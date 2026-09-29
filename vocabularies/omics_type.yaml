@@ -1,0 +1,27 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: omics_type
+title_zh: 组学类型
+enforcement: open
+closure: open
+code_status: proposed
+since: 3.1.0
+origin: [omics_v2]
+source:
+  ref: sources/omics_v2/omics_metadata_template.json
+  quote_zh: 模板分组 genomics_specific / transcriptomics_specific / single_cell_specific / epigenomics_specific / proteomics_specific / metabolomics_specific
+notes_zh: 代码取自模板分组名；模板本身未给出 omics_type 取值。
+ambiguities: [AMB-026]
+values:
+- code: genomics
+  label_zh: 基因组学
+- code: transcriptomics
+  label_zh: 转录组学
+- code: single_cell
+  label_zh: 单细胞组学
+- code: epigenomics
+  label_zh: 表观组学
+- code: proteomics
+  label_zh: 蛋白组学
+- code: metabolomics
+  label_zh: 代谢组学

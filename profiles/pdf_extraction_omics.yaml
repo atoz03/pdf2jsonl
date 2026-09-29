@@ -1,0 +1,12 @@
+# Profile — selects and configures fields of the contract for one use case. Part of the contract; edits require a release.
+profile_format: 1
+name: pdf_extraction_omics
+extends: pdf_extraction
+title_zh: PDF 文献抽取（含多组学）
+description_zh: 在 pdf_extraction 基础上开放 omics 组的直接抽取字段，用于转录组、单细胞、表观、蛋白和代谢组学论文。omics 字段均为 provisional（AMB-026）。
+selection:
+  base: all_active
+  include_availability: [D]
+  include_groups: [common, agent, skills, transform, omics]
+  exclude_fields: [common.source_abstract]
+ambiguities: [AMB-026]

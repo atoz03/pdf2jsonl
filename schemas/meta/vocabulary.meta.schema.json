@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:breeding-data-contract:meta:vocabulary:1",
+  "title": "Vocabulary file format (vocabulary_format 1)",
+  "type": "object",
+  "required": ["vocabulary_format", "name", "title_zh", "code_status", "source"],
+  "properties": {
+    "vocabulary_format": {"const": 1},
+    "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+    "title_zh": {"type": "string"},
+    "vocabulary_type": {"enum": ["code_list", "unit_conversion"]},
+    "enforcement": {"enum": ["error", "warning", "open"]},
+    "closure": {"enum": ["closed", "open"]},
+    "code_status": {"enum": ["source", "proposed", "repository", "legacy"]},
+    "applies_to": {"enum": ["value", "values"]},
+    "since": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+    "origin": {"type": "array", "items": {"enum": ["fields_v3", "legacy_v1", "omics_v2", "repository"]}},
+    "source": {
+      "type": "object",
+      "required": ["ref"],
+      "additionalProperties": false,
+      "properties": {"ref": {"type": "string"}, "quote_zh": {"type": "string"}}
+    },
+    "ambiguities": {"type": "array", "items": {"type": "string", "pattern": "^AMB-\\d{3}$"}},
+    "notes_zh": {"type": "string"},
+    "values": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["code"],
+        "additionalProperties": false,
+        "properties": {
+          "code": {"type": "string", "minLength": 1},
+          "label_zh": {"type": "string"},
+          "label_en": {"type": "string"},
+          "aliases": {"type": "array", "items": {"type": "string"}},
+          "description_zh": {"type": "string"},
+          "grain": {"type": ["string", "null"]},
+          "code_status": {"enum": ["source", "proposed", "repository", "legacy"]},
+          "origin": {"type": "array", "items": {"enum": ["fields_v3", "legacy_v1", "omics_v2", "repository"]}},
+          "ambiguities": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "matching": {"const": "exact_or_alias"},
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["canonical", "units"],
+        "additionalProperties": false,
+        "properties": {
+          "canonical": {"type": "string"},
+          "units": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["factor"],
+              "additionalProperties": false,
+              "properties": {"factor": {"type": "number"}, "offset": {"type": "number"}}
+            }
+          },
+          "aliases": {"type": "object", "additionalProperties": {"type": "string"}}
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "if": {"properties": {"vocabulary_type": {"const": "unit_conversion"}}, "required": ["vocabulary_type"]},
+  "then": {"required": ["dimensions", "matching"]},
+  "else": {"required": ["values", "enforcement", "closure"]}
+}

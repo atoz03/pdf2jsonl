@@ -1,0 +1,232 @@
+{
+  "migration_format": 1,
+  "run_id": "mig_20260921T141320Z_bbfa7e12",
+  "created_at": "2026-09-21T14:13:20Z",
+  "source": {
+    "file_name": "breeding_jsonl_example.jsonl",
+    "sha256": "bbfa7e120ad0f84205a0e984a228ed3548e3373020d8ef7de06d11c9ae2b2031",
+    "documents": 1,
+    "schema_version": "v1.0.0"
+  },
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.1.0",
+    "release_status": "released",
+    "requested": "3.1.0",
+    "release_sha256": "eb0027a4236a6f3edcad5f6940e7f6e6dd16937cd04844dbdfe2f71ae43ca476",
+    "source_digest": "88102faf40ff9300e1adc38029dd9110c8e5904808006978c97548c93789bf98"
+  },
+  "mapping": {
+    "id": "legacy_to_current",
+    "sha256": "31b662daa4a20ecb9169c80d2e65b7cbdea0237a45b129e30601ac9d87d0b5a7"
+  },
+  "options": {
+    "page_offset": 2220,
+    "dataset_id": null,
+    "source_file_sha256": null
+  },
+  "counts": {
+    "records": 13,
+    "rejected": 12,
+    "residue_leaves": 1006,
+    "review_candidates": 7,
+    "rejected_issue_codes": {
+      "RULE_R001": 24,
+      "SCHEMA_MINIMUM": 1
+    }
+  },
+  "notes": [
+    "doc_meta.field 含多个作物，crop_name 不确定（LEG-008）"
+  ],
+  "consumed_leaf_paths": [
+    "analyses[].analysis_name",
+    "analyses[].analysis_type",
+    "analyses[].key_results.effective_parents",
+    "analyses[].key_results.genetic_corr.PH-GY",
+    "analyses[].key_results.heritability",
+    "analyses[].key_results.ld_decay_distance_kb",
+    "analyses[].key_results.population_structure_k",
+    "analyses[].key_results.prediction_accuracy",
+    "analyses[].key_results.top_snps",
+    "analyses[].key_results.var_components.Va",
+    "analyses[].key_results.var_components.Ve",
+    "analyses[].model_name",
+    "analyses[].parameters[].param_name",
+    "analyses[].parameters[].param_type",
+    "analyses[].parameters[].param_value",
+    "analyses[].significance_thresholds[].correction_method",
+    "analyses[].significance_thresholds[].metric",
+    "analyses[].significance_thresholds[].value",
+    "analyses[].software_tools[].tool_name",
+    "analyses[].software_tools[].version",
+    "analyses[].validation_design.k_folds",
+    "analyses[].validation_design.metric",
+    "analyses[].validation_design.strategy",
+    "breed_entities.genes[].chromosome",
+    "breed_entities.genes[].evidence_spans[].page",
+    "breed_entities.genes[].evidence_spans[].section_id",
+    "breed_entities.genes[].evidence_spans[].text_snippet",
+    "breed_entities.genes[].gene_symbol",
+    "breed_entities.genes[].linked_traits",
+    "breed_entities.genes[].name",
+    "breed_entities.genes[].position.end_bp",
+    "breed_entities.genes[].position.ref_genome",
+    "breed_entities.genes[].position.start_bp",
+    "breed_entities.markers[].marker_name",
+    "breed_entities.populations[].name",
+    "breed_entities.populations[].population_name",
+    "breed_entities.qtls[].additive_effect",
+    "breed_entities.qtls[].candidate_genes",
+    "breed_entities.qtls[].chromosome",
+    "breed_entities.qtls[].dominance_effect",
+    "breed_entities.qtls[].interval.end",
+    "breed_entities.qtls[].interval.start",
+    "breed_entities.qtls[].interval.unit",
+    "breed_entities.qtls[].name",
+    "breed_entities.qtls[].nearest_markers",
+    "breed_entities.qtls[].p_value",
+    "breed_entities.qtls[].population_used",
+    "breed_entities.qtls[].pve",
+    "breed_entities.qtls[].qtl_name",
+    "breed_entities.traits[].evidence_spans[].page",
+    "breed_entities.traits[].evidence_spans[].section_id",
+    "breed_entities.traits[].evidence_spans[].text_snippet",
+    "breed_entities.traits[].heritability_h2_estimate",
+    "breed_entities.traits[].measurement_detail.method_standard",
+    "breed_entities.traits[].measurement_detail.organ",
+    "breed_entities.traits[].measurement_detail.stage",
+    "breed_entities.traits[].name",
+    "breed_entities.traits[].trait_category",
+    "breed_entities.traits[].trait_name",
+    "conclusions[].causal_flag",
+    "conclusions[].claim_text",
+    "conclusions[].conclusion_type",
+    "conclusions[].confidence_level",
+    "conclusions[].contradiction_note",
+    "conclusions[].scope_constraints",
+    "conclusions[].supporting_relations",
+    "doc_meta.abstract",
+    "doc_meta.affiliations[].address",
+    "doc_meta.affiliations[].country",
+    "doc_meta.affiliations[].name",
+    "doc_meta.affiliations[].org_id",
+    "doc_meta.authors[].affiliation_name",
+    "doc_meta.authors[].name",
+    "doc_meta.authors[].rank",
+    "doc_meta.doi",
+    "doc_meta.field",
+    "doc_meta.funding",
+    "doc_meta.issue",
+    "doc_meta.journal",
+    "doc_meta.keywords",
+    "doc_meta.pages",
+    "doc_meta.species_list[].name",
+    "doc_meta.species_list[].name_zh",
+    "doc_meta.title",
+    "doc_meta.volume",
+    "doc_meta.year",
+    "provenance.extraction.method",
+    "provenance.integrity.source_file_hash",
+    "record_id",
+    "record_info.doc_type",
+    "record_info.lang",
+    "relations[].effect_direction",
+    "relations[].evidence_spans[].page",
+    "relations[].evidence_spans[].section_id",
+    "relations[].evidence_spans[].text_snippet",
+    "relations[].is_inferred",
+    "relations[].object.entity_id",
+    "relations[].object.entity_type",
+    "relations[].relation_id",
+    "relations[].relation_mechanism",
+    "relations[].relation_type",
+    "relations[].source_section",
+    "relations[].subject.entity_id",
+    "relations[].subject.entity_type",
+    "relations[].supporting_method"
+  ],
+  "record_sources": {
+    "rec_03724b4d838a204c72b9f6eb79f97596": {
+      "input_line": 1,
+      "source_path": "relations[0]",
+      "source_item_id": "rel:ric:r01"
+    },
+    "rec_19e2a000b39a59888c5cd69ee1002d28": {
+      "input_line": 1,
+      "source_path": "relations[2]",
+      "source_item_id": "rel:ric:r03"
+    },
+    "rec_4909b279c2b61b6bbf2b9059c9d33759": {
+      "input_line": 1,
+      "source_path": "conclusions[0]",
+      "source_item_id": "clu:ric:cl01"
+    },
+    "rec_ad52c95e493d7c0cdfa09a704d4529bc": {
+      "input_line": 1,
+      "source_path": "conclusions[1]",
+      "source_item_id": "clu:ric:cl02"
+    },
+    "rec_8d3a8dec750cadc5787e9afc7490d09a": {
+      "input_line": 1,
+      "source_path": "breed_entities.qtls[0]",
+      "source_item_id": "qtl:ric:qPH3"
+    },
+    "rec_f1af759495e747935362c387e63a43f6": {
+      "input_line": 1,
+      "source_path": "breed_entities.qtls[0].additive_effect",
+      "source_item_id": "qtl:ric:qPH3"
+    },
+    "rec_527d93aac600e9dfe681c116976391bf": {
+      "input_line": 1,
+      "source_path": "breed_entities.qtls[0].dominance_effect",
+      "source_item_id": "qtl:ric:qPH3"
+    },
+    "rec_bf1e503d911c5877608db904c5067017": {
+      "input_line": 1,
+      "source_path": "breed_entities.genes[0]",
+      "source_item_id": "gene:ric:sd1"
+    },
+    "rec_7fefdada2f8350012f4bc983ebe40815": {
+      "input_line": 1,
+      "source_path": "breed_entities.genes[1]",
+      "source_item_id": "gene:ric:Os03g0229400"
+    },
+    "rec_da4ecc4c9528f5f156e7206fbb0c4514": {
+      "input_line": 1,
+      "source_path": "breed_entities.traits[0].heritability_h2_estimate",
+      "source_item_id": "trait:ric:plant_height"
+    },
+    "rec_47bcb48ca6c4c634554c2f972b5dedfd": {
+      "input_line": 1,
+      "source_path": "breed_entities.traits[0]",
+      "source_item_id": "trait:ric:plant_height"
+    },
+    "rec_ab154cb53029d9d7b9b554bc002e6167": {
+      "input_line": 1,
+      "source_path": "breed_entities.traits[1].heritability_h2_estimate",
+      "source_item_id": "trait:ric:grain_yield"
+    },
+    "rec_ecd1abda719f008663e31ba49689b164": {
+      "input_line": 1,
+      "source_path": "breed_entities.traits[1]",
+      "source_item_id": "trait:ric:grain_yield"
+    }
+  },
+  "outputs": {
+    "records": {
+      "file": "breeding_jsonl_example.migrated.jsonl",
+      "sha256": "92fa3986f97f7aa9233efaf0ca553992db63f1fd22b96151442d2d7708d20d1c"
+    },
+    "errors": {
+      "file": "breeding_jsonl_example.migrated.errors.jsonl",
+      "sha256": "bd5158a16128ac91fe292838672ff66fc078277b3f4a8ad22ed9301a953cacbc"
+    },
+    "residue": {
+      "file": "breeding_jsonl_example.residue.json",
+      "sha256": "9640454e9161227db5fd2d3ab24a626ea7925706f9e5dd59162342a27ad7eebb"
+    }
+  },
+  "tooling": {
+    "breeding_contract": "1.0.0"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://breeding-contract.local/schemas/runtime/_defs.schema.json",
+  "title": "Shared definitions for pdf2jsonl runtime outputs",
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "contract_identity": {
+      "type": "object",
+      "description": "Contract version an output was produced against (ResolvedContract.identity()).",
+      "required": [
+        "schema_name",
+        "schema_version",
+        "release_status",
+        "requested",
+        "source_digest"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema_name": {
+          "type": "string"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-dev\\.[0-9a-f]{8})?$"
+        },
+        "release_status": {
+          "enum": [
+            "released",
+            "unreleased"
+          ]
+        },
+        "requested": {
+          "type": "string"
+        },
+        "release_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_digest": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "required": [
+        "code",
+        "severity",
+        "path",
+        "message"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "rule_id": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "object"
+        }
+      }
+    },
+    "count_map": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    }
+  }
+}

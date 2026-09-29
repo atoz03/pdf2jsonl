@@ -1,0 +1,20 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: finding_kind
+title_zh: 发现类型
+enforcement: warning
+closure: closed
+code_status: proposed
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L136
+  quote_zh: 关联、预测、功能验证或机制发现
+ambiguities: [AMB-010]
+values:
+- code: association
+  label_zh: 关联
+- code: prediction
+  label_zh: 预测
+- code: functional_validation
+  label_zh: 功能验证
+- code: mechanism_discovery
+  label_zh: 机制发现

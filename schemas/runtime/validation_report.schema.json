@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://breeding-contract.local/schemas/runtime/validation_report.schema.json",
+  "title": "pdf2jsonl validation report (<stem>.validation.json)",
+  "type": "object",
+  "required": [
+    "report_format",
+    "run_id",
+    "contract",
+    "profile",
+    "input",
+    "valid",
+    "counts",
+    "document",
+    "records",
+    "rejected",
+    "repairs",
+    "system_records_skipped"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "report_format": {
+      "const": 1
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "contract": {
+      "$ref": "_defs.schema.json#/$defs/contract_identity"
+    },
+    "profile": {
+      "type": "string"
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "file_name",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "file_name": {
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "_defs.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "valid": {
+      "type": "boolean",
+      "description": "Every written record passed validation (rejections are reported, never written)"
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "pages",
+        "candidates",
+        "records",
+        "rejected",
+        "by_record_kind",
+        "by_review_status",
+        "rejected_by_code"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "pages": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "candidates": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "records": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_record_kind": {
+          "$ref": "_defs.schema.json#/$defs/count_map"
+        },
+        "by_review_status": {
+          "$ref": "_defs.schema.json#/$defs/count_map"
+        },
+        "rejected_by_code": {
+          "$ref": "_defs.schema.json#/$defs/count_map"
+        }
+      }
+    },
+    "document": {
+      "type": "object",
+      "required": [
+        "values",
+        "issues"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "values": {
+          "type": "object",
+          "description": "Document-level values keyed by dotted field path"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "_defs.schema.json#/$defs/issue"
+          }
+        }
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "line",
+          "record_id",
+          "record_kind",
+          "candidate_index",
+          "warnings"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "record_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "record_kind": {
+            "type": "string"
+          },
+          "candidate_index": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "_defs.schema.json#/$defs/issue"
+            }
+          },
+          "notes": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "rejected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "stage",
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "stage": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "candidate_index": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "repairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "where",
+          "action"
+        ],
+        "properties": {
+          "where": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "system_records_skipped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "record_kind",
+          "reason"
+        ],
+        "properties": {
+          "record_kind": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

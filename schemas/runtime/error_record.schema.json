@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://breeding-contract.local/schemas/runtime/error_record.schema.json",
+  "title": "Rejected candidate or migrated record (<stem>.errors.jsonl / <stem>.migrated.errors.jsonl, one object per line)",
+  "type": "object",
+  "required": [
+    "error_format",
+    "stage",
+    "code",
+    "message"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "error_format": {
+      "const": 1
+    },
+    "stage": {
+      "enum": [
+        "candidate",
+        "evidence",
+        "validation",
+        "dataset",
+        "migration"
+      ],
+      "description": "candidate: malformed/duplicate candidate; evidence: quote/page verification; validation: assembled record fails the contract; dataset: dataset-level rule; migration: a record produced by `bdc migrate` fails the contract"
+    },
+    "code": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "message": {
+      "type": "string"
+    },
+    "candidate_index": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Index into candidates.json; absent for system records"
+    },
+    "detail": {
+      "type": "object"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "$ref": "_defs.schema.json#/$defs/issue"
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "description": "The (repaired) candidate as the backend produced it"
+    },
+    "record": {
+      "type": "object",
+      "description": "The assembled record that failed validation"
+    },
+    "source_path": {
+      "type": "string",
+      "description": "migration: location of the item in the legacy document (e.g. relations[1])"
+    },
+    "input_line": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "migration: line of the source JSONL"
+    },
+    "instance": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "migration: instance number in the omics source file"
+    },
+    "conflicts": {
+      "type": "array",
+      "description": "migration: source leaves that competed for the same target field"
+    }
+  }
+}

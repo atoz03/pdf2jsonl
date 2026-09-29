@@ -1,0 +1,103 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 850 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+56 800 Td
+(Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population) Tj T*
+(Synthetic Author A, Synthetic Author B) Tj T*
+(SYNTHETIC EXAMPLE DOCUMENT - not a real publication. doi: 10.0000/synthetic.2026.001) Tj T*
+(Published online: 12 March 2024) Tj T*
+() Tj T*
+(Abstract) Tj T*
+(Plant height is a key agronomic trait in rice. We identified a major QTL, qPH7.1, on chromosome) Tj T*
+(7 using 180 recombinant inbred lines. qPH7.1 explained 23.5% of the phenotypic variance and was) Tj T*
+(significantly associated with plant height in both environments.) Tj T*
+() Tj T*
+(Introduction) Tj T*
+(Semi-dwarf stature improved lodging resistance in modern rice cultivars. Several plant height) Tj T*
+(genes have been cloned, but natural variation in temperate japonica remains poorly) Tj T*
+(characterized.) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 770 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+56 800 Td
+(Materials and Methods) Tj T*
+(A population of 180 recombinant inbred lines was grown at two locations in 2022. Plant height) Tj T*
+(was measured at maturity from the soil surface to the tip of the tallest panicle. Genotyping) Tj T*
+(used 1,536 SNP markers. QTL analysis was performed with QTL IciMapping version 4.2 using) Tj T*
+(inclusive composite interval mapping. Linkage maps were constructed with JoinMap version 5.0.) Tj T*
+() Tj T*
+(Results) Tj T*
+(Plant height of the parents differed markedly. The mean plant height of the population ranged) Tj T*
+(from 85.2 to 132.6 cm.) Tj T*
+(Table 2 Plant height of parents in two environments) Tj T*
+(Line Env1 Env2) Tj T*
+(Parent1 118.4 cm 121.0 cm) Tj T*
+(Parent2 92.1 cm 95.3 cm) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 484 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+56 800 Td
+(qPH7.1 was located between markers S7_1203 and S7_1377 with a LOD score of 12.8. The allele) Tj T*
+(from Parent1 increased plant height by 8.6 cm.) Tj T*
+() Tj T*
+(Discussion) Tj T*
+(qPH7.1 co-localized with a previously reported heading date region, suggesting a possible) Tj T*
+(pleiotropic effect that requires validation.) Tj T*
+() Tj T*
+(Conclusion) Tj T*
+(qPH7.1 is a promising target for marker-assisted breeding of plant height in rice.) Tj T*
+ET
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000133 00000 n 
+0000000230 00000 n 
+0000000356 00000 n 
+0000001257 00000 n 
+0000001383 00000 n 
+0000002204 00000 n 
+0000002330 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R >>
+startxref
+2865
+%%EOF

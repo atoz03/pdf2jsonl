@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://breeding-contract.local/schemas/runtime/manifest.schema.json",
+  "title": "pdf2jsonl run manifest (<stem>.manifest.json)",
+  "type": "object",
+  "required": [
+    "manifest_format",
+    "run_id",
+    "created_at",
+    "contract",
+    "profile",
+    "input",
+    "pipeline",
+    "backend",
+    "options",
+    "environment",
+    "counts",
+    "outputs"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_format": {
+      "const": 1
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "$ref": "_defs.schema.json#/$defs/timestamp"
+    },
+    "contract": {
+      "$ref": "_defs.schema.json#/$defs/contract_identity"
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "name",
+        "extends_chain",
+        "fill_rules",
+        "field_count"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "extends_chain": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "fill_rules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "field_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "file_name",
+        "sha256",
+        "size_bytes",
+        "media_type",
+        "page_count",
+        "parser"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "file_name": {
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "_defs.schema.json#/$defs/sha256"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "media_type": {
+          "type": "string"
+        },
+        "page_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parser": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "candidates_sha256": {
+          "$ref": "_defs.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "pipeline": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "const": "pdf2jsonl"
+        },
+        "version": {
+          "type": "string"
+        },
+        "contract_tooling": {
+          "type": "string"
+        }
+      }
+    },
+    "backend": {
+      "type": "object",
+      "required": [
+        "name",
+        "extraction_method"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "extraction_method": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "description": "CLI options that fed system fields (dataset_id, asset_uri, ...)"
+    },
+    "environment": {
+      "type": "object"
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "pages",
+        "candidates",
+        "records",
+        "rejected"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "pages": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "candidates": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "records": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "required": [
+        "records",
+        "errors",
+        "validation"
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "file",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "sha256": {
+            "$ref": "_defs.schema.json#/$defs/sha256"
+          }
+        }
+      },
+      "propertyNames": {
+        "enum": [
+          "records",
+          "errors",
+          "validation",
+          "bundle"
+        ]
+      }
+    }
+  }
+}

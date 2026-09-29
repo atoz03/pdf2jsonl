@@ -1,0 +1,156 @@
+# Profile — selects and configures fields of the contract for one use case. Part of the contract; edits require a release.
+profile_format: 1
+name: pdf_extraction
+title_zh: PDF 文献抽取
+description_zh: PDF 到原子化 JSONL 的抽取画像。模型只填写可获得性为 D（直接抽取）的字段并附逐字证据；N（标准化）字段由管线按命名规则确定性生成；I/G/F 字段不暴露，绝不补造。
+selection:
+  base: all_active
+  include_availability: [D]
+  include_groups: [common, agent, skills, transform]
+  exclude_fields: [common.source_abstract]
+document_fields:
+- common.source_title
+- common.source_doi
+- common.source_year
+- common.source_authors
+- common.source_language
+- common.source_version
+- common.crop_name
+- common.species_name
+- common.source_type
+- common.source_document_type
+- common.source_journal
+- common.source_volume
+- common.source_issue
+- common.source_page_range
+- common.source_pmid
+- common.source_keywords
+- common.source_funding
+- common.source_affiliations
+document_defaults:
+  common.source_type: paper
+roles:
+  provenance:
+    document_id: common.source_id
+    title: common.source_title
+    page: common.source_page
+    section: common.source_section
+    quote: common.source_quote
+    table_figure: common.source_table_figure
+    row_key: common.source_table_row_key
+    column_key: common.source_table_column_key
+    span: common.source_span
+    locator: common.source_locator
+    file_sha256: common.source_file_sha256
+  semantic:
+    record_kind: common.record_kind
+    source_type: common.source_type
+    doi: common.source_doi
+    year: common.source_year
+    authors: common.source_authors
+    language: common.source_language
+    crop: common.crop_name
+    statement: agent.finding_text
+    qtl_mention: common.qtl_names
+    gene_mention: common.gene_names
+    software_name: skills.software_name
+    software_version: skills.software_version
+    raw_value: common.original_value
+    raw_unit: common.original_unit
+system_fields:
+  common.record_id:
+    rule: stable_record_id
+  common.schema_version:
+    rule: resolved_schema_version
+  common.schema_name:
+    rule: resolved_schema_name
+  common.record_kind:
+    rule: candidate_record_kind
+  common.record_grain:
+    rule: grain_from_record_kind
+  common.source_id:
+    rule: document_source_id
+  common.source_uri:
+    rule: doi_uri
+  common.source_locator:
+    rule: evidence_locator
+  common.source_span:
+    rule: evidence_span
+  common.source_file_sha256:
+    rule: input_file_sha256
+  common.extraction_method:
+    rule: backend_extraction_method
+  common.extraction_run_id:
+    rule: run_id
+  common.review_status:
+    rule: validation_outcome
+    params:
+      clean: auto_validated
+      needs_review: pending_review
+  common.record_version:
+    rule: constant
+    params:
+      value: 1
+  common.qc_rule_set_version:
+    rule: qc_rule_set_version
+  common.qc_failure_codes:
+    rule: warning_codes
+  common.missing_fields:
+    rule: missing_audit
+  common.dataset_id:
+    rule: cli_option
+    params:
+      option: dataset_id
+  common.dataset_version:
+    rule: cli_option
+    params:
+      option: dataset_version
+  common.source_asset_id:
+    rule: cli_option
+    params:
+      option: source_asset_id
+normalizers:
+- rule: unit_normalization
+  inputs:
+    raw_value: common.original_value
+    raw_unit: common.original_unit
+  outputs:
+    value: common.normalized_value
+    min: common.normalized_min_value
+    max: common.normalized_max_value
+    unit: common.normalized_unit
+generated_fields:
+  common.extraction_confidence:
+    rule: backend_confidence
+system_records:
+- record_kind: asset_manifest
+  rule: input_asset_manifest
+  fields:
+    common.asset_kind:
+      rule: constant
+      params:
+        value: raw_pdf
+    common.asset_format:
+      rule: constant
+      params:
+        value: PDF
+    common.asset_sha256:
+      rule: input_file_sha256
+    common.asset_size_bytes:
+      rule: input_file_size
+    common.asset_uri:
+      rule: cli_option
+      params:
+        option: asset_uri
+model_record_kinds: [claim, observation, method, analysis_result, phenotype_observation, environment_observation, genotype_observation]
+evidence_policy:
+  required_for_model_records: true
+  verify_quote: true
+  page_search_radius: 1
+  max_quote_chars: 1200
+  value_presence_check: warning
+  value_presence_exempt: [common.source_language]
+required_fields:
+  always: [common.schema_name]
+ambiguities: [AMB-013]
+notes_zh: common.source_abstract 不进入逐行记录（高频行避免重复长文本，见 v3 source_title 定义），由 document_bundle 视图或迁移数据承载；omics 组字段见 pdf_extraction_omics 画像。

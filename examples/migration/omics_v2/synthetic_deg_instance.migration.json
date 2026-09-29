@@ -1,0 +1,48 @@
+{
+  "migration_format": 1,
+  "run_id": "mig_20260921T141320Z_68fa53cf",
+  "created_at": "2026-09-21T14:13:20Z",
+  "source": {
+    "file_name": "synthetic_deg_instance.json",
+    "sha256": "68fa53cfc54d8b07be7b2290035861c4a5856e095c354be2bdae1bb6ca7feba5",
+    "template_version": "2.0.0"
+  },
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.1.0",
+    "release_status": "released",
+    "requested": "3.1.0",
+    "release_sha256": "eb0027a4236a6f3edcad5f6940e7f6e6dd16937cd04844dbdfe2f71ae43ca476",
+    "source_digest": "88102faf40ff9300e1adc38029dd9110c8e5904808006978c97548c93789bf98"
+  },
+  "mapping": {
+    "id": "omics_to_current",
+    "sha256": "8957104372841527b4e509e52e2411a98e9100b0e0d7802eab3f78652154f8f5"
+  },
+  "options": {
+    "record_kind": null,
+    "dataset_id": null
+  },
+  "counts": {
+    "records": 1,
+    "rejected": 0,
+    "residue_leaves": 0
+  },
+  "outputs": {
+    "records": {
+      "file": "synthetic_deg_instance.migrated.jsonl",
+      "sha256": "86e5c1d042ce4ab7e91c1c4b0d11b297f5d91b89e55266d4bc8a67435990910b"
+    },
+    "errors": {
+      "file": "synthetic_deg_instance.migrated.errors.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "residue": {
+      "file": "synthetic_deg_instance.residue.json",
+      "sha256": "8efaafd93528945f884f9358b60aea4b51377e43de209077c133022ad27db3e6"
+    }
+  },
+  "tooling": {
+    "breeding_contract": "1.0.0"
+  }
+}

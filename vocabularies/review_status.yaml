@@ -1,0 +1,20 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: review_status
+title_zh: 审核状态
+enforcement: warning
+closure: closed
+code_status: proposed
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L29
+  quote_zh: 待复核、自动校验通过、专家通过或驳回
+ambiguities: [AMB-010]
+values:
+- code: pending_review
+  label_zh: 待复核
+- code: auto_validated
+  label_zh: 自动校验通过
+- code: expert_approved
+  label_zh: 专家通过
+- code: rejected
+  label_zh: 驳回

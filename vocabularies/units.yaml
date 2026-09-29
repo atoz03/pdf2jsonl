@@ -1,0 +1,122 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: units
+vocabulary_type: unit_conversion
+title_zh: 单位换算规则
+code_status: repository
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L60
+  quote_zh: normalized_* 数据来源：单位转换规则；填写原则4：无法换算时不强行标准化
+ambiguities: [AMB-015]
+matching: exact_or_alias
+dimensions:
+  length:
+    canonical: cm
+    units:
+      mm:
+        factor: 0.1
+      cm:
+        factor: 1
+      m:
+        factor: 100
+    aliases:
+      毫米: mm
+      厘米: cm
+      米: m
+  mass:
+    canonical: g
+    units:
+      mg:
+        factor: 0.001
+      g:
+        factor: 1
+      kg:
+        factor: 1000
+    aliases:
+      毫克: mg
+      克: g
+      千克: kg
+      公斤: kg
+  yield_per_area:
+    canonical: t/ha
+    units:
+      t/ha:
+        factor: 1
+      kg/ha:
+        factor: 0.001
+      g/m2:
+        factor: 0.01
+      kg/mu:
+        factor: 0.015
+    aliases:
+      t ha-1: t/ha
+      t·ha-1: t/ha
+      t·ha⁻¹: t/ha
+      t hm-2: t/ha
+      kg ha-1: kg/ha
+      kg·ha-1: kg/ha
+      kg·ha⁻¹: kg/ha
+      g m-2: g/m2
+      g/m²: g/m2
+      吨/公顷: t/ha
+      千克/公顷: kg/ha
+      kg/亩: kg/mu
+      公斤/亩: kg/mu
+  temperature:
+    canonical: °C
+    units:
+      °C:
+        factor: 1
+      °F:
+        factor: 0.5555555555555556
+        offset: -17.77777777777778
+      K:
+        factor: 1
+        offset: -273.15
+    aliases:
+      ℃: °C
+      degC: °C
+      ℉: °F
+      degF: °F
+  percent:
+    canonical: '%'
+    units:
+      '%':
+        factor: 1
+    aliases:
+      ％: '%'
+      percent: '%'
+  genomic_length:
+    canonical: bp
+    units:
+      bp:
+        factor: 1
+      kb:
+        factor: 1000
+      Mb:
+        factor: 1000000
+    aliases:
+      kbp: kb
+      Kb: kb
+      Mbp: Mb
+  genetic_distance:
+    canonical: cM
+    units:
+      cM:
+        factor: 1
+    aliases:
+      centimorgan: cM
+  duration:
+    canonical: d
+    units:
+      h:
+        factor: 0.041666666666666664
+      d:
+        factor: 1
+    aliases:
+      day: d
+      days: d
+      天: d
+      hour: h
+      hours: h
+      小时: h

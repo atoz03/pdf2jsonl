@@ -1,0 +1,18 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: entity_alignment_status
+title_zh: 实体对齐状态
+enforcement: warning
+closure: closed
+code_status: proposed
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L238
+  quote_zh: 未链接、候选或已链接
+ambiguities: [AMB-010]
+values:
+- code: unlinked
+  label_zh: 未链接
+- code: candidate
+  label_zh: 候选
+- code: linked
+  label_zh: 已链接

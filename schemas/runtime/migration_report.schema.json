@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://breeding-contract.local/schemas/runtime/migration_report.schema.json",
+  "title": "bdc migrate report (<stem>.migration.json)",
+  "type": "object",
+  "required": [
+    "migration_format",
+    "run_id",
+    "created_at",
+    "source",
+    "contract",
+    "mapping",
+    "options",
+    "counts"
+  ],
+  "properties": {
+    "migration_format": {
+      "const": 1
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "$ref": "_defs.schema.json#/$defs/timestamp"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "file_name",
+        "sha256"
+      ],
+      "properties": {
+        "file_name": {
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "_defs.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "contract": {
+      "$ref": "_defs.schema.json#/$defs/contract_identity"
+    },
+    "mapping": {
+      "type": "object",
+      "required": [
+        "id",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "_defs.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "options": {
+      "type": "object"
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "records",
+        "rejected"
+      ],
+      "properties": {
+        "records": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": {
+        "type": [
+          "integer",
+          "object"
+        ]
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "consumed_leaf_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "record_sources": {
+      "type": "object",
+      "description": "record_id -> where in the source the record came from",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "source_path"
+        ],
+        "properties": {
+          "input_line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "source_path": {
+            "type": "string"
+          },
+          "source_item_id": {
+            "type": "string",
+            "description": "legacy ID of the source item (relation_id, conclusion_id, entity_id, ...)"
+          }
+        }
+      }
+    }
+  }
+}

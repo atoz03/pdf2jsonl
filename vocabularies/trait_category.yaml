@@ -1,0 +1,35 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: trait_category
+title_zh: 性状大类
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 3.1.0
+origin: [legacy_v1]
+source:
+  ref: sources/legacy_v1/breeding_jsonl_spec.md#L427
+  quote_zh: A-3 trait_category：产量性状/品质性状(加工·营养)/农艺性状/生育期性状/形态性状/生理性状/抗生物胁迫(病·虫·草)/抗非生物胁迫(旱·盐·温·涝)/适应性/其他
+notes_zh: A-3 只有中文名；代码由仓库拟定。
+ambiguities: [AMB-026]
+values:
+- code: yield
+  label_zh: 产量性状
+- code: quality
+  label_zh: 品质性状(加工·营养)
+- code: agronomic
+  label_zh: 农艺性状
+- code: growth_period
+  label_zh: 生育期性状
+- code: morphological
+  label_zh: 形态性状
+- code: physiological
+  label_zh: 生理性状
+- code: biotic_stress_resistance
+  label_zh: 抗生物胁迫(病·虫·草)
+- code: abiotic_stress_resistance
+  label_zh: 抗非生物胁迫(旱·盐·温·涝)
+- code: adaptability
+  label_zh: 适应性
+- code: other
+  label_zh: 其他

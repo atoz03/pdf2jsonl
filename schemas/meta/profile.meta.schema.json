@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:breeding-data-contract:meta:profile:1",
+  "title": "Profile file format (profile_format 1)",
+  "description": "A profile selects fields of the contract for one use case and, for extraction profiles, declares which named fill rule produces each non-extracted field. Rule names must be implemented by every consumer that claims to support the profile (the pdf2jsonl Skill is checked in CI).",
+  "type": "object",
+  "required": ["profile_format", "name", "title_zh", "description_zh", "selection"],
+  "additionalProperties": false,
+  "properties": {
+    "profile_format": {"const": 1},
+    "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+    "extends": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+    "title_zh": {"type": "string"},
+    "description_zh": {"type": "string"},
+    "source": {"type": "object", "properties": {"ref": {"type": "string"}, "quote_zh": {"type": "string"}}, "additionalProperties": false},
+    "ambiguities": {"type": "array", "items": {"type": "string", "pattern": "^AMB-\\d{3}$"}},
+    "notes_zh": {"type": "string"},
+    "selection": {
+      "type": "object",
+      "required": ["base"],
+      "additionalProperties": false,
+      "properties": {
+        "base": {"enum": ["all_active", "explicit"]},
+        "fields": {"type": "array", "items": {"$ref": "#/$defs/path"}, "uniqueItems": true},
+        "include_availability": {"type": "array", "items": {"enum": ["D", "N", "I", "G", "F"]}},
+        "include_groups": {"type": "array", "items": {"type": "string"}},
+        "include_fields": {"type": "array", "items": {"$ref": "#/$defs/path"}},
+        "exclude_fields": {"type": "array", "items": {"$ref": "#/$defs/path"}}
+      }
+    },
+    "document_fields": {"type": "array", "items": {"$ref": "#/$defs/path"}, "uniqueItems": true},
+    "document_defaults": {"type": "object", "propertyNames": {"$ref": "#/$defs/path"}},
+    "roles": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provenance": {"$ref": "#/$defs/role_map"},
+        "semantic": {"$ref": "#/$defs/role_map"}
+      }
+    },
+    "system_fields": {"$ref": "#/$defs/fill_map"},
+    "generated_fields": {"$ref": "#/$defs/fill_map"},
+    "normalizers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule", "inputs", "outputs"],
+        "additionalProperties": false,
+        "properties": {
+          "rule": {"type": "string"},
+          "inputs": {"$ref": "#/$defs/role_map"},
+          "outputs": {"$ref": "#/$defs/role_map"}
+        }
+      }
+    },
+    "system_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["record_kind", "rule", "fields"],
+        "additionalProperties": false,
+        "properties": {
+          "record_kind": {"type": "string"},
+          "rule": {"type": "string"},
+          "fields": {"$ref": "#/$defs/fill_map"}
+        }
+      }
+    },
+    "model_record_kinds": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "evidence_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required_for_model_records": {"type": "boolean"},
+        "verify_quote": {"type": "boolean"},
+        "page_search_radius": {"type": "integer", "minimum": 0},
+        "max_quote_chars": {"type": "integer", "minimum": 20},
+        "value_presence_check": {"enum": ["off", "warning", "error"]},
+        "value_presence_exempt": {"type": "array", "items": {"$ref": "#/$defs/path"}, "uniqueItems": true,
+                                  "description": "fields whose values are observable but not literally quotable (e.g. language)"}
+      }
+    },
+    "required_fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {"always": {"type": "array", "items": {"$ref": "#/$defs/path"}}}
+    }
+  },
+  "$defs": {
+    "path": {"type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"},
+    "role_map": {"type": "object", "additionalProperties": {"$ref": "#/$defs/path"}},
+    "fill_map": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"},
+      "additionalProperties": {
+        "type": "object",
+        "required": ["rule"],
+        "additionalProperties": false,
+        "properties": {"rule": {"type": "string"}, "params": {"type": "object"}}
+      }
+    }
+  }
+}

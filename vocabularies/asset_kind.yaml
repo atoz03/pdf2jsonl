@@ -1,0 +1,15 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: asset_kind
+title_zh: 资产类别
+enforcement: open
+closure: open
+code_status: source
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L113
+  quote_zh: genotype_matrix、phenotype_table、image、raw_pdf等资产类别
+values:
+- code: genotype_matrix
+- code: phenotype_table
+- code: image
+- code: raw_pdf

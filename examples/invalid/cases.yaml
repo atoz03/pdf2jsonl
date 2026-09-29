@@ -1,0 +1,121 @@
+# Invalid-record cases: each must produce every listed issue code (checked by `bdc check` and pytest).
+# A case either inlines `record` or starts from `base` (first line of an examples/ JSONL file) and applies
+# `set` (dotted path -> value) and `unset` (dotted paths). `profile` validates against a profile subset.
+cases_format: 1
+cases:
+- id: missing-crop-name
+  why_zh: "crop_name 为必填（Y），缺失即结构错误"
+  version: 3.1.0
+  base: examples/records/tool_spec.jsonl
+  unset: [common.crop_name]
+  expect: [SCHEMA_REQUIRED]
+- id: null-instead-of-omission
+  why_zh: "缺失信息必须省略，不得写 null"
+  version: 3.1.0
+  base: examples/records/tool_spec.jsonl
+  set: {skills.software_version: null}
+  expect: [SCHEMA_TYPE]
+- id: empty-string-instead-of-omission
+  why_zh: "缺失信息必须省略，不得写空字符串"
+  version: 3.1.0
+  base: examples/records/tool_spec.jsonl
+  set: {skills.software_version: ""}
+  expect: [SCHEMA_MINLENGTH]
+- id: unknown-field
+  why_zh: "字段目录之外的字段不允许出现"
+  version: 3.1.0
+  base: examples/records/tool_spec.jsonl
+  set: {common.heading: "Results"}
+  expect: [SCHEMA_UNKNOWN_FIELD]
+- id: omics-field-in-3.0.0
+  why_zh: "omics 组自 3.1.0 起才存在；按 3.0.0 校验时视为未知字段"
+  version: 3.0.0
+  base: examples/records/tool_spec.jsonl
+  set: {common.schema_version: 3.0.0, omics.omics_type: transcriptomics}
+  unset: [common.schema_name]
+  expect: [SCHEMA_UNKNOWN_FIELD]
+- id: bad-record-kind
+  why_zh: "record_kind 为封闭词表"
+  version: 3.1.0
+  base: examples/records/tool_spec.jsonl
+  set: {common.record_kind: paper_summary}
+  expect: [SCHEMA_ENUM]
+- id: paper-record-without-evidence
+  why_zh: "论文证据记录须有物理页码与最小原文证据（R001）"
+  version: 3.1.0
+  base: examples/output/synthetic_rice_qtl.jsonl
+  line: 2
+  unset: [common.source_page, common.source_quote]
+  expect: [RULE_R001]
+- id: local-path-source-id
+  why_zh: "来源标识不得为本地路径或 file: URI（R020）"
+  version: 3.1.0
+  base: examples/records/tool_spec.jsonl
+  set: {common.source_id: "file:///home/user/papers/a.pdf"}
+  expect: [RULE_R020]
+- id: credentials-in-uri
+  why_zh: "访问 URI 不得含凭证（R021）"
+  version: 3.1.0
+  base: examples/records/tool_spec.jsonl
+  set: {common.source_uri: "https://user:secret@example.org/tool"}
+  expect: [RULE_R021]
+- id: dosage-without-ploidy
+  why_zh: "基因型剂量须给出倍性（R009）"
+  version: 3.1.0
+  base: examples/records/genotype_observation.jsonl
+  unset: [common.ploidy]
+  expect: [RULE_R009]
+- id: dosage-exceeds-ploidy
+  why_zh: "剂量不得超过倍性（R010）"
+  version: 3.1.0
+  base: examples/records/genotype_observation.jsonl
+  set: {common.genotype_dosage: 3}
+  expect: [RULE_R010]
+- id: dosage-allele-not-ref-or-alt
+  why_zh: "剂量等位基因须与参考或替代等位一致（R011）"
+  version: 3.1.0
+  base: examples/records/genotype_observation.jsonl
+  set: {common.dosage_allele: T}
+  expect: [RULE_R011]
+- id: variant-without-assembly
+  why_zh: "单一变异 ID 须绑定参考组装（R012）"
+  version: 3.1.0
+  base: examples/records/genotype_observation.jsonl
+  unset: [common.genome_assembly]
+  expect: [RULE_R012]
+- id: normalized-without-original
+  why_zh: "规范化值必须保留原文值与单位（R015/R016）"
+  version: 3.1.0
+  base: examples/records/phenotype_observation.jsonl
+  unset: [common.original_value, common.original_unit]
+  expect: [RULE_R015, RULE_R016]
+- id: value-and-text
+  why_zh: "数值测量与非数值测量二选一（R006）"
+  version: 3.1.0
+  base: examples/records/phenotype_observation.jsonl
+  set: {common.measurement_text: tall}
+  expect: [RULE_R006]
+- id: grain-mismatch
+  why_zh: "记录粒度须与记录类型一致（R024）"
+  version: 3.1.0
+  base: examples/records/phenotype_observation.jsonl
+  set: {common.record_grain: evidence_unit}
+  expect: [RULE_R024]
+- id: base64-payload
+  why_zh: "不内嵌 Base64 或 data: URI（R023）"
+  version: 3.1.0
+  base: examples/records/tool_spec.jsonl
+  set: {common.source_uri: "data:application/pdf;base64,JVBERi0xLjQK"}
+  expect: [RULE_R023]
+- id: genetic-interval-reversed
+  why_zh: "遗传图谱区间起点不大于终点（R027，3.1.0 新增）"
+  version: 3.1.0
+  base: examples/records/genotype_observation.jsonl
+  set: {common.locus_interval_start_cm: 42.0, common.locus_interval_end_cm: 12.5}
+  expect: [RULE_R027]
+- id: field-outside-profile
+  why_zh: "按 compact 画像校验时，画像外的字段不允许"
+  version: 3.1.0
+  profile: compact
+  base: examples/records/genotype_observation.jsonl
+  expect: [PROFILE_FIELD_NOT_ALLOWED]

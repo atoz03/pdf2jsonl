@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# pdf2jsonl launcher: works from the repository or through a symlinked Skill directory.
+# Interpreter: $BDC_PYTHON, else the repository .venv, else python3.
+set -euo pipefail
+here="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+repo="${BREEDING_CONTRACT_HOME:-$(cd "$here/../../.." && pwd)}"
+py="${BDC_PYTHON:-}"
+if [[ -z "$py" ]]; then
+  if [[ -x "$repo/.venv/bin/python" ]]; then py="$repo/.venv/bin/python"; else py="python3"; fi
+fi
+export BREEDING_CONTRACT_HOME="$repo"
+export PYTHONPATH="$here:$repo/src${PYTHONPATH:+:$PYTHONPATH}"
+exec "$py" -m pdf2jsonl_skill.cli "$@"

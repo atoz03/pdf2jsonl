@@ -1,0 +1,49 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: population_type
+title_zh: 群体类型
+enforcement: open
+closure: open
+code_status: source
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L38
+  quote_zh: RIL、NIL或自然群体等类型
+values:
+- code: RIL
+  label_zh: 重组自交系
+- code: NIL
+  label_zh: 近等基因系
+- code: natural_population
+  label_zh: 自然群体
+  code_status: proposed
+  aliases: [natural_pop, 自然群体]
+  origin: [fields_v3, legacy_v1]
+- code: F2
+  code_status: legacy
+  origin: [legacy_v1]
+- code: BC
+  label_zh: 回交群体
+  code_status: legacy
+  origin: [legacy_v1]
+- code: DH
+  label_zh: 双单倍体
+  code_status: legacy
+  origin: [legacy_v1]
+- code: BIL
+  label_zh: 回交导入系
+  code_status: legacy
+  origin: [legacy_v1]
+- code: CSSL
+  label_zh: 染色体片段代换系
+  code_status: legacy
+  origin: [legacy_v1]
+- code: MAGIC
+  code_status: legacy
+  origin: [legacy_v1]
+- code: NAM
+  code_status: legacy
+  origin: [legacy_v1]
+- code: TIL
+  code_status: legacy
+  origin: [legacy_v1]
+notes_zh: 3.1.0 合并 legacy 附录 A-4（sources/legacy_v1/breeding_jsonl_spec.md#L428）；legacy natural_pop 作为 natural_population 的别名。

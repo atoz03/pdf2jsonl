@@ -1,0 +1,19 @@
+{
+  "release_format": 1,
+  "contract": "breeding-literature-record",
+  "version": "3.0.0",
+  "released_on": "2026-09-28",
+  "generator_version": "1.0.0",
+  "source_digest": "2eb926b3b4e79d2443bfc81816a93c216d6b9be478370760fb4e1790a4e0dd06",
+  "files": {
+    "contract.json": "133755143ef0b1af811a0cd73b63ccf287103a35e2b698f5a0423809757e45fb",
+    "profiles/compact.json": "81c004af3ac3cb408d55d1bed86f7c4f0699a96d64c8e4a89c33f3a4dc3db4bf",
+    "profiles/compact.schema.json": "b1ae27a89f7b6b577d8f485884681bfc00665bace3d7478c65111fcdd4b66d71",
+    "profiles/full.json": "e222c6025636744dcf49d0ad82aff9f98ae5888587a8baae36d448aa33d605db",
+    "profiles/full.schema.json": "38d892bc456e919736b79a42e6beac708283037de1b614722ebfc78dda0a0da9",
+    "profiles/pdf_extraction.candidate.schema.json": "9cac3b59c51d11f9c2c1cdc5ff43803b8305de058d4dbde4b7f9c53ee82c6140",
+    "profiles/pdf_extraction.json": "c075332ebf700d55c765b07eb6c4372523d10cf13941acf52d4dfb19e1a7952b",
+    "profiles/pdf_extraction.schema.json": "dde50a0abd624d26f4967c52bb474fcf852498108eafc54529e931193cbb78f6",
+    "record.schema.json": "d64f639c7141527de666e32c14edaaea59a665cafaf5763d7ed289022eec64da"
+  }
+}

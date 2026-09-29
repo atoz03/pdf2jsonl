@@ -1,0 +1,2623 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:breeding-data-contract:breeding-literature-record:3.1.0:candidates:pdf_extraction_omics",
+  "title": "Extraction candidates — breeding-literature-record 3.1.0 / pdf_extraction_omics",
+  "description": "Output format for extraction backends. Keys of `document` and `fields` are dotted field paths from the resolved profile. Evidence is mandatory and must be verbatim.",
+  "type": "object",
+  "required": [
+    "document",
+    "candidates"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "extraction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "backend": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "common.source_type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "来源类型如paper、experiment_record或tool_description",
+          "x-availability": "D",
+          "x-required": "Y",
+          "x-since": "3.0.0",
+          "x-maturity": "verified",
+          "x-vocabulary": "source_type"
+        },
+        "common.source_title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "文献标题；高频观测记录可由source_id连接来源元数据，避免逐行重复",
+          "x-availability": "D",
+          "x-required": "C",
+          "x-since": "3.0.0",
+          "x-maturity": "verified"
+        },
+        "common.source_doi": {
+          "type": "string",
+          "minLength": 1,
+          "description": "论文DOI规范值",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.0.0",
+          "x-maturity": "verified"
+        },
+        "common.source_year": {
+          "type": "integer",
+          "description": "发表年份",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.0.0",
+          "x-maturity": "verified"
+        },
+        "common.source_authors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "作者或发布机构列表",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.0.0",
+          "x-maturity": "verified"
+        },
+        "common.source_language": {
+          "type": "string",
+          "minLength": 1,
+          "description": "原始语种代码",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.0.0",
+          "x-maturity": "verified"
+        },
+        "common.crop_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "记录所属作物名称，需另行映射crop_taxon_id",
+          "x-availability": "D",
+          "x-required": "Y",
+          "x-since": "3.0.0",
+          "x-maturity": "verified",
+          "x-vocabulary": "crop_name"
+        },
+        "common.species_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "物种学名原文",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.0.0",
+          "x-maturity": "verified"
+        },
+        "common.source_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "PDF版本、数据库发布号或工具说明版本",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.0.0",
+          "x-maturity": "verified"
+        },
+        "common.source_document_type": {
+          "type": "string",
+          "minLength": 1,
+          "enum": [
+            "journal_paper",
+            "conference_paper",
+            "dissertation",
+            "experiment_report",
+            "review",
+            "patent",
+            "dataset_paper",
+            "technical_report",
+            "book_chapter",
+            "other"
+          ],
+          "description": "文献类型，如期刊论文、学位论文、综述；细分 source_type=paper",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.1.0",
+          "x-maturity": "provisional",
+          "x-vocabulary": "document_type"
+        },
+        "common.source_journal": {
+          "type": "string",
+          "minLength": 1,
+          "description": "刊物、学位授予单位或发布平台名称",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.1.0",
+          "x-maturity": "provisional"
+        },
+        "common.source_volume": {
+          "type": "string",
+          "minLength": 1,
+          "description": "卷号",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.1.0",
+          "x-maturity": "provisional"
+        },
+        "common.source_issue": {
+          "type": "string",
+          "minLength": 1,
+          "description": "期号",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.1.0",
+          "x-maturity": "provisional"
+        },
+        "common.source_page_range": {
+          "type": "string",
+          "minLength": 1,
+          "description": "出版物页码范围原文；不是 PDF 物理页码 source_page",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.1.0",
+          "x-maturity": "provisional"
+        },
+        "common.source_keywords": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "关键词原文（含作者关键词与主题词）",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.1.0",
+          "x-maturity": "provisional"
+        },
+        "common.source_funding": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "资助项目及编号原文",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.1.0",
+          "x-maturity": "provisional"
+        },
+        "common.source_affiliations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "作者机构名称原文",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.1.0",
+          "x-maturity": "provisional"
+        },
+        "common.source_pmid": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]*$",
+          "description": "PubMed 编号",
+          "x-availability": "D",
+          "x-required": "N",
+          "x-since": "3.1.0",
+          "x-maturity": "provisional"
+        }
+      },
+      "required": [
+        "common.crop_name"
+      ]
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "record_kind",
+          "fields",
+          "evidence"
+        ],
+        "properties": {
+          "record_kind": {
+            "enum": [
+              "claim",
+              "observation",
+              "method",
+              "analysis_result",
+              "phenotype_observation",
+              "environment_observation",
+              "genotype_observation"
+            ]
+          },
+          "fields": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "properties": {
+              "common.subspecies": {
+                "type": "string",
+                "minLength": 1,
+                "description": "亚种或生态型",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.germplasm_names": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "研究种质材料名称",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.variety_names": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "研究品种名称",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.population_name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "试验群体名称",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.population_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "RIL、NIL或自然群体等类型",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified",
+                "x-vocabulary": "population_type"
+              },
+              "common.parent_names": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "亲本名称",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.sample_size": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "支持该结果的材料或个体数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.trial_year": {
+                "type": "integer",
+                "description": "试验年份",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.location_name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "试验地点",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.environmental_conditions": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "温度、水分、土壤等条件原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.growth_stage": {
+                "type": "string",
+                "minLength": 1,
+                "description": "观测生育阶段",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.treatment": {
+                "type": "string",
+                "minLength": 1,
+                "description": "处理因素与强度原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.trait_names": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "结果涉及的性状名称",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.gene_names": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "基因名称原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.marker_names": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "具体分子标记名称",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.qtl_names": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "QTL名称原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.genome_assembly": {
+                "type": "string",
+                "minLength": 1,
+                "description": "变异坐标所依赖的明确参考组装版本，未报告时省略",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.original_value": {
+                "type": "string",
+                "minLength": 1,
+                "description": "原文数值或范围原样字符串",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.original_unit": {
+                "type": "string",
+                "minLength": 1,
+                "description": "原文计量单位",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.environment_code": {
+                "type": "string",
+                "minLength": 1,
+                "description": "单环境结果对应的试验编号如E1；跨环境汇总结论可省略",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.environment_count": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "同一研究用于评价结论的环境总数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.genetic_background": {
+                "type": "string",
+                "minLength": 1,
+                "description": "试验材料的遗传背景或亚种背景",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.population_generation": {
+                "type": "string",
+                "minLength": 1,
+                "description": "群体代次如F2:3或BC3F1",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.donor_parent": {
+                "type": "string",
+                "minLength": 1,
+                "description": "导入片段或耐受等位基因的供体亲本",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.recurrent_parent": {
+                "type": "string",
+                "minLength": 1,
+                "description": "回交或代换系的轮回亲本",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.chromosome": {
+                "type": "string",
+                "minLength": 1,
+                "description": "本证据所指QTL或位点的染色体原文编号",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.locus_interval_start_bp": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "论文报告的物理区间起点bp；须结合组装版本使用",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.locus_interval_end_bp": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "论文报告的物理区间终点bp；须结合组装版本使用",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.locus_interval_label": {
+                "type": "string",
+                "minLength": 1,
+                "description": "以标记命名的区间原文如G1149-R727，不擅自换算成bp",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.trait_measurement_protocol": {
+                "type": "string",
+                "minLength": 1,
+                "description": "性状测量的样本单位、公式或操作条件",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.source_record_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "来源系统中的原始行或对象ID，支持幂等导入",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.data_modality": {
+                "type": "string",
+                "minLength": 1,
+                "description": "paper、genotype、phenotype、environment、omics、image或tool等模态",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified",
+                "x-vocabulary": "data_modality"
+              },
+              "common.observation_time": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|\\+00:00)$",
+                "description": "测量发生的ISO 8601 UTC时间，不等同于入库时间",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.measurement_name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "本行单一测量项名称，如株高或日最高温",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.measurement_value": {
+                "type": "number",
+                "description": "数值测量值；缺失值不可填0代替",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.measurement_text": {
+                "type": "string",
+                "minLength": 1,
+                "description": "非数值测量值，如抗病等级；与measurement_value二选一",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.measurement_unit": {
+                "type": "string",
+                "minLength": 1,
+                "description": "数值测量单位及尺度，须与measurements的标准词表匹配",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.genotype_call": {
+                "type": "string",
+                "minLength": 1,
+                "description": "单样本单变异的基因型调用，密集矩阵优先存外部资产",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.genotype_dosage": {
+                "type": "number",
+                "minimum": 0,
+                "description": "指定等位基因的剂量；需按倍性及等位基因方向解释",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.asset_compression": {
+                "type": "string",
+                "minLength": 1,
+                "description": "gzip、bgzip、zstd等压缩方式",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified",
+                "x-vocabulary": "asset_compression"
+              },
+              "common.latitude_deg": {
+                "type": "number",
+                "minimum": -90,
+                "maximum": 90,
+                "description": "地点纬度十进制度，建议只写入站点元数据记录",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.longitude_deg": {
+                "type": "number",
+                "minimum": -180,
+                "maximum": 180,
+                "description": "地点经度十进制度，建议只写入站点元数据记录",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.elevation_m": {
+                "type": "number",
+                "description": "地点海拔米，来源测量口径需可追溯",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.soil_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "原文或数据字典中的土壤类型，规范ID需另行对齐",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.trial_season": {
+                "type": "string",
+                "minLength": 1,
+                "description": "播种和收获季节标识，区别于自然年度",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.ploidy": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "稀疏基因型调用的倍性，剂量取值不得超过该值",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.reference_allele": {
+                "type": "string",
+                "minLength": 1,
+                "description": "指定参考组装下该位点的参考等位基因",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.alternate_allele": {
+                "type": "string",
+                "minLength": 1,
+                "description": "本行分析的替代等位基因，多等位需明确具体序号",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.dosage_allele": {
+                "type": "string",
+                "minLength": 1,
+                "description": "genotype_dosage所计数的等位基因，必须与本行参考或替代等位一致",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "common.locus_interval_start_cm": {
+                "type": "number",
+                "description": "论文报告的遗传图谱区间起点 cM",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.locus_interval_end_cm": {
+                "type": "number",
+                "description": "论文报告的遗传图谱区间终点 cM",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.marker_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "分子标记类型原文，如 SNP、SSR、InDel、KASP",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.primer_forward": {
+                "type": "string",
+                "minLength": 1,
+                "description": "正向引物序列原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.primer_reverse": {
+                "type": "string",
+                "minLength": 1,
+                "description": "反向引物序列原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.variety_approval_number": {
+                "type": "string",
+                "minLength": 1,
+                "description": "品种审定、登记或植物新品种权编号原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.pedigree_text": {
+                "type": "string",
+                "minLength": 1,
+                "description": "系谱原始文本",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.data_accessions": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "论文报告的公共数据库登录号原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.germplasm_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "种质材料类型原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.germplasm_accessions": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "种质库登记号原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.population_size": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "群体规模（株系或个体数）",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.sample_name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "样本名称原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.sample_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "样本类型原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.batch_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "测定或测序批次编号原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.sex": {
+                "type": "string",
+                "minLength": 1,
+                "description": "样本性别原文（动物或雌雄异株植物）",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.organ": {
+                "type": "string",
+                "minLength": 1,
+                "description": "取样器官原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.tissue": {
+                "type": "string",
+                "minLength": 1,
+                "description": "取样组织原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.sampling_time_relative": {
+                "type": "string",
+                "minLength": 1,
+                "description": "相对采样时间原文，如处理后 6 h",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.treatment_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "处理类型原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.treatment_dose": {
+                "type": "string",
+                "minLength": 1,
+                "description": "处理剂量或强度原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.treatment_duration": {
+                "type": "string",
+                "minLength": 1,
+                "description": "处理持续时间原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.genome_annotation_version": {
+                "type": "string",
+                "minLength": 1,
+                "description": "基因组注释版本原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.gene_id_system": {
+                "type": "string",
+                "minLength": 1,
+                "description": "基因ID体系原文，如 RAP-DB 或 MSU",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.coordinate_system": {
+                "type": "string",
+                "minLength": 1,
+                "description": "基因组坐标体系原文，如 0-based 或 1-based",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.variant_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "变异类型原文，如 SNP、InDel、SV",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.variant_position_bp": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "单个变异的物理位置 bp；须结合组装版本使用",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.effect_allele": {
+                "type": "string",
+                "minLength": 1,
+                "description": "效应等位基因",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.allele_frequency": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "等位基因频率（0–1）",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.minor_allele_frequency": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 0.5,
+                "description": "最小等位基因频率（0–0.5）",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "common.haplotype_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "单倍型编号原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "agent.finding_text": {
+                "type": "string",
+                "minLength": 1,
+                "description": "单一结果的独立陈述",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.supporting_evidence": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/array_evidence_item"
+                },
+                "description": "支持当前结论的原文证据及定位",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.hypothesis_stated": {
+                "type": "string",
+                "minLength": 1,
+                "description": "作者明确提出的假设；未提出则不填写",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.candidate_mechanism": {
+                "type": "string",
+                "minLength": 1,
+                "description": "论文提出或验证的生物学机制",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.mechanism_entities": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "机制路径中涉及的基因、通路等",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.applicable_population": {
+                "type": "string",
+                "minLength": 1,
+                "description": "结论适用的材料或群体",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.applicable_environment": {
+                "type": "string",
+                "minLength": 1,
+                "description": "结论适用的环境边界",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.expected_observation": {
+                "type": "string",
+                "minLength": 1,
+                "description": "作者事先设定的预期观测",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.actual_observation": {
+                "type": "string",
+                "minLength": 1,
+                "description": "论文实际观测结果",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.alternative_explanations": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "作者讨论的替代解释",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.experiment_objective": {
+                "type": "string",
+                "minLength": 1,
+                "description": "此实验要验证的目标",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.experiment_design": {
+                "type": "string",
+                "minLength": 1,
+                "description": "随机化、区组、多点等设计",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.experimental_materials": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "实验使用的材料列表",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.treatment_groups": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "处理组及条件",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.control_groups": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "对照组及条件",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.replicate_count": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "生物或技术重复数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.observation_indicators": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "用于判断假设的测量指标",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.workflow_steps": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/array_step_item"
+                },
+                "description": "论文可复原的实验与分析步骤",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.result_interpretation": {
+                "type": "string",
+                "minLength": 1,
+                "description": "作者对观测的解释",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.breeding_relevance": {
+                "type": "string",
+                "minLength": 1,
+                "description": "结果对选材、组配或育种的意义",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.followup_experiment": {
+                "type": "string",
+                "minLength": 1,
+                "description": "作者提出的下一步验证工作",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.knowledge_gap": {
+                "type": "string",
+                "minLength": 1,
+                "description": "论文指出但尚未解决的问题",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.statistical_test": {
+                "type": "string",
+                "minLength": 1,
+                "description": "支持该结果的统计检验或模型名称",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.lod_score": {
+                "type": "number",
+                "description": "与本行性状、环境及QTL匹配的LOD值",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.pve_percent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "与本行性状、环境及QTL匹配的表型变异解释率百分数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.effect_estimate": {
+                "type": "number",
+                "description": "与本行条件匹配的效应估计原始数值",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.effect_unit": {
+                "type": "string",
+                "minLength": 1,
+                "description": "效应估计的原文单位或尺度",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.environment_stability": {
+                "type": "string",
+                "minLength": 1,
+                "description": "同一位点跨环境重复检出的原文范围或稳定性结论",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.validation_methods": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "对定位或候选基因的独立验证方式如qRT-PCR或转基因",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "agent.effect_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "效应估计的类型原文，如加性效应、显性效应",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "agent.contrast": {
+                "type": "string",
+                "minLength": 1,
+                "description": "比较组设置原文，如处理与对照",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "agent.effect_direction": {
+                "type": "string",
+                "minLength": 1,
+                "description": "效应方向原文，如上调、下调、增加",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "agent.standard_error": {
+                "type": "number",
+                "minimum": 0,
+                "description": "效应估计的标准误",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "agent.p_value": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "显著性检验 P 值",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "agent.q_value": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "多重检验校正后的 q 值或 FDR",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "agent.confidence_interval": {
+                "type": "string",
+                "minLength": 1,
+                "description": "置信区间原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "agent.candidate_gene_window": {
+                "type": "string",
+                "minLength": 1,
+                "description": "候选基因搜索窗口原文，如峰值标记上下游 100 kb",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "skills.method_name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "论文方法名称原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.algorithm_name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "实际使用的算法名称",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.software_name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "软件或R包名称",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.software_version": {
+                "type": "string",
+                "minLength": 1,
+                "description": "软件版本；未报告则省略",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.input_modalities": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "基因型、表型、环境等输入模态",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.genotype_data_format": {
+                "type": "string",
+                "minLength": 1,
+                "description": "基因型文件格式；文献未报则省略",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.phenotype_data_format": {
+                "type": "string",
+                "minLength": 1,
+                "description": "表型文件格式；文献未报则省略",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.environment_data_format": {
+                "type": "string",
+                "minLength": 1,
+                "description": "环境文件格式；文献未报则省略",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.preprocessing_steps": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "数据清洗、缺失填补等步骤",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.qc_filters": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "缺失率、MAF等过滤规则原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.parameters": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/array_parameter_item"
+                },
+                "description": "参数名、原生类型值、value_kind、单位、约束和来源；公式仍为字符串",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.population_structure_control": {
+                "type": "string",
+                "minLength": 1,
+                "description": "群体结构修正方法",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.kinship_control": {
+                "type": "string",
+                "minLength": 1,
+                "description": "亲缘关系修正方法",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.feature_count": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "实际进入模型的标记或特征数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.training_population": {
+                "type": "string",
+                "minLength": 1,
+                "description": "模型训练群体定义",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.training_set_size": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "训练集样本数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.test_set_size": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "测试集样本数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.validation_strategy": {
+                "type": "string",
+                "minLength": 1,
+                "description": "交叉验证或外部验证方案",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.folds": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "交叉验证折数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.split_basis": {
+                "type": "string",
+                "minLength": 1,
+                "description": "按年份、群体或环境分割原则",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.random_seed": {
+                "type": "integer",
+                "description": "论文报告的随机种子",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.output_artifacts": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "曼哈顿图、预测值表等输出",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.output_fields": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "分析结果的关键字段名",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.metric_name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "预测相关性、遗传力等指标名称",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.metric_value": {
+                "type": "number",
+                "description": "与本证据单元匹配的指标值",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.metric_unit": {
+                "type": "string",
+                "minLength": 1,
+                "description": "指标单位或尺度",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.significance_threshold": {
+                "type": "string",
+                "minLength": 1,
+                "description": "显著性阈值原样表达式",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.applicability_limit": {
+                "type": "string",
+                "minLength": 1,
+                "description": "算法适用样本、作物及场景限制",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.reproducibility_assets": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "代码、数据或补充材料引用",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.workflow_steps": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/array_step_item"
+                },
+                "description": "输入、运行、产出的有序分析步骤",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.genotyping_method": {
+                "type": "string",
+                "minLength": 1,
+                "description": "GBS、重测序或RFLP等实际基因分型方式",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.phenotyping_method": {
+                "type": "string",
+                "minLength": 1,
+                "description": "田间测定、图像测定或人工评分等表型来源",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.target_variable": {
+                "type": "string",
+                "minLength": 1,
+                "description": "模型或定位分析实际使用的单一目标性状或指标",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.threshold_calibration": {
+                "type": "string",
+                "minLength": 1,
+                "description": "阈值如何确定，如置换次数与置信水平",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "skills.normalization_method": {
+                "type": "string",
+                "minLength": 1,
+                "description": "组学数据标准化方法原文，如 TPM 或 DESeq2",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "skills.tool_input_formats": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "工具输入文件格式",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "skills.tool_output_formats": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "工具输出文件格式",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "skills.software_dependencies": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "软件依赖及版本",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "transform.subject_mention": {
+                "type": "string",
+                "minLength": 1,
+                "description": "关系主语原文提及",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "transform.object_mention": {
+                "type": "string",
+                "minLength": 1,
+                "description": "关系宾语原文提及",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "transform.chunk_page": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "语料块所在页",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "transform.chunk_section": {
+                "type": "string",
+                "minLength": 1,
+                "description": "语料块所属章节",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "omics.omics_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "组学类型，如转录组、表观组、蛋白组、代谢组",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional",
+                "x-vocabulary": "omics_type"
+              },
+              "omics.assay_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "测定类型原文，如 RNA-seq、ChIP-seq、TMT",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.library_strategy": {
+                "type": "string",
+                "minLength": 1,
+                "description": "文库策略原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.library_selection": {
+                "type": "string",
+                "minLength": 1,
+                "description": "文库选择方法原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.library_layout": {
+                "type": "string",
+                "minLength": 1,
+                "description": "文库布局原文，如单端或双端",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.platform": {
+                "type": "string",
+                "minLength": 1,
+                "description": "测序或检测平台原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.instrument_model": {
+                "type": "string",
+                "minLength": 1,
+                "description": "仪器型号原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.sequencing_depth": {
+                "type": "string",
+                "minLength": 1,
+                "description": "测序深度原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.read_length": {
+                "type": "string",
+                "minLength": 1,
+                "description": "读长原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.cell_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "细胞类型原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.cell_state": {
+                "type": "string",
+                "minLength": 1,
+                "description": "细胞状态原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.feature_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "统一特征类型原文，如基因、转录本、峰、蛋白或代谢物",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.feature_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "特征ID原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.feature_name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "特征名称原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.ortholog_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "直系同源基因ID原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.ortholog_species": {
+                "type": "string",
+                "minLength": 1,
+                "description": "直系同源基因所属物种原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.orthology_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "同源关系类型原文，如一对一",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.synteny_support": {
+                "type": "string",
+                "minLength": 1,
+                "description": "共线性支持情况原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.cross_species_evidence": {
+                "type": "string",
+                "minLength": 1,
+                "description": "跨物种证据描述原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.genotype_quality": {
+                "type": "number",
+                "description": "基因型质量值",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.read_depth": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "测序读深",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.structural_variant_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "结构变异类型原文，如缺失、倒位",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.transcript_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "转录本ID原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.raw_count": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "原始读段计数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.log2_fold_change": {
+                "type": "number",
+                "description": "log2 倍数变化",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.base_mean": {
+                "type": "number",
+                "minimum": 0,
+                "description": "标准化计数均值（baseMean）",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.deg_status": {
+                "type": "string",
+                "minLength": 1,
+                "description": "差异表达状态原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.deg_threshold": {
+                "type": "string",
+                "minLength": 1,
+                "description": "差异表达判定阈值原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.coexpression_module": {
+                "type": "string",
+                "minLength": 1,
+                "description": "共表达模块名称或编号原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.gene_set": {
+                "type": "string",
+                "minLength": 1,
+                "description": "基因集名称原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.pathway_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "通路ID或名称原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.go_term": {
+                "type": "string",
+                "minLength": 1,
+                "description": "GO 术语ID或名称原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.cell_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "细胞ID或条形码原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.cluster_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "细胞聚类编号原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.cell_type_annotation_method": {
+                "type": "string",
+                "minLength": 1,
+                "description": "细胞类型注释方法原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.marker_genes": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "细胞类型或聚类的标记基因原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.n_counts": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "单细胞 UMI 或读段总数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.n_genes": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "单细胞检出基因数",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.mitochondrial_fraction": {
+                "type": "number",
+                "description": "线粒体读段比例",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.doublet_status": {
+                "type": "string",
+                "minLength": 1,
+                "description": "双细胞判定状态原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.integration_method": {
+                "type": "string",
+                "minLength": 1,
+                "description": "批次整合方法原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.trajectory_method": {
+                "type": "string",
+                "minLength": 1,
+                "description": "轨迹推断方法原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.pseudotime": {
+                "type": "number",
+                "description": "拟时序值",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.cell_cell_interaction_method": {
+                "type": "string",
+                "minLength": 1,
+                "description": "细胞通讯分析方法原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.chromatin_region_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "染色质区域或峰ID原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.peak_start": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "峰起点物理位置 bp；须结合组装版本使用",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.peak_end": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "峰终点物理位置 bp；须结合组装版本使用",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.histone_mark": {
+                "type": "string",
+                "minLength": 1,
+                "description": "组蛋白修饰类型原文，如 H3K27ac",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.methylation_context": {
+                "type": "string",
+                "minLength": 1,
+                "description": "甲基化序列背景原文，如 CG、CHG、CHH",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.motif_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "基序ID原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.tf_binding_candidate": {
+                "type": "string",
+                "minLength": 1,
+                "description": "候选结合转录因子原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.linked_regulatory_gene": {
+                "type": "string",
+                "minLength": 1,
+                "description": "关联的调控靶基因原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.differential_peak_status": {
+                "type": "string",
+                "minLength": 1,
+                "description": "差异峰状态原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.protein_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "蛋白ID原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.peptide_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "肽段ID或序列原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.protein_fold_change": {
+                "type": "number",
+                "description": "蛋白丰度倍数变化",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.protein_identification_score": {
+                "type": "number",
+                "description": "蛋白鉴定得分",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.post_translational_modification": {
+                "type": "string",
+                "minLength": 1,
+                "description": "翻译后修饰类型原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.interaction_partner": {
+                "type": "string",
+                "minLength": 1,
+                "description": "互作蛋白原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.metabolite_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "代谢物ID原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.metabolite_name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "代谢物名称原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.metabolite_database_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "代谢物数据库ID原文，如 KEGG 或 HMDB 编号",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.chemical_formula": {
+                "type": "string",
+                "minLength": 1,
+                "description": "化学式原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.mz": {
+                "type": "number",
+                "minimum": 0,
+                "description": "质荷比 m/z",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.retention_time": {
+                "type": "string",
+                "minLength": 1,
+                "description": "保留时间原文（含单位）",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.metabolite_fold_change": {
+                "type": "number",
+                "description": "代谢物丰度倍数变化",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              },
+              "omics.metabolite_annotation_level": {
+                "type": "string",
+                "minLength": 1,
+                "description": "代谢物注释置信等级原文",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.1.0",
+                "x-maturity": "provisional"
+              }
+            }
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "page": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "PDF物理页码从1开始",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "section": {
+                "type": "string",
+                "minLength": 1,
+                "description": "证据所在章节",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "quote": {
+                "type": "string",
+                "minLength": 1,
+                "description": "最小且可回查的原文证据片段",
+                "x-availability": "D",
+                "x-required": "C",
+                "x-since": "3.0.0",
+                "x-maturity": "verified",
+                "maxLength": 1200
+              },
+              "table_figure": {
+                "type": "string",
+                "minLength": 1,
+                "description": "支撑结论的表格或图件编号",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "row_key": {
+                "type": "string",
+                "minLength": 1,
+                "description": "表格内行标签或行主键，保留原文格式",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              },
+              "column_key": {
+                "type": "string",
+                "minLength": 1,
+                "description": "表格内列标签或列主键，保留原文格式",
+                "x-availability": "D",
+                "x-required": "N",
+                "x-since": "3.0.0",
+                "x-maturity": "verified"
+              }
+            },
+            "required": [
+              "page",
+              "quote"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "description": "free-text note for reviewers; never copied into records"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "backend-reported confidence; omit if the backend has none"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "array_evidence_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z][A-Za-z0-9+.\\-]*:\\S+$"
+        },
+        "source_page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_table_figure": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_table_row_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_table_column_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_quote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_locator": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "source_quote"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "source_page"
+          ]
+        },
+        {
+          "required": [
+            "source_locator"
+          ]
+        }
+      ],
+      "x-maturity": "provisional"
+    },
+    "array_step_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "step_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "step_no": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "step_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "step_desc": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "tool_name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "step_desc"
+      ],
+      "x-maturity": "provisional"
+    },
+    "array_parameter_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "integer",
+            "boolean"
+          ]
+        },
+        "value_kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "constraint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "x-maturity": "provisional"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "breeding-data-contract"
+dynamic = ["version"]
+description = "Repository-owned data contract for atomic breeding-literature JSONL records, plus the pdf2jsonl Skill runtime"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "jsonschema>=4.18",
+  "referencing>=0.28",
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+pdf = ["pypdf>=4.0"]
+xlsx = ["openpyxl>=3.1"]
+dev = ["pytest>=7", "pypdf>=4.0", "openpyxl>=3.1"]
+
+[project.scripts]
+bdc = "breeding_contract.cli:main"
+pdf2jsonl = "pdf2jsonl_skill.cli:main"
+
+[tool.setuptools]
+package-dir = { "breeding_contract" = "src/breeding_contract", "pdf2jsonl_skill" = "skills/pdf2jsonl/scripts/pdf2jsonl_skill", "pdf2jsonl_skill.backends" = "skills/pdf2jsonl/scripts/pdf2jsonl_skill/backends" }
+packages = ["breeding_contract", "pdf2jsonl_skill", "pdf2jsonl_skill.backends"]
+
+[tool.setuptools.dynamic]
+version = { file = "VERSION" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "skills/pdf2jsonl/scripts", "tests"]
+addopts = "-q"

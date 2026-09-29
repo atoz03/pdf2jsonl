@@ -1,0 +1,563 @@
+{
+  "bundle_format": 1,
+  "view": "document_bundle",
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.1.0"
+  },
+  "documents": [
+    {
+      "source_id": "doi:10.0000/synthetic.2026.001",
+      "document": {
+        "common.source_id": "doi:10.0000/synthetic.2026.001",
+        "common.source_type": "paper",
+        "common.source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+        "common.source_doi": "10.0000/synthetic.2026.001",
+        "common.source_year": 2024,
+        "common.source_authors": [
+          "Synthetic Author A",
+          "Synthetic Author B"
+        ],
+        "common.source_language": "en",
+        "common.source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+        "common.source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+        "common.crop_name": "rice"
+      },
+      "counts": {
+        "records": 10,
+        "by_record_kind": {
+          "analysis_result": 1,
+          "asset_manifest": 1,
+          "claim": 4,
+          "method": 1,
+          "observation": 1,
+          "phenotype_observation": 2
+        }
+      },
+      "records_by_kind": {
+        "analysis_result": [
+          "rec_75d35ed34cbebb046a94c6e247a5dc60"
+        ],
+        "asset_manifest": [
+          "rec_305cbc3d9bb13bf7385413f4515b2eb6"
+        ],
+        "claim": [
+          "rec_828955fbf1c3d2acf5c43230fa88afc7",
+          "rec_2c2f3dbf70914eef12331dd0d89cfd7e",
+          "rec_18bf9222499634af1d778fb417e7d6d8",
+          "rec_9befd96dbb0b420dc2a64adeb5f73c5b"
+        ],
+        "method": [
+          "rec_dd7b60a23157d0181674f4f12c1ac9d0"
+        ],
+        "observation": [
+          "rec_d61a1c256e2c34e8f90d732f2c2f67c4"
+        ],
+        "phenotype_observation": [
+          "rec_b3dcb9b22b1ca801ce5df6237f5eb126",
+          "rec_0ed2e8a5d40980ef327894598a52be54"
+        ]
+      },
+      "entities": {
+        "trait_names": [
+          "plant height"
+        ],
+        "qtl_names": [
+          "qPH7.1"
+        ],
+        "germplasm_names": [
+          "Parent1"
+        ],
+        "marker_names": [
+          "S7_1203",
+          "S7_1377"
+        ]
+      },
+      "evidence_index": [
+        {
+          "page": 1,
+          "section": "Abstract",
+          "quote": "We identified a major QTL, qPH7.1, on chromosome 7 using 180 recombinant inbred lines.",
+          "record_ids": [
+            "rec_2c2f3dbf70914eef12331dd0d89cfd7e"
+          ]
+        },
+        {
+          "page": 1,
+          "section": "Abstract",
+          "quote": "qPH7.1 explained 23.5% of the phenotypic variance and was significantly associated with plant height in both environments.",
+          "record_ids": [
+            "rec_828955fbf1c3d2acf5c43230fa88afc7"
+          ]
+        },
+        {
+          "page": 2,
+          "section": "Materials and Methods",
+          "quote": "QTL analysis was performed with QTL IciMapping version 4.2 using inclusive composite interval mapping.",
+          "record_ids": [
+            "rec_dd7b60a23157d0181674f4f12c1ac9d0"
+          ]
+        },
+        {
+          "page": 2,
+          "section": "Results",
+          "table_figure": "Table 2",
+          "quote": "Parent1 118.4 cm 121.0 cm",
+          "record_ids": [
+            "rec_b3dcb9b22b1ca801ce5df6237f5eb126",
+            "rec_0ed2e8a5d40980ef327894598a52be54"
+          ]
+        },
+        {
+          "page": 2,
+          "section": "Results",
+          "quote": "The mean plant height of the population ranged from 85.2 to 132.6 cm.",
+          "record_ids": [
+            "rec_d61a1c256e2c34e8f90d732f2c2f67c4"
+          ]
+        },
+        {
+          "page": 3,
+          "section": "Discussion",
+          "quote": "qPH7.1 co-localized with a previously reported heading date region, suggesting a possible pleiotropic effect that requires validation.",
+          "record_ids": [
+            "rec_9befd96dbb0b420dc2a64adeb5f73c5b"
+          ]
+        },
+        {
+          "page": 3,
+          "section": "Results",
+          "quote": "The allele from Parent1 increased plant height by 8.6 cm.",
+          "record_ids": [
+            "rec_18bf9222499634af1d778fb417e7d6d8"
+          ]
+        },
+        {
+          "page": 3,
+          "section": "Results",
+          "quote": "qPH7.1 was located between markers S7_1203 and S7_1377 with a LOD score of 12.8.",
+          "record_ids": [
+            "rec_75d35ed34cbebb046a94c6e247a5dc60"
+          ]
+        }
+      ],
+      "records": [
+        {
+          "common": {
+            "source_type": "paper",
+            "source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+            "source_doi": "10.0000/synthetic.2026.001",
+            "source_year": 2024,
+            "source_authors": [
+              "Synthetic Author A",
+              "Synthetic Author B"
+            ],
+            "source_language": "en",
+            "crop_name": "rice",
+            "asset_format": "PDF",
+            "record_id": "rec_305cbc3d9bb13bf7385413f4515b2eb6",
+            "schema_version": "3.1.0",
+            "record_kind": "asset_manifest",
+            "source_id": "doi:10.0000/synthetic.2026.001",
+            "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "source_locator": "document",
+            "extraction_method": "model",
+            "review_status": "pending_review",
+            "missing_fields": {
+              "common.asset_uri": "requires_external_source"
+            },
+            "record_version": 1,
+            "record_grain": "asset_unit",
+            "extraction_run_id": "run_example",
+            "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+            "asset_kind": "raw_pdf",
+            "asset_size_bytes": 3131,
+            "asset_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "qc_rule_set_version": "breeding-literature-record@3.1.0+pdf2jsonl@0.1.0",
+            "qc_failure_codes": [
+              "RULE_R018"
+            ],
+            "schema_name": "breeding-literature-record"
+          }
+        },
+        {
+          "common": {
+            "source_type": "paper",
+            "source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+            "source_doi": "10.0000/synthetic.2026.001",
+            "source_year": 2024,
+            "source_authors": [
+              "Synthetic Author A",
+              "Synthetic Author B"
+            ],
+            "source_page": 1,
+            "source_section": "Abstract",
+            "source_quote": "qPH7.1 explained 23.5% of the phenotypic variance and was significantly associated with plant height in both environments.",
+            "source_language": "en",
+            "crop_name": "rice",
+            "trait_names": [
+              "plant height"
+            ],
+            "qtl_names": [
+              "qPH7.1"
+            ],
+            "record_id": "rec_828955fbf1c3d2acf5c43230fa88afc7",
+            "schema_version": "3.1.0",
+            "record_kind": "claim",
+            "source_id": "doi:10.0000/synthetic.2026.001",
+            "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "source_locator": "page=1;section=Abstract",
+            "source_span": "page=1;char=377-499",
+            "extraction_method": "model",
+            "review_status": "auto_validated",
+            "record_version": 1,
+            "record_grain": "evidence_unit",
+            "extraction_run_id": "run_example",
+            "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+            "qc_rule_set_version": "breeding-literature-record@3.1.0+pdf2jsonl@0.1.0",
+            "schema_name": "breeding-literature-record"
+          },
+          "agent": {
+            "finding_text": "qPH7.1 explained 23.5% of the phenotypic variance and was significantly associated with plant height in both environments.",
+            "pve_percent": 23.5
+          }
+        },
+        {
+          "common": {
+            "source_type": "paper",
+            "source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+            "source_doi": "10.0000/synthetic.2026.001",
+            "source_year": 2024,
+            "source_authors": [
+              "Synthetic Author A",
+              "Synthetic Author B"
+            ],
+            "source_page": 1,
+            "source_section": "Abstract",
+            "source_quote": "We identified a major QTL, qPH7.1, on chromosome 7 using 180 recombinant inbred lines.",
+            "source_language": "en",
+            "crop_name": "rice",
+            "population_type": "RIL",
+            "sample_size": 180,
+            "qtl_names": [
+              "qPH7.1"
+            ],
+            "chromosome": "7",
+            "record_id": "rec_2c2f3dbf70914eef12331dd0d89cfd7e",
+            "schema_version": "3.1.0",
+            "record_kind": "claim",
+            "source_id": "doi:10.0000/synthetic.2026.001",
+            "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "source_locator": "page=1;section=Abstract",
+            "source_span": "page=1;char=290-376",
+            "extraction_method": "model",
+            "review_status": "auto_validated",
+            "record_version": 1,
+            "record_grain": "evidence_unit",
+            "extraction_run_id": "run_example",
+            "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+            "qc_rule_set_version": "breeding-literature-record@3.1.0+pdf2jsonl@0.1.0",
+            "schema_name": "breeding-literature-record"
+          },
+          "agent": {
+            "finding_text": "We identified a major QTL, qPH7.1, on chromosome 7 using 180 recombinant inbred lines."
+          }
+        },
+        {
+          "common": {
+            "source_type": "paper",
+            "source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+            "source_doi": "10.0000/synthetic.2026.001",
+            "source_year": 2024,
+            "source_authors": [
+              "Synthetic Author A",
+              "Synthetic Author B"
+            ],
+            "source_page": 2,
+            "source_section": "Materials and Methods",
+            "source_quote": "QTL analysis was performed with QTL IciMapping version 4.2 using inclusive composite interval mapping.",
+            "source_language": "en",
+            "crop_name": "rice",
+            "record_id": "rec_dd7b60a23157d0181674f4f12c1ac9d0",
+            "schema_version": "3.1.0",
+            "record_kind": "method",
+            "source_id": "doi:10.0000/synthetic.2026.001",
+            "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "source_locator": "page=2;section=Materials and Methods",
+            "source_span": "page=2;char=233-335",
+            "extraction_method": "model",
+            "review_status": "auto_validated",
+            "record_version": 1,
+            "record_grain": "evidence_unit",
+            "extraction_run_id": "run_example",
+            "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+            "qc_rule_set_version": "breeding-literature-record@3.1.0+pdf2jsonl@0.1.0",
+            "schema_name": "breeding-literature-record"
+          },
+          "skills": {
+            "method_name": "inclusive composite interval mapping",
+            "software_name": "QTL IciMapping",
+            "software_version": "4.2"
+          }
+        },
+        {
+          "common": {
+            "source_type": "paper",
+            "source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+            "source_doi": "10.0000/synthetic.2026.001",
+            "source_year": 2024,
+            "source_authors": [
+              "Synthetic Author A",
+              "Synthetic Author B"
+            ],
+            "source_page": 2,
+            "source_section": "Results",
+            "source_table_figure": "Table 2",
+            "source_table_row_key": "Parent1",
+            "source_table_column_key": "Env1",
+            "source_quote": "Parent1 118.4 cm 121.0 cm",
+            "source_language": "en",
+            "crop_name": "rice",
+            "germplasm_names": [
+              "Parent1"
+            ],
+            "original_value": "118.4",
+            "original_unit": "cm",
+            "environment_code": "Env1",
+            "measurement_name": "Plant height",
+            "measurement_value": 118.4,
+            "measurement_unit": "cm",
+            "record_id": "rec_b3dcb9b22b1ca801ce5df6237f5eb126",
+            "schema_version": "3.1.0",
+            "record_kind": "phenotype_observation",
+            "source_id": "doi:10.0000/synthetic.2026.001",
+            "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "source_locator": "page=2;section=Results;table=Table 2;row=Parent1;col=Env1",
+            "source_span": "page=2;char=584-609",
+            "extraction_method": "model",
+            "review_status": "auto_validated",
+            "normalized_value": 118.4,
+            "normalized_unit": "cm",
+            "record_version": 1,
+            "record_grain": "observation_unit",
+            "extraction_run_id": "run_example",
+            "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+            "qc_rule_set_version": "breeding-literature-record@3.1.0+pdf2jsonl@0.1.0",
+            "schema_name": "breeding-literature-record"
+          }
+        },
+        {
+          "common": {
+            "source_type": "paper",
+            "source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+            "source_doi": "10.0000/synthetic.2026.001",
+            "source_year": 2024,
+            "source_authors": [
+              "Synthetic Author A",
+              "Synthetic Author B"
+            ],
+            "source_page": 2,
+            "source_section": "Results",
+            "source_table_figure": "Table 2",
+            "source_table_row_key": "Parent1",
+            "source_table_column_key": "Env2",
+            "source_quote": "Parent1 118.4 cm 121.0 cm",
+            "source_language": "en",
+            "crop_name": "rice",
+            "germplasm_names": [
+              "Parent1"
+            ],
+            "original_value": "121.0",
+            "original_unit": "cm",
+            "environment_code": "Env2",
+            "measurement_name": "Plant height",
+            "measurement_value": 121.0,
+            "measurement_unit": "cm",
+            "record_id": "rec_0ed2e8a5d40980ef327894598a52be54",
+            "schema_version": "3.1.0",
+            "record_kind": "phenotype_observation",
+            "source_id": "doi:10.0000/synthetic.2026.001",
+            "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "source_locator": "page=2;section=Results;table=Table 2;row=Parent1;col=Env2",
+            "source_span": "page=2;char=584-609",
+            "extraction_method": "model",
+            "review_status": "auto_validated",
+            "normalized_value": 121,
+            "normalized_unit": "cm",
+            "record_version": 1,
+            "record_grain": "observation_unit",
+            "extraction_run_id": "run_example",
+            "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+            "qc_rule_set_version": "breeding-literature-record@3.1.0+pdf2jsonl@0.1.0",
+            "schema_name": "breeding-literature-record"
+          }
+        },
+        {
+          "common": {
+            "source_type": "paper",
+            "source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+            "source_doi": "10.0000/synthetic.2026.001",
+            "source_year": 2024,
+            "source_authors": [
+              "Synthetic Author A",
+              "Synthetic Author B"
+            ],
+            "source_page": 2,
+            "source_section": "Results",
+            "source_quote": "The mean plant height of the population ranged from 85.2 to 132.6 cm.",
+            "source_language": "en",
+            "crop_name": "rice",
+            "trait_names": [
+              "plant height"
+            ],
+            "original_value": "85.2 to 132.6",
+            "original_unit": "cm",
+            "record_id": "rec_d61a1c256e2c34e8f90d732f2c2f67c4",
+            "schema_version": "3.1.0",
+            "record_kind": "observation",
+            "source_id": "doi:10.0000/synthetic.2026.001",
+            "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "source_locator": "page=2;section=Results",
+            "source_span": "page=2;char=447-516",
+            "extraction_method": "model",
+            "review_status": "auto_validated",
+            "normalized_min_value": 85.2,
+            "normalized_max_value": 132.6,
+            "normalized_unit": "cm",
+            "record_version": 1,
+            "record_grain": "evidence_unit",
+            "extraction_run_id": "run_example",
+            "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+            "qc_rule_set_version": "breeding-literature-record@3.1.0+pdf2jsonl@0.1.0",
+            "schema_name": "breeding-literature-record"
+          }
+        },
+        {
+          "common": {
+            "source_type": "paper",
+            "source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+            "source_doi": "10.0000/synthetic.2026.001",
+            "source_year": 2024,
+            "source_authors": [
+              "Synthetic Author A",
+              "Synthetic Author B"
+            ],
+            "source_page": 3,
+            "source_section": "Results",
+            "source_quote": "qPH7.1 was located between markers S7_1203 and S7_1377 with a LOD score of 12.8.",
+            "source_language": "en",
+            "crop_name": "rice",
+            "marker_names": [
+              "S7_1203",
+              "S7_1377"
+            ],
+            "qtl_names": [
+              "qPH7.1"
+            ],
+            "record_id": "rec_75d35ed34cbebb046a94c6e247a5dc60",
+            "schema_version": "3.1.0",
+            "record_kind": "analysis_result",
+            "source_id": "doi:10.0000/synthetic.2026.001",
+            "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "source_locator": "page=3;section=Results",
+            "source_span": "page=3;char=0-80",
+            "extraction_method": "model",
+            "review_status": "auto_validated",
+            "missing_fields": {
+              "common.record_grain": "ambiguous_in_contract"
+            },
+            "record_version": 1,
+            "extraction_run_id": "run_example",
+            "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+            "qc_rule_set_version": "breeding-literature-record@3.1.0+pdf2jsonl@0.1.0",
+            "schema_name": "breeding-literature-record"
+          },
+          "agent": {
+            "lod_score": 12.8
+          }
+        },
+        {
+          "common": {
+            "source_type": "paper",
+            "source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+            "source_doi": "10.0000/synthetic.2026.001",
+            "source_year": 2024,
+            "source_authors": [
+              "Synthetic Author A",
+              "Synthetic Author B"
+            ],
+            "source_page": 3,
+            "source_section": "Results",
+            "source_quote": "The allele from Parent1 increased plant height by 8.6 cm.",
+            "source_language": "en",
+            "crop_name": "rice",
+            "qtl_names": [
+              "qPH7.1"
+            ],
+            "record_id": "rec_18bf9222499634af1d778fb417e7d6d8",
+            "schema_version": "3.1.0",
+            "record_kind": "claim",
+            "source_id": "doi:10.0000/synthetic.2026.001",
+            "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "source_locator": "page=3;section=Results",
+            "source_span": "page=3;char=81-138",
+            "extraction_method": "model",
+            "review_status": "pending_review",
+            "record_version": 1,
+            "record_grain": "evidence_unit",
+            "extraction_run_id": "run_example",
+            "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+            "qc_rule_set_version": "breeding-literature-record@3.1.0+pdf2jsonl@0.1.0",
+            "qc_failure_codes": [
+              "EVIDENCE_PAGE_CORRECTED"
+            ],
+            "schema_name": "breeding-literature-record"
+          },
+          "agent": {
+            "finding_text": "The allele from Parent1 increased plant height by 8.6 cm.",
+            "effect_estimate": 8.6,
+            "effect_unit": "cm"
+          }
+        },
+        {
+          "common": {
+            "source_type": "paper",
+            "source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
+            "source_doi": "10.0000/synthetic.2026.001",
+            "source_year": 2024,
+            "source_authors": [
+              "Synthetic Author A",
+              "Synthetic Author B"
+            ],
+            "source_page": 3,
+            "source_section": "Discussion",
+            "source_quote": "qPH7.1 co-localized with a previously reported heading date region, suggesting a possible pleiotropic effect that requires validation.",
+            "source_language": "en",
+            "crop_name": "rice",
+            "qtl_names": [
+              "qPH7.1"
+            ],
+            "record_id": "rec_9befd96dbb0b420dc2a64adeb5f73c5b",
+            "schema_version": "3.1.0",
+            "record_kind": "claim",
+            "source_id": "doi:10.0000/synthetic.2026.001",
+            "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+            "source_locator": "page=3;section=Discussion",
+            "source_span": "page=3;char=150-284",
+            "extraction_method": "model",
+            "review_status": "auto_validated",
+            "record_version": 1,
+            "record_grain": "evidence_unit",
+            "extraction_run_id": "run_example",
+            "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
+            "qc_rule_set_version": "breeding-literature-record@3.1.0+pdf2jsonl@0.1.0",
+            "schema_name": "breeding-literature-record"
+          },
+          "agent": {
+            "finding_text": "qPH7.1 co-localized with a previously reported heading date region, suggesting a possible pleiotropic effect that requires validation."
+          }
+        }
+      ]
+    }
+  ]
+}

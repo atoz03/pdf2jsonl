@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://breeding-contract.local/schemas/runtime/document_bundle.schema.json",
+  "title": "document_bundle view (derived from atomic records; never a source of truth)",
+  "type": "object",
+  "required": [
+    "bundle_format",
+    "view",
+    "contract",
+    "documents"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "bundle_format": {
+      "const": 1
+    },
+    "view": {
+      "const": "document_bundle"
+    },
+    "contract": {
+      "type": "object",
+      "required": [
+        "schema_name",
+        "schema_version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema_name": {
+          "type": "string"
+        },
+        "schema_version": {
+          "type": "string"
+        }
+      }
+    },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_id",
+          "document",
+          "counts",
+          "records_by_kind",
+          "entities",
+          "evidence_index",
+          "records"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "document": {
+            "type": "object",
+            "description": "Document-level values shared by every record of the source, keyed by dotted field path"
+          },
+          "counts": {
+            "type": "object",
+            "required": [
+              "records",
+              "by_record_kind"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "records": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "by_record_kind": {
+                "$ref": "_defs.schema.json#/$defs/count_map"
+              }
+            }
+          },
+          "records_by_kind": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "entities": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "evidence_index": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "page",
+                "quote",
+                "record_ids"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "page": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "section": {
+                  "type": "string"
+                },
+                "table_figure": {
+                  "type": "string"
+                },
+                "quote": {
+                  "type": "string"
+                },
+                "record_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "The atomic records themselves (validated by the release record schema)"
+          }
+        }
+      }
+    }
+  }
+}

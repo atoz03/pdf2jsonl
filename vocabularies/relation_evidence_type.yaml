@@ -1,0 +1,18 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: relation_evidence_type
+title_zh: 关系证据类型
+enforcement: warning
+closure: closed
+code_status: proposed
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L257
+  quote_zh: 关系依据是统计定位、表达支持还是功能验证
+ambiguities: [AMB-010]
+values:
+- code: statistical_mapping
+  label_zh: 统计定位
+- code: expression_support
+  label_zh: 表达支持
+- code: functional_validation
+  label_zh: 功能验证

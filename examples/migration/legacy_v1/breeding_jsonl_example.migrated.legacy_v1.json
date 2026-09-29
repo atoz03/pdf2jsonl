@@ -1,0 +1,159 @@
+{
+  "bundle_format": 1,
+  "view": "legacy_v1_projection",
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.1.0"
+  },
+  "note_zh": "由原子记录派生的 legacy v1 视图；有损，页码为 PDF 物理页（AMB-029）。",
+  "documents": [
+    {
+      "legacy_v1": {
+        "record_id": "doi:10.1007/fict.2021.0000",
+        "schema_version": "v1.0.0",
+        "record_info": {
+          "doc_type": "journal_paper",
+          "lang": "en",
+          "created_at": "2026-09-21T14:13:20Z"
+        },
+        "doc_meta": {
+          "title": "Genome-Wide Association Study Identifies a Stable QTL qPH3 for Plant Height and Its Potential in Yield Breeding in Rice",
+          "authors": [
+            {
+              "rank": 1,
+              "name": "Zhang Lei"
+            },
+            {
+              "rank": 2,
+              "name": "Wang Fang"
+            }
+          ],
+          "journal": "Theoretical and Applied Genetics (fictional)",
+          "year": 2021,
+          "volume": "134",
+          "issue": "7",
+          "pages": "2221-2235",
+          "doi": "10.1007/fict.2021.0000",
+          "abstract": "We performed a genome-wide association study of plant height and grain yield in a panel of 448 indica rice accessions across three environments, identifying the stable major QTL qPH3 ...",
+          "keywords": [
+            "GWAS",
+            "plant height",
+            "qPH3",
+            "grain yield",
+            "Oryza sativa",
+            "marker-assisted selection"
+          ],
+          "funding": [
+            "NK2021A02 (Jiangsu Modern Agriculture Project)",
+            "NSFC-32172010"
+          ],
+          "document_sections": [
+            {
+              "section_id": "sec-p3-1",
+              "page": 3,
+              "text_snippet": "GY (g) after air drying"
+            },
+            {
+              "section_id": "sec-p3-2",
+              "page": 3,
+              "text_snippet": "PH (cm) measured at maturity"
+            },
+            {
+              "section_id": "sec-p3-3",
+              "page": 3,
+              "text_snippet": "genotyping with 54K chip covering sd1 region"
+            },
+            {
+              "section_id": "sec-p7-4",
+              "page": 7,
+              "text_snippet": "qPH3 stable across E1E2E3"
+            },
+            {
+              "section_id": "sec-p7-5",
+              "page": 7,
+              "text_snippet": "qPH3 stable across E1E2E3"
+            },
+            {
+              "section_id": "sec-p9-6",
+              "page": 9,
+              "text_snippet": "sd1 allele reduces PH by 15-25 cm"
+            },
+            {
+              "section_id": "sec-p14-7",
+              "page": 14,
+              "text_snippet": "candidate genes in qPH3 interval"
+            }
+          ]
+        },
+        "breed_entities": {
+          "genes": [
+            {
+              "entity_id": "gene:1",
+              "name": "sd1",
+              "gene_symbol": "sd1"
+            },
+            {
+              "entity_id": "gene:2",
+              "name": "Os03g0229400",
+              "gene_symbol": "Os03g0229400"
+            }
+          ],
+          "traits": [
+            {
+              "entity_id": "trait:1",
+              "name": "Plant height",
+              "trait_name": "Plant height"
+            },
+            {
+              "entity_id": "trait:2",
+              "name": "Grain yield per plant",
+              "trait_name": "Grain yield per plant"
+            }
+          ],
+          "qtls": [
+            {
+              "entity_id": "qtl:1",
+              "name": "qPH3",
+              "qtl_name": "qPH3"
+            }
+          ],
+          "markers": [
+            {
+              "entity_id": "marker:1",
+              "name": "SNP3_17300000",
+              "marker_name": "SNP3_17300000"
+            }
+          ]
+        },
+        "relations": [],
+        "experiments": [],
+        "analyses": [],
+        "conclusions": [
+          {
+            "conclusion_id": "clu:rec_4909b279c2b61b6bbf2b9059c9d33759",
+            "claim_text": "qPH3 位于第3染色体16.8-18.2Mb区间，作为主效QTL在三环境中稳定关联株高（PVE=12.3%），且与产量性状存在潜在多效性"
+          },
+          {
+            "conclusion_id": "clu:rec_ad52c95e493d7c0cdfa09a704d4529bc",
+            "claim_text": "sd1 等位基因在籼稻自然群体中与株高显著负相关，功能缺失型sd1广泛存在且与稳产性一致"
+          }
+        ],
+        "pipeline": {},
+        "governance": {},
+        "provenance": {
+          "extraction": {
+            "method": "LLM抽取"
+          }
+        },
+        "agent": {},
+        "skill": {}
+      },
+      "skipped": [
+        "rec_03724b4d838a204c72b9f6eb79f97596: relation without transform.predicate_label (legacy relation_type is required)",
+        "rec_19e2a000b39a59888c5cd69ee1002d28: relation without transform.predicate_label (legacy relation_type is required)"
+      ],
+      "legacy_schema_errors": [],
+      "valid_against_legacy_schema": true
+    }
+  ]
+}

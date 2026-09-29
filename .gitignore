@@ -1,0 +1,18 @@
+# environments and build output
+.venv/
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# pdf2jsonl run artefacts (examples/output is generated deliberately and committed)
+/output/
+/out/
+*.work/
+
+# editors / OS
+.DS_Store
+.idea/
+.vscode/

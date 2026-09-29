@@ -1,0 +1,76 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: crop_name
+title_zh: 作物名称
+enforcement: open
+closure: open
+code_status: proposed
+since: 3.1.0
+origin: [legacy_v1]
+source:
+  ref: sources/legacy_v1/breeding_jsonl_spec.md#L426
+  quote_zh: A-2 field：水稻/玉米/小麦/大麦/高粱/大豆/油菜/花生/棉花/马铃薯/番茄/蔬菜作物/果树/牧草/猪/牛/羊/鸡/鸭/鱼/虾/其他
+notes_zh: 开放词表：仅作提示与自动识别（别名为可在原文中出现的表面形式；无别名的类目不参与自动识别）。“羊”在 A-2 中未区分绵羊与山羊。
+ambiguities: [AMB-030]
+values:
+- code: rice
+  label_zh: 水稻
+  aliases: [水稻, rice, Oryza sativa, paddy]
+- code: maize
+  label_zh: 玉米
+  aliases: [玉米, maize, corn, Zea mays]
+- code: wheat
+  label_zh: 小麦
+  aliases: [小麦, wheat, Triticum aestivum]
+- code: barley
+  label_zh: 大麦
+  aliases: [大麦, barley, Hordeum vulgare]
+- code: sorghum
+  label_zh: 高粱
+  aliases: [高粱, sorghum, Sorghum bicolor]
+- code: soybean
+  label_zh: 大豆
+  aliases: [大豆, soybean, soya bean, Glycine max]
+- code: rapeseed
+  label_zh: 油菜
+  aliases: [油菜, rapeseed, oilseed rape, canola, Brassica napus]
+- code: peanut
+  label_zh: 花生
+  aliases: [花生, peanut, groundnut, Arachis hypogaea]
+- code: cotton
+  label_zh: 棉花
+  aliases: [棉花, cotton, Gossypium]
+- code: potato
+  label_zh: 马铃薯
+  aliases: [马铃薯, potato, Solanum tuberosum]
+- code: tomato
+  label_zh: 番茄
+  aliases: [番茄, tomato, Solanum lycopersicum]
+- code: vegetable_crops
+  label_zh: 蔬菜作物
+- code: fruit_trees
+  label_zh: 果树
+- code: forage
+  label_zh: 牧草
+- code: pig
+  label_zh: 猪
+  aliases: [猪, pig, swine, Sus scrofa]
+- code: cattle
+  label_zh: 牛
+  aliases: [牛, cattle, Bos taurus]
+- code: sheep
+  label_zh: 羊
+  aliases: [羊, sheep, goat]
+- code: chicken
+  label_zh: 鸡
+  aliases: [鸡, chicken, Gallus gallus]
+- code: duck
+  label_zh: 鸭
+  aliases: [鸭, duck]
+- code: fish
+  label_zh: 鱼
+- code: shrimp
+  label_zh: 虾
+  aliases: [虾, shrimp]
+- code: other
+  label_zh: 其他

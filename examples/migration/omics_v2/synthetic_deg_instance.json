@@ -1,0 +1,58 @@
+{
+  "basic_identity": {
+    "record_id": "deg-0001",
+    "record_type": "analysis_result",
+    "source_id": "urn:example:synthetic-omics-001",
+    "source_type": "experiment_record",
+    "source_title": "Synthetic drought RNA-seq experiment (example data, not a real study)",
+    "publication_year": 2025,
+    "data_accession": "EXAMPLE-ACC-0001"
+  },
+  "species_and_material": {
+    "species_name": "Oryza sativa",
+    "crop_name": "rice",
+    "germplasm_name": "SyntheticLine-1"
+  },
+  "tissue_and_development": {
+    "organ": "leaf",
+    "development_stage": "tillering"
+  },
+  "treatment_and_environment": {
+    "treatment_type": "abiotic_stress",
+    "treatment_name": "drought",
+    "control_type": null
+  },
+  "omics_experiment": {
+    "omics_type": "transcriptomics",
+    "assay_type": "RNA-seq",
+    "library_layout": "paired",
+    "platform": "Illumina"
+  },
+  "reference_system": {
+    "reference_genome_version": "IRGSP-1.0"
+  },
+  "data_processing": {
+    "analysis_method": "differential expression analysis",
+    "software": "DESeq2",
+    "software_version": "1.40.0"
+  },
+  "statistical_results": {
+    "contrast": "drought vs control",
+    "effect_direction": "up",
+    "p_value": 0.00002,
+    "q_value": 0.001
+  },
+  "transcriptomics_specific": {
+    "gene_id": "SYN_G0001",
+    "transcript_id": "SYN_T0001.1",
+    "log2_fold_change": 2.3,
+    "base_mean": 512.4,
+    "deg_status": "DEG",
+    "deg_threshold": "|log2FC| >= 1 and q < 0.05"
+  },
+  "quality_and_provenance": {
+    "extraction_method": "manual",
+    "human_review_status": "pending_review",
+    "notes": "synthetic example instance"
+  }
+}

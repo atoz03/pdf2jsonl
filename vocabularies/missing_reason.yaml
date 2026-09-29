@@ -1,0 +1,26 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: missing_reason
+title_zh: 缺失原因代码
+enforcement: open
+closure: open
+code_status: repository
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L64
+  quote_zh: missing_fields：缺失字段到原因代码的映射（原因代码未定义，由仓库提供初始集）
+applies_to: values
+values:
+- code: not_reported
+  label_zh: 论文未报告
+- code: not_located
+  label_zh: 未能在来源中定位证据
+- code: not_applicable
+  label_zh: 不适用
+- code: requires_external_source
+  label_zh: 需外部数据库或未来来源（N/F）
+- code: requires_review
+  label_zh: 需人工判断（I）
+- code: ambiguous_in_contract
+  label_zh: 契约定义不明确
+- code: conversion_not_possible
+  label_zh: 无法确定性换算

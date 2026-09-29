@@ -1,0 +1,29 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: document_type
+title_zh: 文献类型
+enforcement: error
+closure: closed
+code_status: legacy
+since: 3.1.0
+origin: [legacy_v1]
+source:
+  ref: sources/legacy_v1/breeding_jsonl_spec.md#L425
+  quote_zh: A-1 doc_type：journal_paper(期刊论文) / conference_paper / dissertation(学位论文) / experiment_report(实验报告) / review(综述) / patent(专利) / dataset_paper / technical_report / book_chapter / other
+ambiguities: [AMB-028]
+values:
+- code: journal_paper
+  label_zh: 期刊论文
+- code: conference_paper
+- code: dissertation
+  label_zh: 学位论文
+- code: experiment_report
+  label_zh: 实验报告
+- code: review
+  label_zh: 综述
+- code: patent
+  label_zh: 专利
+- code: dataset_paper
+- code: technical_report
+- code: book_chapter
+- code: other

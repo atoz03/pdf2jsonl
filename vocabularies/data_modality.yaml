@@ -1,0 +1,18 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: data_modality
+title_zh: 数据模态
+enforcement: open
+closure: open
+code_status: source
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L86
+  quote_zh: paper、genotype、phenotype、environment、omics、image或tool等模态
+values:
+- code: paper
+- code: genotype
+- code: phenotype
+- code: environment
+- code: omics
+- code: image
+- code: tool

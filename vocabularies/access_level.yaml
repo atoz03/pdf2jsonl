@@ -1,0 +1,17 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: access_level
+title_zh: 访问级别
+enforcement: error
+closure: closed
+code_status: source
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L89
+  quote_zh: open、controlled或restricted访问级别
+values:
+- code: open
+  label_zh: 开放
+- code: controlled
+  label_zh: 受控
+- code: restricted
+  label_zh: 限制

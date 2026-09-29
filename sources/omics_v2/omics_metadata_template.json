@@ -1,0 +1,330 @@
+{
+  "schema_info": {
+    "schema_name": "Breeding Multi-omics AI-ready Schema",
+    "schema_version": "2.0.0",
+    "language": "zh-CN",
+    "description": "面向育种多组学数据整合、科学发现与分析工具技能化的候选字段模板",
+    "research_questions": {
+      "RQ1": "统一语义：定义样本、实验、特征、上下文及其关系",
+      "RQ2": "科学发现：整合效应、证据、跨组学关系和性状，支持假设生成",
+      "RQ3": "工具技能化：描述数据、方法、软件、参数以及输入输出链条"
+    },
+    "missing_value_convention": "尚未填写的字段使用 null；不适用字段也可使用 null 并在 quality_and_provenance.missing_status 中说明"
+  },
+  "basic_identity": {
+    "record_id": null,
+    "record_type": null,
+    "source_id": null,
+    "source_type": null,
+    "source_title": null,
+    "doi": null,
+    "pmid": null,
+    "publication_year": null,
+    "data_accession": null,
+    "evidence_span": null
+  },
+  "species_and_material": {
+    "species_name": null,
+    "species_taxon_id": null,
+    "crop_name": null,
+    "germplasm_id": null,
+    "germplasm_name": null,
+    "germplasm_type": null,
+    "accession_id": null,
+    "genetic_background": null,
+    "parental_line": null,
+    "population_id": null,
+    "population_type": null,
+    "population_size": null
+  },
+  "sample": {
+    "sample_id": null,
+    "sample_name": null,
+    "sample_type": null,
+    "biological_replicate": null,
+    "technical_replicate": null,
+    "batch_id": null,
+    "sex": null,
+    "ploidy": null
+  },
+  "tissue_and_development": {
+    "organ": null,
+    "tissue": null,
+    "cell_type": null,
+    "cell_state": null,
+    "development_stage": null,
+    "sampling_time": null,
+    "sampling_time_relative": null
+  },
+  "treatment_and_environment": {
+    "treatment_type": null,
+    "treatment_name": null,
+    "treatment_dose": null,
+    "treatment_duration": null,
+    "control_type": null,
+    "location": null,
+    "year": null,
+    "temperature": null,
+    "precipitation": null,
+    "soil_type": null,
+    "soil_ph": null,
+    "photoperiod": null,
+    "irrigation": null,
+    "fertilization": null
+  },
+  "omics_experiment": {
+    "omics_type": null,
+    "assay_type": null,
+    "experimental_design": null,
+    "library_strategy": null,
+    "library_selection": null,
+    "library_layout": null,
+    "platform": null,
+    "instrument_model": null,
+    "sequencing_depth": null,
+    "read_length": null
+  },
+  "reference_system": {
+    "reference_genome": null,
+    "reference_genome_version": null,
+    "annotation_version": null,
+    "gene_id_system": null,
+    "coordinate_system": null
+  },
+  "data_files": {
+    "raw_data_accession": null,
+    "raw_data_format": null,
+    "processed_data_format": null,
+    "file_checksum": null,
+    "data_availability": null
+  },
+  "data_processing": {
+    "qc_method": null,
+    "preprocessing_method": null,
+    "normalization_method": null,
+    "analysis_method": null,
+    "software": null,
+    "software_version": null,
+    "parameters": null
+  },
+  "unified_feature": {
+    "feature_type": null,
+    "feature_id": null,
+    "feature_name": null,
+    "feature_value": null,
+    "feature_unit": null
+  },
+  "statistical_results": {
+    "contrast": null,
+    "effect_direction": null,
+    "effect_size": null,
+    "standard_error": null,
+    "p_value": null,
+    "q_value": null,
+    "confidence_interval": null
+  },
+  "breeding_links": {
+    "trait_raw": null,
+    "trait_normalized": null,
+    "trait_ontology_id": null,
+    "trait_category": null,
+    "phenotype_value": null,
+    "phenotype_unit": null,
+    "phenotyping_method": null,
+    "linked_gene": null,
+    "linked_variant": null,
+    "linked_qtl": null
+  },
+  "evidence": {
+    "relation_type": null,
+    "evidence_type": null,
+    "evidence_level": null,
+    "validation_type": null,
+    "validation_status": null,
+    "replication_status": null,
+    "contradiction_status": null,
+    "evidence_confidence": null
+  },
+  "cross_omics": {
+    "upstream_feature": null,
+    "downstream_feature": null,
+    "cross_omics_relation": null,
+    "mediation_candidate": null,
+    "multiomics_support_count": null
+  },
+  "cross_species": {
+    "ortholog_id": null,
+    "ortholog_species": null,
+    "orthology_type": null,
+    "synteny_support": null,
+    "cross_species_evidence": null
+  },
+  "research_discovery": {
+    "research_question": null,
+    "hypothesis": null,
+    "main_finding": null,
+    "knowledge_gap": null,
+    "limitation": null,
+    "future_direction": null,
+    "breeding_implication": null
+  },
+  "tool_skill": {
+    "tool_name": null,
+    "tool_task": null,
+    "tool_input_type": null,
+    "tool_input_format": null,
+    "tool_output_type": null,
+    "tool_output_format": null,
+    "required_parameters": null,
+    "optional_parameters": null,
+    "dependencies": null,
+    "validation_rule": null,
+    "failure_modes": null
+  },
+  "ontology_mapping": {
+    "entity_type": null,
+    "ontology_source": null,
+    "ontology_id": null,
+    "mapping_type": null,
+    "mapping_confidence": null,
+    "synonyms": null
+  },
+  "quality_and_provenance": {
+    "extraction_method": null,
+    "extraction_confidence": null,
+    "human_review_status": null,
+    "missing_status": null,
+    "quality_flag": null,
+    "notes": null
+  },
+  "genomics_specific": {
+    "chromosome": null,
+    "position": null,
+    "start_position": null,
+    "end_position": null,
+    "variant_id": null,
+    "variant_type": null,
+    "ref_allele": null,
+    "alt_allele": null,
+    "effect_allele": null,
+    "genotype_call": null,
+    "allele_frequency": null,
+    "minor_allele_frequency": null,
+    "genotype_quality": null,
+    "read_depth": null,
+    "haplotype_id": null,
+    "structural_variant_type": null
+  },
+  "qtl_gwas_specific": {
+    "qtl_id": null,
+    "qtl_chromosome": null,
+    "qtl_start": null,
+    "qtl_end": null,
+    "left_marker": null,
+    "right_marker": null,
+    "lod_score": null,
+    "pve_percent": null,
+    "gwas_model": null,
+    "population_structure_method": null,
+    "kinship_method": null,
+    "significance_threshold": null,
+    "candidate_gene_window": null,
+    "candidate_gene_status": null
+  },
+  "transcriptomics_specific": {
+    "gene_id": null,
+    "transcript_id": null,
+    "expression_value": null,
+    "expression_unit": null,
+    "raw_count": null,
+    "log2_fold_change": null,
+    "base_mean": null,
+    "deg_status": null,
+    "deg_threshold": null,
+    "coexpression_module": null,
+    "gene_set": null,
+    "pathway_id": null,
+    "go_term": null
+  },
+  "single_cell_specific": {
+    "cell_id": null,
+    "cell_type": null,
+    "cell_state": null,
+    "cluster_id": null,
+    "cell_type_annotation_method": null,
+    "marker_genes": null,
+    "n_counts": null,
+    "n_genes": null,
+    "mitochondrial_fraction": null,
+    "doublet_status": null,
+    "batch": null,
+    "integration_method": null,
+    "trajectory_method": null,
+    "pseudotime": null,
+    "cell_cell_interaction_method": null
+  },
+  "epigenomics_specific": {
+    "epigenomic_assay": null,
+    "chromatin_region_id": null,
+    "peak_start": null,
+    "peak_end": null,
+    "peak_signal": null,
+    "histone_mark": null,
+    "methylation_context": null,
+    "methylation_level": null,
+    "motif_id": null,
+    "tf_binding_candidate": null,
+    "linked_regulatory_gene": null,
+    "differential_peak_status": null
+  },
+  "proteomics_specific": {
+    "protein_id": null,
+    "peptide_id": null,
+    "protein_abundance": null,
+    "protein_fold_change": null,
+    "protein_q_value": null,
+    "mass_spectrometer": null,
+    "proteomics_method": null,
+    "protein_identification_score": null,
+    "post_translational_modification": null,
+    "interaction_partner": null
+  },
+  "metabolomics_specific": {
+    "metabolite_id": null,
+    "metabolite_name": null,
+    "database_id": null,
+    "chemical_formula": null,
+    "mz": null,
+    "retention_time": null,
+    "metabolite_abundance": null,
+    "metabolite_fold_change": null,
+    "metabolite_q_value": null,
+    "annotation_level": null,
+    "metabolic_pathway": null,
+    "metabolite_trait_relation": null
+  },
+  "cross_omics_relation": {
+    "source_feature_id": null,
+    "source_feature_type": null,
+    "relation": null,
+    "target_feature_id": null,
+    "target_feature_type": null,
+    "relation_direction": null,
+    "relation_effect_size": null,
+    "relation_p_value": null,
+    "relation_evidence_type": null,
+    "relation_context": null,
+    "relation_validation_status": null,
+    "relation_source": null
+  },
+  "controlled_vocabularies": {
+    "candidate_gene_status": [
+      "proximity_only",
+      "author_proposed",
+      "expression_supported",
+      "fine_mapped",
+      "functional_validated",
+      "field_validated"
+    ]
+  }
+}

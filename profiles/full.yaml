@@ -1,0 +1,7 @@
+# Profile — selects and configures fields of the contract for one use case. Part of the contract; edits require a release.
+profile_format: 1
+name: full
+title_zh: 完整字段目录
+description_zh: 契约中全部现行字段，用于长期数据治理、跨来源汇交与任意来源记录的校验。
+selection:
+  base: all_active

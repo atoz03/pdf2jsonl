@@ -1,0 +1,203 @@
+{
+  "record_id": "",
+  "schema_version": "v1.0.0",
+  "record_info": {
+    "doc_type": "",
+    "lang": "",
+    "created_at": "",
+    "updated_at": ""
+  },
+  "doc_meta": {
+    "title": "",
+    "title_zh": "",
+    "title_en": "",
+    "authors": [],
+    "affiliations": [],
+    "journal": "",
+    "journal_meta": {
+      "issn": "",
+      "category": "",
+      "sci_quarter": "",
+      "cas_zone": ""
+    },
+    "year": null,
+    "volume": "",
+    "issue": "",
+    "pages": "",
+    "doi": "",
+    "url": "",
+    "pdf_path": "",
+    "abstract": "",
+    "keywords": [],
+    "funding": [],
+    "species_list": [],
+    "field": [],
+    "sources": [],
+    "document_sections": [],
+    "section_vectors": [],
+    "citation_count": null,
+    "cited_by": [],
+    "related_docs": []
+  },
+  "breed_entities": {
+    "genes": [],
+    "traits": [],
+    "germplasm": [],
+    "varieties": [],
+    "populations": [],
+    "environments": [],
+    "markers": [],
+    "qtls": [],
+    "disease_pests": [],
+    "other_entities": []
+  },
+  "relations": [],
+  "experiments": [],
+  "analyses": [],
+  "conclusions": [],
+  "pipeline": {
+    "upstream_refs": [],
+    "downstream_refs": [],
+    "ontology_mapping": [],
+    "kg_node_id": "",
+    "kg_subgraph_id": "",
+    "fusion_status": "",
+    "fusion_group_id": "",
+    "conflict_statements": [],
+    "resolution_statement": "",
+    "canonical_entity_links": [],
+    "update_chain": [],
+    "task_association": {
+      "tasks": [],
+      "priority_level": ""
+    }
+  },
+  "governance": {
+    "ontology_ref": [],
+    "knowledge_units": [],
+    "curation_status": "",
+    "curation_history": [],
+    "domain_tags": [],
+    "technical_scope": [],
+    "quality_grade": "",
+    "consistency_checks": [],
+    "duplicates_group": "",
+    "freshness_level": "",
+    "retention_policy": "",
+    "next_review_date": "",
+    "pending_updates": []
+  },
+  "provenance": {
+    "extraction": {
+      "method": "",
+      "pipeline_version": "",
+      "llm_model": "",
+      "llm_prompt_version": "",
+      "extractor_config_hash": "",
+      "extraction_datetime": "",
+      "parser_tool": ""
+    },
+    "source_locations": [],
+    "field_level_confidence": [],
+    "quality_scores": {
+      "completeness": 0,
+      "accuracy": 0,
+      "consistency": 0,
+      "uniqueness": 0,
+      "timeliness": 0,
+      "interpretability": 0,
+      "retrieval_ai_ready": 0,
+      "provenance_completeness": 0,
+      "overall": 0
+    },
+    "verification": {
+      "status": "",
+      "verifier": "",
+      "date": "",
+      "notes": "",
+      "cross_doc_support_count": 0
+    },
+    "conflicts": [],
+    "corrections": [],
+    "data_license": {
+      "license_name": "",
+      "copyright_note": "",
+      "allowed_usage": [],
+      "restrictions": []
+    },
+    "integrity": {
+      "record_sha256": "",
+      "source_file_hash": "",
+      "algorithm": ""
+    },
+    "provenance_chain": []
+  },
+  "agent": {
+    "agent_state": {
+      "problem_statement": "",
+      "state_known": [],
+      "state_unknowns": [],
+      "evidence_citation": [],
+      "solved_problem_types": []
+    },
+    "hypotheses": [],
+    "causal_model": [],
+    "reasoning_premises": {
+      "premises": [],
+      "inference_type": "",
+      "inference_steps": [],
+      "conclusion_refs": [],
+      "uncertainty": 0,
+      "retrieval_keys": []
+    },
+    "planning": [],
+    "memory": {
+      "episodic": [],
+      "semantic": [],
+      "procedural": []
+    },
+    "tool_calls": [],
+    "feedback_loop": {
+      "reward_score": 0,
+      "policy_update": "",
+      "next_action_recommendation": "",
+      "iteration_no": 0
+    },
+    "knowledge_state_hash": ""
+  },
+  "skill": {
+    "skill_id": "",
+    "skill_name": "",
+    "skill_category": "",
+    "experiment_cards": [],
+    "analysis_cards": [],
+    "hypothesis_cards": [],
+    "workflow_orchestration": {
+      "workflow_id": "",
+      "workflow_name": "",
+      "dag_steps": [],
+      "execution_mode": "",
+      "version": "",
+      "rollback_strategy": ""
+    },
+    "tool_bindings": [],
+    "io_adapter": {
+      "standard_input_formats": [],
+      "standard_output_formats": [],
+      "unit_conversion": "",
+      "missing_value_convention": "",
+      "sample_key_format": "",
+      "encoding": ""
+    },
+    "model_profiles": [],
+    "result_visualizations": [],
+    "execution_feedback": {
+      "execution_records": [],
+      "success_rate": 0,
+      "avg_duration": 0,
+      "error_logs": [],
+      "optimization_suggestions": [],
+      "skill_upgrade_version": ""
+    }
+  }
+}

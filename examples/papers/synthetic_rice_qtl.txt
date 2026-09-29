@@ -1,0 +1,26 @@
+Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population
+Synthetic Author A, Synthetic Author B
+SYNTHETIC EXAMPLE DOCUMENT - not a real publication. doi: 10.0000/synthetic.2026.001
+Published online: 12 March 2024
+
+Abstract
+Plant height is a key agronomic trait in rice. We identified a major QTL, qPH7.1, on chromosome 7 using 180 recombinant inbred lines. qPH7.1 explained 23.5% of the phenotypic variance and was significantly associated with plant height in both environments.
+
+Introduction
+Semi-dwarf stature improved lodging resistance in modern rice cultivars. Several plant height genes have been cloned, but natural variation in temperate japonica remains poorly characterized.
+Materials and Methods
+A population of 180 recombinant inbred lines was grown at two locations in 2022. Plant height was measured at maturity from the soil surface to the tip of the tallest panicle. Genotyping used 1,536 SNP markers. QTL analysis was performed with QTL IciMapping version 4.2 using inclusive composite interval mapping. Linkage maps were constructed with JoinMap version 5.0.
+
+Results
+Plant height of the parents differed markedly. The mean plant height of the population ranged from 85.2 to 132.6 cm.
+Table 2 Plant height of parents in two environments
+Line Env1 Env2
+Parent1 118.4 cm 121.0 cm
+Parent2 92.1 cm 95.3 cm
+qPH7.1 was located between markers S7_1203 and S7_1377 with a LOD score of 12.8. The allele from Parent1 increased plant height by 8.6 cm.
+
+Discussion
+qPH7.1 co-localized with a previously reported heading date region, suggesting a possible pleiotropic effect that requires validation.
+
+Conclusion
+qPH7.1 is a promising target for marker-assisted breeding of plant height in rice.

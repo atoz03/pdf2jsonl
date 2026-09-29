@@ -1,0 +1,26 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: extraction_method
+title_zh: 抽取或接入方式
+enforcement: warning
+closure: closed
+code_status: proposed
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L27
+  quote_zh: 人工、规则、OCR、模型、API、仪器或ETL接入方式
+ambiguities: [AMB-010]
+values:
+- code: manual
+  label_zh: 人工
+- code: rule
+  label_zh: 规则
+- code: ocr
+  label_zh: OCR
+- code: model
+  label_zh: 模型
+- code: api
+  label_zh: API
+- code: instrument
+  label_zh: 仪器
+- code: etl
+  label_zh: ETL接入

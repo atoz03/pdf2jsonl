@@ -1,0 +1,26 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: candidate_gene_status
+title_zh: 候选基因证据层级
+enforcement: warning
+closure: closed
+code_status: source
+since: 3.1.0
+origin: [omics_v2]
+source:
+  ref: sources/omics_v2/omics_metadata_template.json#/controlled_vocabularies/candidate_gene_status
+  quote_zh: proximity_only, author_proposed, expression_supported, fine_mapped, functional_validated, field_validated
+notes_zh: 代码逐字来自 omics 模板受控词表；v3 字段定义为“区分定位、表达支持与功能验证”，两者一致但模板为候选稿，故先按 warning 执行。
+values:
+- code: proximity_only
+  label_zh: 仅位置邻近
+- code: author_proposed
+  label_zh: 作者提出
+- code: expression_supported
+  label_zh: 表达证据支持
+- code: fine_mapped
+  label_zh: 精细定位
+- code: functional_validated
+  label_zh: 功能验证
+- code: field_validated
+  label_zh: 田间验证

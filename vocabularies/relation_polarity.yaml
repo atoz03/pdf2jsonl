@@ -1,0 +1,20 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: relation_polarity
+title_zh: 关系极性
+enforcement: warning
+closure: closed
+code_status: proposed
+source:
+  ref: sources/fields_v3/breeding_fields_259_final.md#L234
+  quote_zh: 增加、降低、无显著效应或未知
+ambiguities: [AMB-010]
+values:
+- code: increase
+  label_zh: 增加
+- code: decrease
+  label_zh: 降低
+- code: no_significant_effect
+  label_zh: 无显著效应
+- code: unknown
+  label_zh: 未知
