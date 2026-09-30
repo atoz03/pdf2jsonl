@@ -15,6 +15,9 @@ profiles/*.yaml                   ─┘                   contract.json, record
                                                                              validation, outputs)
 ```
 
+**Live demo:** https://atoz03.github.io/pdf2jsonl/ — field catalog browser, PDF → JSONL walk-through, record examples,
+vocabularies and rules, generated from the latest release by `scripts/make_site.py`.
+
 ## Contents
 
 | Path | What it is |

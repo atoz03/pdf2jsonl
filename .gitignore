@@ -16,3 +16,6 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
+
+# demo site build output (scripts/make_site.py; deployed by .github/workflows/pages.yml)
+/_site/

@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pdf2jsonl · breeding-literature-record __VERSION__</title>
+<meta name="description" content="Data contract and PDF-to-JSONL demo for breeding-literature records: field catalog, profiles, vocabularies, rules and an end-to-end extraction walk-through.">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f7f7f5; --surface: #ffffff; --surface-2: #f0f0ed; --border: #e2e1dc;
+  --text: #0b0b0b; --text-2: #52514e; --text-3: #7a7973;
+  --accent: #2a78d6; --accent-soft: #e5effb;
+  --mark: #fff1c2; --mark-sel: #ffd65c; --mark-border: #e0a800;
+  --ok: #1b7f3b; --warn: #a45f00; --err: #c62828; --err-soft: #fdecea; --warn-soft: #fff4e0; --ok-soft: #e6f4ea;
+  --av-D: #2a78d6; --av-N: #eb6834; --av-I: #1baf7a; --av-G: #eda100; --av-F: #e87ba4;
+  --j-key: #4a3aa7; --j-str: #1b6b3a; --j-num: #b0461a; --j-lit: #8a2c8a;
+  --radius: 8px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #33332f;
+    --text: #f4f4f1; --text-2: #c3c2b7; --text-3: #8f8e86;
+    --accent: #5b9df0; --accent-soft: #1d2d42;
+    --mark: #4a3d12; --mark-sel: #8a6d10; --mark-border: #c99a1c;
+    --ok: #5cc27a; --warn: #e6a23c; --err: #ef6b6b; --err-soft: #3a1d1d; --warn-soft: #3a2c14; --ok-soft: #173222;
+    --av-D: #3987e5; --av-N: #d95926; --av-I: #199e70; --av-G: #c98500; --av-F: #d55181;
+    --j-key: #a99ff0; --j-str: #7fd19b; --j-num: #f0a070; --j-lit: #e39be3;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.55 system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, .mono { font-family: var(--mono); font-size: 12.5px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+header.top { background: var(--surface); border-bottom: 1px solid var(--border); }
+header.top .wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding-block: 16px; }
+header.top h1 { font-size: 18px; margin: 0; letter-spacing: -0.01em; }
+header.top h1 span { color: var(--text-3); font-weight: 500; }
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 600; font-size: 12px; }
+header.top .spacer { flex: 1; }
+nav.tabs { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--border); }
+nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; }
+nav.tabs a { padding: 11px 14px; color: var(--text-2); font-weight: 500; border-bottom: 2px solid transparent; white-space: nowrap; }
+nav.tabs a:hover { color: var(--text); text-decoration: none; }
+nav.tabs a.active { color: var(--text); border-bottom-color: var(--accent); }
+main { padding-block: 24px 60px; }
+section.view[hidden] { display: none; }
+h2 { font-size: 20px; margin: 4px 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 15px; margin: 22px 0 10px; }
+p.lead { color: var(--text-2); margin: 0 0 18px; max-width: 900px; }
+.muted { color: var(--text-3); }
+.small { font-size: 12.5px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.pad { padding: 16px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 14px 0 6px; }
+.tile { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.tile .k { color: var(--text-2); font-size: 12.5px; }
+.tile .v { font-size: 26px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.2; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.tile .s { color: var(--text-3); font-size: 12px; margin-top: 2px; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.grid2 > * { min-width: 0; }
+@media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+.tbl-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-size: 12px; font-weight: 600; color: var(--text-2); background: var(--surface-2); position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.badge { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 5px; font-size: 11.5px; font-weight: 650; color: var(--text); border: 1px solid; }
+.av-D { border-color: var(--av-D); background: color-mix(in srgb, var(--av-D) 16%, transparent); }
+.av-N { border-color: var(--av-N); background: color-mix(in srgb, var(--av-N) 16%, transparent); }
+.av-I { border-color: var(--av-I); background: color-mix(in srgb, var(--av-I) 16%, transparent); }
+.av-G { border-color: var(--av-G); background: color-mix(in srgb, var(--av-G) 16%, transparent); }
+.av-F { border-color: var(--av-F); background: color-mix(in srgb, var(--av-F) 16%, transparent); }
+.tag { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); white-space: nowrap; }
+.tag.ok { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
+.tag.warn { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.tag.err { background: var(--err-soft); color: var(--err); border-color: transparent; }
+.tag.acc { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin: 10px 0; padding: 0; list-style: none; counter-reset: step; }
+.flow li { flex: 1 1 150px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; position: relative; counter-increment: step; }
+.flow li::before { content: counter(step); display: inline-flex; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11.5px; font-weight: 700; align-items: center; justify-content: center; margin-right: 6px; }
+.flow li b { font-size: 13px; }
+.flow li div { color: var(--text-2); font-size: 12.5px; margin-top: 4px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+input[type=search], select { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; }
+input[type=search] { flex: 1 1 260px; min-width: 200px; }
+input[type=search]:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.chip { font: inherit; font-size: 12.5px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-2); border-radius: 999px; padding: 5px 10px; display: inline-flex; gap: 6px; align-items: center; }
+.chip[aria-pressed=true] { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+tr.frow { cursor: pointer; }
+tr.frow:hover td { background: var(--surface-2); }
+tr.frow td.path { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+tr.frow td.path .g { color: var(--text-3); }
+tr.detail td { background: var(--surface-2); }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; }
+dl.kv dt { color: var(--text-2); font-size: 12.5px; }
+dl.kv dd { margin: 0; }
+.codes { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.codes code { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; }
+/* demo */
+.demo { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 960px) { .demo { grid-template-columns: 1fr; } }
+.pages { max-height: 640px; overflow: auto; }
+.page { padding: 14px 16px; border-bottom: 1px dashed var(--border); }
+.page:last-child { border-bottom: 0; }
+.page .ph { font-size: 11.5px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.page pre { margin: 0; white-space: pre-wrap; word-break: break-word; font-family: var(--mono); font-size: 12.5px; line-height: 1.6; }
+mark { background: var(--mark); color: inherit; border-radius: 3px; cursor: pointer; box-shadow: inset 0 -2px 0 var(--mark-border); }
+mark.sel { background: var(--mark-sel); }
+.items { max-height: 640px; overflow: auto; }
+.item { display: block; width: 100%; text-align: left; font: inherit; color: inherit; background: none; border: 0; border-bottom: 1px solid var(--border); padding: 10px 14px; cursor: pointer; }
+.item:last-child { border-bottom: 0; }
+.item:hover { background: var(--surface-2); }
+.item.sel { background: var(--accent-soft); }
+.item .row1 { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 4px; }
+.item .sum { color: var(--text); font-size: 13px; }
+.item .meta { color: var(--text-3); font-size: 12px; margin-top: 2px; font-family: var(--mono); }
+pre.json { margin: 0; padding: 12px 14px; font-family: var(--mono); font-size: 12px; line-height: 1.55; overflow: auto; max-height: 560px; white-space: pre; }
+pre.json .j-key { color: var(--j-key); }
+pre.json a.j-key { text-decoration: underline dotted; text-underline-offset: 2px; }
+pre.json .j-str { color: var(--j-str); }
+pre.json .j-num { color: var(--j-num); }
+pre.json .j-lit { color: var(--j-lit); }
+.panel-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 13px; }
+.issues { margin: 8px 0 0; padding-left: 18px; }
+.issues li { margin: 2px 0; }
+details { margin-top: 14px; }
+details > summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
+pre.brief { max-height: 520px; overflow: auto; white-space: pre-wrap; padding: 14px 16px; margin: 0; font-family: var(--mono); font-size: 12px; }
+.gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
+.gal .card h4 { margin: 0; font-size: 14px; }
+.ftable td { padding: 4px 10px; font-size: 12.5px; }
+.ftable td:first-child { font-family: var(--mono); white-space: nowrap; }
+.ftable td:last-child { font-family: var(--mono); word-break: break-word; }
+.vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; }
+footer { color: var(--text-3); font-size: 12.5px; border-top: 1px solid var(--border); padding-block: 18px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <h1>pdf2jsonl <span>· breeding literature → atomic JSONL</span></h1>
+  <span class="pill" id="ver-pill">contract __VERSION__</span>
+  <span class="spacer"></span>
+  <a id="repo-link" href="#">GitHub repository →</a>
+</div></header>
+<nav class="tabs" aria-label="Sections"><div class="wrap">
+  <a href="#overview" data-view="overview">Overview</a>
+  <a href="#fields" data-view="fields">Field catalog</a>
+  <a href="#demo" data-view="demo">PDF → JSONL demo</a>
+  <a href="#records" data-view="records">Record examples</a>
+  <a href="#vocab" data-view="vocab">Vocabularies</a>
+  <a href="#rules" data-view="rules">Rules &amp; ambiguities</a>
+</div></nav>
+<main class="wrap">
+  <section class="view" id="view-overview"></section>
+  <section class="view" id="view-fields"></section>
+  <section class="view" id="view-demo"></section>
+  <section class="view" id="view-records"></section>
+  <section class="view" id="view-vocab"></section>
+  <section class="view" id="view-rules"></section>
+</main>
+<footer><div class="wrap" id="foot"></div></footer>
+
+<script id="site-data" type="application/json">/*__DATA__*/null</script>
+<script>
+"use strict";
+const DATA = JSON.parse(document.getElementById("site-data").textContent);
+const C = DATA.contract, D = DATA.demo;
+const F = Object.fromEntries(C.fields.map(f => [f.path, f]));
+const GROUPS = Object.keys(C.groups);
+const AV = ["D", "N", "I", "G", "F"];
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const av = a => `<span class="badge av-${a}" title="${esc(C.codes.availability[a].label_en)} · ${esc(C.codes.availability[a].label_zh)}">${a}</span>`;
+const fieldLink = (p, label) => `<a class="mono" href="#fields?q=${encodeURIComponent(p)}" title="${esc(F[p] ? F[p].definition_zh : "")}">${esc(label || p)}</a>`;
+const count = (arr, fn) => arr.reduce((n, x) => n + (fn(x) ? 1 : 0), 0);
+
+// ---------------------------------------------------------------- JSON view with field-name links
+function jsonHTML(v, ind = "", parentKey = null, depth = 0) {
+  const pad = ind + "  ";
+  if (v === null) return '<span class="j-lit">null</span>';
+  if (Array.isArray(v)) {
+    if (!v.length) return "[]";
+    if (v.every(x => typeof x !== "object" || x === null) && JSON.stringify(v).length < 80)
+      return "[" + v.map(x => jsonHTML(x, pad)).join(", ") + "]";
+    return "[\n" + v.map(x => pad + jsonHTML(x, pad, null, depth + 1)).join(",\n") + "\n" + ind + "]";
+  }
+  if (typeof v === "object") {
+    const ks = Object.keys(v);
+    if (!ks.length) return "{}";
+    return "{\n" + ks.map(k => pad + keyHTML(k, parentKey, depth) + ": " + jsonHTML(v[k], pad, k, depth + 1)).join(",\n") + "\n" + ind + "}";
+  }
+  if (typeof v === "string") return '<span class="j-str">' + esc(JSON.stringify(v)) + "</span>";
+  if (typeof v === "number") return '<span class="j-num">' + v + "</span>";
+  return '<span class="j-lit">' + v + "</span>";
+}
+function keyHTML(k, parentKey, depth) {
+  const path = F[k] ? k : (depth === 1 && GROUPS.includes(parentKey) && F[parentKey + "." + k]) ? parentKey + "." + k : null;
+  const q = esc(JSON.stringify(k));
+  return path ? `<a class="j-key" href="#fields?q=${encodeURIComponent(path)}" title="${esc(path + " — " + F[path].definition_zh)}">${q}</a>` : `<span class="j-key">${q}</span>`;
+}
+
+// ---------------------------------------------------------------- overview
+function renderOverview() {
+  const nV = count(C.fields, f => f.maturity === "verified");
+  const nErr = count(C.rules, r => r.severity === "error");
+  const latest = DATA.versions.find(v => v.latest) || {};
+  const byGroup = GROUPS.map(g => {
+    const fs = C.fields.filter(f => f.group === g);
+    return `<tr><td class="mono"><a href="#fields?group=${g}">${g}</a></td><td>${esc(C.groups[g].title_zh)}</td>
+      <td class="small">${esc(C.groups[g].purpose_zh)}</td><td class="num"><b>${fs.length}</b></td>
+      ${AV.map(a => `<td class="num">${count(fs, f => f.availability === a) || '<span class="muted">·</span>'}</td>`).join("")}</tr>`;
+  }).join("");
+  const kinds = Object.entries(C.record_kinds).map(([k, v]) =>
+    `<tr><td class="mono">${k}</td><td>${esc(v.label_zh || "")}</td><td class="mono small">${esc(v.grain || "—")}</td><td class="small">${esc(v.description_zh || "")}</td></tr>`).join("");
+  const vers = DATA.versions.map(v => `<tr><td class="mono">${v.version} ${v.latest ? '<span class="tag acc">latest</span>' : ""}</td>
+    <td>${v.released_on}</td><td class="num">${v.fields}</td><td class="num">${v.rules}</td><td class="num">${v.vocabularies}</td>
+    <td class="small mono">${v.profiles.join(", ")}</td></tr>`).join("");
+  $("#view-overview").innerHTML = `
+    <h2>${esc(C.title_zh)} <span class="muted">· ${esc(C.name)}</span></h2>
+    <p class="lead">The repository owns the data contract; the <b>pdf2jsonl</b> Skill is the operational entry point.
+      One canonical field catalog generates the JSON Schema, profiles, dictionaries and validation, and the extraction
+      pipeline resolves the contract version at run time. ${esc(C.baseline_zh || "")}</p>
+    <div class="tiles">
+      <div class="tile"><div class="k">Fields</div><div class="v">${C.fields.length}</div><div class="s">${nV} verified · ${C.fields.length - nV} provisional</div></div>
+      <div class="tile"><div class="k">Field groups</div><div class="v">${GROUPS.length}</div><div class="s">${GROUPS.join(" · ")}</div></div>
+      <div class="tile"><div class="k">Record kinds</div><div class="v">${Object.keys(C.record_kinds).length}</div><div class="s">one fact per JSONL line</div></div>
+      <div class="tile"><div class="k">Vocabularies</div><div class="v">${C.vocabularies.length}</div><div class="s">plus a unit-conversion table</div></div>
+      <div class="tile"><div class="k">Cross-field rules</div><div class="v">${C.rules.length}</div><div class="s">${nErr} error · ${C.rules.length - nErr} warning</div></div>
+      <div class="tile"><div class="k">Releases</div><div class="v">${DATA.versions.length}</div><div class="s">latest ${esc(latest.version || "")}</div></div>
+    </div>
+    <h3>Availability codes — what each field's value is, not how good it is</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Meaning</th><th>中文</th><th>Who fills it in the PDF pipeline</th><th class="num">Fields</th></tr></thead><tbody>
+      ${AV.map(a => `<tr><td>${av(a)}</td><td>${esc(C.codes.availability[a].label_en)}</td><td>${esc(C.codes.availability[a].label_zh)}</td>
+        <td class="small">${{D: "the extraction model, with a verbatim quote", N: "the pipeline, by named deterministic rules", I: "a human reviewer — never exposed to the model", G: "later processing (only confidence, if the backend reports it)", F: "future external sources — never fabricated"}[a]}</td>
+        <td class="num"><a href="#fields?av=${a}">${count(C.fields, f => f.availability === a)}</a></td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="small muted">${esc(C.codes.availability_note_zh || "")} Requirement codes: <b>Y</b> required · <b>C</b> conditional · <b>N</b> optional. Missing information is omitted — never <code>null</code> or an empty value.</p>
+    <h3>Field groups</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>Group</th><th>名称</th><th>Purpose</th><th class="num">Fields</th>${AV.map(a => `<th class="num">${av(a)}</th>`).join("")}</tr></thead><tbody>${byGroup}</tbody></table></div>
+    <h3>How a paper becomes records</h3>
+    <ol class="flow">
+      <li><b>Resolve</b><div>contract version + profile (<code>latest</code> or an exact release)</div></li>
+      <li><b>Prepare</b><div>parse the PDF text layer; render the brief from the profile</div></li>
+      <li><b>Extract</b><div>the agent writes candidates: D fields + page + verbatim quote</div></li>
+      <li><b>Verify &amp; repair</b><div>quotes checked against the page; structural fixes logged</div></li>
+      <li><b>Assemble</b><div>IDs, locators, normalized values, review status by rule</div></li>
+      <li><b>Validate &amp; write</b><div>records · errors · validation report · manifest</div></li>
+    </ol>
+    <p class="small"><a href="#demo">See it run on the synthetic example paper →</a></p>
+    <h3>Record kinds</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>record_kind</th><th>名称</th><th>record_grain</th><th>Description</th></tr></thead><tbody>${kinds}</tbody></table></div>
+    <h3>Releases</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>Version</th><th>Released</th><th class="num">Fields</th><th class="num">Rules</th><th class="num">Vocabularies</th><th>Profiles</th></tr></thead><tbody>${vers}</tbody></table></div>`;
+}
+
+// ---------------------------------------------------------------- field catalog
+const FS = { q: "", group: "", profile: "", maturity: "", since: "", req: "", av: new Set(AV), open: null };
+function renderFieldsShell() {
+  const profs = Object.keys(C.profiles);
+  const sinces = [...new Set(C.fields.map(f => f.since))].sort();
+  $("#view-fields").innerHTML = `
+    <h2>Field catalog</h2>
+    <p class="lead">Every field of contract ${esc(C.version)}, generated from <code>field_catalog/field_catalog.yaml</code>.
+      Records nest by group: the field <code>common.record_id</code> is written <code>{"common": {"record_id": …}}</code>. Click a row for details.</p>
+    <div class="controls">
+      <input type="search" id="f-q" placeholder="Search field path, definition, source…" aria-label="Search fields">
+      <select id="f-group" aria-label="Group"><option value="">All groups</option>${GROUPS.map(g => `<option>${g}</option>`).join("")}</select>
+      <select id="f-profile" aria-label="Profile"><option value="">Any profile</option>${profs.map(p => `<option value="${p}">${p} — ${esc(C.profiles[p].title_zh || "")}</option>`).join("")}</select>
+      <select id="f-maturity" aria-label="Maturity"><option value="">Any maturity</option><option>verified</option><option>provisional</option></select>
+      <select id="f-since" aria-label="Since"><option value="">Any version</option>${sinces.map(s => `<option value="${s}">since ${s}</option>`).join("")}</select>
+      <select id="f-req" aria-label="Required"><option value="">Any requirement</option><option value="Y">Y · required</option><option value="C">C · conditional</option><option value="N">N · optional</option></select>
+    </div>
+    <div class="controls" role="group" aria-label="Availability">
+      ${AV.map(a => `<button class="chip" data-av="${a}" aria-pressed="true">${av(a)} ${esc(C.codes.availability[a].label_en)}</button>`).join("")}
+      <span class="spacer" style="flex:1"></span><span class="small muted" id="f-count"></span>
+    </div>
+    <div class="tbl-wrap"><table><thead><tr><th>Field path</th><th>Type</th><th>Avail.</th><th>Req.</th><th>Definition (定义)</th></tr></thead><tbody id="f-body"></tbody></table></div>`;
+  const bind = (id, key) => $(id).addEventListener("input", e => { FS[key] = e.target.value; FS.open = null; renderFieldRows(); });
+  bind("#f-q", "q"); bind("#f-group", "group"); bind("#f-profile", "profile"); bind("#f-maturity", "maturity"); bind("#f-since", "since"); bind("#f-req", "req");
+  $("#view-fields").querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+    const a = b.dataset.av; FS.av.has(a) ? FS.av.delete(a) : FS.av.add(a);
+    b.setAttribute("aria-pressed", FS.av.has(a)); renderFieldRows();
+  }));
+  $("#f-body").addEventListener("click", e => {
+    if (e.target.closest("a")) return;
+    const tr = e.target.closest("tr.frow"); if (!tr) return;
+    FS.open = FS.open === tr.dataset.path ? null : tr.dataset.path; renderFieldRows();
+  });
+}
+function syncFieldControls() {
+  $("#f-q").value = FS.q; $("#f-group").value = FS.group; $("#f-profile").value = FS.profile;
+  $("#f-maturity").value = FS.maturity; $("#f-since").value = FS.since; $("#f-req").value = FS.req;
+  $("#view-fields").querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", FS.av.has(b.dataset.av)));
+}
+function fieldDetail(f) {
+  const voc = f.vocabulary && C.vocabularies.find(v => v.name === f.vocabulary);
+  const roles = Object.entries(C.profiles).filter(([, p]) => p.roles[f.path]).map(([n, p]) => `<span class="tag">${n}: ${p.roles[f.path]}</span>`).join(" ");
+  const ambs = (f.ambiguities || []).map(id => { const a = C.ambiguities.find(x => x.id === id); return `<div><a href="#rules?amb=${id}">${id}</a> <span class="tag">${a ? a.status : ""}</span> ${esc(a ? a.title_zh : "")}</div>`; }).join("");
+  const rules = C.rules.filter(r => r.fields.includes(f.path)).map(r => `<span class="tag ${r.severity === "error" ? "err" : "warn"}" title="${esc(r.title_zh)}">${r.id}</span>`).join(" ");
+  return `<dl class="kv">
+    <dt>Data source (数据来源)</dt><dd>${esc(f.data_source_zh || "—")}</dd>
+    <dt>Downstream (下游用途)</dt><dd>${esc(f.downstream_zh || "—")}</dd>
+    <dt>Since · maturity · origin</dt><dd>${f.since} · ${f.maturity} · ${(f.origin || []).join(", ")}</dd>
+    ${f.constraints ? `<dt>Constraints</dt><dd class="mono">${esc(JSON.stringify(f.constraints))}</dd>` : ""}
+    ${voc ? `<dt>Vocabulary</dt><dd><a href="#vocab?q=${voc.name}">${voc.name}</a> <span class="tag">${voc.enforcement}</span> <span class="tag">${voc.closure}</span>
+      <div class="codes" style="margin-top:6px">${voc.values.slice(0, 40).map(v => `<code title="${esc(v.label_zh || "")}">${esc(v.code)}</code>`).join("")}${voc.values.length > 40 ? ` <span class="muted">+${voc.values.length - 40} more</span>` : ""}</div></dd>` : ""}
+    ${rules ? `<dt>Rules</dt><dd>${rules}</dd>` : ""}
+    <dt>Profiles (role)</dt><dd>${roles || '<span class="muted">not in any profile</span>'}</dd>
+    ${ambs ? `<dt>Ambiguities</dt><dd>${ambs}</dd>` : ""}
+    <dt>Source reference</dt><dd class="mono small">${esc(f.source_ref || "—")}</dd>
+  </dl>`;
+}
+function renderFieldRows() {
+  const q = FS.q.trim().toLowerCase();
+  const prof = FS.profile && C.profiles[FS.profile];
+  const rows = C.fields.filter(f =>
+    (!FS.group || f.group === FS.group) && FS.av.has(f.availability) && (!prof || prof.roles[f.path]) &&
+    (!FS.maturity || f.maturity === FS.maturity) && (!FS.since || f.since === FS.since) && (!FS.req || f.required === FS.req) &&
+    (!q || (f.path + " " + (f.definition_zh || "") + " " + (f.data_source_zh || "") + " " + (f.vocabulary || "")).toLowerCase().includes(q)));
+  if (rows.length === 1) FS.open = rows[0].path;
+  $("#f-count").textContent = `${rows.length} of ${C.fields.length} fields`;
+  $("#f-body").innerHTML = rows.map(f => {
+    const [g, n] = [f.group, f.path.slice(f.group.length + 1)];
+    const row = `<tr class="frow" data-path="${f.path}"><td class="path"><span class="g">${g}.</span>${n}${f.maturity === "provisional" ? ' <span class="tag" title="provisional: written by the repository, awaiting confirmation">prov.</span>' : ""}</td>
+      <td class="mono small">${f.type}</td><td>${av(f.availability)}</td><td><b>${f.required}</b></td><td>${esc(f.definition_zh)}</td></tr>`;
+    return row + (FS.open === f.path ? `<tr class="detail"><td colspan="5">${fieldDetail(f)}</td></tr>` : "");
+  }).join("") || `<tr><td colspan="5" class="muted">No field matches these filters.</td></tr>`;
+}
+
+// ---------------------------------------------------------------- demo
+const V = D.validation;
+const VREC = Object.fromEntries(V.records.map(r => [r.record_id, r]));
+const DS = { sel: null };
+function summary(r) {
+  const c = r.common || {}, a = r.agent || {}, s = r.skills || {}, t = r.transform || {}, o = r.omics || {};
+  if (a.finding_text) return a.finding_text;
+  if (c.measurement_name) return `${c.measurement_name}: ${c.measurement_value ?? c.measurement_text ?? ""} ${c.measurement_unit || ""}`.trim() + (c.germplasm_names ? ` — ${c.germplasm_names.join(", ")}` : "") + (c.environment_code ? ` · ${c.environment_code}` : "");
+  if (s.software_name) return `${s.software_name}${s.software_version ? " " + s.software_version : ""}${s.method_name ? " — " + s.method_name : ""}`;
+  if (c.variant_id) return `${c.variant_id} · ${c.genotype_call || ""}`;
+  if (c.asset_kind) return `Input asset: ${c.asset_kind} · ${c.asset_format || ""} · ${c.asset_size_bytes ?? "?"} bytes`;
+  if (t.subject_mention) return `${t.subject_mention} → ${t.object_mention || ""}`;
+  if (o.omics_type) return `${o.omics_type}${o.log2_fold_change != null ? " · log2FC " + o.log2_fold_change : ""}`;
+  return c.source_quote || c.record_kind;
+}
+function reviewTag(s) { return s === "auto_validated" ? `<span class="tag ok">auto_validated</span>` : s ? `<span class="tag warn">${esc(s)}</span>` : ""; }
+function spanOf(r) { const m = /page=(\d+);char=(\d+)-(\d+)/.exec((r.common || {}).source_span || ""); return m ? { page: +m[1], a: +m[2], b: +m[3] } : null; }
+function items() {
+  const recs = D.records.map(r => ({ type: "record", id: r.common.record_id, rec: r, v: VREC[r.common.record_id] || {} }));
+  const errs = D.errors.map((e, i) => ({ type: "error", id: "err" + i, err: e }));
+  return [...recs, ...errs];
+}
+function renderDemo() {
+  const counts = V.counts;
+  const its = items();
+  $("#view-demo").innerHTML = `
+    <h2>PDF → JSONL, end to end</h2>
+    <p class="lead">A run of the real pipeline on <code>${esc(D.file_name)}</code>, a <b>synthetic</b> three-page paper shipped in <code>examples/</code>.
+      The agent read the brief and wrote ${counts.candidates} candidates. One of them was deliberately fabricated, and one was deliberately malformed.
+      The pipeline checked every quote against the parsed PDF text, repaired structure, assembled atomic records and validated them against contract
+      <b>${esc(D.manifest.contract.schema_version)}</b> (requested: <code>${esc(D.manifest.contract.requested)}</code>). Click a record or a highlighted quote.</p>
+    <div class="tiles">
+      <div class="tile"><div class="k">Candidates from the agent</div><div class="v">${counts.candidates}</div><div class="s">examples/papers/…candidates.json</div></div>
+      <div class="tile"><div class="k">Records written</div><div class="v">${counts.records}</div><div class="s">incl. 1 system record for the PDF</div></div>
+      <div class="tile"><div class="k">Rejected</div><div class="v">${counts.rejected}</div><div class="s">${Object.keys(counts.rejected_by_code).join(", ") || "—"}</div></div>
+      <div class="tile"><div class="k">Pending review</div><div class="v">${counts.by_review_status.pending_review || 0}</div><div class="s">${counts.by_review_status.auto_validated || 0} auto_validated</div></div>
+      <div class="tile"><div class="k">Structural repairs</div><div class="v">${V.repairs.length}</div><div class="s">each one logged</div></div>
+    </div>
+    <div class="demo">
+      <div class="card">
+        <div class="panel-h"><span>Parsed PDF text (what the pipeline verifies quotes against)</span><span class="muted small">${D.pages.length} pages</span></div>
+        <div class="pages" id="d-pages"></div>
+      </div>
+      <div class="card">
+        <div class="panel-h"><span>Output: records and rejections</span><span class="muted small">${D.records.length} + ${D.errors.length}</span></div>
+        <div class="items" id="d-items">${its.map(it => it.type === "record" ? `
+          <button class="item" data-id="${it.id}"><div class="row1"><span class="tag acc">${it.rec.common.record_kind}</span>${reviewTag(it.rec.common.review_status)}
+            ${it.v.warnings && it.v.warnings.length ? `<span class="tag warn">${it.v.warnings.length} warning${it.v.warnings.length > 1 ? "s" : ""}</span>` : ""}
+            ${it.rec.common.source_page ? `<span class="muted small">p.${it.rec.common.source_page}</span>` : ""}</div>
+            <div class="sum">${esc(summary(it.rec))}</div><div class="meta">${it.id}</div></button>` : `
+          <button class="item" data-id="${it.id}"><div class="row1"><span class="tag err">rejected</span><span class="tag">${esc(it.err.stage)}</span><span class="mono small">${esc(it.err.code)}</span></div>
+            <div class="sum">${esc((it.err.candidate && it.err.candidate.fields && Object.values(it.err.candidate.fields)[0]) || it.err.message)}</div>
+            <div class="meta">candidate #${it.err.candidate_index} · ${esc(it.err.message)}</div></button>`).join("")}</div>
+      </div>
+    </div>
+    <div id="d-detail" style="margin-top:16px"></div>
+    <h3>Repair log</h3>
+    <p class="small muted">Structural repairs only: formatting, types, vocabulary labels and pipeline-owned fields. Content is never invented; an unverifiable quote is rejected, not repaired.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Where</th><th>Action</th><th>Field</th><th>From</th><th>To</th></tr></thead><tbody>
+      ${V.repairs.map(r => `<tr><td class="mono small">${esc(r.where)}</td><td>${esc(r.action)}${r.reason ? ` <span class="muted small">(${esc(r.reason)})</span>` : ""}</td>
+        <td>${r.key ? (F[r.key] ? fieldLink(r.key) : `<span class="mono">${esc(r.key)}</span>`) : ""}</td>
+        <td class="mono small">${r.from !== undefined ? esc(JSON.stringify(r.from)) : ""}</td><td class="mono small">${r.to !== undefined ? esc(JSON.stringify(r.to)) : ""}</td></tr>`).join("")}
+    </tbody></table></div>
+    <details><summary>Extraction brief the agent received (rendered from the resolved profile, not hand-written)</summary>
+      <div class="card"><pre class="brief">${esc(D.brief)}</pre></div></details>
+    <details><summary>Run manifest (excerpt)</summary><div class="card"><pre class="json">${jsonHTML(D.manifest)}</pre></div></details>`;
+  renderPages();
+  $("#d-items").addEventListener("click", e => { const b = e.target.closest(".item"); if (b) selectItem(b.dataset.id, false); });
+  $("#d-pages").addEventListener("click", e => { const m = e.target.closest("mark"); if (m) selectItem(m.dataset.ids.split(" ")[0], true); });
+  selectItem(D.records.find(r => r.common.record_kind === "claim").common.record_id, false);
+}
+function renderPages() {
+  const spans = D.records.map(r => ({ id: r.common.record_id, s: spanOf(r) })).filter(x => x.s);
+  $("#d-pages").innerHTML = D.pages.map((text, i) => {
+    const pg = i + 1, mine = spans.filter(x => x.s.page === pg);
+    const cuts = [...new Set([0, text.length, ...mine.flatMap(x => [x.s.a, x.s.b])])].filter(n => n >= 0 && n <= text.length).sort((a, b) => a - b);
+    let html = "";
+    for (let k = 0; k < cuts.length - 1; k++) {
+      const [a, b] = [cuts[k], cuts[k + 1]], seg = esc(text.slice(a, b));
+      const ids = mine.filter(x => x.s.a <= a && x.s.b >= b).map(x => x.id);
+      html += ids.length ? `<mark data-ids="${ids.join(" ")}">${seg}</mark>` : seg;
+    }
+    return `<div class="page" id="page-${pg}"><div class="ph">Page ${pg}</div><pre>${html}</pre></div>`;
+  }).join("");
+}
+function selectItem(id, fromText) {
+  DS.sel = id;
+  document.querySelectorAll("#d-items .item").forEach(b => b.classList.toggle("sel", b.dataset.id === id));
+  document.querySelectorAll("#d-pages mark").forEach(m => m.classList.toggle("sel", m.dataset.ids.split(" ").includes(id)));
+  const it = items().find(x => x.id === id);
+  const btn = document.querySelector(`#d-items .item[data-id="${id}"]`);
+  if (fromText && btn) btn.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  if (!fromText) { const m = document.querySelector("#d-pages mark.sel"); if (m) m.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+  const box = $("#d-detail");
+  if (it.type === "record") {
+    const ci = it.v.candidate_index;
+    const cand = ci != null ? D.candidates.candidates[ci] : null;
+    const warns = (it.v.warnings || []).map(w => `<li><span class="mono small">${esc(w.code)}</span> ${w.path && F[w.path] ? fieldLink(w.path) : ""} — ${esc(w.message)}</li>`).join("");
+    box.innerHTML = `<div class="card pad" style="margin-bottom:12px"><div class="row1" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span class="tag acc">${it.rec.common.record_kind}</span>${reviewTag(it.rec.common.review_status)}<span class="mono small">${esc(id)}</span>
+        <span class="muted small">locator: <span class="mono">${esc(it.rec.common.source_locator)}</span></span></div>
+        ${warns ? `<ul class="issues small">${warns}</ul>` : `<div class="small muted" style="margin-top:6px">No warnings: the quote was found on the stated page and every value appears in it.</div>`}</div>
+      <div class="grid2">
+        <div class="card"><div class="panel-h"><span>Candidate — written by the agent</span><span class="muted small">${cand ? "candidates[" + ci + "]" : "system record"}</span></div>
+          <pre class="json">${cand ? jsonHTML(cand) : '<span class="muted">No candidate: the pipeline creates this record for the input PDF itself (profile system record).</span>'}</pre></div>
+        <div class="card"><div class="panel-h"><span>Record — assembled and validated by the pipeline</span><span class="muted small">line ${it.v.line || "?"} of .jsonl</span></div>
+          <pre class="json">${jsonHTML(it.rec)}</pre></div>
+      </div>`;
+  } else {
+    const e = it.err;
+    box.innerHTML = `<div class="card pad" style="margin-bottom:12px"><span class="tag err">rejected</span> <span class="mono">${esc(e.code)}</span> — ${esc(e.message)}
+        <div class="small muted" style="margin-top:6px">Written to <code>.errors.jsonl</code>, never to the records file. The quote does not occur on the stated page or on the pages next to it, so the claim cannot be grounded in the paper.</div></div>
+      <div class="card"><div class="panel-h"><span>Rejected error record</span><span class="muted small">stage: ${esc(e.stage)}</span></div><pre class="json">${jsonHTML(e)}</pre></div>`;
+  }
+}
+
+// ---------------------------------------------------------------- record gallery
+function renderRecords() {
+  const html = DATA.gallery.map(g => {
+    const r = g.record, rows = [];
+    for (const grp of Object.keys(r)) for (const [k, v] of Object.entries(r[grp])) rows.push([grp + "." + k, v]);
+    return `<div class="card"><div class="pad" style="padding-bottom:8px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <h4 class="mono">${r.common.record_kind}</h4><span class="muted">${esc((C.record_kinds[r.common.record_kind] || {}).label_zh || "")}</span>
+        <span class="spacer" style="flex:1"></span><span class="tag">${esc(g.source)}</span></div>
+        <div class="small" style="margin-top:4px">${esc(summary(r))}</div><div class="small muted mono">${esc(g.file)}</div></div>
+      <div style="max-height:360px;overflow:auto;border-top:1px solid var(--border)"><table class="ftable"><tbody>
+        ${rows.map(([p, v]) => `<tr><td>${F[p] ? `${av(F[p].availability)} ` + fieldLink(p) : esc(p)}</td><td>${esc(typeof v === "string" ? v : JSON.stringify(v))}</td></tr>`).join("")}
+      </tbody></table></div></div>`;
+  }).join("");
+  $("#view-records").innerHTML = `<h2>Record examples</h2>
+    <p class="lead">One valid record per kind and origin: curated examples, pdf2jsonl output, legacy v1 migration and omics v2 migration. Every record
+      carries <code>schema_name</code> + <code>schema_version</code>, a stable <code>record_id</code> and provenance, and omits missing values. Field names link to the catalog.</p>
+    <div class="gal">${html}</div>`;
+}
+
+// ---------------------------------------------------------------- vocabularies
+function renderVocab(q = "") {
+  if (!$("#v-q")) {
+    $("#view-vocab").innerHTML = `<h2>Controlled vocabularies</h2>
+      <p class="lead"><b>error</b> vocabularies are enforced by the schema. <b>warning</b> vocabularies report unknown codes. <b>open</b> vocabularies only suggest codes.
+        Codes proposed by the repository for Chinese-only source lists are warning-level until confirmed.</p>
+      <div class="controls"><input type="search" id="v-q" placeholder="Search vocabulary, code or label…" aria-label="Search vocabularies"></div><div class="vgrid" id="v-grid"></div>`;
+    $("#v-q").addEventListener("input", e => renderVocab(e.target.value));
+  }
+  $("#v-q").value = q;
+  const s = q.trim().toLowerCase();
+  const used = v => C.fields.filter(f => f.vocabulary === v.name).map(f => fieldLink(f.path)).join(" ");
+  $("#v-grid").innerHTML = C.vocabularies.filter(v => !s || JSON.stringify(v).toLowerCase().includes(s)).map(v => `
+    <div class="card pad"><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><b class="mono">${v.name}</b><span class="muted">${esc(v.title_zh || "")}</span></div>
+      <div style="margin:6px 0;display:flex;gap:6px;flex-wrap:wrap"><span class="tag ${v.enforcement === "error" ? "err" : v.enforcement === "warning" ? "warn" : ""}">${v.enforcement}</span>
+        <span class="tag">${v.closure}</span><span class="tag">${v.code_status}</span></div>
+      <div class="small" style="margin-bottom:6px">${used(v) || '<span class="muted">not bound to a field</span>'}</div>
+      <table class="ftable"><tbody>${v.values.map(x => `<tr><td>${esc(x.code)}</td><td style="font-family:inherit">${esc(x.label_zh || "")}${x.aliases ? ` <span class="muted small">(${esc(x.aliases.join(", "))})</span>` : ""}</td></tr>`).join("")}</tbody></table></div>`).join("")
+    || '<p class="muted">No vocabulary matches.</p>';
+}
+
+// ---------------------------------------------------------------- rules & ambiguities
+function renderRules(amb) {
+  $("#view-rules").innerHTML = `<h2>Cross-field rules</h2>
+    <p class="lead">Rules taken from explicit source statements are <b>errors</b>. Anything only implied by the sources is a <b>warning</b>: the contract never enforces inferred semantics.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Severity</th><th>Basis</th><th>Kind</th><th>Rule (规则)</th><th>Fields</th></tr></thead><tbody>
+      ${C.rules.map(r => `<tr><td class="mono">${r.id}</td><td><span class="tag ${r.severity === "error" ? "err" : "warn"}">${r.severity}</span></td><td class="small">${r.basis}</td>
+        <td class="mono small">${r.kind}</td><td>${esc(r.title_zh)}</td><td class="small">${r.fields.map(p => p === "*" ? "<i>all fields</i>" : fieldLink(p)).join(" ")}</td></tr>`).join("")}
+    </tbody></table></div>
+    <h3>Ambiguity register</h3>
+    <p class="small muted">Where the sources are silent or disagree, the decision is recorded here instead of being made silently. <b>open</b> and <b>provisional</b> items await the data owners.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Status</th><th>Question (问题)</th><th>Finding</th><th>Resolution</th></tr></thead><tbody>
+      ${C.ambiguities.map(a => `<tr id="amb-${a.id}" ${a.id === amb ? 'style="outline:2px solid var(--accent)"' : ""}><td class="mono">${a.id}</td>
+        <td><span class="tag ${a.status === "decided" ? "ok" : a.status === "open" ? "warn" : ""}">${a.status}</span></td>
+        <td>${esc(a.title_zh)}</td><td class="small">${esc(a.finding_zh || "")}</td><td class="small">${esc(a.resolution_zh || "")}</td></tr>`).join("")}
+    </tbody></table></div>`;
+  if (amb) { const tr = document.getElementById("amb-" + amb); if (tr) tr.scrollIntoView({ block: "center" }); }
+}
+
+// ---------------------------------------------------------------- routing
+const rendered = new Set();
+function route() {
+  const [view, qs] = (location.hash.slice(1) || "overview").split("?");
+  const name = document.getElementById("view-" + view) ? view : "overview";
+  const params = new URLSearchParams(qs || "");
+  document.querySelectorAll("section.view").forEach(s => s.hidden = s.id !== "view-" + name);
+  document.querySelectorAll("nav.tabs a").forEach(a => a.classList.toggle("active", a.dataset.view === name));
+  if (name === "overview" && !rendered.has(name)) renderOverview();
+  if (name === "fields") {
+    if (!rendered.has(name)) renderFieldsShell();
+    if (qs !== undefined) {
+      Object.assign(FS, { q: params.get("q") || "", group: params.get("group") || "", profile: "", maturity: "", since: "", req: "", open: null });
+      FS.av = new Set(params.get("av") ? [params.get("av")] : AV);
+    }
+    syncFieldControls(); renderFieldRows();
+  }
+  if (name === "demo" && !rendered.has(name)) renderDemo();
+  if (name === "records" && !rendered.has(name)) renderRecords();
+  if (name === "vocab") renderVocab(params.get("q") || ($("#v-q") ? $("#v-q").value : ""));
+  if (name === "rules") renderRules(params.get("amb"));
+  rendered.add(name);
+  if (qs === undefined) window.scrollTo(0, 0);
+}
+$("#repo-link").href = DATA.repo;
+$("#foot").innerHTML = `Generated from release <b>${esc(C.version)}</b> of <span class="mono">${esc(C.name)}</span> and the checked-in examples by
+  <span class="mono">scripts/make_site.py</span>. All example papers and data are synthetic. <a href="${DATA.repo}">Source on GitHub</a>.`;
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
