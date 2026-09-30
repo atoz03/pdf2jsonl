@@ -14,6 +14,7 @@ from pathlib import Path
 
 from .compile import compile_contract, field_index, resolve_all_profiles
 from .docs_gen import generate_docs
+from .functions import field_facets, source_card, source_functions
 from .release import build_artifacts, changelog_date, load_index, verify_release
 from .sources import Sources, load_sources, meta_validate
 from .util import ContractError, load_json, load_yaml, parse_semver
@@ -76,6 +77,7 @@ def check_catalog(src: Sources) -> list[Finding]:
                 err(f"{p}: replaced_by {f['replaced_by']} does not exist")
             if f["required"] == "Y":
                 err(f"{p}: a deprecated field cannot be required (Y)")
+    out += check_field_functions(cat)
     for tname, t in cat["types"].items():
         for fp in (t.get("item") or {}).get("from_fields") or []:
             if fp not in seen:
@@ -102,6 +104,13 @@ def check_catalog(src: Sources) -> list[Finding]:
         def walk(c: dict) -> None:
             for sub in c.get("all", []) + c.get("any", []):
                 walk(sub)
+            if "matches" in c:
+                if r["severity"] == "error":
+                    err(f"rule {r['id']}: `matches` conditions cannot be error rules (not expressible in JSON Schema)")
+                try:
+                    re.compile(c["matches"])
+                except re.error as e:
+                    err(f"rule {r['id']}: invalid pattern {c['matches']!r}: {e}")
             if c.get("field") == "common.record_kind":
                 for k in c.get("in", [c.get("equals")]):
                     if kinds and k not in kinds:
@@ -127,6 +136,59 @@ def check_catalog(src: Sources) -> list[Finding]:
         for a in prof.get("ambiguities") or []:
             if a not in amb:
                 err(f"profile {name}: unknown ambiguity {a}")
+    return out
+
+
+def check_field_functions(cat: dict) -> list[Finding]:
+    """key_role / serves / argument_role must use declared codes; source-stated functions are never dropped."""
+    out: list[Finding] = []
+    err = lambda m: out.append(Finding("error", "catalog", m))  # noqa: E731
+    codes = cat["codes"]
+    functions, roles, arg_roles, cards = (set(codes.get(k) or {})
+                                          for k in ("function", "key_role", "argument_role", "card"))
+    families = set(codes.get("key_role_family") or {})
+    for name, spec in (codes.get("key_role") or {}).items():
+        if spec.get("family") not in families:
+            err(f"key_role {name}: unknown family {spec.get('family')!r}")
+        for fn, facets in (spec.get("facets") or {}).items():
+            known = set((codes["function"].get(fn) or {}).get("facets") or {})
+            if fn not in functions or not known:
+                err(f"key_role {name}: facets for unknown function {fn}")
+            elif set(facets) - known:
+                err(f"key_role {name}: unknown {fn} facets {sorted(set(facets) - known)}")
+        missing = {"kg", "rdb", "triple", "qa_corpus"} - set(spec.get("projection") or {})
+        if missing:
+            err(f"key_role {name}: projection lacks {sorted(missing)}")
+    for g, spec in cat["groups"].items():
+        for fn in spec.get("serves") or []:
+            if fn not in functions:
+                err(f"group {g}: unknown function {fn}")
+    used_roles = set()
+    for f in cat["fields"]:
+        p = f["path"]
+        if f.get("key_role") not in roles:
+            err(f"{p}: unknown key_role {f.get('key_role')!r}")
+        used_roles.add(f.get("key_role"))
+        for fn in f.get("serves") or []:
+            if fn not in functions:
+                err(f"{p}: unknown function {fn}")
+        if f.get("argument_role") and f["argument_role"] not in arg_roles:
+            err(f"{p}: unknown argument_role {f['argument_role']!r}")
+        if f.get("card") and f["card"] not in cards:
+            err(f"{p}: unknown card {f['card']!r}")
+        stated = source_card(cat, f)
+        if stated and f.get("card") != stated:
+            err(f"{p}: card must be {stated} (downstream: {f['downstream_zh']})")
+        dropped = [fn for fn in source_functions(cat, f) if fn not in (f.get("serves") or [])]
+        if dropped:
+            err(f"{p}: serves drops source-stated function(s) {dropped} (downstream: {f['downstream_zh']})")
+        empty = [fn for fn, facets in field_facets(cat, f).items() if not facets]
+        if empty:
+            err(f"{p}: key_role {f.get('key_role')} names no facet for {empty}")
+        if f["maturity"] == "verified" and not source_functions(cat, f):
+            err(f"{p}: verified field whose downstream statement maps to no function")
+    for name in sorted(roles - used_roles):
+        out.append(Finding("warning", "catalog", f"key_role {name} is declared but used by no field"))
     return out
 
 

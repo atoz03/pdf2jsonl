@@ -15,8 +15,9 @@ profiles/*.yaml                   ─┘                   contract.json, record
                                                                              validation, outputs)
 ```
 
-**Live demo:** https://atoz03.github.io/pdf2jsonl/ — field catalog browser, PDF → JSONL walk-through, record examples,
-vocabularies and rules, generated from the latest release by `scripts/make_site.py`.
+**Live demo:** https://atoz03.github.io/pdf2jsonl/ — field catalog browser with key roles and functions, PDF → JSONL
+walk-through with the evidence-chain audit, record examples, vocabularies and rules, generated from the latest release
+by `scripts/make_site.py`.
 
 ## Contents
 
@@ -30,16 +31,21 @@ vocabularies and rules, generated from the latest release by `scripts/make_site.
 | `schemas/runtime/` | JSON Schemas for run outputs (manifest, validation report, error records, bundle, migration report) |
 | `mappings/` | Legacy v1 and omics v2 → current contract mappings, with issue registers |
 | `sources/` | Immutable original inputs (see `sources/SOURCES.md`) |
-| `src/breeding_contract/` | Contract tooling: compile, release, resolve, validate, migrate, bundle (`bdc` CLI) |
+| `src/breeding_contract/` | Contract tooling: compile, release, resolve, validate, migrate, bundle, derive, audit (`bdc` CLI) |
 | `skills/pdf2jsonl/` | The Skill: `SKILL.md`, extraction brief template, runtime (`scripts/pdf2jsonl`) |
-| `docs/` | Architecture, versioning, source analysis, migration; `docs/generated/` is built from the catalog |
+| `docs/` | Architecture, versioning, source analysis, migration, key roles and functions; `docs/generated/` is built from the catalog |
 | `examples/` | Synthetic paper, curated records, pipeline output, migration output, invalid cases |
-| `tests/` | pytest suite (catalog fidelity, releases, validation, pipeline, Skill sync, migrations, bundles) |
+| `tests/` | pytest suite (catalog fidelity, releases, validation, pipeline, Skill sync, migrations, bundles, functions and evidence chain) |
 
-## Contract at a glance (3.1.0)
+## Contract at a glance (3.2.0)
 
-- 388 fields in five groups: `common` 170, `agent` 55, `skills` 52, `transform` 43, `omics` 68.
-  The 259 v3.0.0 fields are `verified` and verbatim; the 129 fields added in 3.1.0 are `provisional`.
+- 397 fields in five groups: `common` 174, `agent` 57, `skills` 53, `transform` 45, `omics` 68.
+  The 259 v3.0.0 fields are `verified` and verbatim; the 138 fields added in 3.1.0 and 3.2.0 are `provisional`.
+- Every key states **what it does** (`key_role`, 25 roles with their projection into graph, tables, triples and
+  QA/corpora) and **which function it serves** (`serves`): Topic 2 agent, Topic 3 skills, derivation into
+  KG / relational DB / QA / corpus / triples, and our own iteration (Topic 1). Topic 2/3 fields also name their
+  card, and evidence-chain fields their Toulmin/Flavell element (after TRACE). Functions stated by the source
+  are kept apart from repository additions. See `docs/field_functions.md`.
 - Nested records: the field `common.record_id` is `{"common": {"record_id": ...}}`.
 - Availability codes are semantics, not quality: **D** direct extraction, **N** normalized by rules,
   **I** human judgement, **G** generated later, **F** future source. Requirement codes **Y / C / N**.
@@ -47,10 +53,11 @@ vocabularies and rules, generated from the latest release by `scripts/make_site.
 - Every record carries `common.schema_name` and `common.schema_version`, a stable `common.record_id`
   (`rec_` + 32 hex), provenance (`source_id`, `source_locator`, page and verbatim quote for paper evidence),
   and a `review_status`.
-- 30 cross-field rules: explicit source statements are errors, inferred ones are warnings only.
-- 31 ambiguities are registered in the catalog (`AMB-001` … `AMB-031`) instead of being silently decided.
+- 32 cross-field rules (20 errors, 12 warnings): explicit source statements are errors, inferred ones are warnings only.
+- 36 ambiguities are registered in the catalog (`AMB-001` … `AMB-036`) instead of being silently decided.
 
-See `docs/generated/field_dictionary.md` (also `.csv`; `bdc generate --xlsx out.xlsx` for Excel).
+See `docs/generated/field_dictionary.md` (also `.csv`; `bdc generate --xlsx out.xlsx` for Excel) and
+`docs/generated/field_functions.md` (every key by function, with its role and facets).
 
 ## Quick start
 
@@ -71,7 +78,8 @@ skills/pdf2jsonl/scripts/pdf2jsonl paper.pdf --profile pdf_extraction --schema-v
 
 Outputs: `paper.jsonl` (records), `paper.validation.json`, `paper.errors.jsonl` (rejected candidates, never
 written as records), `paper.manifest.json` (contract identity, input hash, backend, environment, output hashes);
-`--bundle` adds `paper.bundle.json`. Other backends: `--candidates file.json`, `--backend mock`,
+`--bundle` adds `paper.bundle.json`. The validation report includes `argument_structure`, the evidence-chain audit
+(which statements are linked to data and methods, and which hedges or links are missing). Other backends: `--candidates file.json`, `--backend mock`,
 `--backend module:callable`.
 
 To make the Skill available to Claude Code in this repository, `.claude/skills/pdf2jsonl` links to
@@ -84,7 +92,7 @@ from breeding_contract import resolve_schema, load_profile, load_field_catalog, 
 
 rc = resolve_schema("latest")                  # or "3.0.0", or "dev" (unreleased working tree)
 profile = load_profile("pdf_extraction", "latest")
-catalog = load_field_catalog("3.1.0")
+catalog = load_field_catalog("3.2.0")
 result = validate_record(record)               # validates against the version the record declares
 result.valid, [i.to_dict() for i in result.errors]
 ```
@@ -101,6 +109,8 @@ result.valid, [i.to_dict() for i in result.errors]
 | `bdc diff A B` | Field-level diff between two versions |
 | `bdc migrate legacy F --out DIR --page-offset N` / `bdc migrate omics F --out DIR` | Convert legacy v1 documents / omics template instances |
 | `bdc bundle F.jsonl [--legacy-v1]` | Derive the per-document view (or the legacy v1 layout) from records |
+| `bdc derive F.jsonl --out DIR` | Function 3: relational tables (CSV), knowledge-graph triples and an evidence corpus, driven by `key_role` |
+| `bdc audit F.jsonl [--json]` | Evidence-chain audit (Toulmin/Flavell elements, link closure, review flags; no score) |
 
 ## Changing the contract
 
@@ -117,4 +127,6 @@ result.valid, [i.to_dict() for i in result.errors]
 - `docs/architecture.md` — components, data flow, pipeline stages, invariants
 - `docs/versioning.md` — semantic versioning of the contract, releases, `latest`/`dev`, compatibility
 - `docs/source_analysis.md` — the three source designs, their inconsistencies and the merge decisions
-- `docs/migration.md` — legacy v1 / omics v2 migration and the derived `document_bundle` view
+- `docs/migration.md` — legacy v1 / omics v2 migration and the derived views (`document_bundle`, `bdc derive`)
+- `docs/field_functions.md` — what every key is for: roles, the four functions, cards, the evidence chain (TRACE),
+  derived views and the audit

@@ -19,6 +19,8 @@ for p in (ROOT / "src", ROOT / "skills/pdf2jsonl/scripts"):
     sys.path.insert(0, str(p))
 
 from breeding_contract.api import available_versions, resolve_schema  # noqa: E402
+from breeding_contract.derive import Deriver  # noqa: E402
+from breeding_contract.functions import source_functions  # noqa: E402
 from breeding_contract.schema_gen import rule_paths  # noqa: E402
 from breeding_contract.util import load_json  # noqa: E402
 
@@ -26,7 +28,7 @@ EX = ROOT / "examples"
 PAPER = "synthetic_rice_qtl"
 FIELD_KEYS = ("path", "group", "type", "availability", "required", "definition_zh", "data_source_zh",
               "downstream_zh", "since", "status", "maturity", "origin", "vocabulary", "ambiguities", "source_ref",
-              "constraints")
+              "constraints", "key_role", "serves", "card", "argument_role")
 
 
 def jsonl(path: Path) -> list[dict]:
@@ -52,7 +54,8 @@ def contract_data(rc) -> dict:
     return {
         "name": c["name"], "version": rc.version, "title_zh": c["title_zh"], "baseline_zh": c.get("baseline_zh"),
         "codes": c["codes"], "groups": c["groups"], "record_kinds": c["record_kinds"],
-        "fields": [{k: f[k] for k in FIELD_KEYS if f.get(k) not in (None, [], {})} for f in c["fields"]],
+        "fields": [{**{k: f[k] for k in FIELD_KEYS if f.get(k) not in (None, [], {})},
+                    "serves_src": source_functions(c, f)} for f in c["fields"]],
         "rules": [{"id": r["id"], "severity": r["severity"], "basis": r["basis"], "kind": r["kind"],
                    "title_zh": r["title_zh"], "fields": rule_paths(r)} for r in c["rules"]],
         "vocabularies": vocabs,
@@ -71,15 +74,29 @@ def demo_data(rc) -> dict:
     version = manifest["contract"]["schema_version"]
     doc = parse_document(EX / "papers" / f"{PAPER}.pdf")
     rc_demo, profile = resolve_contract(version, "pdf_extraction", False)
+    records = jsonl(out / f"{PAPER}.jsonl")
+    deriver = Deriver(rc_demo.contract)
+    tables, triples, corpus = deriver.tables(records), deriver.triples(records), deriver.corpus(records)
     return {
         "file_name": f"{PAPER}.pdf",
         "pages": [p.text for p in doc.pages],
         "candidates": load_json(EX / "papers" / f"{PAPER}.candidates.json"),
-        "records": jsonl(out / f"{PAPER}.jsonl"),
+        "records": records,
         "errors": jsonl(out / f"{PAPER}.errors.jsonl"),
         "validation": load_json(out / f"{PAPER}.validation.json"),
         "manifest": {k: manifest[k] for k in ("run_id", "contract", "profile", "input", "backend", "counts")},
         "brief": render_brief(rc_demo, profile, "pages.txt", "candidates.json", "candidate.schema.json"),
+        "record_links": profile.get("record_links") or {},
+        # function 3 on the demo output (`bdc derive`): counts plus the rows a reader can check by eye
+        "derived": {
+            "counts": {**{f"table:{k}": len(v) for k, v in tables.items()}, "triples": len(triples),
+                       "corpus_chunks": len(corpus)},
+            "record_links": tables["record_links"],
+            "statements": [t for t in triples if "statement" in t],
+            "entity_triples": list({t["p"]: t for t in reversed(triples) if t["o_kind"] == "iri"
+                                    and str(t["o"]).startswith(("ent:", "rec:")) and t["s"].startswith("rec:")}.values())[::-1],
+            "corpus": corpus[:4],
+        },
     }
 
 

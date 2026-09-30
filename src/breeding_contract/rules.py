@@ -15,7 +15,7 @@ from .util import MISSING, get_path, iter_fields, iter_strings, split_path
 
 RECORD_RULE_KINDS = {"required_when", "require_any_when", "paired", "mutually_exclusive", "lte",
                      "equals_any_field", "forbid_pattern", "grain_matches_kind"}
-DATASET_RULE_KINDS = {"unique_within_dataset", "single_value_per_group"}
+DATASET_RULE_KINDS = {"unique_within_dataset", "single_value_per_group", "references_resolve"}
 
 
 @dataclass
@@ -57,6 +57,8 @@ def eval_condition(cond: dict, record: dict) -> bool:
             return value == cond["equals"]
         if "in" in cond:
             return value in cond["in"]
+        if "matches" in cond:
+            return any(_compiled(cond["matches"]).search(s) for s in iter_strings(value))
     raise ValueError(f"unsupported condition: {cond}")
 
 
@@ -152,6 +154,17 @@ def check_dataset_rule(rule: dict, records: list[dict]) -> list[tuple[int, Issue
                                      rule["id"])))
             else:
                 groups.setdefault(g, (v, i))
+    elif rule["kind"] == "references_resolve":
+        known = {v for rec in records for v in iter_strings(get_path(rec, rule["target"], None) or [])}
+        for i, rec in enumerate(records):
+            for p in rule["fields"]:
+                value = get_path(rec, p)
+                if value is MISSING:
+                    continue
+                dangling = [v for v in iter_strings(value) if v not in known]
+                if dangling:
+                    out.append((i, Issue(code, sev, p, f"{title}：{', '.join(dangling)} 不在本数据集的 "
+                                                       f"{rule['target']} 中", rule["id"], {"unresolved": dangling})))
     return out
 
 
@@ -172,6 +185,8 @@ def _cond_schema(cond: dict) -> dict:
     if "any_present" in cond:
         return {"anyOf": [_present_schema(p) for p in cond["any_present"]]}
     g, n = split_path(cond["field"])
+    if "matches" in cond:  # only warning rules use `matches` (bdc check): Python regex flags are not ECMA-262
+        raise ValueError(f"condition {cond} is not expressible in JSON Schema")
     value_schema = {"const": cond["equals"]} if "equals" in cond else {"enum": cond["in"]}
     return {"required": [g], "properties": {g: {"required": [n], "properties": {n: value_schema}}}}
 

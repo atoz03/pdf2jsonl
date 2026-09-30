@@ -22,7 +22,12 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - run: pip install -e '.[pdf]'
+      - run: pip install -e '.[dev]'
+      # Never publish a site built from a contract or examples that fail the gate.
+      - name: Contract consistency
+        run: bdc check --strict
+      - name: Tests
+        run: pytest -q
       - name: Build the demo site from the latest release and examples
         run: python scripts/make_site.py --out _site
       - uses: actions/upload-pages-artifact@v5

@@ -10,6 +10,8 @@ mappings against these files, so any divergence from the sources is deliberate a
 | `archives/fields_v3__jsonl.zip` | `jsonl.zip` (contains `字段/`) | v3.0.0 field specification (authoritative) | `9f6d0b33b014966f538a0270995e6ea62b00589e29698d95d8f54dfec0a4c786` |
 | `archives/legacy_v1__Jsonl.zip` | `Jsonl.zip` (contains `Jsonl/`) | legacy v1.0.0 document-centric design | `dedf9fa9576c162e18b98d08cdc366e853386737fb0922a23a578b84ffdb0b52` |
 | `omics_v2/omics_metadata_template.json` | `omics_metadata_template.json` | multi-omics candidate template 2.0.0 | `608c4b84924de6149cdd3ec4e4b2385f9e4ba5d0088f05aa74f02f80d83682e0` |
+| `project/record_functions.md` | data owner's requirement (2026-09-30), verbatim with the list line breaks restored | the four functions every key must serve (`key_role`, `serves`) | `8f00e7b4154da51bdc4e34e5d62bf5f4db1e878bdc339b013ca7b3c8fdd62f08` |
+| `project/research_contents.md` | project research contents supplied by the data owner (2026-09-30), verbatim | definition of Topics 1–3; basis of the four record functions (`codes.function`, AMB-032) | `498fa2f3323a73ba9362f4915a1ebc25001a9b357d04b10d03d4f88a542cc386` |
 
 Extracted members (byte-identical to the archive members):
 

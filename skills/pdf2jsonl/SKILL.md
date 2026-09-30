@@ -27,13 +27,19 @@ Launcher: `scripts/pdf2jsonl` in this skill directory. It works through a symlin
 3. **Extract.** Read `brief.md` completely, then `pages.txt`, page by page. Write
    `out/paper.work/candidates.json` exactly as the brief and `candidate.schema.json` describe. Long papers can
    be done in page batches that are appended to the same `candidates` array.
+   When the paper itself connects statements (a conclusion rests on a result, a result was produced by a
+   method), give the target candidate a short `ref` and list it under the source candidate's `links`. The
+   brief names the link types the profile allows. Keep the author's hedging words and stated limitations
+   verbatim in the fields the brief lists under "Evidence chain".
 4. **Finalize.** Run the same command as in step 2 again (or `scripts/pdf2jsonl finalize out/paper.work`).
    The pipeline then:
    - verifies every quote against the PDF text;
    - assembles records: identifiers, locators, schema version, normalized values and review fields are
      computed, never taken from you;
    - validates the records against the pinned contract;
-   - writes `paper.jsonl`, `paper.validation.json`, `paper.errors.jsonl` and `paper.manifest.json`.
+   - turns `links` into record IDs; a link to a rejected candidate is dropped and flagged, never guessed;
+   - writes `paper.jsonl`, `paper.validation.json` (including the evidence-chain audit `argument_structure`),
+     `paper.errors.jsonl` and `paper.manifest.json`.
 5. **Repair and re-run.** Read `paper.errors.jsonl` and the warnings in `paper.validation.json`. Fix
    `candidates.json` and finalize again; outputs are overwritten deterministically.
    - `EVIDENCE_QUOTE_NOT_FOUND`: copy the quote verbatim from the page, or drop the candidate if the paper does
@@ -41,10 +47,14 @@ Launcher: `scripts/pdf2jsonl` in this skill directory. It works through a symlin
    - `RECORD_INVALID`: follow the issue messages (wrong type, vocabulary code, missing paired field, …).
    - Value-presence warnings: a value is not literally on the evidence page. Correct it, or accept that the
      record stays `pending_review`.
+   - `CANDIDATE_LINK_*` warnings: fix the `ref` / `links`, or remove a link the paper does not state.
+   - Audit flags in `argument_structure` (for example `NO_WARRANT`, `QUALIFIER_NOT_CAPTURED`) are review hints.
+     Add a link or a hedge only when the paper states it.
    Never "fix" a record by inventing content.
 6. **Report** to the user:
    - the resolved contract version and profile;
    - records accepted / rejected / pending review;
+   - the evidence-chain summary (statements, unresolved links, audit flags);
    - the output paths;
    - any ambiguity you left unresolved.
 
@@ -74,3 +84,5 @@ Launcher: `scripts/pdf2jsonl` in this skill directory. It works through a symlin
 - `--backend mock`: a deterministic rule-based smoke test with no model.
 - `scripts/pdf2jsonl validate out/paper.jsonl`: validates each record against the version it declares.
 - `scripts/pdf2jsonl bundle out/paper.jsonl [--legacy-v1]`: derives the per-paper `document_bundle` view.
+- `bdc derive out/paper.jsonl --out derived/` and `bdc audit out/paper.jsonl` (repository CLI): relational tables,
+  triples and an evidence corpus, and the evidence-chain audit on any record set.

@@ -25,3 +25,5 @@ jobs:
         run: |
           bdc generate
           git diff --exit-code -- docs/generated
+      - name: Demo site builds
+        run: python scripts/make_site.py --out _site

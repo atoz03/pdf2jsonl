@@ -3,11 +3,11 @@
   "run_id": "run_example",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "release_status": "released",
-    "requested": "3.1.0",
-    "release_sha256": "eb0027a4236a6f3edcad5f6940e7f6e6dd16937cd04844dbdfe2f71ae43ca476",
-    "source_digest": "88102faf40ff9300e1adc38029dd9110c8e5904808006978c97548c93789bf98"
+    "requested": "3.2.0",
+    "release_sha256": "a2c74ea2b1a5ab73c616addc18967fbd67055a3aa54f8cf16fda0eb8185e3aa2",
+    "source_digest": "6d7a7c67d100998d94393f532c323d8105a5d544328cc168ca2b349b9e6ce6e5"
   },
   "profile": "pdf_extraction",
   "input": {
@@ -17,20 +17,20 @@
   "valid": true,
   "counts": {
     "pages": 3,
-    "candidates": 10,
-    "records": 10,
+    "candidates": 18,
+    "records": 18,
     "rejected": 1,
     "by_record_kind": {
       "analysis_result": 1,
       "asset_manifest": 1,
-      "claim": 4,
-      "method": 1,
-      "observation": 1,
-      "phenotype_observation": 2
+      "claim": 6,
+      "method": 4,
+      "observation": 2,
+      "phenotype_observation": 4
     },
     "by_review_status": {
-      "auto_validated": 8,
-      "pending_review": 2
+      "auto_validated": 15,
+      "pending_review": 3
     },
     "rejected_by_code": {
       "EVIDENCE_QUOTE_NOT_FOUND": 1
@@ -69,28 +69,28 @@
     },
     {
       "line": 2,
-      "record_id": "rec_828955fbf1c3d2acf5c43230fa88afc7",
+      "record_id": "rec_f14cf35540cd343ba197afdbb0d1be2b",
       "record_kind": "claim",
       "candidate_index": 0,
       "warnings": []
     },
     {
       "line": 3,
-      "record_id": "rec_2c2f3dbf70914eef12331dd0d89cfd7e",
+      "record_id": "rec_08e1eb43367c113a51a822ef0ada8cc6",
       "record_kind": "claim",
       "candidate_index": 1,
       "warnings": []
     },
     {
       "line": 4,
-      "record_id": "rec_dd7b60a23157d0181674f4f12c1ac9d0",
+      "record_id": "rec_0d7dc45bbe58a92d202e012510f6dddc",
       "record_kind": "method",
       "candidate_index": 2,
       "warnings": []
     },
     {
       "line": 5,
-      "record_id": "rec_b3dcb9b22b1ca801ce5df6237f5eb126",
+      "record_id": "rec_58945dadf226ce0677fd88b024dd1890",
       "record_kind": "phenotype_observation",
       "candidate_index": 3,
       "warnings": [],
@@ -109,7 +109,7 @@
     },
     {
       "line": 6,
-      "record_id": "rec_0ed2e8a5d40980ef327894598a52be54",
+      "record_id": "rec_7ad570828311c1f25637f155d78554a1",
       "record_kind": "phenotype_observation",
       "candidate_index": 4,
       "warnings": [],
@@ -128,7 +128,7 @@
     },
     {
       "line": 7,
-      "record_id": "rec_d61a1c256e2c34e8f90d732f2c2f67c4",
+      "record_id": "rec_9910a284bbd3c46723b782ae6036dcf8",
       "record_kind": "observation",
       "candidate_index": 5,
       "warnings": [],
@@ -148,7 +148,7 @@
     },
     {
       "line": 8,
-      "record_id": "rec_75d35ed34cbebb046a94c6e247a5dc60",
+      "record_id": "rec_8cb15f3fc682966f331e99645d1feeee",
       "record_kind": "analysis_result",
       "candidate_index": 6,
       "warnings": [],
@@ -160,7 +160,7 @@
     },
     {
       "line": 9,
-      "record_id": "rec_18bf9222499634af1d778fb417e7d6d8",
+      "record_id": "rec_7f5dffa5d004f757faf37699f6e0de97",
       "record_kind": "claim",
       "candidate_index": 7,
       "warnings": [
@@ -178,10 +178,101 @@
     },
     {
       "line": 10,
-      "record_id": "rec_9befd96dbb0b420dc2a64adeb5f73c5b",
+      "record_id": "rec_2948c949662fc366580763be4eb34923",
       "record_kind": "claim",
       "candidate_index": 9,
       "warnings": []
+    },
+    {
+      "line": 11,
+      "record_id": "rec_72ee809732015a8cf903d7fa3a40fee2",
+      "record_kind": "phenotype_observation",
+      "candidate_index": 10,
+      "warnings": [],
+      "notes": {
+        "normalization": [
+          {
+            "raw_value": "92.1",
+            "raw_unit": "cm",
+            "result": {
+              "value": 92.1,
+              "unit": "cm"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "line": 12,
+      "record_id": "rec_360ccac261cdf8ece2775e4d8e03ba1a",
+      "record_kind": "phenotype_observation",
+      "candidate_index": 11,
+      "warnings": [],
+      "notes": {
+        "normalization": [
+          {
+            "raw_value": "95.3",
+            "raw_unit": "cm",
+            "result": {
+              "value": 95.3,
+              "unit": "cm"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "line": 13,
+      "record_id": "rec_5c53b13c583f012777560afb901f0896",
+      "record_kind": "method",
+      "candidate_index": 12,
+      "warnings": []
+    },
+    {
+      "line": 14,
+      "record_id": "rec_37b7608caa93e974bb0d2751a826bfed",
+      "record_kind": "method",
+      "candidate_index": 13,
+      "warnings": []
+    },
+    {
+      "line": 15,
+      "record_id": "rec_ce342cc427ccb1192ae32b4ea3604dea",
+      "record_kind": "method",
+      "candidate_index": 14,
+      "warnings": []
+    },
+    {
+      "line": 16,
+      "record_id": "rec_08d03e69158c60bdfa90aa5cf0cc1dc1",
+      "record_kind": "observation",
+      "candidate_index": 15,
+      "warnings": []
+    },
+    {
+      "line": 17,
+      "record_id": "rec_2c945a65b48e06c883660614fcf44b19",
+      "record_kind": "claim",
+      "candidate_index": 16,
+      "warnings": []
+    },
+    {
+      "line": 18,
+      "record_id": "rec_09bf178c22a0ac588f5a8562bac5075f",
+      "record_kind": "claim",
+      "candidate_index": 17,
+      "warnings": [
+        {
+          "code": "CANDIDATE_LINK_UNRESOLVED",
+          "severity": "warning",
+          "path": "agent.evidence_record_ids",
+          "message": "evidence 引用的候选 'c_fake' 不存在或未被接受",
+          "detail": {
+            "link": "evidence",
+            "ref": "c_fake"
+          }
+        }
+      ]
     }
   ],
   "rejected": [
@@ -242,5 +333,188 @@
       "reason": "computed_by_pipeline"
     }
   ],
-  "system_records_skipped": []
+  "system_records_skipped": [],
+  "argument_structure": {
+    "audit_format": 1,
+    "basis": "TRACE (arXiv:2605.29656): Toulmin + Flavell elements via catalog argument_role (AMB-033); reports structure and connectivity, not correctness",
+    "statements": 6,
+    "coverage": {
+      "claim": {
+        "own": 5,
+        "chain": 5
+      },
+      "data": {
+        "own": 6,
+        "chain": 6
+      },
+      "warrant": {
+        "own": 2,
+        "chain": 4
+      },
+      "backing": {
+        "own": 0,
+        "chain": 0
+      },
+      "qualifier": {
+        "own": 1,
+        "chain": 1
+      },
+      "rebuttal": {
+        "own": 0,
+        "chain": 0
+      },
+      "monitoring": {
+        "own": 3,
+        "chain": 3
+      },
+      "evaluation": {
+        "own": 6,
+        "chain": 6
+      }
+    },
+    "links": {
+      "total": 5,
+      "unresolved": 0
+    },
+    "flags": {
+      "NO_WARRANT": 2
+    },
+    "flag_help": {
+      "NO_WARRANT": "no warrant in the chain: no statistical test, evidence type or linked method"
+    },
+    "records": [
+      {
+        "record_id": "rec_f14cf35540cd343ba197afdbb0d1be2b",
+        "record_kind": "claim",
+        "elements": [
+          "claim",
+          "data",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "claim",
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "links": {
+          "agent.evidence_record_ids": [
+            "rec_8cb15f3fc682966f331e99645d1feeee"
+          ]
+        },
+        "supports": [
+          "rec_09bf178c22a0ac588f5a8562bac5075f"
+        ]
+      },
+      {
+        "record_id": "rec_08e1eb43367c113a51a822ef0ada8cc6",
+        "record_kind": "claim",
+        "elements": [
+          "claim",
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "claim",
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "links": {
+          "agent.evidence_record_ids": [
+            "rec_8cb15f3fc682966f331e99645d1feeee"
+          ],
+          "skills.method_record_ids": [
+            "rec_0d7dc45bbe58a92d202e012510f6dddc"
+          ]
+        }
+      },
+      {
+        "record_id": "rec_8cb15f3fc682966f331e99645d1feeee",
+        "record_kind": "analysis_result",
+        "elements": [
+          "data",
+          "warrant",
+          "monitoring",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "data",
+          "warrant",
+          "monitoring",
+          "evaluation"
+        ],
+        "links": {
+          "skills.method_record_ids": [
+            "rec_0d7dc45bbe58a92d202e012510f6dddc"
+          ]
+        },
+        "supports": [
+          "rec_08e1eb43367c113a51a822ef0ada8cc6",
+          "rec_f14cf35540cd343ba197afdbb0d1be2b"
+        ]
+      },
+      {
+        "record_id": "rec_7f5dffa5d004f757faf37699f6e0de97",
+        "record_kind": "claim",
+        "elements": [
+          "claim",
+          "data",
+          "monitoring",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "claim",
+          "data",
+          "monitoring",
+          "evaluation"
+        ],
+        "flags": [
+          "NO_WARRANT"
+        ]
+      },
+      {
+        "record_id": "rec_2948c949662fc366580763be4eb34923",
+        "record_kind": "claim",
+        "elements": [
+          "claim",
+          "data",
+          "qualifier",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "claim",
+          "data",
+          "qualifier",
+          "evaluation"
+        ],
+        "flags": [
+          "NO_WARRANT"
+        ]
+      },
+      {
+        "record_id": "rec_09bf178c22a0ac588f5a8562bac5075f",
+        "record_kind": "claim",
+        "elements": [
+          "claim",
+          "data",
+          "monitoring",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "claim",
+          "data",
+          "warrant",
+          "monitoring",
+          "evaluation"
+        ],
+        "links": {
+          "agent.evidence_record_ids": [
+            "rec_f14cf35540cd343ba197afdbb0d1be2b"
+          ]
+        }
+      }
+    ]
+  }
 }

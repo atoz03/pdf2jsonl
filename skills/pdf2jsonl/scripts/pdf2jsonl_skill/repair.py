@@ -8,11 +8,24 @@ never guessed.
 """
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass, field
 from typing import Any
 
 EMPTY = (None, "", [], {})
+_REF = re.compile(r"^[A-Za-z0-9_.:-]{1,64}$")
+
+
+def non_finite(value: Any) -> bool:
+    """NaN/Infinity anywhere in a JSON value (Python's json accepts them; JSON and every validator do not)."""
+    if isinstance(value, float):
+        return not math.isfinite(value)
+    if isinstance(value, list):
+        return any(non_finite(v) for v in value)
+    if isinstance(value, dict):
+        return any(non_finite(v) for v in value.values())
+    return False
 _NUM = re.compile(r"^[-+]?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?(?:[eE][-+]?\d+)?$")
 _INT = re.compile(r"^[-+]?(?:\d+|\d{1,3}(?:,\d{3})+)$")
 
@@ -44,6 +57,7 @@ class Repairer:
                                  if role in ("page", "section", "quote", "table_figure", "row_key", "column_key")}
         self.evidence_roles = set(self.evidence_role_of.values())
         self.kinds = list(profile.get("model_record_kinds") or [])
+        self.links = set(profile.get("record_links") or {})
         self.vocab_maps: dict[str, dict[str, str]] = {}
         for name, voc in profile["vocabularies"].items():
             m: dict[str, str] = {}
@@ -144,11 +158,18 @@ class Repairer:
                 v = v.strip()
             if v in EMPTY:
                 continue
+            if non_finite(v):
+                log.add(where, "dropped_non_finite_number", f"evidence.{role}")
+                continue
             if role == "page" and isinstance(v, str) and v.isdigit():
                 log.add(where, "coerced_type", "evidence.page", **{"from": v, "to": int(v)})
                 v = int(v)
             elif role != "page" and isinstance(v, (int, float)) and not isinstance(v, bool):
+                log.add(where, "coerced_type", f"evidence.{role}", **{"from": v, "to": str(v)})
                 v = str(v)
+            if role != "page" and not isinstance(v, str):
+                log.add(where, "dropped_malformed_evidence_value", f"evidence.{role}", type=type(v).__name__)
+                continue
             out[role] = v
         return out
 
@@ -163,6 +184,9 @@ class Repairer:
                 continue
             if v in EMPTY:
                 log.add("document", "dropped_empty_value", path)
+                continue
+            if non_finite(v):
+                log.add("document", "dropped_non_finite_number", path)
                 continue
             if self.fields.get(path, {}).get("role") != "document":
                 log.add("document", "dropped_non_document_field", path)
@@ -194,6 +218,9 @@ class Repairer:
             if v in EMPTY:
                 log.add(where, "dropped_empty_value", path)
                 continue
+            if non_finite(v):
+                log.add(where, "dropped_non_finite_number", path)
+                continue
             if path in self.evidence_role_of:
                 role = self.evidence_role_of[path]
                 ev = self.repair_evidence({role: v}, where, log)
@@ -215,9 +242,45 @@ class Repairer:
         if overrides:
             out["document_overrides"] = overrides
         for opt in ("confidence", "note"):
-            if cand.get(opt) not in EMPTY:
+            if cand.get(opt) not in EMPTY and not non_finite(cand[opt]):
                 out[opt] = cand[opt]
+        ref, links = self.repair_links(cand, where, log)
+        if ref:
+            out["ref"] = ref
+        if links:
+            out["links"] = links
         return out
+
+    def repair_links(self, cand: dict, where: str, log: RepairLog) -> tuple[str | None, dict]:
+        """`ref` (candidate-local name) and `links` ({link name: [ref, ...]}) as declared by profile record_links."""
+        ref = cand.get("ref")
+        if ref is not None:
+            ref = str(ref).strip() if isinstance(ref, (str, int)) and not isinstance(ref, bool) else None
+            if not ref or not _REF.match(ref):
+                log.add(where, "dropped_malformed_ref", **{"value": cand.get("ref")})
+                ref = None
+        links: dict = {}
+        raw = cand.get("links")
+        if raw not in EMPTY and not isinstance(raw, dict):
+            log.add(where, "dropped_malformed_links")
+            raw = {}
+        for name, refs in (raw or {}).items():
+            if name not in self.links:
+                log.add(where, "dropped_unknown_link", name, allowed=sorted(self.links))
+                continue
+            if isinstance(refs, (str, int)) and not isinstance(refs, bool):
+                refs = [refs]
+            if not isinstance(refs, list):
+                log.add(where, "dropped_malformed_links", name)
+                continue
+            clean = []
+            for r in refs:
+                r = str(r).strip() if isinstance(r, (str, int)) and not isinstance(r, bool) else ""
+                if r and r not in clean:
+                    clean.append(r)
+            if clean:
+                links[name] = clean
+        return ref, links
 
 
 def repair_output(raw: dict, profile: dict, contract: dict) -> tuple[dict, list[dict | None], list[dict]]:

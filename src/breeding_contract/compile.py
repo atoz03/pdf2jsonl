@@ -14,7 +14,8 @@ from .util import ContractError, split_path
 
 PROFILE_MERGE_KEYS = ("roles", "system_fields", "generated_fields", "document_defaults", "evidence_policy",
                       "required_fields")
-ROLE_PRIORITY = ("system", "normalized", "generated", "document", "provenance")
+ROLE_PRIORITY = ("system", "linked", "normalized", "generated", "document", "provenance")
+FIELD_ANNOTATIONS = ("key_role", "serves", "argument_role")
 EVIDENCE_ROLES = ("page", "section", "quote", "table_figure", "row_key", "column_key")
 
 
@@ -150,6 +151,13 @@ def resolve_profile(contract: dict, raw_profiles: dict[str, dict], name: str) ->
             tag(path, "system", "system_records.fields")
     for path in p.get("document_fields") or []:
         tag(path, "document", "document_fields")
+    for link, spec in (p.get("record_links") or {}).items():
+        tag(spec["field"], "linked", f"record_links.{link}")
+        if idx[spec["field"]]["type"] != "array_string":
+            raise ContractError(f"profile {name}: record_links.{link} -> {spec['field']} must be array_string")
+        for k in spec.get("target_kinds") or []:
+            if contract["record_kinds"] and k not in contract["record_kinds"]:
+                raise ContractError(f"profile {name}: record_links.{link}: unknown record kind {k}")
     prov = (p.get("roles") or {}).get("provenance") or {}
     for role, path in prov.items():
         if role in EVIDENCE_ROLES:
@@ -185,7 +193,7 @@ def resolve_profile(contract: dict, raw_profiles: dict[str, dict], name: str) ->
         entry = {"path": path, "group": f["group"], "name": f["name"], "role": role, "type": f["type"],
                  "availability": f["availability"], "required": f["required"], "definition_zh": f["definition_zh"],
                  "data_source_zh": f.get("data_source_zh"), "maturity": f["maturity"], "since": f["since"]}
-        for opt in ("vocabulary", "constraints", "status"):
+        for opt in ("vocabulary", "constraints", "status") + FIELD_ANNOTATIONS:
             if opt in f:
                 entry[opt] = f[opt]
         out_fields.append(entry)
@@ -225,7 +233,8 @@ def resolve_profile(contract: dict, raw_profiles: dict[str, dict], name: str) ->
         },
     }
     for key in ("document_fields", "document_defaults", "roles", "system_fields", "normalizers",
-                "generated_fields", "system_records", "model_record_kinds", "evidence_policy", "required_fields",
+                "generated_fields", "system_records", "model_record_kinds", "record_links", "evidence_policy",
+                "required_fields",
                 "ambiguities", "source"):
         if key in p:
             resolved[key] = p[key]

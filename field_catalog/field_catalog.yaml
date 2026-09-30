@@ -66,6 +66,504 @@ codes:
       label_zh: 多组学候选模板 2.0.0
     repository:
       label_zh: 仓库治理需要新增
+  function:
+    topic2:
+      label_zh: 课题二：科学智能体
+      short_zh: 课题二
+      label_en: Topic 2 — breeding scientific agent
+      description_zh: 推理、规划、记忆与自主执行一体的育种科学智能体；主要读取 common + agent，用于知识状态、假设卡、实验设计卡、结果分析卡和证据约束
+      downstream_labels: [全部, 课题二]
+      source_ref: sources/project/research_contents.md#L7
+      facets:
+        reasoning:
+          label_zh: 推理层
+          description_zh: 把育种知识、群体遗传规律与实验反馈编译为结构化研究状态；知识状态机约束假设生成与因果推断
+        planning:
+          label_zh: 规划层
+          description_zh: 依据研究状态与历史轨迹分解任务、设计实验，生成可执行计划
+        memory:
+          label_zh: 记忆层
+          description_zh: 分层记忆：长程育种知识、中程实验状态、短程操作上下文
+        execution:
+          label_zh: 执行层
+          description_zh: 对接技能 API，完成工具调用、结果校验与策略修正
+    topic3:
+      label_zh: 课题三：模型与工具技能化
+      short_zh: 课题三
+      label_en: Topic 3 — skillification of breeding models and tools
+      description_zh: 育种组件的标准交互接口、技能封装与注册；主要读取 common + skills，用于基因组预测、GWAS、群体遗传等工具的标准输入输出、参数语义和验证
+      downstream_labels: [全部, 课题三]
+      source_ref: sources/project/research_contents.md#L11
+      facets:
+        interface:
+          label_zh: 标准接口
+          description_zh: 数据输入、参数配置的统一规则；标准输入、输出与参数语义
+        orchestration:
+          label_zh: 工作流编排
+          description_zh: 工作流编排；依据智能体工作计划自动生成自适应接口，贯通规划、操作、计算与结果
+        output:
+          label_zh: 结果与可视化
+          description_zh: 结果产物、指标与可视化的统一接口
+        registry:
+          label_zh: 技能注册中心
+          description_zh: 支持大模型驱动智能编排的技能注册中心
+        cards:
+          label_zh: 卡片流转
+          description_zh: 科学假设卡、实验设计卡与结果分析卡的结构化流转
+    derivation:
+      label_zh: 派生：知识图谱 / 关系库 / 问答 / 语料 / 三元组
+      short_zh: 派生
+      label_en: Derivation — knowledge graph, relational tables, QA pairs, corpora, triples
+      description_zh: 决定派生产物结构的键（节点、边、限定、证据 ID、来源位置、训练划分和授权）；v3 要求派生保留条件限定、证据 ID、来源位置、训练划分和授权信息
+      downstream_labels: [全部, 图谱, GraphRAG, 语料, 问答, 模型训练, 全部转化]
+      source_ref: sources/project/record_functions.md#L4
+      facets:
+        kg:
+          label_zh: 知识图谱
+          description_zh: 节点、边、边限定与证据来源
+        rdb:
+          label_zh: 关系数据库
+          description_zh: 表、主键、外键与关联表
+        triple:
+          label_zh: 三元组
+          description_zh: 主语-谓词-宾语及其限定
+        qa:
+          label_zh: 问答对
+          description_zh: 问题、答案、支持证据与答案范围
+        corpus:
+          label_zh: 语料
+          description_zh: 语料块、出处、训练划分、去重与许可
+    iteration:
+      label_zh: 自身迭代（课题一：数据标准、本体与知识融合）
+      short_zh: 自身迭代
+      label_en: Our own iteration — Topic 1 data standards, ontology and knowledge fusion
+      description_zh: 课题一的数据标准与质量评价、本体构建、知识融合（知识抽取、实体对齐、冲突消解、动态更新），形成可追溯、可演化的 AI-Ready 知识库；v3 中标为“课题一”（抽取、质控、复核）与“数据治理”的字段属于此项
+      downstream_labels: [全部, 课题一, 数据治理]
+      source_ref: sources/project/research_contents.md#L3
+      facets:
+        standard:
+          label_zh: 数据标准与元数据规范
+          description_zh: 多源育种数据类型梳理与元数据规范
+        quality:
+          label_zh: 质量评价
+          description_zh: 质量评价体系：质控码、复核状态、缺失审计
+        ontology:
+          label_zh: 本体构建
+          description_zh: 基因-性状-环境-品种等多层概念与关系
+        fusion:
+          label_zh: 知识融合
+          description_zh: 知识抽取、实体对齐、冲突消解与动态更新
+        traceability:
+          label_zh: 可追溯与可演化
+          description_zh: 来源回查、版本、重跑与回填
+  function_note_zh: serves 列出字段服务的功能。由分组与 v3 downstream_zh（下游用途）推出的功能为来源功能，bdc check 保证不被删除；其余为仓库按键角色补充（AMB-032）。派生（derivation）只标注决定派生结构的键；任何字段在转为关系表或图谱属性时都会随记录携带。
+  card:
+    hypothesis:
+      label_zh: 科学假设卡
+      downstream_labels: [假设卡, 假设生成, 竞争假设]
+    experiment_design:
+      label_zh: 实验设计卡
+      downstream_labels: [实验设计卡]
+    result_analysis:
+      label_zh: 结果分析卡
+      downstream_labels: [结果分析卡, 假设评价]
+  card_note_zh: card 标注课题二/三卡片流转（research_contents.md#L11）中字段进入哪张卡；downstream_zh 命中卡片标签的为来源标注，其余为仓库补充（AMB-032）。
+  key_role_family:
+    identity_provenance:
+      label_zh: 身份与溯源
+    breeding_fact:
+      label_zh: 育种事实
+    argument:
+      label_zh: 论证与证据链
+    method_skill:
+      label_zh: 方法与技能
+    derivation:
+      label_zh: 派生结构
+    governance:
+      label_zh: 资产、治理与迭代
+  key_role:
+    record_identity:
+      label_zh: 记录身份
+      family: identity_provenance
+      description_zh: 记录主键、记录类型、粒度与契约版本
+      facets:
+        topic2: [memory]
+        topic3: [interface]
+        derivation: [kg, rdb, triple, qa, corpus]
+        iteration: [standard, traceability]
+      projection:
+        kg: 记录/语句节点 IRI 与类型
+        rdb: 主键；按 record_kind 分表
+        triple: '三元组主语（记录本身）'
+        qa_corpus: 支持证据引用的目标 ID
+    source_identity:
+      label_zh: 来源标识
+      family: identity_provenance
+      description_zh: 来源的稳定标识与文件指纹
+      facets:
+        topic2: [memory]
+        topic3: [interface]
+        derivation: [kg, rdb, corpus]
+        iteration: [traceability, fusion]
+      projection:
+        kg: Document 节点 ID
+        rdb: sources 表主键；记录表外键
+        triple: '(记录, fromSource, 来源)'
+        qa_corpus: 引用来源
+    bibliographic:
+      label_zh: 书目信息
+      family: identity_provenance
+      description_zh: 标题、作者、年份、刊物等书目元数据
+      facets:
+        topic2: [memory]
+        topic3: [registry]
+        derivation: [kg, rdb, corpus]
+        iteration: [traceability]
+      projection:
+        kg: Document 节点属性；作者、机构节点
+        rdb: sources 表列
+        triple: '(来源, hasTitle/hasAuthor, 值)'
+        qa_corpus: 语料元数据与检索过滤
+    evidence_locator:
+      label_zh: 证据定位
+      family: identity_provenance
+      description_zh: 页码、章节、表图、行列键、逐字引文与字符偏移
+      facets:
+        topic2: [reasoning]
+        topic3: [interface]
+        derivation: [kg, qa, corpus]
+        iteration: [quality, traceability]
+      projection:
+        kg: 语句的 provenance（页、节、表、引文）
+        rdb: 证据列
+        triple: '语句限定（reification）'
+        qa_corpus: 引文、chunk 锚点与答案出处
+    entity_mention:
+      label_zh: 实体提及
+      family: breeding_fact
+      description_zh: 作物、种质、群体、性状、基因、标记、QTL 等实体的原文名称
+      facets:
+        topic2: [reasoning, memory]
+        topic3: [interface]
+        derivation: [kg, rdb, triple, qa]
+        iteration: [ontology, fusion]
+      projection:
+        kg: 实体节点标签（类型由字段决定）
+        rdb: 实体表 + 记录-实体关联表
+        triple: '主语/宾语文字'
+        qa_corpus: 检索关键词与答案实体
+    entity_id:
+      label_zh: 实体标识
+      family: breeding_fact
+      description_zh: 实体的规范 ID 或原文登记号
+      facets:
+        topic2: [memory]
+        topic3: [interface]
+        derivation: [kg, rdb, triple]
+        iteration: [ontology, fusion]
+      projection:
+        kg: 实体节点 IRI 与合并键
+        rdb: 实体表主键/外键
+        triple: '主语/宾语 ID'
+        qa_corpus: 实体归一与去重
+    entity_attribute:
+      label_zh: 实体属性
+      family: breeding_fact
+      description_zh: 实体的坐标、类型、等位基因、引物、系谱等属性
+      facets:
+        topic2: [memory]
+        topic3: [interface]
+        derivation: [kg, rdb, qa]
+        iteration: [ontology]
+      projection:
+        kg: 实体节点属性
+        rdb: 实体表列
+        triple: '(实体, hasX, 字面值)'
+        qa_corpus: 事实型问答答案
+    reference_frame:
+      label_zh: 参考体系
+      family: breeding_fact
+      description_zh: 坐标、基因 ID 与本体术语所依赖的组装、注释、ID 体系或本体版本
+      facets:
+        topic3: [interface]
+        derivation: [kg, rdb]
+        iteration: [standard, ontology, fusion]
+      projection:
+        kg: 坐标与 ID 的解释上下文
+        rdb: 与坐标/ID 同行的列或维表
+        triple: '语句限定'
+        qa_corpus: 答案适用范围；升级组装或本体时重映射的依据
+    context_key:
+      label_zh: 试验上下文 ID
+      family: breeding_fact
+      description_zh: 研究、试验、环境、样本、小区、重复等上下文的稳定 ID
+      facets:
+        topic2: [memory, planning]
+        topic3: [interface, orchestration]
+        derivation: [kg, rdb]
+        iteration: [fusion]
+      projection:
+        kg: 研究/试验/环境/样本节点 ID
+        rdb: 维表外键
+        triple: '(记录, inTrial/inEnvironment, ID)'
+        qa_corpus: 多跳路径的连接点
+    condition:
+      label_zh: 条件限定
+      family: breeding_fact
+      description_zh: 群体、环境、时间、处理、组织等使结论成立的条件
+      facets:
+        topic2: [reasoning, planning]
+        topic3: [interface]
+        derivation: [kg, triple, qa]
+        iteration: [ontology]
+      projection:
+        kg: 边限定（relation_qualifiers 的来源）
+        rdb: 维表列或事实表列
+        triple: '语句限定'
+        qa_corpus: qa_answer_scope 与 chunk 条件
+    measurement:
+      label_zh: 测量值
+      family: breeding_fact
+      description_zh: 原文值与单位、规范化值与单位、分型调用等单值观测
+      facets:
+        topic2: [reasoning, execution]
+        topic3: [interface, output]
+        derivation: [rdb, qa]
+        iteration: [quality]
+      projection:
+        kg: 观测节点的字面值属性
+        rdb: 事实表列（原文值与规范值分列）
+        triple: '(观测, hasValue, 字面值)'
+        qa_corpus: 数值型问答答案
+    statistic:
+      label_zh: 统计量
+      family: breeding_fact
+      description_zh: LOD、PVE、效应、P/q 值、指标值等统计结果
+      facets:
+        topic2: [reasoning, execution]
+        topic3: [output]
+        derivation: [kg, rdb, qa]
+        iteration: [quality]
+      projection:
+        kg: 语句/边属性
+        rdb: 结果表列
+        triple: '语句限定'
+        qa_corpus: 证据强度说明
+    assertion:
+      label_zh: 作者陈述
+      family: argument
+      description_zh: 论文作者的结论、假设、机制、解释、局限等陈述
+      facets:
+        topic2: [reasoning, memory]
+        topic3: [cards]
+        derivation: [kg, qa, corpus]
+        iteration: [fusion]
+      projection:
+        kg: Claim 节点文本
+        rdb: claims 表文本列
+        triple: '主谓宾抽取的原文依据'
+        qa_corpus: chunk 与答案原文
+    appraisal:
+      label_zh: 证据评价
+      family: argument
+      description_zh: 对结论的人工判读：证据类型与强度、关联或因果、外推边界
+      facets:
+        topic2: [reasoning]
+        topic3: [cards]
+        derivation: [kg, qa]
+        iteration: [quality, fusion]
+      projection:
+        kg: Claim 节点评价属性
+        rdb: 评价列（人工判断）
+        triple: '语句限定（关联/因果、证据层级）'
+        qa_corpus: 答案可信度与范围
+    record_link:
+      label_zh: 记录关联
+      family: argument
+      description_zh: 指向其他记录或证据的 ID（支撑、矛盾、来源、方法、问答支持）
+      facets:
+        topic2: [reasoning, memory]
+        topic3: [orchestration]
+        derivation: [kg, rdb, triple, qa]
+        iteration: [fusion, traceability]
+      projection:
+        kg: 语句之间的边（supports / contradicts / producedBy / derivedFrom）
+        rdb: 关联表或外键
+        triple: '(记录, supportedBy, 记录)'
+        qa_corpus: support_ids 与多跳推理路径
+    study_design:
+      label_zh: 试验设计
+      family: argument
+      description_zh: 实验目标、设计、处理组、对照组、重复与观测指标
+      facets:
+        topic2: [planning]
+        topic3: [cards, orchestration]
+        derivation: [rdb, qa]
+        iteration: [standard]
+      projection:
+        kg: Experiment 节点属性
+        rdb: experiments 表
+        triple: '(实验, hasControl/hasTreatment, 值)'
+        qa_corpus: 实验设计问答
+    method_spec:
+      label_zh: 方法与工具
+      family: method_skill
+      description_zh: 方法、算法、软件、参数、质控与验证方案
+      facets:
+        topic2: [planning, execution]
+        topic3: [interface, registry]
+        derivation: [kg, rdb]
+        iteration: [standard]
+      projection:
+        kg: Method/Software 节点与属性
+        rdb: methods 表
+        triple: '(结果, usesMethod, 方法)'
+        qa_corpus: 方法问答
+    interface_spec:
+      label_zh: 技能接口
+      family: method_skill
+      description_zh: 工具的输入输出格式、结构定义、注册 ID 与运行环境
+      facets:
+        topic2: [execution]
+        topic3: [interface, orchestration, output, registry]
+        derivation: [rdb]
+        iteration: [standard]
+      projection:
+        kg: Skill 节点与输入输出定义
+        rdb: 技能注册表
+        triple: '(技能, accepts/produces, 格式)'
+        qa_corpus: 技能调用说明
+    relation:
+      label_zh: 关系三元组
+      family: derivation
+      description_zh: 主语、谓词、宾语、极性、限定与图谱语句 ID
+      facets:
+        topic2: [reasoning]
+        derivation: [kg, triple, qa]
+        iteration: [ontology, fusion]
+      projection:
+        kg: 边本身
+        rdb: relations 表
+        triple: '直接输出为三元组'
+        qa_corpus: 多跳推理路径
+    entity_alignment:
+      label_zh: 实体对齐
+      family: derivation
+      description_zh: 实体提及到规范 ID 的对齐状态、来源、类型与同义词
+      facets:
+        derivation: [kg, rdb]
+        iteration: [ontology, fusion]
+      projection:
+        kg: 节点合并与同义词
+        rdb: 实体映射表
+        triple: 'sameAs / skos 映射'
+        qa_corpus: 检索同义词扩展
+    corpus_qa:
+      label_zh: 语料与问答
+      family: derivation
+      description_zh: 语料块与候选问答对的内容、位置与可答性
+      facets:
+        derivation: [qa, corpus]
+        iteration: [traceability]
+      projection:
+        kg: 不入图（可挂 provenance）
+        rdb: chunks / qa 表
+        triple: '—'
+        qa_corpus: 直接构成语料块与问答对
+    derivation_control:
+      label_zh: 派生控制
+      family: derivation
+      description_zh: 训练划分、去重、泄漏组、许可与派生产物审核状态
+      facets:
+        derivation: [kg, qa, corpus]
+        iteration: [quality]
+      projection:
+        kg: 发布状态过滤
+        rdb: 过滤列
+        triple: '发布过滤'
+        qa_corpus: 训练划分、去重、许可与审核
+    asset:
+      label_zh: 资产索引
+      family: governance
+      description_zh: 大文件与数据集的 URI、格式、校验和与模态
+      facets:
+        topic2: [memory]
+        topic3: [interface, orchestration]
+        derivation: [rdb]
+        iteration: [standard, traceability]
+      projection:
+        kg: Asset/Dataset 节点
+        rdb: assets 表
+        triple: '(记录, hasAsset, URI)'
+        qa_corpus: 不内嵌，仅引用
+    governance:
+      label_zh: 授权与访问
+      family: governance
+      description_zh: 来源许可与访问级别
+      facets:
+        derivation: [qa, corpus]
+        iteration: [standard]
+      projection:
+        kg: 访问控制属性
+        rdb: 行级权限列
+        triple: '许可声明'
+        qa_corpus: 能否进入语料与训练
+    lifecycle:
+      label_zh: 生产与迭代
+      family: governance
+      description_zh: 抽取方式、运行与批次、质控码、缺失审计、复核状态与数据集版本
+      facets:
+        topic2: [memory]
+        topic3: [interface]
+        derivation: [kg, rdb, qa, corpus]
+        iteration: [standard, quality, fusion, traceability]
+      projection:
+        kg: 不入图（审计属性）
+        rdb: 审计列
+        triple: '—'
+        qa_corpus: 过滤未审核记录
+  argument_role:
+    claim:
+      label_zh: 结论
+      label_en: Claim
+      framework: toulmin
+      description_zh: 被论证的结论、断言或答案
+    data:
+      label_zh: 依据
+      label_en: Data/Evidence
+      framework: toulmin
+      description_zh: 具体事实、观测或给定信息（逐字证据、观测值、统计结果、支撑记录）
+    warrant:
+      label_zh: 推理依据
+      label_en: Warrant
+      framework: toulmin
+      description_zh: 连接依据与结论的推理（统计检验、证据类型、方法、前提假设）
+    backing:
+      label_zh: 支撑
+      label_en: Backing
+      framework: toulmin
+      description_zh: 对推理依据的支持（独立验证、跨环境重复、阈值标定）
+    qualifier:
+      label_zh: 限定
+      label_en: Qualifier
+      framework: toulmin
+      description_zh: 确定性或不确定性的表达与适用范围（限定措辞、关联或因果、证据强度）
+    rebuttal:
+      label_zh: 反驳
+      label_en: Rebuttal
+      framework: toulmin
+      description_zh: 反例、例外、局限或替代解释
+    monitoring:
+      label_zh: 监控
+      label_en: Monitoring
+      framework: flavell
+      description_zh: 生产过程中的自检（质控码、缺失审计、抽取置信度）
+    evaluation:
+      label_zh: 评估
+      label_en: Evaluation
+      framework: flavell
+      description_zh: 对结果质量或正确性的判断（复核状态与复核说明）
+  argument_role_source: 'TRACE: Toulmin-based Reasoning Assessment through Constructive Elements (Kim & Yang, ICML 2026, arXiv:2605.29656) — Toulmin 六要素 + Flavell 元认知两要素（AMB-033）'
 groups:
   common:
     title_zh: 通用
@@ -75,14 +573,17 @@ groups:
     title_zh: 科学智能体
     purpose_zh: 课题二的科学问题、证据链、假设、实验设计、结果解释和反馈
     consumers_zh: 课题二（common + agent）
+    serves: [topic2]
   skills:
     title_zh: 工具技能化
     purpose_zh: 课题三的分析任务、输入输出、参数、工作流、验证和技能注册
     consumers_zh: 课题三（common + skills）
+    serves: [topic3]
   transform:
     title_zh: AI 派生
     purpose_zh: 知识图谱、语料块、问答、推理路径、泄漏控制和许可派生
     consumers_zh: 图谱与训练派生（common + transform）
+    serves: [derivation]
   omics:
     title_zh: 多组学
     purpose_zh: 组学实验、特征、单细胞、表观、蛋白与代谢组学专用字段
@@ -190,6 +691,30 @@ types:
           type: string
           minLength: 1
       required: [name]
+  array_entity_link:
+    maturity: provisional
+    ambiguities: [AMB-034]
+    item:
+      properties:
+        mention:
+          type: string
+          minLength: 1
+        source_field:
+          type: string
+          pattern: ^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$
+        entity_type:
+          type: string
+          minLength: 1
+        entity_id:
+          type: string
+          minLength: 1
+        alignment_status:
+          type: string
+          minLength: 1
+        alignment_source:
+          type: string
+          minLength: 1
+      required: [mention, source_field]
 fields:
 - path: common.record_id
   type: string
@@ -203,6 +728,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-011]
+  key_role: record_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L7
 - path: common.schema_version
   type: string
@@ -216,6 +743,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-002]
+  key_role: record_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L8
 - path: common.record_kind
   type: string
@@ -230,6 +759,8 @@ fields:
   origin: [fields_v3]
   vocabulary: record_kind
   ambiguities: [AMB-012]
+  key_role: record_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L9
 - path: common.source_id
   type: string
@@ -246,6 +777,8 @@ fields:
     pattern: ^[A-Za-z][A-Za-z0-9+.\-]*:\S+$
     basis: explicit
     note_zh: '定义：跨机构稳定且带命名空间的来源ID，如doi:、sra:或urn:'
+  key_role: source_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L10
 - path: common.source_type
   type: string
@@ -260,6 +793,8 @@ fields:
   origin: [fields_v3]
   vocabulary: source_type
   ambiguities: [AMB-021]
+  key_role: source_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L11
 - path: common.source_title
   type: string
@@ -273,6 +808,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-020]
+  key_role: bibliographic
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L12
 - path: common.source_doi
   type: string
@@ -285,6 +822,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: source_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L13
 - path: common.source_year
   type: integer
@@ -297,6 +836,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: bibliographic
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L14
 - path: common.source_authors
   type: array_string
@@ -309,6 +850,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: bibliographic
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L15
 - path: common.source_asset_id
   type: string
@@ -322,6 +865,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-018]
+  key_role: source_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L16
 - path: common.source_file_sha256
   type: string
@@ -339,6 +884,8 @@ fields:
     basis: definitional
     note_zh: 字段名指明SHA-256；定义仅写“校验和”（AMB-023）
   ambiguities: [AMB-018, AMB-023]
+  key_role: source_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L17
 - path: common.source_locator
   type: string
@@ -352,6 +899,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-011]
+  key_role: evidence_locator
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L18
 - path: common.source_page
   type: integer
@@ -368,6 +917,8 @@ fields:
     minimum: 1
     basis: explicit
     note_zh: 定义：PDF物理页码从1开始
+  key_role: evidence_locator
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L19
 - path: common.source_section
   type: string
@@ -380,6 +931,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: evidence_locator
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L20
 - path: common.source_table_figure
   type: string
@@ -392,6 +945,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: evidence_locator
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L21
 - path: common.source_table_row_key
   type: string
@@ -404,6 +959,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: evidence_locator
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L22
 - path: common.source_table_column_key
   type: string
@@ -416,6 +973,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: evidence_locator
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L23
 - path: common.source_quote
   type: string
@@ -429,6 +988,9 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-019]
+  key_role: evidence_locator
+  serves: [topic2, topic3, derivation, iteration]
+  argument_role: data
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L24
 - path: common.source_span
   type: string
@@ -442,6 +1004,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-011]
+  key_role: evidence_locator
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L25
 - path: common.source_language
   type: string
@@ -454,6 +1018,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: bibliographic
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L26
 - path: common.extraction_method
   type: string
@@ -468,6 +1034,8 @@ fields:
   origin: [fields_v3]
   vocabulary: extraction_method
   ambiguities: [AMB-010]
+  key_role: lifecycle
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L27
 - path: common.extraction_confidence
   type: number
@@ -486,6 +1054,9 @@ fields:
     basis: explicit
     note_zh: 定义：抽取过程置信度0到1
   ambiguities: [AMB-017]
+  key_role: lifecycle
+  serves: [iteration]
+  argument_role: monitoring
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L28
 - path: common.review_status
   type: string
@@ -500,6 +1071,9 @@ fields:
   origin: [fields_v3]
   vocabulary: review_status
   ambiguities: [AMB-010]
+  key_role: lifecycle
+  serves: [iteration]
+  argument_role: evaluation
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L29
 - path: common.review_note
   type: string
@@ -512,6 +1086,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: lifecycle
+  serves: [iteration]
+  argument_role: evaluation
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L30
 - path: common.crop_name
   type: string
@@ -526,6 +1103,8 @@ fields:
   origin: [fields_v3]
   vocabulary: crop_name
   ambiguities: [AMB-022]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L31
 - path: common.crop_taxon_id
   type: string
@@ -538,6 +1117,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_id
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L32
 - path: common.species_name
   type: string
@@ -550,6 +1131,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L33
 - path: common.subspecies
   type: string
@@ -562,6 +1145,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L34
 - path: common.germplasm_names
   type: array_string
@@ -574,6 +1159,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L35
 - path: common.variety_names
   type: array_string
@@ -586,6 +1173,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L36
 - path: common.population_name
   type: string
@@ -598,6 +1187,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L37
 - path: common.population_type
   type: string
@@ -611,6 +1202,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: population_type
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L38
 - path: common.parent_names
   type: array_string
@@ -623,6 +1216,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L39
 - path: common.sample_size
   type: integer
@@ -639,6 +1234,8 @@ fields:
     minimum: 0
     basis: definitional
     note_zh: 计数不可为负
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L40
 - path: common.trial_year
   type: integer
@@ -651,6 +1248,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L41
 - path: common.location_name
   type: string
@@ -663,6 +1262,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L42
 - path: common.environmental_conditions
   type: array_string
@@ -675,6 +1276,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L43
 - path: common.growth_stage
   type: string
@@ -687,6 +1290,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L44
 - path: common.treatment
   type: string
@@ -699,6 +1304,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L45
 - path: common.trait_names
   type: array_string
@@ -711,6 +1318,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L46
 - path: common.trait_ids
   type: array_string
@@ -723,6 +1332,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_id
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L47
 - path: common.gene_names
   type: array_string
@@ -735,6 +1346,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L48
 - path: common.gene_ids
   type: array_string
@@ -747,6 +1360,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_id
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L49
 - path: common.marker_names
   type: array_string
@@ -759,6 +1374,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L50
 - path: common.qtl_names
   type: array_string
@@ -771,6 +1388,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L51
 - path: common.genome_assembly
   type: string
@@ -784,6 +1403,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-009]
+  key_role: reference_frame
+  serves: [topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L52
 - path: common.variant_ids
   type: array_string
@@ -796,6 +1417,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_id
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L53
 - path: common.sequence_accessions
   type: array_string
@@ -808,6 +1431,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_id
+  serves: [topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L54
 - path: common.genotype_dataset_id
   type: string
@@ -820,6 +1445,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: asset
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L55
 - path: common.phenotype_dataset_id
   type: string
@@ -832,6 +1459,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: asset
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L56
 - path: common.data_access_uri
   type: string
@@ -844,6 +1473,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: asset
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L57
 - path: common.original_value
   type: string
@@ -856,6 +1487,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: measurement
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L58
 - path: common.original_unit
   type: string
@@ -868,6 +1501,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: measurement
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L59
 - path: common.normalized_value
   type: number
@@ -881,6 +1516,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-015]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L60
 - path: common.normalized_min_value
   type: number
@@ -894,6 +1531,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-015]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L61
 - path: common.normalized_max_value
   type: number
@@ -907,6 +1546,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-015]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L62
 - path: common.normalized_unit
   type: string
@@ -920,6 +1561,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-015]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L63
 - path: common.missing_fields
   type: object_string
@@ -933,6 +1576,9 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: missing_reason
+  key_role: lifecycle
+  serves: [iteration]
+  argument_role: monitoring
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L64
 - path: common.conflict_record_ids
   type: array_string
@@ -945,6 +1591,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: record_link
+  serves: [topic2, derivation]
+  argument_role: rebuttal
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L65
 - path: common.environment_code
   type: string
@@ -957,6 +1606,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: context_key
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L66
 - path: common.environment_count
   type: integer
@@ -973,6 +1624,8 @@ fields:
     minimum: 0
     basis: definitional
     note_zh: 计数不可为负
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L67
 - path: common.genetic_background
   type: string
@@ -985,6 +1638,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L68
 - path: common.population_generation
   type: string
@@ -997,6 +1652,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L69
 - path: common.donor_parent
   type: string
@@ -1009,6 +1666,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L70
 - path: common.recurrent_parent
   type: string
@@ -1021,6 +1680,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L71
 - path: common.chromosome
   type: string
@@ -1033,6 +1694,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_attribute
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L72
 - path: common.locus_interval_start_bp
   type: integer
@@ -1050,6 +1713,8 @@ fields:
     basis: definitional
     note_zh: 物理坐标不可为负
   ambiguities: [AMB-009]
+  key_role: entity_attribute
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L73
 - path: common.locus_interval_end_bp
   type: integer
@@ -1067,6 +1732,8 @@ fields:
     basis: definitional
     note_zh: 物理坐标不可为负
   ambiguities: [AMB-009]
+  key_role: entity_attribute
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L74
 - path: common.locus_interval_label
   type: string
@@ -1079,6 +1746,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_attribute
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L75
 - path: common.trait_measurement_protocol
   type: string
@@ -1091,6 +1760,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L76
 - path: common.dataset_id
   type: string
@@ -1104,6 +1775,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: lifecycle
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L77
 - path: common.dataset_version
   type: string
@@ -1117,6 +1790,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: lifecycle
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L78
 - path: common.record_version
   type: integer
@@ -1134,6 +1809,8 @@ fields:
     basis: explicit
     note_zh: 定义：修订序号，从1递增
   ambiguities: [AMB-008]
+  key_role: record_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L79
 - path: common.record_grain
   type: string
@@ -1148,6 +1825,8 @@ fields:
   origin: [fields_v3]
   vocabulary: record_grain
   ambiguities: [AMB-007, AMB-008]
+  key_role: record_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L80
 - path: common.ingest_batch_id
   type: string
@@ -1160,6 +1839,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: lifecycle
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L81
 - path: common.extraction_run_id
   type: string
@@ -1172,6 +1853,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: lifecycle
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L82
 - path: common.source_record_id
   type: string
@@ -1184,6 +1867,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: source_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L83
 - path: common.source_version
   type: string
@@ -1196,6 +1881,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: source_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L84
 - path: common.source_uri
   type: string
@@ -1208,6 +1895,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: source_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L85
 - path: common.data_modality
   type: string
@@ -1221,6 +1910,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: data_modality
+  key_role: asset
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L86
 - path: common.linked_modalities
   type: array_string
@@ -1234,6 +1925,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: data_modality
+  key_role: asset
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L87
 - path: common.license_id
   type: string
@@ -1246,6 +1939,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: governance
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L88
 - path: common.access_level
   type: string
@@ -1259,6 +1954,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: access_level
+  key_role: governance
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L89
 - path: common.ingested_at
   type: string
@@ -1275,6 +1972,8 @@ fields:
     pattern: ^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|\+00:00)$
     basis: explicit
     note_zh: 定义：ISO 8601 UTC时间
+  key_role: lifecycle
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L90
 - path: common.study_id
   type: string
@@ -1287,6 +1986,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: context_key
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L91
 - path: common.experiment_id
   type: string
@@ -1299,6 +2000,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: context_key
+  serves: [topic2]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L92
 - path: common.trial_id
   type: string
@@ -1311,6 +2014,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: context_key
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L93
 - path: common.environment_id
   type: string
@@ -1324,6 +2029,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: context_key
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L94
 - path: common.material_id
   type: string
@@ -1336,6 +2043,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_id
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L95
 - path: common.sample_id
   type: string
@@ -1349,6 +2058,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: context_key
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L96
 - path: common.plot_id
   type: string
@@ -1361,6 +2072,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: context_key
+  serves: [topic2]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L97
 - path: common.replicate_id
   type: string
@@ -1373,6 +2086,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: context_key
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L98
 - path: common.treatment_id
   type: string
@@ -1385,6 +2100,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: context_key
+  serves: [topic2]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L99
 - path: common.assay_id
   type: string
@@ -1397,6 +2114,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: context_key
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L100
 - path: common.analysis_run_id
   type: string
@@ -1409,6 +2128,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: context_key
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L101
 - path: common.trait_id
   type: string
@@ -1422,6 +2143,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: entity_id
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L102
 - path: common.variant_id
   type: string
@@ -1435,6 +2158,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L103
 - path: common.observation_time
   type: string
@@ -1452,6 +2177,8 @@ fields:
     basis: explicit
     note_zh: 定义：ISO 8601 UTC时间
   ambiguities: [AMB-008]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L104
 - path: common.measurement_name
   type: string
@@ -1465,6 +2192,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L105
 - path: common.measurement_value
   type: number
@@ -1478,6 +2207,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L106
 - path: common.measurement_text
   type: string
@@ -1491,6 +2222,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L107
 - path: common.measurement_unit
   type: string
@@ -1504,6 +2237,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-016]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L108
 - path: common.measurement_quality_flag
   type: string
@@ -1517,6 +2252,9 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: measurement_quality_flag
+  key_role: lifecycle
+  serves: [topic2, iteration]
+  argument_role: monitoring
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L109
 - path: common.genotype_call
   type: string
@@ -1530,6 +2268,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L110
 - path: common.genotype_dosage
   type: number
@@ -1546,6 +2286,8 @@ fields:
     minimum: 0
     basis: definitional
     note_zh: 剂量不可为负
+  key_role: measurement
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L111
 - path: common.asset_uri
   type: string
@@ -1559,6 +2301,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: asset
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L112
 - path: common.asset_kind
   type: string
@@ -1572,6 +2316,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: asset_kind
+  key_role: asset
+  serves: [topic2, topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L113
 - path: common.asset_format
   type: string
@@ -1586,6 +2332,8 @@ fields:
   origin: [fields_v3]
   vocabulary: asset_format
   ambiguities: [AMB-008]
+  key_role: asset
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L114
 - path: common.asset_compression
   type: string
@@ -1599,6 +2347,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: asset_compression
+  key_role: asset
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L115
 - path: common.asset_size_bytes
   type: integer
@@ -1616,6 +2366,8 @@ fields:
     basis: definitional
     note_zh: 字节数不可为负
   ambiguities: [AMB-008]
+  key_role: asset
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L116
 - path: common.asset_sha256
   type: string
@@ -1633,6 +2385,8 @@ fields:
     basis: explicit
     note_zh: 定义：SHA-256十六进制摘要
   ambiguities: [AMB-008]
+  key_role: asset
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L117
 - path: common.asset_row_count
   type: integer
@@ -1649,6 +2403,8 @@ fields:
     minimum: 0
     basis: explicit
     note_zh: 定义：零行文件须显式登记
+  key_role: asset
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L118
 - path: common.asset_column_count
   type: integer
@@ -1665,6 +2421,8 @@ fields:
     minimum: 0
     basis: definitional
     note_zh: 计数不可为负
+  key_role: asset
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L119
 - path: common.asset_schema_ref
   type: string
@@ -1677,6 +2435,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: asset
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L120
 - path: common.qc_rule_set_version
   type: string
@@ -1689,6 +2449,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: lifecycle
+  serves: [iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L121
 - path: common.qc_failure_codes
   type: array_string
@@ -1701,6 +2463,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: lifecycle
+  serves: [iteration]
+  argument_role: monitoring
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L122
 - path: common.site_id
   type: string
@@ -1713,6 +2478,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: context_key
+  serves: [topic2]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L123
 - path: common.latitude_deg
   type: number
@@ -1730,6 +2497,8 @@ fields:
     maximum: 90
     basis: definitional
     note_zh: 十进制度纬度
+  key_role: condition
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L124
 - path: common.longitude_deg
   type: number
@@ -1747,6 +2516,8 @@ fields:
     maximum: 180
     basis: definitional
     note_zh: 十进制度经度
+  key_role: condition
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L125
 - path: common.elevation_m
   type: number
@@ -1759,6 +2530,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L126
 - path: common.soil_type
   type: string
@@ -1771,6 +2544,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L127
 - path: common.agroecological_zone
   type: string
@@ -1783,6 +2558,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L128
 - path: common.trial_season
   type: string
@@ -1795,6 +2572,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L129
 - path: common.ploidy
   type: integer
@@ -1812,6 +2591,8 @@ fields:
     basis: definitional
     note_zh: 倍性至少为1
   ambiguities: [AMB-008]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L130
 - path: common.reference_allele
   type: string
@@ -1825,6 +2606,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L131
 - path: common.alternate_allele
   type: string
@@ -1838,6 +2621,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L132
 - path: common.dosage_allele
   type: string
@@ -1851,6 +2636,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-008]
+  key_role: entity_attribute
+  serves: [topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L133
 - path: common.schema_name
   type: string
@@ -1863,6 +2650,8 @@ fields:
   maturity: provisional
   origin: [repository]
   ambiguities: [AMB-013]
+  key_role: record_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: docs/versioning.md
 - path: common.source_document_type
   type: string
@@ -1877,6 +2666,8 @@ fields:
   origin_paths: ['legacy_v1:record_info.doc_type']
   vocabulary: document_type
   ambiguities: [AMB-028]
+  key_role: source_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L47
 - path: common.source_journal
   type: string
@@ -1889,6 +2680,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:doc_meta.journal']
+  key_role: bibliographic
+  serves: [derivation, iteration]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L62
 - path: common.source_volume
   type: string
@@ -1901,6 +2694,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:doc_meta.volume']
+  key_role: bibliographic
+  serves: [derivation, iteration]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L65
 - path: common.source_issue
   type: string
@@ -1913,6 +2708,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:doc_meta.issue']
+  key_role: bibliographic
+  serves: [derivation, iteration]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L65
 - path: common.source_page_range
   type: string
@@ -1926,6 +2723,8 @@ fields:
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:doc_meta.pages']
   ambiguities: [AMB-029]
+  key_role: bibliographic
+  serves: [derivation, iteration]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L65
 - path: common.source_abstract
   type: string
@@ -1938,6 +2737,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:doc_meta.abstract']
+  key_role: bibliographic
+  serves: [topic2, derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L68
 - path: common.source_keywords
   type: array_string
@@ -1950,6 +2751,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:doc_meta.keywords']
+  key_role: bibliographic
+  serves: [derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L69
 - path: common.source_funding
   type: array_string
@@ -1962,6 +2765,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:doc_meta.funding']
+  key_role: bibliographic
+  serves: [derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L70
 - path: common.source_affiliations
   type: array_string
@@ -1974,6 +2779,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:doc_meta.affiliations', 'legacy_v1:doc_meta.authors[].affiliation_name']
+  key_role: bibliographic
+  serves: [derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L61
 - path: common.locus_interval_start_cm
   type: number
@@ -1986,6 +2793,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:breed_entities.qtls[].interval.start']
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L211
 - path: common.locus_interval_end_cm
   type: number
@@ -1998,6 +2807,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:breed_entities.qtls[].interval.end']
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L211
 - path: common.marker_type
   type: string
@@ -2010,6 +2821,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:breed_entities.markers[].marker_type']
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L196
 - path: common.primer_forward
   type: string
@@ -2022,6 +2835,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:breed_entities.markers[].primer.forward']
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L203
 - path: common.primer_reverse
   type: string
@@ -2034,6 +2849,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:breed_entities.markers[].primer.reverse']
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L203
 - path: common.variety_approval_number
   type: string
@@ -2046,6 +2863,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:breed_entities.varieties[].approved_number']
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L152
 - path: common.pedigree_text
   type: string
@@ -2058,6 +2877,8 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:breed_entities.germplasm[].pedigree_text']
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L138
 - path: common.source_pmid
   type: string
@@ -2075,6 +2896,8 @@ fields:
     basis: definitional
     note_zh: PMID 为正整数编号
   ambiguities: [AMB-026]
+  key_role: source_identity
+  serves: [topic2, topic3, derivation, iteration]
   source_ref: sources/omics_v2/omics_metadata_template.json#/basic_identity/pmid
 - path: common.data_accessions
   type: array_string
@@ -2088,6 +2911,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:basic_identity.data_accession', 'omics_v2:data_files.raw_data_accession']
   ambiguities: [AMB-026, AMB-027]
+  key_role: asset
+  serves: [topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/basic_identity/data_accession
 - path: common.germplasm_type
   type: string
@@ -2101,6 +2926,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:species_and_material.germplasm_type']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/species_and_material/germplasm_type
 - path: common.germplasm_accessions
   type: array_string
@@ -2114,6 +2941,8 @@ fields:
   origin: [omics_v2, legacy_v1]
   origin_paths: ['omics_v2:species_and_material.accession_id', 'legacy_v1:breed_entities.germplasm[].accession_number[].accno']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/species_and_material/accession_id
 - path: common.population_id
   type: string
@@ -2127,6 +2956,8 @@ fields:
   origin: [omics_v2, legacy_v1]
   origin_paths: ['omics_v2:species_and_material.population_id', 'legacy_v1:breed_entities.populations[].population_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/species_and_material/population_id
 - path: common.population_size
   type: integer
@@ -2144,6 +2975,8 @@ fields:
     basis: definitional
     note_zh: 群体至少含一个成员
   ambiguities: [AMB-026]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/species_and_material/population_size
 - path: common.sample_name
   type: string
@@ -2157,6 +2990,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:sample.sample_name']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/sample/sample_name
 - path: common.sample_type
   type: string
@@ -2170,6 +3005,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:sample.sample_type']
   ambiguities: [AMB-026]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/sample/sample_type
 - path: common.batch_id
   type: string
@@ -2183,6 +3020,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:sample.batch_id', 'omics_v2:single_cell_specific.batch']
   ambiguities: [AMB-026]
+  key_role: context_key
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/sample/batch_id
 - path: common.sex
   type: string
@@ -2196,6 +3035,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:sample.sex']
   ambiguities: [AMB-026]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/sample/sex
 - path: common.organ
   type: string
@@ -2209,6 +3050,8 @@ fields:
   origin: [omics_v2, legacy_v1]
   origin_paths: ['omics_v2:tissue_and_development.organ', 'legacy_v1:breed_entities.traits[].measurement_detail.organ']
   ambiguities: [AMB-026]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/tissue_and_development/organ
 - path: common.tissue
   type: string
@@ -2222,6 +3065,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:tissue_and_development.tissue']
   ambiguities: [AMB-026]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/tissue_and_development/tissue
 - path: common.sampling_time_relative
   type: string
@@ -2235,6 +3080,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:tissue_and_development.sampling_time_relative']
   ambiguities: [AMB-026]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/tissue_and_development/sampling_time_relative
 - path: common.treatment_type
   type: string
@@ -2248,6 +3095,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:treatment_and_environment.treatment_type']
   ambiguities: [AMB-026, AMB-027]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/treatment_and_environment/treatment_type
 - path: common.treatment_dose
   type: string
@@ -2261,6 +3110,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:treatment_and_environment.treatment_dose']
   ambiguities: [AMB-026, AMB-027]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/treatment_and_environment/treatment_dose
 - path: common.treatment_duration
   type: string
@@ -2274,6 +3125,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:treatment_and_environment.treatment_duration']
   ambiguities: [AMB-026, AMB-027]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/treatment_and_environment/treatment_duration
 - path: common.genome_annotation_version
   type: string
@@ -2287,6 +3140,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:reference_system.annotation_version']
   ambiguities: [AMB-026]
+  key_role: reference_frame
+  serves: [topic3, derivation, iteration]
   source_ref: sources/omics_v2/omics_metadata_template.json#/reference_system/annotation_version
 - path: common.gene_id_system
   type: string
@@ -2300,6 +3155,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:reference_system.gene_id_system']
   ambiguities: [AMB-026]
+  key_role: reference_frame
+  serves: [topic3, derivation, iteration]
   source_ref: sources/omics_v2/omics_metadata_template.json#/reference_system/gene_id_system
 - path: common.coordinate_system
   type: string
@@ -2313,6 +3170,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:reference_system.coordinate_system']
   ambiguities: [AMB-026]
+  key_role: reference_frame
+  serves: [topic3, derivation, iteration]
   source_ref: sources/omics_v2/omics_metadata_template.json#/reference_system/coordinate_system
 - path: common.trait_category
   type: string
@@ -2327,6 +3186,8 @@ fields:
   origin_paths: ['legacy_v1:breed_entities.traits[].trait_category', 'omics_v2:breeding_links.trait_category']
   vocabulary: trait_category
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L119
 - path: common.variant_type
   type: string
@@ -2340,6 +3201,8 @@ fields:
   origin: [omics_v2, legacy_v1]
   origin_paths: ['omics_v2:genomics_specific.variant_type', 'legacy_v1:breed_entities.genes[].alleles[].variant_type']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/genomics_specific/variant_type
 - path: common.variant_position_bp
   type: integer
@@ -2357,6 +3220,8 @@ fields:
     basis: definitional
     note_zh: 物理坐标为正整数
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/genomics_specific/position
 - path: common.effect_allele
   type: string
@@ -2370,6 +3235,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:genomics_specific.effect_allele']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/genomics_specific/effect_allele
 - path: common.allele_frequency
   type: number
@@ -2388,6 +3255,8 @@ fields:
     basis: definitional
     note_zh: 频率取值 0–1
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/genomics_specific/allele_frequency
 - path: common.minor_allele_frequency
   type: number
@@ -2408,6 +3277,8 @@ fields:
     basis: definitional
     note_zh: 按定义最小等位基因频率不超过 0.5
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/genomics_specific/minor_allele_frequency
 - path: common.haplotype_id
   type: string
@@ -2421,7 +3292,71 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:genomics_specific.haplotype_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/genomics_specific/haplotype_id
+- path: common.extraction_profile
+  type: string
+  availability: N
+  required: N
+  definition_zh: 产生本记录的抽取画像名称；与 schema_version 一起说明抽取时哪些字段曾被要求填写，用于区分“未被要求抽取”与“未找到”
+  data_source_zh: 抽取管线（系统填写）
+  since: 3.2.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-032]
+  key_role: lifecycle
+  serves: [iteration]
+  source_ref: docs/field_functions.md
+- path: common.replaces_record_ids
+  type: array_string
+  availability: N
+  required: N
+  definition_zh: 本记录取代的旧记录 record_id（重新抽取、纠错或合并使锚点变化时填写）；动态更新时据此迁移图谱、问答和关系库中的引用，旧记录不删除
+  data_source_zh: 知识库更新日志
+  since: 3.2.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-036]
+  key_role: record_link
+  serves: [derivation, iteration]
+  source_ref: sources/project/research_contents.md#L3
+- path: common.conflict_resolution_status
+  type: string
+  availability: I
+  required: N
+  definition_zh: 与 common.conflict_record_ids 所列记录的冲突消解结果：未消解、条件不同均成立、保留本记录或本记录被取代
+  data_source_zh: 知识融合复核
+  since: 3.2.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: conflict_resolution_status
+  ambiguities: [AMB-036]
+  key_role: appraisal
+  serves: [topic2, derivation, iteration]
+  argument_role: evaluation
+  source_ref: sources/project/research_contents.md#L3
+- path: common.record_updated_at
+  type: string
+  availability: N
+  required: N
+  definition_zh: 本版本记录（record_version）生成或修订的 ISO 8601 UTC 时间；与首次入库时间 common.ingested_at 分开
+  data_source_zh: 知识库更新日志
+  since: 3.2.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  constraints:
+    pattern: ^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$
+    basis: definitional
+    note_zh: 定义要求 ISO 8601 UTC 时间
+  ambiguities: [AMB-036]
+  key_role: lifecycle
+  serves: [iteration]
+  source_ref: sources/project/research_contents.md#L3
 - path: agent.scientific_question
   type: string
   availability: I
@@ -2433,6 +3368,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: hypothesis
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L134
 - path: agent.finding_text
   type: string
@@ -2446,6 +3384,10 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-014]
+  key_role: assertion
+  serves: [topic2, derivation]
+  card: result_analysis
+  argument_role: claim
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L135
 - path: agent.finding_kind
   type: string
@@ -2460,6 +3402,10 @@ fields:
   origin: [fields_v3]
   vocabulary: finding_kind
   ambiguities: [AMB-010]
+  key_role: appraisal
+  serves: [topic2]
+  card: result_analysis
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L136
 - path: agent.evidence_type
   type: string
@@ -2473,6 +3419,10 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: evidence_type
+  key_role: appraisal
+  serves: [topic2]
+  card: result_analysis
+  argument_role: warrant
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L137
 - path: agent.evidence_strength
   type: string
@@ -2485,6 +3435,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: appraisal
+  serves: [topic2]
+  card: result_analysis
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L138
 - path: agent.supporting_evidence
   type: array_evidence
@@ -2498,6 +3452,10 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-004]
+  key_role: record_link
+  serves: [topic2, derivation]
+  card: result_analysis
+  argument_role: data
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L139
 - path: agent.contradictory_evidence
   type: array_evidence
@@ -2511,6 +3469,10 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-004]
+  key_role: record_link
+  serves: [topic2, derivation]
+  card: hypothesis
+  argument_role: rebuttal
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L140
 - path: agent.hypothesis_stated
   type: string
@@ -2523,6 +3485,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: hypothesis
+  argument_role: claim
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L141
 - path: agent.candidate_mechanism
   type: string
@@ -2535,6 +3501,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: hypothesis
+  argument_role: claim
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L142
 - path: agent.mechanism_entities
   type: array_string
@@ -2547,6 +3517,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_mention
+  serves: [topic2, derivation]
+  card: hypothesis
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L143
 - path: agent.causal_direction
   type: string
@@ -2559,6 +3532,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: appraisal
+  serves: [topic2]
+  card: hypothesis
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L144
 - path: agent.association_vs_causation
   type: string
@@ -2572,6 +3548,10 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-024]
+  key_role: appraisal
+  serves: [topic2]
+  card: result_analysis
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L145
 - path: agent.assumption_conditions
   type: array_string
@@ -2584,6 +3564,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: appraisal
+  serves: [topic2]
+  card: hypothesis
+  argument_role: warrant
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L146
 - path: agent.applicable_population
   type: string
@@ -2596,6 +3580,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, derivation]
+  card: experiment_design
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L147
 - path: agent.applicable_environment
   type: string
@@ -2608,6 +3596,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: condition
+  serves: [topic2, derivation]
+  card: experiment_design
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L148
 - path: agent.expected_observation
   type: string
@@ -2620,6 +3612,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L149
 - path: agent.actual_observation
   type: string
@@ -2632,6 +3627,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: result_analysis
+  argument_role: data
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L150
 - path: agent.alternative_explanations
   type: array_string
@@ -2644,6 +3643,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: hypothesis
+  argument_role: rebuttal
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L151
 - path: agent.uncertainty_note
   type: string
@@ -2656,6 +3659,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: appraisal
+  serves: [topic2]
+  card: result_analysis
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L152
 - path: agent.falsification_test
   type: string
@@ -2668,6 +3675,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: appraisal
+  serves: [topic2]
+  card: hypothesis
+  argument_role: rebuttal
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L153
 - path: agent.experiment_objective
   type: string
@@ -2680,6 +3691,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: study_design
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L154
 - path: agent.experiment_design
   type: string
@@ -2692,6 +3706,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: study_design
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L155
 - path: agent.experimental_materials
   type: array_string
@@ -2704,6 +3721,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: study_design
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L156
 - path: agent.treatment_groups
   type: array_string
@@ -2716,6 +3736,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: study_design
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L157
 - path: agent.control_groups
   type: array_string
@@ -2728,6 +3751,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: study_design
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L158
 - path: agent.replicate_count
   type: integer
@@ -2744,6 +3770,9 @@ fields:
     minimum: 0
     basis: definitional
     note_zh: 计数不可为负
+  key_role: study_design
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L159
 - path: agent.observation_indicators
   type: array_string
@@ -2756,6 +3785,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: study_design
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L160
 - path: agent.workflow_steps
   type: array_step
@@ -2769,6 +3801,9 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-005]
+  key_role: study_design
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L161
 - path: agent.workflow_dependencies
   type: array_string
@@ -2781,6 +3816,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: study_design
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L162
 - path: agent.result_interpretation
   type: string
@@ -2793,6 +3831,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: result_analysis
+  argument_role: claim
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L163
 - path: agent.breeding_relevance
   type: string
@@ -2805,6 +3847,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: result_analysis
+  argument_role: claim
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L164
 - path: agent.followup_experiment
   type: string
@@ -2817,6 +3863,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L165
 - path: agent.knowledge_gap
   type: string
@@ -2829,6 +3878,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: hypothesis
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L166
 - path: agent.task_tags
   type: array_string
@@ -2841,6 +3893,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: appraisal
+  serves: [topic2]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L167
 - path: agent.hypothesis_origin
   type: string
@@ -2855,6 +3909,10 @@ fields:
   origin: [fields_v3]
   vocabulary: hypothesis_origin
   ambiguities: [AMB-010]
+  key_role: appraisal
+  serves: [topic2]
+  card: hypothesis
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L168
 - path: agent.candidate_gene_status
   type: string
@@ -2868,6 +3926,10 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: candidate_gene_status
+  key_role: appraisal
+  serves: [topic2]
+  card: result_analysis
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L169
 - path: agent.statistical_test
   type: string
@@ -2880,6 +3942,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic2]
+  card: result_analysis
+  argument_role: warrant
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L170
 - path: agent.lod_score
   type: number
@@ -2892,6 +3958,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: statistic
+  serves: [topic2]
+  card: result_analysis
+  argument_role: data
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L171
 - path: agent.pve_percent
   type: number
@@ -2909,6 +3979,10 @@ fields:
     maximum: 100
     basis: definitional
     note_zh: 百分数
+  key_role: statistic
+  serves: [topic2]
+  card: result_analysis
+  argument_role: data
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L172
 - path: agent.effect_estimate
   type: number
@@ -2921,6 +3995,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: statistic
+  serves: [topic2]
+  card: result_analysis
+  argument_role: data
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L173
 - path: agent.effect_unit
   type: string
@@ -2933,6 +4011,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: statistic
+  serves: [topic2]
+  card: result_analysis
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L174
 - path: agent.environment_stability
   type: string
@@ -2945,6 +4026,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: assertion
+  serves: [topic2]
+  card: result_analysis
+  argument_role: backing
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L175
 - path: agent.validation_methods
   type: array_string
@@ -2957,6 +4042,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic2]
+  card: result_analysis
+  argument_role: backing
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L176
 - path: agent.claim_id
   type: string
@@ -2969,6 +4058,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: record_link
+  serves: [topic2, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L177
 - path: agent.evidence_record_ids
   type: array_string
@@ -2981,6 +4072,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: record_link
+  serves: [topic2, derivation]
+  card: result_analysis
+  argument_role: data
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L178
 - path: agent.external_validity_scope
   type: string
@@ -2993,6 +4088,10 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: appraisal
+  serves: [topic2]
+  card: result_analysis
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L179
 - path: agent.effect_type
   type: string
@@ -3005,6 +4104,9 @@ fields:
   maturity: provisional
   origin: [legacy_v1]
   origin_paths: ['legacy_v1:breed_entities.qtls[].additive_effect', 'legacy_v1:breed_entities.qtls[].dominance_effect']
+  key_role: statistic
+  serves: [topic2]
+  card: result_analysis
   source_ref: sources/legacy_v1/breeding_jsonl_spec.md#L214
 - path: agent.contrast
   type: string
@@ -3018,6 +4120,9 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:statistical_results.contrast']
   ambiguities: [AMB-026]
+  key_role: study_design
+  serves: [topic2]
+  card: experiment_design
   source_ref: sources/omics_v2/omics_metadata_template.json#/statistical_results/contrast
 - path: agent.effect_direction
   type: string
@@ -3031,6 +4136,9 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:statistical_results.effect_direction']
   ambiguities: [AMB-026, AMB-027]
+  key_role: statistic
+  serves: [topic2]
+  card: result_analysis
   source_ref: sources/omics_v2/omics_metadata_template.json#/statistical_results/effect_direction
 - path: agent.standard_error
   type: number
@@ -3048,6 +4156,10 @@ fields:
     basis: definitional
     note_zh: 标准误非负
   ambiguities: [AMB-026]
+  key_role: statistic
+  serves: [topic2]
+  card: result_analysis
+  argument_role: data
   source_ref: sources/omics_v2/omics_metadata_template.json#/statistical_results/standard_error
 - path: agent.p_value
   type: number
@@ -3069,6 +4181,10 @@ fields:
     basis: definitional
     note_zh: 概率取值 0–1；-log10(P) 不得写入此字段
   ambiguities: [AMB-026]
+  key_role: statistic
+  serves: [topic2]
+  card: result_analysis
+  argument_role: data
   source_ref: sources/omics_v2/omics_metadata_template.json#/statistical_results/p_value
 - path: agent.q_value
   type: number
@@ -3090,6 +4206,10 @@ fields:
     basis: definitional
     note_zh: 概率取值 0–1
   ambiguities: [AMB-026]
+  key_role: statistic
+  serves: [topic2]
+  card: result_analysis
+  argument_role: data
   source_ref: sources/omics_v2/omics_metadata_template.json#/statistical_results/q_value
 - path: agent.confidence_interval
   type: string
@@ -3103,6 +4223,10 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:statistical_results.confidence_interval']
   ambiguities: [AMB-026]
+  key_role: statistic
+  serves: [topic2]
+  card: result_analysis
+  argument_role: data
   source_ref: sources/omics_v2/omics_metadata_template.json#/statistical_results/confidence_interval
 - path: agent.replication_status
   type: string
@@ -3116,6 +4240,10 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:evidence.replication_status']
   ambiguities: [AMB-026, AMB-027]
+  key_role: appraisal
+  serves: [topic2]
+  card: result_analysis
+  argument_role: backing
   source_ref: sources/omics_v2/omics_metadata_template.json#/evidence/replication_status
 - path: agent.candidate_gene_window
   type: string
@@ -3129,7 +4257,41 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:qtl_gwas_specific.candidate_gene_window']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic2]
   source_ref: sources/omics_v2/omics_metadata_template.json#/qtl_gwas_specific/candidate_gene_window
+- path: agent.claim_qualifier_text
+  type: string
+  availability: D
+  required: N
+  definition_zh: 作者为该结论附加的限定或不确定性措辞原文，如 may、suggesting a possible、requires validation、可能、推测；逐字摘自证据引文，没有限定措辞则省略
+  data_source_zh: 结论原文
+  since: 3.2.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-033, AMB-035]
+  key_role: assertion
+  serves: [topic2, derivation]
+  card: result_analysis
+  argument_role: qualifier
+  source_ref: docs/field_functions.md
+- path: agent.stated_limitations
+  type: array_string
+  availability: D
+  required: N
+  definition_zh: 作者明确陈述的本结论的局限、例外或不成立条件原文；抽取者自己的判断写入 agent.uncertainty_note（I），不写入本字段
+  data_source_zh: 结果与讨论
+  since: 3.2.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-033]
+  key_role: assertion
+  serves: [topic2]
+  card: result_analysis
+  argument_role: rebuttal
+  source_ref: docs/field_functions.md
 - path: skills.analysis_task
   type: string
   availability: I
@@ -3141,6 +4303,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L180
 - path: skills.method_category
   type: string
@@ -3154,6 +4318,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: method_category
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L181
 - path: skills.method_name
   type: string
@@ -3166,6 +4332,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L182
 - path: skills.algorithm_name
   type: string
@@ -3178,6 +4346,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L183
 - path: skills.software_name
   type: string
@@ -3190,6 +4360,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L184
 - path: skills.software_version
   type: string
@@ -3202,6 +4374,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L185
 - path: skills.input_modalities
   type: array_string
@@ -3214,6 +4388,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L186
 - path: skills.genotype_data_format
   type: string
@@ -3226,6 +4402,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L187
 - path: skills.phenotype_data_format
   type: string
@@ -3238,6 +4416,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L188
 - path: skills.environment_data_format
   type: string
@@ -3250,6 +4430,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L189
 - path: skills.preprocessing_steps
   type: array_string
@@ -3262,6 +4444,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L190
 - path: skills.qc_filters
   type: array_string
@@ -3274,6 +4458,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L191
 - path: skills.parameters
   type: array_parameter
@@ -3287,6 +4473,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-006]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L192
 - path: skills.population_structure_control
   type: string
@@ -3299,6 +4487,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L193
 - path: skills.kinship_control
   type: string
@@ -3311,6 +4501,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L194
 - path: skills.feature_count
   type: integer
@@ -3327,6 +4519,8 @@ fields:
     minimum: 0
     basis: definitional
     note_zh: 计数不可为负
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L195
 - path: skills.training_population
   type: string
@@ -3339,6 +4533,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L196
 - path: skills.training_set_size
   type: integer
@@ -3355,6 +4551,8 @@ fields:
     minimum: 0
     basis: definitional
     note_zh: 计数不可为负
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L197
 - path: skills.test_set_size
   type: integer
@@ -3371,6 +4569,8 @@ fields:
     minimum: 0
     basis: definitional
     note_zh: 计数不可为负
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L198
 - path: skills.validation_strategy
   type: string
@@ -3383,6 +4583,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L199
 - path: skills.folds
   type: integer
@@ -3399,6 +4601,8 @@ fields:
     minimum: 1
     basis: definitional
     note_zh: 折数为正整数
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L200
 - path: skills.split_basis
   type: string
@@ -3411,6 +4615,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L201
 - path: skills.random_seed
   type: integer
@@ -3423,6 +4629,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L202
 - path: skills.output_artifacts
   type: array_string
@@ -3435,6 +4643,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L203
 - path: skills.output_fields
   type: array_string
@@ -3447,6 +4657,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L204
 - path: skills.metric_name
   type: string
@@ -3459,6 +4671,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: statistic
+  serves: [topic3]
+  card: result_analysis
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L205
 - path: skills.metric_value
   type: number
@@ -3471,6 +4686,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: statistic
+  serves: [topic3]
+  card: result_analysis
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L206
 - path: skills.metric_unit
   type: string
@@ -3483,6 +4701,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: statistic
+  serves: [topic3]
+  card: result_analysis
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L207
 - path: skills.significance_threshold
   type: string
@@ -3495,6 +4716,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
+  argument_role: backing
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L208
 - path: skills.method_assumptions
   type: array_string
@@ -3507,6 +4731,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
+  argument_role: warrant
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L209
 - path: skills.applicability_limit
   type: string
@@ -3519,6 +4746,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
+  argument_role: rebuttal
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L210
 - path: skills.reproducibility_assets
   type: array_string
@@ -3531,6 +4761,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L211
 - path: skills.tool_description_uri
   type: string
@@ -3543,6 +4775,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L212
 - path: skills.input_schema_ref
   type: string
@@ -3555,6 +4789,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L213
 - path: skills.output_schema_ref
   type: string
@@ -3567,6 +4803,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L214
 - path: skills.parameter_schema_ref
   type: string
@@ -3579,6 +4817,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L215
 - path: skills.workflow_steps
   type: array_step
@@ -3592,6 +4832,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-005]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L216
 - path: skills.genotyping_method
   type: string
@@ -3604,6 +4846,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L217
 - path: skills.phenotyping_method
   type: string
@@ -3616,6 +4860,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L218
 - path: skills.target_variable
   type: string
@@ -3628,6 +4874,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L219
 - path: skills.threshold_calibration
   type: string
@@ -3640,6 +4888,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: method_spec
+  serves: [topic3]
+  argument_role: backing
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L220
 - path: skills.skill_spec_id
   type: string
@@ -3652,6 +4903,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L221
 - path: skills.skill_spec_version
   type: string
@@ -3664,6 +4917,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L222
 - path: skills.input_asset_refs
   type: array_string
@@ -3676,6 +4931,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: record_link
+  serves: [topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L223
 - path: skills.output_asset_refs
   type: array_string
@@ -3688,6 +4945,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: record_link
+  serves: [topic3, derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L224
 - path: skills.runtime_environment_ref
   type: string
@@ -3700,6 +4959,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L225
 - path: skills.normalization_method
   type: string
@@ -3713,6 +4974,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:data_processing.normalization_method']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/data_processing/normalization_method
 - path: skills.tool_input_formats
   type: array_string
@@ -3726,6 +4989,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:tool_skill.tool_input_format']
   ambiguities: [AMB-026]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/tool_skill/tool_input_format
 - path: skills.tool_output_formats
   type: array_string
@@ -3739,6 +5004,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:tool_skill.tool_output_format']
   ambiguities: [AMB-026]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/tool_skill/tool_output_format
 - path: skills.software_dependencies
   type: array_string
@@ -3752,6 +5019,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:tool_skill.dependencies']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/tool_skill/dependencies
 - path: skills.validation_rules
   type: array_string
@@ -3765,6 +5034,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:tool_skill.validation_rule']
   ambiguities: [AMB-026]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/tool_skill/validation_rule
 - path: skills.failure_modes
   type: array_string
@@ -3778,7 +5049,25 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:tool_skill.failure_modes']
   ambiguities: [AMB-026]
+  key_role: interface_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/tool_skill/failure_modes
+- path: skills.method_record_ids
+  type: array_string
+  availability: N
+  required: N
+  definition_zh: 产生本结果或观测所用方法的 method 记录 record_id，由抽取管线按候选引用解析；连接结果与方法，构成证据链的推理依据环节
+  data_source_zh: 同一来源的 method 记录
+  since: 3.2.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-033]
+  key_role: record_link
+  serves: [topic2, topic3, derivation]
+  card: result_analysis
+  argument_role: warrant
+  source_ref: docs/field_functions.md
 - path: transform.subject_mention
   type: string
   availability: D
@@ -3791,6 +5080,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-012]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L226
 - path: transform.subject_type
   type: string
@@ -3803,6 +5094,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L227
 - path: transform.subject_id
   type: string
@@ -3815,6 +5108,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L228
 - path: transform.predicate_label
   type: string
@@ -3829,6 +5124,8 @@ fields:
   origin: [fields_v3]
   vocabulary: predicate_label
   ambiguities: [AMB-012]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L229
 - path: transform.predicate_id
   type: string
@@ -3841,6 +5138,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L230
 - path: transform.object_mention
   type: string
@@ -3854,6 +5153,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   ambiguities: [AMB-012]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L231
 - path: transform.object_type
   type: string
@@ -3866,6 +5167,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L232
 - path: transform.object_id
   type: string
@@ -3878,6 +5181,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L233
 - path: transform.relation_polarity
   type: string
@@ -3892,6 +5197,8 @@ fields:
   origin: [fields_v3]
   vocabulary: relation_polarity
   ambiguities: [AMB-010]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L234
 - path: transform.relation_qualifiers
   type: object_string
@@ -3904,6 +5211,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: relation
+  serves: [derivation]
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L235
 - path: transform.graph_statement_id
   type: string
@@ -3916,6 +5226,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L236
 - path: transform.graph_status
   type: string
@@ -3930,6 +5242,9 @@ fields:
   origin: [fields_v3]
   vocabulary: graph_status
   ambiguities: [AMB-010]
+  key_role: derivation_control
+  serves: [derivation]
+  argument_role: evaluation
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L237
 - path: transform.entity_alignment_status
   type: string
@@ -3944,6 +5259,8 @@ fields:
   origin: [fields_v3]
   vocabulary: entity_alignment_status
   ambiguities: [AMB-010]
+  key_role: entity_alignment
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L238
 - path: transform.entity_alignment_source
   type: string
@@ -3956,6 +5273,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: entity_alignment
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L239
 - path: transform.external_graph_ids
   type: array_string
@@ -3968,6 +5287,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: relation
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L240
 - path: transform.provenance_record_ids
   type: array_string
@@ -3980,6 +5301,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: record_link
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L241
 - path: transform.chunk_id
   type: string
@@ -3992,6 +5315,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: corpus_qa
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L242
 - path: transform.chunk_text
   type: string
@@ -4004,6 +5329,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: corpus_qa
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L243
 - path: transform.chunk_page
   type: integer
@@ -4020,6 +5347,8 @@ fields:
     minimum: 1
     basis: explicit
     note_zh: PDF物理页码（与source_page同口径）
+  key_role: corpus_qa
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L244
 - path: transform.chunk_section
   type: string
@@ -4032,6 +5361,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: corpus_qa
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L245
 - path: transform.chunk_start_offset
   type: integer
@@ -4048,6 +5379,8 @@ fields:
     minimum: 0
     basis: definitional
     note_zh: 字符偏移不可为负
+  key_role: corpus_qa
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L246
 - path: transform.chunk_end_offset
   type: integer
@@ -4064,6 +5397,8 @@ fields:
     minimum: 0
     basis: definitional
     note_zh: 字符偏移不可为负
+  key_role: corpus_qa
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L247
 - path: transform.chunk_keywords
   type: array_string
@@ -4076,6 +5411,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: corpus_qa
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L248
 - path: transform.qa_seed_question
   type: string
@@ -4088,6 +5425,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: corpus_qa
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L249
 - path: transform.qa_seed_answer
   type: string
@@ -4100,6 +5439,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: corpus_qa
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L250
 - path: transform.qa_answerable
   type: boolean
@@ -4112,6 +5453,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: corpus_qa
+  serves: [derivation]
+  argument_role: evaluation
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L251
 - path: transform.qa_support_ids
   type: array_string
@@ -4124,6 +5468,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: record_link
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L252
 - path: transform.qa_reasoning_path_ids
   type: array_string
@@ -4136,6 +5482,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: record_link
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L253
 - path: transform.qa_difficulty
   type: string
@@ -4150,6 +5498,8 @@ fields:
   origin: [fields_v3]
   vocabulary: qa_difficulty
   ambiguities: [AMB-010]
+  key_role: corpus_qa
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L254
 - path: transform.leakage_group_id
   type: string
@@ -4162,6 +5512,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: derivation_control
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L255
 - path: transform.transform_review_status
   type: string
@@ -4174,6 +5526,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: derivation_control
+  serves: [derivation, iteration]
+  argument_role: evaluation
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L256
 - path: transform.relation_evidence_type
   type: string
@@ -4188,6 +5543,9 @@ fields:
   origin: [fields_v3]
   vocabulary: relation_evidence_type
   ambiguities: [AMB-010]
+  key_role: relation
+  serves: [derivation]
+  argument_role: warrant
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L257
 - path: transform.qa_answer_scope
   type: string
@@ -4200,6 +5558,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: corpus_qa
+  serves: [derivation]
+  argument_role: qualifier
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L258
 - path: transform.qa_unanswerable_reason
   type: string
@@ -4212,6 +5573,9 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: corpus_qa
+  serves: [derivation]
+  argument_role: evaluation
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L259
 - path: transform.ontology_version
   type: string
@@ -4224,6 +5588,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: reference_frame
+  serves: [derivation, iteration]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L260
 - path: transform.corpus_split
   type: string
@@ -4237,6 +5603,8 @@ fields:
   maturity: verified
   origin: [fields_v3]
   vocabulary: corpus_split
+  key_role: derivation_control
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L261
 - path: transform.dedup_group_id
   type: string
@@ -4249,6 +5617,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: derivation_control
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L262
 - path: transform.qa_review_status
   type: string
@@ -4263,6 +5633,9 @@ fields:
   origin: [fields_v3]
   vocabulary: qa_review_status
   ambiguities: [AMB-010]
+  key_role: derivation_control
+  serves: [derivation]
+  argument_role: evaluation
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L263
 - path: transform.derivative_license_id
   type: string
@@ -4275,6 +5648,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: derivation_control
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L264
 - path: transform.chunk_support_ids
   type: array_string
@@ -4287,6 +5662,8 @@ fields:
   status: active
   maturity: verified
   origin: [fields_v3]
+  key_role: record_link
+  serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L265
 - path: transform.mapping_type
   type: string
@@ -4300,6 +5677,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:ontology_mapping.mapping_type']
   ambiguities: [AMB-026]
+  key_role: entity_alignment
+  serves: [derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/ontology_mapping/mapping_type
 - path: transform.mapping_confidence
   type: number
@@ -4313,6 +5692,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:ontology_mapping.mapping_confidence']
   ambiguities: [AMB-026]
+  key_role: entity_alignment
+  serves: [derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/ontology_mapping/mapping_confidence
 - path: transform.entity_synonyms
   type: array_string
@@ -4326,7 +5707,37 @@ fields:
   origin: [omics_v2, legacy_v1]
   origin_paths: ['omics_v2:ontology_mapping.synonyms', 'legacy_v1:breed_entities.genes[].aliases']
   ambiguities: [AMB-026]
+  key_role: entity_alignment
+  serves: [derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/ontology_mapping/synonyms
+- path: transform.entity_links
+  type: array_entity_link
+  availability: N
+  required: N
+  definition_zh: 本记录每个实体提及与规范实体的逐项对应：提及原文、来源字段、实体类型、规范 ID、对齐状态与来源；不对 *_names 与 *_ids 数组做位置对齐假设
+  data_source_zh: 实体对齐过程
+  since: 3.2.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  notes_zh: item.alignment_status 取 entity_alignment_status 词表代码
+  ambiguities: [AMB-034]
+  key_role: entity_alignment
+  serves: [derivation]
+  source_ref: docs/field_functions.md
+- path: transform.qa_id
+  type: string
+  availability: G
+  required: N
+  definition_zh: 候选问答对的稳定 ID，用于问答去重、训练划分与回溯；与 record_id 分开
+  data_source_zh: 问答生成过程
+  since: 3.2.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  key_role: corpus_qa
+  serves: [derivation]
+  source_ref: docs/field_functions.md
 - path: omics.omics_type
   type: string
   availability: D
@@ -4340,6 +5751,8 @@ fields:
   origin_paths: ['omics_v2:omics_experiment.omics_type']
   vocabulary: omics_type
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/omics_experiment/omics_type
 - path: omics.assay_type
   type: string
@@ -4356,6 +5769,8 @@ fields:
   - omics_v2:epigenomics_specific.epigenomic_assay
   - omics_v2:proteomics_specific.proteomics_method
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/omics_experiment/assay_type
 - path: omics.library_strategy
   type: string
@@ -4369,6 +5784,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:omics_experiment.library_strategy']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/omics_experiment/library_strategy
 - path: omics.library_selection
   type: string
@@ -4382,6 +5799,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:omics_experiment.library_selection']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/omics_experiment/library_selection
 - path: omics.library_layout
   type: string
@@ -4395,6 +5814,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:omics_experiment.library_layout']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/omics_experiment/library_layout
 - path: omics.platform
   type: string
@@ -4408,6 +5829,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:omics_experiment.platform']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/omics_experiment/platform
 - path: omics.instrument_model
   type: string
@@ -4421,6 +5844,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:omics_experiment.instrument_model', 'omics_v2:proteomics_specific.mass_spectrometer']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/omics_experiment/instrument_model
 - path: omics.sequencing_depth
   type: string
@@ -4434,6 +5859,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:omics_experiment.sequencing_depth']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/omics_experiment/sequencing_depth
 - path: omics.read_length
   type: string
@@ -4447,6 +5874,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:omics_experiment.read_length']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/omics_experiment/read_length
 - path: omics.cell_type
   type: string
@@ -4460,6 +5889,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:tissue_and_development.cell_type', 'omics_v2:single_cell_specific.cell_type']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/tissue_and_development/cell_type
 - path: omics.cell_state
   type: string
@@ -4473,6 +5904,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:tissue_and_development.cell_state', 'omics_v2:single_cell_specific.cell_state']
   ambiguities: [AMB-026]
+  key_role: condition
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/tissue_and_development/cell_state
 - path: omics.feature_type
   type: string
@@ -4486,6 +5919,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:unified_feature.feature_type']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/unified_feature/feature_type
 - path: omics.feature_id
   type: string
@@ -4499,6 +5934,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:unified_feature.feature_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/unified_feature/feature_id
 - path: omics.feature_name
   type: string
@@ -4512,6 +5949,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:unified_feature.feature_name']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/unified_feature/feature_name
 - path: omics.multiomics_support_count
   type: integer
@@ -4529,6 +5968,9 @@ fields:
     basis: definitional
     note_zh: 计数非负
   ambiguities: [AMB-026]
+  key_role: statistic
+  serves: [topic2, topic3]
+  argument_role: backing
   source_ref: sources/omics_v2/omics_metadata_template.json#/cross_omics/multiomics_support_count
 - path: omics.ortholog_id
   type: string
@@ -4542,6 +5984,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:cross_species.ortholog_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/cross_species/ortholog_id
 - path: omics.ortholog_species
   type: string
@@ -4555,6 +5999,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:cross_species.ortholog_species']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/cross_species/ortholog_species
 - path: omics.orthology_type
   type: string
@@ -4568,6 +6014,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:cross_species.orthology_type']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/cross_species/orthology_type
 - path: omics.synteny_support
   type: string
@@ -4581,6 +6029,9 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:cross_species.synteny_support']
   ambiguities: [AMB-026]
+  key_role: assertion
+  serves: [topic2, topic3]
+  argument_role: backing
   source_ref: sources/omics_v2/omics_metadata_template.json#/cross_species/synteny_support
 - path: omics.cross_species_evidence
   type: string
@@ -4594,6 +6045,9 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:cross_species.cross_species_evidence']
   ambiguities: [AMB-026]
+  key_role: assertion
+  serves: [topic2, topic3]
+  argument_role: backing
   source_ref: sources/omics_v2/omics_metadata_template.json#/cross_species/cross_species_evidence
 - path: omics.genotype_quality
   type: number
@@ -4607,6 +6061,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:genomics_specific.genotype_quality']
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/genomics_specific/genotype_quality
 - path: omics.read_depth
   type: integer
@@ -4624,6 +6080,8 @@ fields:
     basis: definitional
     note_zh: 计数非负
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/genomics_specific/read_depth
 - path: omics.structural_variant_type
   type: string
@@ -4637,6 +6095,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:genomics_specific.structural_variant_type']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/genomics_specific/structural_variant_type
 - path: omics.transcript_id
   type: string
@@ -4650,6 +6110,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:transcriptomics_specific.transcript_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/transcriptomics_specific/transcript_id
 - path: omics.raw_count
   type: integer
@@ -4667,6 +6129,8 @@ fields:
     basis: definitional
     note_zh: 计数非负
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/transcriptomics_specific/raw_count
 - path: omics.log2_fold_change
   type: number
@@ -4680,6 +6144,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:transcriptomics_specific.log2_fold_change']
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/transcriptomics_specific/log2_fold_change
 - path: omics.base_mean
   type: number
@@ -4697,6 +6163,8 @@ fields:
     basis: definitional
     note_zh: 计数均值非负
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/transcriptomics_specific/base_mean
 - path: omics.deg_status
   type: string
@@ -4710,6 +6178,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:transcriptomics_specific.deg_status']
   ambiguities: [AMB-026]
+  key_role: statistic
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/transcriptomics_specific/deg_status
 - path: omics.deg_threshold
   type: string
@@ -4723,6 +6193,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:transcriptomics_specific.deg_threshold']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/transcriptomics_specific/deg_threshold
 - path: omics.coexpression_module
   type: string
@@ -4736,6 +6208,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:transcriptomics_specific.coexpression_module']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/transcriptomics_specific/coexpression_module
 - path: omics.gene_set
   type: string
@@ -4749,6 +6223,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:transcriptomics_specific.gene_set']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/transcriptomics_specific/gene_set
 - path: omics.pathway_id
   type: string
@@ -4762,6 +6238,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:transcriptomics_specific.pathway_id', 'omics_v2:metabolomics_specific.metabolic_pathway']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/transcriptomics_specific/pathway_id
 - path: omics.go_term
   type: string
@@ -4775,6 +6253,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:transcriptomics_specific.go_term']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/transcriptomics_specific/go_term
 - path: omics.cell_id
   type: string
@@ -4788,6 +6268,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:single_cell_specific.cell_id']
   ambiguities: [AMB-026]
+  key_role: context_key
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/cell_id
 - path: omics.cluster_id
   type: string
@@ -4801,6 +6283,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:single_cell_specific.cluster_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/cluster_id
 - path: omics.cell_type_annotation_method
   type: string
@@ -4814,6 +6298,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:single_cell_specific.cell_type_annotation_method']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/cell_type_annotation_method
 - path: omics.marker_genes
   type: array_string
@@ -4827,6 +6313,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:single_cell_specific.marker_genes']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/marker_genes
 - path: omics.n_counts
   type: integer
@@ -4844,6 +6332,8 @@ fields:
     basis: definitional
     note_zh: 计数非负
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/n_counts
 - path: omics.n_genes
   type: integer
@@ -4861,6 +6351,8 @@ fields:
     basis: definitional
     note_zh: 计数非负
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/n_genes
 - path: omics.mitochondrial_fraction
   type: number
@@ -4874,6 +6366,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:single_cell_specific.mitochondrial_fraction']
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/mitochondrial_fraction
 - path: omics.doublet_status
   type: string
@@ -4887,6 +6381,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:single_cell_specific.doublet_status']
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/doublet_status
 - path: omics.integration_method
   type: string
@@ -4900,6 +6396,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:single_cell_specific.integration_method']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/integration_method
 - path: omics.trajectory_method
   type: string
@@ -4913,6 +6411,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:single_cell_specific.trajectory_method']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/trajectory_method
 - path: omics.pseudotime
   type: number
@@ -4926,6 +6426,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:single_cell_specific.pseudotime']
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/pseudotime
 - path: omics.cell_cell_interaction_method
   type: string
@@ -4939,6 +6441,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:single_cell_specific.cell_cell_interaction_method']
   ambiguities: [AMB-026]
+  key_role: method_spec
+  serves: [topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/single_cell_specific/cell_cell_interaction_method
 - path: omics.chromatin_region_id
   type: string
@@ -4952,6 +6456,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:epigenomics_specific.chromatin_region_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/epigenomics_specific/chromatin_region_id
 - path: omics.peak_start
   type: integer
@@ -4969,6 +6475,8 @@ fields:
     basis: definitional
     note_zh: 物理坐标为正整数
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/epigenomics_specific/peak_start
 - path: omics.peak_end
   type: integer
@@ -4986,6 +6494,8 @@ fields:
     basis: definitional
     note_zh: 物理坐标为正整数
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/epigenomics_specific/peak_end
 - path: omics.histone_mark
   type: string
@@ -4999,6 +6509,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:epigenomics_specific.histone_mark']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/epigenomics_specific/histone_mark
 - path: omics.methylation_context
   type: string
@@ -5012,6 +6524,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:epigenomics_specific.methylation_context']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/epigenomics_specific/methylation_context
 - path: omics.motif_id
   type: string
@@ -5025,6 +6539,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:epigenomics_specific.motif_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/epigenomics_specific/motif_id
 - path: omics.tf_binding_candidate
   type: string
@@ -5038,6 +6554,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:epigenomics_specific.tf_binding_candidate']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/epigenomics_specific/tf_binding_candidate
 - path: omics.linked_regulatory_gene
   type: string
@@ -5051,6 +6569,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:epigenomics_specific.linked_regulatory_gene']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/epigenomics_specific/linked_regulatory_gene
 - path: omics.differential_peak_status
   type: string
@@ -5064,6 +6584,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:epigenomics_specific.differential_peak_status']
   ambiguities: [AMB-026]
+  key_role: statistic
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/epigenomics_specific/differential_peak_status
 - path: omics.protein_id
   type: string
@@ -5077,6 +6599,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:proteomics_specific.protein_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/proteomics_specific/protein_id
 - path: omics.peptide_id
   type: string
@@ -5090,6 +6614,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:proteomics_specific.peptide_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/proteomics_specific/peptide_id
 - path: omics.protein_fold_change
   type: number
@@ -5103,6 +6629,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:proteomics_specific.protein_fold_change']
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/proteomics_specific/protein_fold_change
 - path: omics.protein_identification_score
   type: number
@@ -5116,6 +6644,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:proteomics_specific.protein_identification_score']
   ambiguities: [AMB-026]
+  key_role: statistic
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/proteomics_specific/protein_identification_score
 - path: omics.post_translational_modification
   type: string
@@ -5129,6 +6659,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:proteomics_specific.post_translational_modification']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/proteomics_specific/post_translational_modification
 - path: omics.interaction_partner
   type: string
@@ -5142,6 +6674,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:proteomics_specific.interaction_partner']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/proteomics_specific/interaction_partner
 - path: omics.metabolite_id
   type: string
@@ -5155,6 +6689,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:metabolomics_specific.metabolite_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/metabolomics_specific/metabolite_id
 - path: omics.metabolite_name
   type: string
@@ -5168,6 +6704,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:metabolomics_specific.metabolite_name']
   ambiguities: [AMB-026]
+  key_role: entity_mention
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/metabolomics_specific/metabolite_name
 - path: omics.metabolite_database_id
   type: string
@@ -5181,6 +6719,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:metabolomics_specific.database_id']
   ambiguities: [AMB-026]
+  key_role: entity_id
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/metabolomics_specific/database_id
 - path: omics.chemical_formula
   type: string
@@ -5194,6 +6734,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:metabolomics_specific.chemical_formula']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/metabolomics_specific/chemical_formula
 - path: omics.mz
   type: number
@@ -5211,6 +6753,8 @@ fields:
     basis: definitional
     note_zh: 质荷比非负
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/metabolomics_specific/mz
 - path: omics.retention_time
   type: string
@@ -5224,6 +6768,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:metabolomics_specific.retention_time']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/metabolomics_specific/retention_time
 - path: omics.metabolite_fold_change
   type: number
@@ -5237,6 +6783,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:metabolomics_specific.metabolite_fold_change']
   ambiguities: [AMB-026]
+  key_role: measurement
+  serves: [topic2, topic3]
   source_ref: sources/omics_v2/omics_metadata_template.json#/metabolomics_specific/metabolite_fold_change
 - path: omics.metabolite_annotation_level
   type: string
@@ -5250,6 +6798,8 @@ fields:
   origin: [omics_v2]
   origin_paths: ['omics_v2:metabolomics_specific.annotation_level']
   ambiguities: [AMB-026]
+  key_role: entity_attribute
+  serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/metabolomics_specific/annotation_level
 rules:
 - id: R001
@@ -5521,6 +7071,31 @@ rules:
   candidates: [common.reference_allele, common.alternate_allele]
   source_zh: 类比 R011；多等位位点可能不满足
   ambiguities: [AMB-026]
+- id: R031
+  kind: references_resolve
+  severity: warning
+  basis: definitional
+  title_zh: 证据链引用的记录应能在数据集中找到
+  fields: [agent.evidence_record_ids, skills.method_record_ids]
+  target: common.record_id
+  source_zh: agent.evidence_record_ids 定义：支撑本断言的原子记录ID，用于检查证据链是否闭合
+  since: 3.2.0
+  ambiguities: [AMB-033]
+- id: R032
+  kind: required_when
+  severity: warning
+  basis: inferred
+  title_zh: 引文含限定措辞的结论宜保留限定原文
+  when:
+    all:
+    - field: common.record_kind
+      equals: claim
+    - field: common.source_quote
+      matches: '(?i)\b(may|might|could|possibl[ey]|putative|likely|probabl[ey]|potential(ly)?|suggest(s|ed|ing)?|appears? to|seems? to|requires? (further )?validation)\b|可能|推测|或许|有待'
+  require: [agent.claim_qualifier_text]
+  source_zh: 填写原则5：关联证据不能自动升级为因果结论；TRACE（arXiv:2605.29656）Qualifier 要素
+  since: 3.2.0
+  ambiguities: [AMB-035]
 ambiguities:
 - id: AMB-001
   status: decided
@@ -5708,3 +7283,33 @@ ambiguities:
   finding_zh: 模板中 expression_value、protein_abundance、metabolite_abundance、peak_signal、methylation_level、feature_value 等均为单一测量值。
   resolution_zh: 按 v3 单值观测设计映射到 common.measurement_value / measurement_unit，并由 measurement_name 说明测量量；不为每种组学重复定义数值字段。
   since: 3.1.0
+- id: AMB-032
+  status: provisional
+  title_zh: 字段的功能归属
+  finding_zh: 数据负责人要求每个键说明作用及其服务的四项功能：课题二、课题三、派生（知识图谱/关系库/问答/语料/三元组）与我方自身迭代（sources/project/record_functions.md）。v3 只在分组说明与 downstream_zh 列中给出消费方；3.1.0 起新增的字段没有下游说明。
+  resolution_zh: 每个字段标注 key_role（键的作用，含到图谱/关系表/三元组/问答语料的投影）与 serves（服务的功能），课题二/三卡片字段另标 card；各功能的分面取自研究内容（sources/project/research_contents.md），字段分面 = 键角色的分面 ∩ serves。由分组与 downstream_zh 推出的功能和卡片为来源标注，bdc check 保证不被删除或改写；其余由仓库补充，生成文档中单独列出。自身迭代即课题一（数据标准与质量评价、本体构建、知识融合），v3 中的“课题一”与“数据治理”归入此项：数据负责人已确认（2026-09-30，我方即课题一）。各字段由仓库补充的功能与卡片仍待确认。
+  since: 3.2.0
+- id: AMB-033
+  status: provisional
+  title_zh: 证据链的论证要素（TRACE）
+  finding_zh: 课题二需要证据链，但契约未说明哪些字段构成结论、依据、推理依据、支撑、限定与反驳；论文结论的限定措辞与作者陈述的局限没有逐字字段，结果与产生它的方法之间也没有记录级链接。TRACE（arXiv:2605.29656）以 Toulmin 六要素与 Flavell 两要素分析推理结构。
+  resolution_zh: argument_role 按 TRACE 八要素标注字段在证据链中的作用；新增 agent.claim_qualifier_text、agent.stated_limitations（D，逐字）与 skills.method_record_ids（N，管线按候选引用解析）；R031 检查证据链引用能否闭合。论证结构审计只报告要素覆盖与链接闭合，不是质量或真值评分（TRACE 自述局限：结构完整不代表结论正确）。
+  since: 3.2.0
+- id: AMB-034
+  status: open
+  title_zh: 实体提及与规范 ID 的逐项对应
+  finding_zh: common.gene_names 与 gene_ids、trait_names 与 trait_ids 等数组之间没有逐项对应规则；transform 的 subject/object 一条记录只能表达一对实体，图谱与关系库无法确定每个提及对应哪个节点。
+  resolution_zh: 新增 transform.entity_links（array_entity_link）逐项记录提及、来源字段、实体类型、规范 ID 与对齐状态；不对 *_names 与 *_ids 做位置对齐假设。item 结构为仓库拟定，待确认。
+  since: 3.2.0
+- id: AMB-035
+  status: provisional
+  title_zh: 结论限定措辞的识别
+  finding_zh: 结论中的限定措辞（may、suggesting a possible、可能）若在抽取中丢失，图谱与问答会把假设当作事实；v3 未定义限定措辞字段与词表。
+  resolution_zh: agent.claim_qualifier_text 逐字保存限定措辞；R032 用仓库拟定的中英文限定词正则提示缺失（warning，inferred），词表待确认。
+  since: 3.2.0
+- id: AMB-036
+  status: provisional
+  title_zh: 知识融合的冲突消解与动态更新
+  finding_zh: 课题一的知识融合包括冲突消解与动态更新（research_contents.md），但 v3 只有 conflict_record_ids（哪些记录冲突）与 record_version（修订序号），没有消解结果，也无法在重新抽取使 record_id 变化时追溯新旧记录。
+  resolution_zh: 新增 common.conflict_resolution_status（I，词表 conflict_resolution_status，代码为仓库拟定）、common.replaces_record_ids（N，新记录指向被取代的旧记录）与 common.record_updated_at（N，版本时间）。旧记录不删除；取代与消解都保留证据链。
+  since: 3.2.0

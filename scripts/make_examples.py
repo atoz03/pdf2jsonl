@@ -61,6 +61,21 @@ CURATED = [
         "skills.method_name": "mixed linear model GWAS", "skills.method_category": "GWAS",
         "skills.software_name": "GEMMA", "skills.software_version": "0.98.5",
         "skills.tool_input_formats": ["PLINK bed", "phenotype TSV"], "skills.tool_output_formats": ["assoc TSV"],
+        # Topic 3: standard inputs, outputs and parameter semantics of a skill
+        "skills.input_modalities": ["genotype", "phenotype"],
+        "skills.genotype_data_format": "PLINK bed", "skills.phenotype_data_format": "TSV",
+        "skills.output_fields": ["chr", "rs", "ps", "beta", "se", "p_wald"],
+        "skills.parameters": [
+            {"name": "lmm", "value": 1, "value_kind": "categorical", "constraint": "1 = Wald test",
+             "source": "tool manual"},
+            {"name": "maf", "value": 0.01, "value_kind": "threshold", "constraint": "0 <= maf <= 0.5",
+             "source": "tool manual"}],
+        "skills.workflow_steps": [
+            {"step_no": 1, "step_name": "kinship", "tool_name": "GEMMA", "step_desc": "estimate the relatedness matrix",
+             "inputs": ["PLINK bed"], "outputs": ["kinship matrix"]},
+            {"step_no": 2, "step_name": "association", "tool_name": "GEMMA",
+             "step_desc": "fit the univariate linear mixed model", "inputs": ["PLINK bed", "kinship matrix"],
+             "outputs": ["assoc TSV"]}],
         "_locator": {"section": "Usage"}}),
 ]
 

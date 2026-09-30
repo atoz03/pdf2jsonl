@@ -8,6 +8,7 @@ objects, or JSONL — one template instance per record.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -20,7 +21,8 @@ from .ids import stable_record_id
 from .mappings import entry_targets, match_entry
 from .paths import repo_root
 from .schema_gen import field_schema
-from .util import ContractError, dumps_json, get_path, load_yaml, parse_semver, set_path, sha256_file, utc_now
+from .util import (ContractError, canonical_json, dumps_json, dumps_jsonl, get_path, load_yaml, parse_semver, set_path,
+                   sha256_file, utc_now)
 
 EMPTY = (None, "", [], {})
 SKIP_GROUPS = {"schema_info", "controlled_vocabularies"}
@@ -118,7 +120,9 @@ class OmicsMigrator:
         original_id = get_path(rec, "common.record_id", None)
         if original_id is not None:
             set_path(rec, "common.source_record_id", str(original_id))
-        anchor = f"omics:{original_id or ''}"
+        # Without an instance ID the record is identified by its content, never by its position in the file.
+        anchor = f"omics:{original_id}" if original_id is not None else \
+            "omics:sha256=" + hashlib.sha256(canonical_json(inst).encode("utf-8")).hexdigest()[:16]
         set_path(rec, "common.record_id", stable_record_id(str(source_id), kind, anchor,
                                                            get_path(rec, "common.source_quote", None)))
         grain = (self.contract["record_kinds"].get(kind) or {}).get("grain")
@@ -160,17 +164,27 @@ def migrate_omics_file(path: Path | str, out_dir: Path | str, version: str = "la
             continue
         result = mig.validator.validate(rec)
         if result.valid:
-            records.append(rec)
+            records.append((n, rec))
         else:
             rejected.append({"error_format": 1, "stage": "migration", "code": "RECORD_INVALID", "instance": n,
                              "message": "迁移记录未通过契约校验", "issues": [i.to_dict() for i in result.errors],
                              "conflicts": conflicts, "record": rec})
+    bad: dict[int, list] = {}
+    for idx, issue in mig.validator.validate_dataset([r for _, r in records]):
+        if issue.severity == "error":
+            bad.setdefault(idx, []).append(issue)
+    for idx in sorted(bad, reverse=True):
+        n, rec = records.pop(idx)
+        rejected.append({"error_format": 1, "stage": "dataset", "code": "DATASET_RULE", "instance": n,
+                         "message": bad[idx][0].message, "issues": [i.to_dict() for i in bad[idx]], "record": rec})
+    rejected.sort(key=lambda e: e.get("instance", 0))
+    records = [r for _, r in records]
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = path.stem
     outs = {"records": out_dir / f"{stem}.migrated.jsonl", "errors": out_dir / f"{stem}.migrated.errors.jsonl",
             "residue": out_dir / f"{stem}.residue.json", "report": out_dir / f"{stem}.migration.json"}
-    outs["records"].write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records), encoding="utf-8")
-    outs["errors"].write_text("".join(json.dumps(e, ensure_ascii=False) + "\n" for e in rejected), encoding="utf-8")
+    outs["records"].write_text(dumps_jsonl(records), encoding="utf-8")
+    outs["errors"].write_text(dumps_jsonl(rejected), encoding="utf-8")
     outs["residue"].write_text(dumps_json({"residue_format": 1, "source": path.name, "unconsumed": residue}),
                                encoding="utf-8")
     counts = {"records": len(records), "rejected": len(rejected), "residue_leaves": len(residue)}

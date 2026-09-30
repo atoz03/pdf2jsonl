@@ -218,6 +218,75 @@
           }
         }
       }
+    },
+    "argument_structure": {
+      "description": "Evidence-chain audit (Toulmin/Flavell elements via catalog argument_role, after TRACE arXiv:2605.29656); structure and connectivity only, not correctness",
+      "type": "object",
+      "required": [
+        "audit_format",
+        "statements",
+        "coverage",
+        "links",
+        "flags",
+        "records"
+      ],
+      "properties": {
+        "audit_format": {
+          "const": 1
+        },
+        "basis": {
+          "type": "string"
+        },
+        "statements": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coverage": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "own",
+              "chain"
+            ],
+            "properties": {
+              "own": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "chain": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "links": {
+          "type": "object",
+          "required": [
+            "total",
+            "unresolved"
+          ]
+        },
+        "flags": {
+          "$ref": "_defs.schema.json#/$defs/count_map"
+        },
+        "flag_help": {
+          "type": "object"
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "record_id",
+              "record_kind",
+              "elements",
+              "chain_elements"
+            ]
+          }
+        }
+      }
     }
   }
 }

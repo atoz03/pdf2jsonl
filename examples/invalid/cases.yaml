@@ -119,3 +119,21 @@ cases:
   profile: compact
   base: examples/records/genotype_observation.jsonl
   expect: [PROFILE_FIELD_NOT_ALLOWED]
+- id: entity-link-without-source-field
+  why_zh: "实体对齐链接须指明提及来自哪个字段（transform.entity_links，AMB-034，3.2.0 新增）"
+  version: 3.2.0
+  base: examples/records/genotype_observation.jsonl
+  set: {transform.entity_links: [{mention: qPH7.1, entity_id: "QTL:0001"}]}
+  expect: [SCHEMA_REQUIRED]
+- id: record-updated-at-not-utc
+  why_zh: "record_updated_at 为 ISO 8601 UTC 时间（AMB-036，3.2.0 新增）"
+  version: 3.2.0
+  base: examples/records/tool_spec.jsonl
+  set: {common.record_updated_at: "2026/09/30 10:00"}
+  expect: [SCHEMA_PATTERN]
+- id: evidence-link-not-a-list
+  why_zh: "证据链引用为记录ID数组（agent.evidence_record_ids）"
+  version: 3.2.0
+  base: examples/records/tool_spec.jsonl
+  set: {agent.evidence_record_ids: rec_0123456789abcdef0123456789abcdef}
+  expect: [SCHEMA_TYPE]

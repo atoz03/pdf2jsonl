@@ -76,5 +76,6 @@ agent mode, `prepare` pins the resolved version in `request.json`, and `finalize
 | --- | --- |
 | 3.0.0 | Faithful import of the 259-field v3 baseline: rules, vocabularies, profiles `full` / `compact` / `pdf_extraction` |
 | 3.1.0 | Merge of legacy v1 and omics v2: 129 provisional fields (legacy 17, omics 111, `schema_name`), 6 vocabularies, R027–R030, `pdf_extraction_omics`, mappings |
+| 3.2.0 | Key roles and functions on every field (`key_role`, `serves`, `card`, `argument_role`); 9 provisional fields for the evidence chain, derivation and Topic 1 fusion; R031–R032; vocabulary `conflict_resolution_status`; profile `record_links` |
 
 See `CHANGELOG.md` for details.

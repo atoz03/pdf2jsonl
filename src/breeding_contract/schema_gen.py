@@ -13,7 +13,11 @@ from .rules import rule_to_json_schema
 from .util import split_path
 
 SCHEMA_DIALECT = "https://json-schema.org/draft/2020-12/schema"
-ITEM_TYPES = ("array_evidence", "array_step", "array_parameter")
+
+
+def item_types(contract: dict) -> list[str]:
+    """Types whose values are arrays of structured items (array_evidence, array_step, ...)."""
+    return [name for name, t in contract["types"].items() if "item" in t]
 
 
 def _id(contract: dict, kind: str) -> str:
@@ -62,10 +66,8 @@ def field_schema(contract: dict, f: dict, *, annotate: bool = True) -> dict:
 def item_defs(contract: dict) -> dict:
     idx = field_index(contract)
     defs = {}
-    for tname in ITEM_TYPES:
-        t = contract["types"].get(tname)
-        if not t or "item" not in t:
-            continue
+    for tname in item_types(contract):
+        t = contract["types"][tname]
         item = t["item"]
         props = copy.deepcopy(item.get("properties") or {})
         for path in item.get("from_fields") or []:
@@ -126,7 +128,7 @@ def record_schema(contract: dict, *, fields: list[str] | None = None, extra_requ
                        "source_digest": contract["source_digest"]},
     }
     defs = item_defs(contract)
-    used = {f"{idx[p]['type']}_item" for p in allowed if idx[p]["type"] in ITEM_TYPES}
+    used = {f"{idx[p]['type']}_item" for p in allowed if idx[p]["type"] in item_types(contract)}
     if used:
         schema["$defs"] = {k: v for k, v in defs.items() if k in used}
     if include_rules:
@@ -152,7 +154,7 @@ def record_schema(contract: dict, *, fields: list[str] | None = None, extra_requ
 def rule_paths(rule: dict) -> list[str]:
     paths = list(rule.get("require") or []) + list(rule.get("require_any") or [])
     paths += [p for p in rule.get("fields") or [] if p != "*"]
-    for key in ("field", "group_by"):
+    for key in ("field", "group_by", "target"):
         if rule.get(key):
             paths.append(rule[key])
     paths += list(rule.get("candidates") or [])
@@ -205,6 +207,18 @@ def candidate_schema(contract: dict, profile: dict) -> dict:
                      "required": ev_required},
         "note": {"type": "string", "description": "free-text note for reviewers; never copied into records"},
     }
+    links = profile.get("record_links") or {}
+    if links:
+        cand_props["ref"] = {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{1,64}$",
+                             "description": "candidate-local name that other candidates can reference in `links`"}
+        cand_props["links"] = {
+            "type": "object", "additionalProperties": False, "minProperties": 1,
+            "description": "references to other candidates by `ref`; resolved to record IDs by the pipeline",
+            "properties": {name: {"type": "array", "minItems": 1, "uniqueItems": True,
+                                  "items": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{1,64}$"},
+                                  "description": spec["description_zh"] +
+                                  (f"（目标类型：{', '.join(spec['target_kinds'])}）" if spec.get("target_kinds") else "")}
+                           for name, spec in links.items()}}
     if any(spec["rule"] == "backend_confidence" for spec in (profile.get("generated_fields") or {}).values()):
         cand_props["confidence"] = {"type": "number", "minimum": 0, "maximum": 1,
                                     "description": "backend-reported confidence; omit if the backend has none"}

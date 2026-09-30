@@ -1,0 +1,20 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: conflict_resolution_status
+title_zh: 冲突消解状态
+enforcement: warning
+closure: closed
+code_status: proposed
+source:
+  ref: sources/project/research_contents.md#L3
+  quote_zh: 知识融合：知识抽取、实体对齐、冲突消解与动态更新（Topic 1 knowledge fusion — conflict resolution）
+ambiguities: [AMB-036]
+values:
+- code: unresolved
+  label_zh: 未消解
+- code: context_dependent
+  label_zh: 条件不同，均成立
+- code: retained
+  label_zh: 保留本记录
+- code: superseded
+  label_zh: 本记录被取代

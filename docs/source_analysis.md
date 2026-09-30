@@ -14,6 +14,14 @@ the catalog, or as a mapping issue (`LEG-*`, `OMX-*`) in `mappings/`. The genera
 | **legacy_v1** (v1.0.0) | `sources/legacy_v1/` spec, JSON Schema, template, example, README | Document-centric: **one paper per JSONL line** with 12–14 top-level blocks (`record_info`, `doc_meta`, `breed_entities`, `relations`, `experiments`, `analyses`, `conclusions`, `pipeline`, `governance`, `provenance`, `agent`, `skill`); 713 schema leaves. | Superseded design. Content fields merged as 17 provisional fields (3.1.0); the rest is covered by `mappings/legacy_to_current.yaml`. Converted by `bdc migrate legacy`, and re-derivable as a view with `bdc bundle --legacy-v1`. |
 | **omics_v2** (2.0.0) | `sources/omics_v2/omics_metadata_template.json` | A template of 27 groups and 252 field names, all values `null`. It has no definitions, types, units or requirements. | Candidate extension. Merged as 111 provisional fields (68 in the new `omics` group), plus `mappings/omics_to_current.yaml`. Converted by `bdc migrate omics`. |
 
+Two project documents were added later, in 3.2.0. They define what the records are for rather than new fields.
+They are also kept verbatim, under `sources/project/`:
+
+| Source | File | Used for |
+| --- | --- | --- |
+| **record_functions** | `sources/project/record_functions.md` | The data owner's four record functions: Topic 2, Topic 3, derivation into KG / relational DB / QA / corpus / triples, and our own iteration. They became `codes.function` and the `serves` annotation (AMB-032). |
+| **research_contents** | `sources/project/research_contents.md` | The research contents of Topics 1–3. They supply the facets of each function: reasoning, planning, memory and execution layers; interfaces, orchestration, registry and card flow; standards, quality, ontology and fusion. Topic 1 fusion needs (conflict resolution, dynamic update) motivated AMB-036. |
+
 The two uploaded archives were named `jsonl.zip` and `Jsonl.zip`. The names differ only by case and collide on
 case-insensitive filesystems, so they are stored as `sources/archives/fields_v3__jsonl.zip` and
 `legacy_v1__Jsonl.zip`.
@@ -113,6 +121,8 @@ Decisions that need a domain owner's confirmation are listed with status `open` 
 - AMB-022: `crop_name` for multi-crop papers.
 - AMB-026 / AMB-027: definitions of the omics fields, and whether overlapping raw and normalized pairs should
   be consolidated.
+- AMB-032 … 036: the function assignment of every key (source statement versus repository addition), the TRACE
+  argument roles, the entity-link structure, the hedge lexicon, and the conflict-resolution codes.
 
 Confirming a provisional field (`provisional` → `verified`) is a MINOR release. Changing its meaning is a
 MAJOR release (`docs/versioning.md`).

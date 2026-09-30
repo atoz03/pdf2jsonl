@@ -67,6 +67,21 @@
       }
     },
     "model_record_kinds": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "record_links": {
+      "type": "object",
+      "description": "Named references between candidates (candidate `ref` + `links`). The pipeline resolves them to the record IDs of accepted records and writes them to `field`; unresolved references are warnings, never invented IDs.",
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_]*$"},
+      "additionalProperties": {
+        "type": "object",
+        "required": ["field", "description_zh"],
+        "additionalProperties": false,
+        "properties": {
+          "field": {"$ref": "#/$defs/path"},
+          "target_kinds": {"type": "array", "items": {"type": "string"}, "uniqueItems": true, "minItems": 1},
+          "description_zh": {"type": "string"}
+        }
+      }
+    },
     "evidence_policy": {
       "type": "object",
       "additionalProperties": false,

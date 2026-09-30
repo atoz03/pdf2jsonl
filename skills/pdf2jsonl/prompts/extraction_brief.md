@@ -31,6 +31,9 @@ validates against `{{candidate_schema_file}}`:
    (identifiers, versions, locators, review status, normalized values, generated or externally sourced fields)
    are computed by the pipeline or by later stages and must not appear in your output.
 6. Values from a controlled vocabulary must use the listed codes.
+7. **Keep the evidence chain.** A conclusion travels downstream (agent reasoning, knowledge-graph edges, QA
+   answers) with its grounds, its hedges and its stated exceptions. Link it to the candidates it rests on, copy
+   hedging words verbatim, and never drop or add a hedge (see the two sections below).
 
 ## Record kinds you may produce
 
@@ -51,6 +54,23 @@ validates against `{{candidate_schema_file}}`:
 ## Controlled vocabularies
 
 {{vocabularies_block}}
+
+## Evidence chain (Toulmin elements, after TRACE)
+
+Capture each element the paper states, in these fields, and nothing it does not state:
+
+{{argument_block}}
+
+- If the quote hedges the conclusion (may, suggests, possible, putative, requires validation, 可能, 推测), copy
+  the hedging words verbatim into the Qualifier field that is listed for text. A hedged statement is not a finding.
+- Limitations, exceptions or alternative explanations that the authors state go into the Rebuttal fields.
+  Your own doubts do not; they belong to reviewers.
+- Structure is not correctness: a complete chain does not make a claim true, so never complete a chain by
+  inference.
+
+## Linking candidates
+
+{{record_links_block}}
 
 ## Cross-field rules checked by the validator
 

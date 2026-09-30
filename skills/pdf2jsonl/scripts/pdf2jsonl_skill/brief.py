@@ -13,8 +13,9 @@ PLACEHOLDERS = frozenset({
     "contract_name", "schema_version", "release_status", "profile_name", "profile_title", "profile_description",
     "record_kinds_table", "document_fields_table", "evidence_roles_table", "extract_fields_table", "field_count",
     "vocabularies_block", "rules_block", "system_fields_list", "candidate_schema_file", "pages_file",
-    "candidates_file",
+    "candidates_file", "argument_block", "record_links_block",
 })
+ARGUMENT_ORDER = ("claim", "data", "warrant", "backing", "qualifier", "rebuttal")
 
 ROLE_HELP = {
     "page": "physical PDF page number, starting at 1 (the page marker in the pages file)",
@@ -91,8 +92,46 @@ def rules_block(contract: dict, profile: dict) -> str:
     return "\n".join(lines)
 
 
+def argument_block(contract: dict, profile: dict) -> str:
+    """Fields the model may fill, grouped by their Toulmin element (catalog `argument_role`, AMB-033)."""
+    labels = (contract.get("codes") or {}).get("argument_role") or {}
+    by_role: dict[str, list[str]] = {}
+    for f in profile["fields"]:
+        if f.get("argument_role") in ARGUMENT_ORDER and f["role"] in ("extract", "provenance"):
+            by_role.setdefault(f["argument_role"], []).append(f["path"])
+    lines = []
+    for r in ARGUMENT_ORDER:
+        if r in by_role:
+            spec = labels.get(r, {})
+            lines.append(f"- **{spec.get('label_en', r)}** ({spec.get('label_zh', '')}，{spec.get('description_zh', '')}): "
+                         + ", ".join(f"`{p}`" for p in by_role[r]))
+    linked = [f"`{s['field']}` (via `links.{n}`)" for n, s in (profile.get("record_links") or {}).items()]
+    if linked:
+        lines.append("- **Links** between candidates, filled by the pipeline: " + ", ".join(linked))
+    return "\n".join(lines) or "(this profile exposes no evidence-chain fields)"
+
+
+def record_links_block(profile: dict) -> str:
+    links = profile.get("record_links") or {}
+    if not links:
+        return "(this profile declares no candidate links; do not output `ref` or `links`)"
+    first = next(iter(links))
+    lines = ["Give a candidate a short `ref` (letters, digits, `_.:-`) when another candidate points to it, and list the "
+             "references under `links`, e.g. "
+             f'`{{"ref": "r3", "record_kind": "...", "links": {{"{first}": ["r1", "r2"]}}, ...}}`.', ""]
+    for name, spec in links.items():
+        targets = ", ".join(f"`{k}`" for k in spec.get("target_kinds") or []) or "any record kind"
+        lines.append(f"- `links.{name}` → stored as `{spec['field']}`: {spec['description_zh']} (targets: {targets})")
+    lines += ["", "Reference only candidates in this file and only when the paper itself connects them (the result is "
+              "reported by that method; the conclusion rests on that observation). The pipeline turns references into "
+              "record IDs. A reference to a candidate that is rejected, e.g. because its quote is not found, stays "
+              "unresolved and the linking record is flagged for review."]
+    return "\n".join(lines)
+
+
 def system_list(profile: dict) -> str:
-    return ", ".join(f"`{f['path']}`" for f in profile["fields"] if f["role"] in ("system", "normalized", "generated"))
+    return ", ".join(f"`{f['path']}`" for f in profile["fields"]
+                     if f["role"] in ("system", "linked", "normalized", "generated"))
 
 
 def render_brief(rc, profile: dict, pages_file: str, candidates_file: str, candidate_schema_file: str) -> str:
@@ -115,6 +154,8 @@ def render_brief(rc, profile: dict, pages_file: str, candidates_file: str, candi
         "candidate_schema_file": candidate_schema_file,
         "pages_file": pages_file,
         "candidates_file": candidates_file,
+        "argument_block": argument_block(rc.contract, profile),
+        "record_links_block": record_links_block(profile),
     }
     assert set(values) == PLACEHOLDERS
 

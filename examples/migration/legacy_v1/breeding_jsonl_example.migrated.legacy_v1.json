@@ -3,7 +3,7 @@
   "view": "legacy_v1_projection",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.1.0"
+    "schema_version": "3.2.0"
   },
   "note_zh": "由原子记录派生的 legacy v1 视图；有损，页码为 PDF 物理页（AMB-029）。",
   "documents": [

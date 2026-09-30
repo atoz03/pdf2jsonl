@@ -6,7 +6,7 @@ import json
 from breeding_contract.release import release
 
 from conftest import EXAMPLE_PDF, run_skill
-from helpers import PROBE, add_probe_field, bump_version
+from helpers import NEXT, PROBE, add_probe_field, bump_version
 
 
 def brief(repo, *args):
@@ -26,23 +26,23 @@ def test_brief_is_rendered_from_the_resolved_profile(root):
 
 
 def test_catalog_change_reaches_the_skill(repo_copy, tmp_path):
-    add_probe_field(repo_copy, since="3.2.0")
-    bump_version(repo_copy, "3.2.0")
+    add_probe_field(repo_copy, since=NEXT)
+    bump_version(repo_copy, NEXT)
     assert PROBE not in brief(repo_copy)  # latest release is unchanged
     refused = run_skill(repo_copy, "brief", "--schema-version", "dev")
     assert refused.returncode == 1 and "unreleased" in refused.stderr
     dev = brief(repo_copy, "--schema-version", "dev", "--allow-unreleased")
-    assert PROBE in dev and "3.2.0-dev." in dev
+    assert PROBE in dev and f"{NEXT}-dev." in dev
     # a dev run stamps the unreleased version into every record
     run = run_skill(repo_copy, "run", str(EXAMPLE_PDF), "--backend", "mock", "--schema-version", "dev",
                     "--allow-unreleased", "--out-dir", str(tmp_path / "dev"))
     assert run.returncode == 0, run.stderr
     rec = json.loads((tmp_path / "dev/synthetic_rice_qtl.jsonl").read_text().splitlines()[0])
-    assert rec["common"]["schema_version"].startswith("3.2.0-dev.")
+    assert rec["common"]["schema_version"].startswith(f"{NEXT}-dev.")
     # after `bdc release` the default (latest) picks the field up without touching the Skill
     assert release(repo_copy)[1] == "created"
     assert PROBE in brief(repo_copy)
-    assert json.loads(run_skill(repo_copy, "resolve").stdout)["schema_version"] == "3.2.0"
+    assert json.loads(run_skill(repo_copy, "resolve").stdout)["schema_version"] == NEXT
 
 
 def test_skill_refuses_an_unsupported_major(monkeypatch, root):

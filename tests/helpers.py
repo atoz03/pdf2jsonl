@@ -9,6 +9,11 @@ import yaml
 from breeding_contract.util import load_yaml
 
 PROBE = "common.source_probe_note"
+# Version-relative so the evolution tests keep working after every real release.
+CURRENT = (Path(__file__).resolve().parents[1] / "VERSION").read_text(encoding="utf-8").strip()
+_major, _minor, _ = (int(x) for x in CURRENT.split("."))
+NEXT = f"{_major}.{_minor + 1}.0"
+NEXT_MAJOR = f"{_major + 1}.0.0"
 
 
 def add_probe_field(repo: Path, since: str) -> str:

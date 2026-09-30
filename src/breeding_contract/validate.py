@@ -7,6 +7,7 @@ Validation = JSON Schema structure (fields, types, constraints, error-level voca
 """
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass, field
 from typing import Iterable
@@ -50,6 +51,18 @@ def _json_path(parts: Iterable) -> str:
         else:
             out += ("." if i else "") + str(p)
     return out
+
+
+def _scalars(value, path: str = ""):
+    """(json path, scalar) for every leaf of a record."""
+    if isinstance(value, dict):
+        for k, v in value.items():
+            yield from _scalars(v, f"{path}.{k}" if path else str(k))
+    elif isinstance(value, list):
+        for i, v in enumerate(value):
+            yield from _scalars(v, f"{path}[{i}]")
+    else:
+        yield path, value
 
 
 class Validator:
@@ -109,6 +122,11 @@ class Validator:
         if not isinstance(record, dict):
             return ValidationResult([Issue("SCHEMA_TYPE", "error", "<record>", "记录必须是 JSON 对象")])
         issues = self._schema_issues(record)
+        for path, value in _scalars(record):
+            if isinstance(value, float) and not math.isfinite(value):
+                issues.append(Issue("VALUE_NOT_FINITE", "error", path, f"{path} 为 NaN/Infinity，不是合法 JSON 数值"))
+            elif isinstance(value, str) and not value.strip():
+                issues.append(Issue("VALUE_BLANK", "warning", path, f"{path} 只含空白字符（缺失值应省略）"))
         kinds = self.contract.get("record_kinds") or {}
         for rule in self.record_rules:
             issues.extend(check_record_rule(rule, record, kinds))

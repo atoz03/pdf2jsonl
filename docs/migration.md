@@ -82,7 +82,7 @@ field. Anything else goes to the residue. If two source leaves compete for one f
 the result is `OMICS_FIELD_CONFLICT`. The template itself, being all `null`, migrates to nothing. That is correct
 behaviour, not a failure to fix. `examples/migration/omics_v2/` shows a filled synthetic instance.
 
-## Derived views: `document_bundle` and the legacy projection
+## Derived views: `document_bundle`, the legacy projection and `bdc derive`
 
 ```bash
 bdc bundle paper.jsonl                 # -> paper.bundle.json   (schemas/runtime/document_bundle.schema.json)
@@ -105,3 +105,16 @@ read it. It is lossy by design. Entity and relation IDs are regenerated in the l
 exist in the records are skipped and listed in `skipped` rather than invented; for example, a relation without
 a predicate code, or a document type the paper does not state. Every projection states
 `valid_against_legacy_schema` and the legacy schema errors, if any.
+
+The bundle's document-level fields and entity index are chosen by `key_role` (`source_identity`,
+`bibliographic` and document-level `entity_mention` fields), so a new catalog field lands in the right place
+without a code change.
+
+**`bdc derive`** turns records into the Function 3 targets: relational tables (CSV), knowledge-graph triples
+(JSONL) and an evidence corpus (JSONL). Like the bundle it is a view. It places every field by its `key_role`,
+never pairs name and ID arrays by position, and writes a statement without a reviewed predicate as
+`bdc:unlabelled_relation` rather than guessing. See `docs/field_functions.md` for the layout.
+
+```bash
+bdc derive paper.jsonl --out derived/  # -> derived/paper.tables/*.csv, paper.triples.jsonl, paper.corpus.jsonl
+```

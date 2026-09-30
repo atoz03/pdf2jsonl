@@ -21,7 +21,7 @@ from .api import resolve_schema
 from .ids import build_locator, stable_record_id
 from .mappings import match_entry
 from .paths import repo_root
-from .util import ContractError, dumps_json, load_yaml, parse_semver, set_path, sha256_file, utc_now
+from .util import ContractError, dumps_json, dumps_jsonl, load_yaml, parse_semver, set_path, sha256_file, utc_now
 
 EMPTY = (None, "", [], {})
 MIN_VERSION = (3, 1, 0)
@@ -597,17 +597,19 @@ def migrate_legacy_file(path: Path | str, out_dir: Path | str, version: str = "l
         candidates.update(res["review_candidates"])
         notes += res["notes"]
         consumed |= set(res["consumed_leaf_paths"])
-    dataset_issues = mig.validator.validate_dataset(records)
-    for idx, issue in sorted(dataset_issues, key=lambda x: -x[0]):
+    bad: dict[int, list] = {}
+    for idx, issue in mig.validator.validate_dataset(records):
         if issue.severity == "error":
-            rejected.append({"error_format": 1, "stage": "dataset", "code": "DATASET_RULE", "message": issue.message,
-                             "issues": [issue.to_dict()], "record": records.pop(idx)})
+            bad.setdefault(idx, []).append(issue)
+    for idx in sorted(bad, reverse=True):  # one pop per record, however many rules it breaks
+        rejected.append({"error_format": 1, "stage": "dataset", "code": "DATASET_RULE", "message": bad[idx][0].message,
+                         "issues": [i.to_dict() for i in bad[idx]], "record": records.pop(idx)})
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = path.name[:-6] if path.name.endswith(".jsonl") else path.stem
     outs = {"records": out_dir / f"{stem}.migrated.jsonl", "errors": out_dir / f"{stem}.migrated.errors.jsonl",
             "residue": out_dir / f"{stem}.residue.json", "report": out_dir / f"{stem}.migration.json"}
-    outs["records"].write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records), encoding="utf-8")
-    outs["errors"].write_text("".join(json.dumps(e, ensure_ascii=False) + "\n" for e in rejected), encoding="utf-8")
+    outs["records"].write_text(dumps_jsonl(records), encoding="utf-8")
+    outs["errors"].write_text(dumps_jsonl(rejected), encoding="utf-8")
     outs["residue"].write_text(dumps_json({"residue_format": 1, "source": path.name, "unconsumed": residue,
                                            "review_candidates": candidates}), encoding="utf-8")
     by_code: dict = {}

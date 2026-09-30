@@ -26,9 +26,11 @@ from .contract_link import ensure_contract_importable, sha256_file
 
 ensure_contract_importable()
 from breeding_contract import GENERATOR_VERSION, resolve_schema  # noqa: E402
+from breeding_contract.argument import argument_audit  # noqa: E402
 from breeding_contract.ids import normalize_text  # noqa: E402
 from breeding_contract.rules import Issue  # noqa: E402
-from breeding_contract.util import MISSING, ContractError, del_path, dumps_json, get_path, set_path, utc_now  # noqa: E402
+from breeding_contract.util import (MISSING, ContractError, del_path, dumps_json, dumps_jsonl, get_path,  # noqa: E402
+                                    set_path, utc_now)
 
 from .backends import load_backend  # noqa: E402
 from .brief import candidates_skeleton, render_brief  # noqa: E402
@@ -39,6 +41,7 @@ from .repair import repair_output  # noqa: E402
 
 EMPTY = (None, "", [], {})
 EVIDENCE_ROLES = ("page", "section", "quote", "table_figure", "row_key", "column_key")
+ID_ANCHOR_ROLES = ("page", "table_figure", "row_key", "column_key")  # the section is not part of record identity
 
 
 class PipelineError(Exception):
@@ -255,7 +258,8 @@ class Assembler:
 
     # -- records
     def build(self, kind: str, *, candidate: dict | None, evidence: dict, span, ordinal: int,
-              pre_issues: list[Issue], extra_fields: list[tuple[str, dict]] = ()) -> tuple[dict, RecordContext]:
+              pre_issues: list[Issue], extra_fields: list[tuple[str, dict]] = (),
+              links: dict[str, list[str]] | None = None) -> tuple[dict, RecordContext]:
         ctx = RecordContext(self.run, kind, {}, candidate=candidate, evidence=evidence, span=span, ordinal=ordinal)
         doc_values = {**self.run.document, **((candidate or {}).get("document_overrides") or {})}
         for path, v in doc_values.items():
@@ -265,6 +269,8 @@ class Assembler:
                 set_path(ctx.record, self.prov[role], v)
         for path, v in ((candidate or {}).get("fields") or {}).items():
             set_path(ctx.record, path, v)
+        for path, ids in (links or {}).items():
+            set_path(ctx.record, path, ids)
         if candidate is not None:
             for n in self.profile.get("normalizers") or []:
                 for path, v in REGISTRY[n["rule"]].fn(ctx, n).items():
@@ -276,7 +282,12 @@ class Assembler:
         for path, spec in self.phase1:
             self._apply(ctx, path, spec)
         doc_issues = [i for i in self.document_issues if get_path(ctx.record, i.path) is not MISSING]
-        pre = list(pre_issues) + doc_issues
+        self.review(ctx, list(pre_issues) + doc_issues)
+        return ctx.record, ctx
+
+    def review(self, ctx: RecordContext, pre: list[Issue]) -> None:
+        """Validate and (re)compute the phase-2 review fields, which depend on the warnings. Also used after
+        dataset rules add warnings, so review_status / qc_failure_codes always match the reported warnings."""
         ctx.issues = pre + self.validator.validate(ctx.record).issues
         seen_codes = None
         for _ in range(3):  # review fields depend on warnings; re-run until stable
@@ -288,14 +299,14 @@ class Assembler:
                 break
             seen_codes = codes
         ctx.record = self._ordered(ctx.record)
-        return ctx.record, ctx
+        ctx.pre = pre
 
 
 # ---------------------------------------------------------------------------------------------- run
 def _candidate_problems(cand: dict | None, kinds: set[str]) -> dict | None:
     if cand is None:
         return {"code": "CANDIDATE_MALFORMED", "message": "候选不是 JSON 对象"}
-    if cand.get("record_kind") not in kinds:
+    if not isinstance(cand.get("record_kind"), str) or cand["record_kind"] not in kinds:
         return {"code": "CANDIDATE_RECORD_KIND", "message": f"record_kind {cand.get('record_kind')!r} 不在画像允许的类型中",
                 "detail": {"allowed": sorted(kinds)}}
     if not cand.get("fields"):
@@ -328,8 +339,8 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
     kinds = set(profile.get("model_record_kinds") or [])
     accepted: list[tuple[dict, RecordContext, int | None]] = []
     rejected: list[dict] = []
-    seen: set = set()
-    ordinals: dict = {}
+    seen: dict = {}
+    ordinals: dict[int, int] = {}
 
     def reject(stage: str, idx: int | None, problem: dict, cand=None, record=None, issues=None):
         e = {"error_format": 1, "stage": stage, "code": problem["code"], "message": problem["message"]}
@@ -361,6 +372,9 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
         else:
             accepted.append((rec, ctx, None))
 
+    # pass 1: shape, evidence and duplicates
+    verified: list[tuple[int, dict, dict, Any, list[Issue]]] = []
+    ref_alias: dict[str, str] = {}
     for i, cand in enumerate(candidates):
         problem = _candidate_problems(cand, kinds)
         if problem:
@@ -370,19 +384,76 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
         if problem:
             reject("evidence", i, problem, cand=cand)
             continue
-        dedupe_key = (cand["record_kind"], json.dumps(cand["fields"], sort_keys=True, ensure_ascii=False),
-                      ev.get("page"), normalize_text(ev.get("quote") or ""))
+        anchor = tuple(str(ev.get(r)) for r in ID_ANCHOR_ROLES) + (normalize_text(ev.get("quote") or ""),)
+        dedupe_key = (cand["record_kind"], json.dumps(cand["fields"], sort_keys=True, ensure_ascii=False)) + anchor
         if dedupe_key in seen:
+            first = seen[dedupe_key]
+            if cand.get("ref") and first.get("ref") and cand["ref"] != first["ref"]:
+                ref_alias[cand["ref"]] = first["ref"]  # links to the duplicate resolve to the kept candidate
             reject("candidate", i, {"code": "CANDIDATE_DUPLICATE", "message": "与前面的候选完全相同，已去重"}, cand=cand)
             continue
-        seen.add(dedupe_key)
-        anchor_key = (cand["record_kind"],) + tuple(str(ev.get(r)) for r in EVIDENCE_ROLES[:2] + EVIDENCE_ROLES[3:]) + \
-            (normalize_text(ev.get("quote") or ""),)
-        ordinal = ordinals.get(anchor_key, 0)
-        ordinals[anchor_key] = ordinal + 1
+        seen[dedupe_key] = cand
         pre += asm.value_warnings(cand, ev["page"])
-        rec, ctx = asm.build(cand["record_kind"], candidate=cand, evidence=ev, span=span, ordinal=ordinal,
+        verified.append((i, cand, ev, span, pre))
+
+    # Ordinals separate records that share kind + anchor + quote. They follow the canonical field content,
+    # not the input order, so re-running with reordered candidates keeps every record_id.
+    groups: dict[tuple, list] = {}
+    for item in verified:
+        i, cand, ev = item[:3]
+        key = (cand["record_kind"],) + tuple(str(ev.get(r)) for r in ID_ANCHOR_ROLES) + \
+            (normalize_text(ev.get("quote") or ""),)
+        groups.setdefault(key, []).append(item)
+    for items in groups.values():
+        items.sort(key=lambda it: json.dumps(it[1]["fields"], sort_keys=True, ensure_ascii=False))
+        for n, (i, *_rest) in enumerate(items):
+            ordinals[i] = n
+
+    # pass 2: build records
+    built: dict[int, tuple[dict, RecordContext]] = {}
+    for i, cand, ev, span, pre in verified:
+        built[i] = asm.build(cand["record_kind"], candidate=cand, evidence=ev, span=span, ordinal=ordinals[i],
                              pre_issues=pre)
+
+    # pass 3: resolve candidate references (profile record_links) to record IDs and rebuild the linking records
+    record_links = profile.get("record_links") or {}
+    targets: dict[str, tuple[str, str]] = {}
+    for i, cand, *_ in verified:
+        rec, ctx = built[i]
+        ref = cand.get("ref")
+        if not ref or any(x.severity == "error" for x in ctx.issues):
+            continue
+        if ref in targets:
+            ctx.issues.append(Issue("CANDIDATE_REF_DUPLICATE", "warning", "ref", f"ref {ref!r} 已被前面的候选使用"))
+            continue
+        targets[ref] = (_record_id(rec, profile), cand["record_kind"])
+    for i, cand, ev, span, pre in verified:
+        if not cand.get("links"):
+            continue
+        resolved: dict[str, list[str]] = {}
+        link_issues: list[Issue] = []
+        for name, refs in cand["links"].items():
+            spec = record_links[name]
+            ids = []
+            for r in refs:
+                target = targets.get(ref_alias.get(r, r))
+                if r == cand.get("ref"):
+                    link_issues.append(Issue("CANDIDATE_LINK_SELF", "warning", spec["field"], f"{name} 引用了候选自身"))
+                elif target is None:
+                    link_issues.append(Issue("CANDIDATE_LINK_UNRESOLVED", "warning", spec["field"],
+                                             f"{name} 引用的候选 {r!r} 不存在或未被接受", detail={"link": name, "ref": r}))
+                elif spec.get("target_kinds") and target[1] not in spec["target_kinds"]:
+                    link_issues.append(Issue("CANDIDATE_LINK_KIND", "warning", spec["field"],
+                                             f"{name} 只能引用 {', '.join(spec['target_kinds'])}，{r!r} 是 {target[1]}",
+                                             detail={"link": name, "ref": r}))
+                elif target[0] not in ids:
+                    ids.append(target[0])
+            if ids:
+                resolved[spec["field"]] = ids
+        built[i] = asm.build(cand["record_kind"], candidate=cand, evidence=ev, span=span, ordinal=ordinals[i],
+                             pre_issues=pre + link_issues, links=resolved)
+    for i, cand, *_ in verified:
+        rec, ctx = built[i]
         errs = [x for x in ctx.issues if x.severity == "error"]
         if errs:
             reject("validation", i, {"code": "RECORD_INVALID", "message": "组装后的记录未通过契约校验"},
@@ -390,14 +461,18 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
         else:
             accepted.append((rec, ctx, i))
 
-    # dataset-level rules over the accepted set
+    # dataset-level rules over the accepted set; warnings feed back into the review fields
     dataset_issues = asm.validator.validate_dataset([r for r, _, _ in accepted])
-    bad = {}
+    bad: dict[int, list[Issue]] = {}
+    extra: dict[int, list[Issue]] = {}
     for idx, issue in dataset_issues:
-        if issue.severity == "error":
-            bad.setdefault(idx, []).append(issue)
-        else:
-            accepted[idx][1].issues.append(issue)
+        (bad if issue.severity == "error" else extra).setdefault(idx, []).append(issue)
+    for idx, issues in extra.items():
+        if idx in bad:
+            continue
+        rec, ctx, ci = accepted[idx]
+        asm.review(ctx, ctx.pre + issues)
+        accepted[idx] = (ctx.record, ctx, ci)
     for idx in sorted(bad, reverse=True):
         rec, ctx, ci = accepted.pop(idx)
         reject("dataset", ci, {"code": "DATASET_RULE", "message": "违反数据集级规则"}, record=rec, issues=bad[idx])
@@ -436,8 +511,8 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
     paths = {k: out_dir / f"{stem}{suffix}" for k, suffix in
              (("records", ".jsonl"), ("errors", ".errors.jsonl"), ("validation", ".validation.json"),
               ("manifest", ".manifest.json"))}
-    paths["records"].write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records), encoding="utf-8")
-    paths["errors"].write_text("".join(json.dumps(e, ensure_ascii=False) + "\n" for e in rejected), encoding="utf-8")
+    paths["records"].write_text(dumps_jsonl(records), encoding="utf-8")
+    paths["errors"].write_text(dumps_jsonl(rejected), encoding="utf-8")
     identity = rc.identity()
     report = {
         "report_format": 1,
@@ -456,6 +531,7 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
         "rejected": [{k: e[k] for k in ("stage", "code", "message", "candidate_index") if k in e} for e in rejected],
         "repairs": repairs,
         "system_records_skipped": skipped_system,
+        "argument_structure": argument_audit(records, rc.contract),
     }
     paths["validation"].write_text(dumps_json(report), encoding="utf-8")
 

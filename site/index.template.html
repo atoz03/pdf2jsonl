@@ -60,7 +60,9 @@ p.lead { color: var(--text-2); margin: 0 0 18px; max-width: 900px; }
 .tile { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
 .tile .k { color: var(--text-2); font-size: 12.5px; }
 .tile .v { font-size: 26px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.2; margin-top: 2px; font-variant-numeric: tabular-nums; }
-.tile .s { color: var(--text-3); font-size: 12px; margin-top: 2px; }
+.tile .s { color: var(--text-3); font-size: 12px; margin-top: 2px; overflow-wrap: anywhere; }
+.grid21 { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .grid21 { grid-template-columns: 1fr; } }
 .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
 .grid2 > * { min-width: 0; }
 @media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
@@ -137,6 +139,17 @@ pre.brief { max-height: 520px; overflow: auto; white-space: pre-wrap; padding: 1
 .ftable td { padding: 4px 10px; font-size: 12.5px; }
 .ftable td:first-child { font-family: var(--mono); white-space: nowrap; }
 .ftable td:last-child { font-family: var(--mono); word-break: break-word; }
+.fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.fgrid .card h4 { margin: 0 0 2px; font-size: 15px; }
+.facets { margin: 8px 0 0; padding-left: 18px; font-size: 12.5px; color: var(--text-2); }
+.facets li { margin: 1px 0; }
+td.heat { text-align: right; font-variant-numeric: tabular-nums; }
+td.heat a { color: var(--text); display: block; }
+.el { display: inline-block; padding: 0 6px; border-radius: 4px; font-size: 11.5px; margin: 1px 2px 1px 0; border: 1px solid var(--accent); }
+.el.own { background: var(--accent-soft); }
+.el.chain { border-style: dashed; color: var(--text-2); }
+.linkto { font: inherit; font-size: 12.5px; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+.linkto:hover { text-decoration: underline; }
 .vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; }
 footer { color: var(--text-3); font-size: 12.5px; border-top: 1px solid var(--border); padding-block: 18px; }
 </style>
@@ -151,6 +164,7 @@ footer { color: var(--text-3); font-size: 12.5px; border-top: 1px solid var(--bo
 <nav class="tabs" aria-label="Sections"><div class="wrap">
   <a href="#overview" data-view="overview">Overview</a>
   <a href="#fields" data-view="fields">Field catalog</a>
+  <a href="#functions" data-view="functions">Functions &amp; roles</a>
   <a href="#demo" data-view="demo">PDF → JSONL demo</a>
   <a href="#records" data-view="records">Record examples</a>
   <a href="#vocab" data-view="vocab">Vocabularies</a>
@@ -159,6 +173,7 @@ footer { color: var(--text-3); font-size: 12.5px; border-top: 1px solid var(--bo
 <main class="wrap">
   <section class="view" id="view-overview"></section>
   <section class="view" id="view-fields"></section>
+  <section class="view" id="view-functions"></section>
   <section class="view" id="view-demo"></section>
   <section class="view" id="view-records"></section>
   <section class="view" id="view-vocab"></section>
@@ -179,6 +194,14 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;",
 const av = a => `<span class="badge av-${a}" title="${esc(C.codes.availability[a].label_en)} · ${esc(C.codes.availability[a].label_zh)}">${a}</span>`;
 const fieldLink = (p, label) => `<a class="mono" href="#fields?q=${encodeURIComponent(p)}" title="${esc(F[p] ? F[p].definition_zh : "")}">${esc(label || p)}</a>`;
 const count = (arr, fn) => arr.reduce((n, x) => n + (fn(x) ? 1 : 0), 0);
+const FN = C.codes.function || {}, ROLE = C.codes.key_role || {}, FAM = C.codes.key_role_family || {};
+const ARG = C.codes.argument_role || {}, CARD = C.codes.card || {};
+const FNS = Object.keys(FN);
+const isAdded = (f, fn) => !(f.serves_src || []).includes(fn);
+const fnTag = (f, fn) => `<span class="tag${isAdded(f, fn) ? "" : " acc"}" title="${esc((FN[fn] || {}).label_zh || fn)} — ${isAdded(f, fn) ? "added by the repository" : "stated by the source"}">${esc((FN[fn] || {}).short_zh || fn)}${isAdded(f, fn) ? "⁺" : ""}</span>`;
+const roleTag = r => r ? `<a class="tag" href="#fields?role=${encodeURIComponent(r)}" title="${esc((ROLE[r] || {}).description_zh || "")}">${esc((ROLE[r] || {}).label_zh || r)}</a>` : "";
+const facetsOf = (f, fn) => (((ROLE[f.key_role] || {}).facets || {})[fn] || []);
+const facetLabel = (fn, k) => (((FN[fn] || {}).facets || {})[k] || {}).label_zh || k;
 
 // ---------------------------------------------------------------- JSON view with field-name links
 function jsonHTML(v, ind = "", parentKey = null, depth = 0) {
@@ -217,10 +240,10 @@ function renderOverview() {
       ${AV.map(a => `<td class="num">${count(fs, f => f.availability === a) || '<span class="muted">·</span>'}</td>`).join("")}</tr>`;
   }).join("");
   const kinds = Object.entries(C.record_kinds).map(([k, v]) =>
-    `<tr><td class="mono">${k}</td><td>${esc(v.label_zh || "")}</td><td class="mono small">${esc(v.grain || "—")}</td><td class="small">${esc(v.description_zh || "")}</td></tr>`).join("");
-  const vers = DATA.versions.map(v => `<tr><td class="mono">${v.version} ${v.latest ? '<span class="tag acc">latest</span>' : ""}</td>
-    <td>${v.released_on}</td><td class="num">${v.fields}</td><td class="num">${v.rules}</td><td class="num">${v.vocabularies}</td>
-    <td class="small mono">${v.profiles.join(", ")}</td></tr>`).join("");
+    `<tr><td class="mono">${esc(k)}</td><td>${esc(v.label_zh || "")}</td><td class="mono small">${esc(v.grain || "—")}</td><td class="small">${esc(v.description_zh || "")}</td></tr>`).join("");
+  const vers = DATA.versions.map(v => `<tr><td class="mono">${esc(v.version)} ${v.latest ? '<span class="tag acc">latest</span>' : ""}</td>
+    <td>${esc(v.released_on)}</td><td class="num">${v.fields}</td><td class="num">${v.rules}</td><td class="num">${v.vocabularies}</td>
+    <td class="small mono">${esc(v.profiles.join(", "))}</td></tr>`).join("");
   $("#view-overview").innerHTML = `
     <h2>${esc(C.title_zh)} <span class="muted">· ${esc(C.name)}</span></h2>
     <p class="lead">The repository owns the data contract; the <b>pdf2jsonl</b> Skill is the operational entry point.
@@ -233,7 +256,15 @@ function renderOverview() {
       <div class="tile"><div class="k">Vocabularies</div><div class="v">${C.vocabularies.length}</div><div class="s">plus a unit-conversion table</div></div>
       <div class="tile"><div class="k">Cross-field rules</div><div class="v">${C.rules.length}</div><div class="s">${nErr} error · ${C.rules.length - nErr} warning</div></div>
       <div class="tile"><div class="k">Releases</div><div class="v">${DATA.versions.length}</div><div class="s">latest ${esc(latest.version || "")}</div></div>
+      <div class="tile"><div class="k">Key roles</div><div class="v">${Object.keys(ROLE).length}</div><div class="s"><a href="#functions">every key states its role and function</a></div></div>
     </div>
+    <h3>What the records are for</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>Function</th><th>What it needs from a record</th><th class="num">Fields</th><th class="num">stated by source</th></tr></thead><tbody>
+      ${FNS.map(fn => { const fs = C.fields.filter(f => (f.serves || []).includes(fn));
+        return `<tr><td><a href="#fields?fn=${encodeURIComponent(fn)}">${esc(FN[fn].label_zh)}</a></td><td class="small">${esc(FN[fn].description_zh || "")}</td>
+          <td class="num">${fs.length}</td><td class="num">${count(fs, f => !isAdded(f, fn))}</td></tr>`; }).join("")}
+    </tbody></table></div>
+    <p class="small muted">Details, the role of every key and the evidence-chain elements: <a href="#functions">Functions &amp; roles →</a></p>
     <h3>Availability codes — what each field's value is, not how good it is</h3>
     <div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Meaning</th><th>中文</th><th>Who fills it in the PDF pipeline</th><th class="num">Fields</th></tr></thead><tbody>
       ${AV.map(a => `<tr><td>${av(a)}</td><td>${esc(C.codes.availability[a].label_en)}</td><td>${esc(C.codes.availability[a].label_zh)}</td>
@@ -249,8 +280,8 @@ function renderOverview() {
       <li><b>Prepare</b><div>parse the PDF text layer; render the brief from the profile</div></li>
       <li><b>Extract</b><div>the agent writes candidates: D fields + page + verbatim quote</div></li>
       <li><b>Verify &amp; repair</b><div>quotes checked against the page; structural fixes logged</div></li>
-      <li><b>Assemble</b><div>IDs, locators, normalized values, review status by rule</div></li>
-      <li><b>Validate &amp; write</b><div>records · errors · validation report · manifest</div></li>
+      <li><b>Assemble &amp; link</b><div>IDs, locators, normalized values, review status by rule; candidate links become record IDs</div></li>
+      <li><b>Validate &amp; write</b><div>records · errors · validation report with evidence-chain audit · manifest</div></li>
     </ol>
     <p class="small"><a href="#demo">See it run on the synthetic example paper →</a></p>
     <h3>Record kinds</h3>
@@ -260,7 +291,7 @@ function renderOverview() {
 }
 
 // ---------------------------------------------------------------- field catalog
-const FS = { q: "", group: "", profile: "", maturity: "", since: "", req: "", av: new Set(AV), open: null };
+const FS = { q: "", group: "", profile: "", maturity: "", since: "", req: "", fn: "", role: "", av: new Set(AV), open: null };
 function renderFieldsShell() {
   const profs = Object.keys(C.profiles);
   const sinces = [...new Set(C.fields.map(f => f.since))].sort();
@@ -275,14 +306,19 @@ function renderFieldsShell() {
       <select id="f-maturity" aria-label="Maturity"><option value="">Any maturity</option><option>verified</option><option>provisional</option></select>
       <select id="f-since" aria-label="Since"><option value="">Any version</option>${sinces.map(s => `<option value="${s}">since ${s}</option>`).join("")}</select>
       <select id="f-req" aria-label="Required"><option value="">Any requirement</option><option value="Y">Y · required</option><option value="C">C · conditional</option><option value="N">N · optional</option></select>
+      <select id="f-fn" aria-label="Function"><option value="">Any function</option>${FNS.map(fn => `<option value="${esc(fn)}">${esc(FN[fn].label_zh)}</option>`).join("")}</select>
+      <select id="f-role" aria-label="Key role"><option value="">Any key role</option>${Object.keys(FAM).map(fam => `<optgroup label="${esc(FAM[fam].label_zh)}">${
+        Object.entries(ROLE).filter(([, r]) => r.family === fam).map(([k, r]) => `<option value="${esc(k)}">${esc(r.label_zh)} · ${esc(k)}</option>`).join("")}</optgroup>`).join("")}</select>
     </div>
     <div class="controls" role="group" aria-label="Availability">
       ${AV.map(a => `<button class="chip" data-av="${a}" aria-pressed="true">${av(a)} ${esc(C.codes.availability[a].label_en)}</button>`).join("")}
       <span class="spacer" style="flex:1"></span><span class="small muted" id="f-count"></span>
     </div>
-    <div class="tbl-wrap"><table><thead><tr><th>Field path</th><th>Type</th><th>Avail.</th><th>Req.</th><th>Definition (定义)</th></tr></thead><tbody id="f-body"></tbody></table></div>`;
+    <p class="small muted">Functions: <span class="tag acc">stated by the source</span> (v3 group or downstream column) · <span class="tag">added⁺</span> by the repository from the key role (AMB-032).</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Field path</th><th>Type</th><th>Avail.</th><th>Req.</th><th>Role · functions</th><th>Definition (定义)</th></tr></thead><tbody id="f-body"></tbody></table></div>`;
   const bind = (id, key) => $(id).addEventListener("input", e => { FS[key] = e.target.value; FS.open = null; renderFieldRows(); });
   bind("#f-q", "q"); bind("#f-group", "group"); bind("#f-profile", "profile"); bind("#f-maturity", "maturity"); bind("#f-since", "since"); bind("#f-req", "req");
+  bind("#f-fn", "fn"); bind("#f-role", "role");
   $("#view-fields").querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
     const a = b.dataset.av; FS.av.has(a) ? FS.av.delete(a) : FS.av.add(a);
     b.setAttribute("aria-pressed", FS.av.has(a)); renderFieldRows();
@@ -296,19 +332,27 @@ function renderFieldsShell() {
 function syncFieldControls() {
   $("#f-q").value = FS.q; $("#f-group").value = FS.group; $("#f-profile").value = FS.profile;
   $("#f-maturity").value = FS.maturity; $("#f-since").value = FS.since; $("#f-req").value = FS.req;
+  $("#f-fn").value = FS.fn; $("#f-role").value = FS.role;
   $("#view-fields").querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", FS.av.has(b.dataset.av)));
 }
 function fieldDetail(f) {
   const voc = f.vocabulary && C.vocabularies.find(v => v.name === f.vocabulary);
-  const roles = Object.entries(C.profiles).filter(([, p]) => p.roles[f.path]).map(([n, p]) => `<span class="tag">${n}: ${p.roles[f.path]}</span>`).join(" ");
-  const ambs = (f.ambiguities || []).map(id => { const a = C.ambiguities.find(x => x.id === id); return `<div><a href="#rules?amb=${id}">${id}</a> <span class="tag">${a ? a.status : ""}</span> ${esc(a ? a.title_zh : "")}</div>`; }).join("");
-  const rules = C.rules.filter(r => r.fields.includes(f.path)).map(r => `<span class="tag ${r.severity === "error" ? "err" : "warn"}" title="${esc(r.title_zh)}">${r.id}</span>`).join(" ");
+  const roles = Object.entries(C.profiles).filter(([, p]) => p.roles[f.path]).map(([n, p]) => `<span class="tag">${esc(n)}: ${esc(p.roles[f.path])}</span>`).join(" ");
+  const ambs = (f.ambiguities || []).map(id => { const a = C.ambiguities.find(x => x.id === id); return `<div><a href="#rules?amb=${encodeURIComponent(id)}">${esc(id)}</a> <span class="tag">${esc(a ? a.status : "")}</span> ${esc(a ? a.title_zh : "")}</div>`; }).join("");
+  const rules = C.rules.filter(r => r.fields.includes(f.path)).map(r => `<span class="tag ${r.severity === "error" ? "err" : "warn"}" title="${esc(r.title_zh)}">${esc(r.id)}</span>`).join(" ");
+  const role = ROLE[f.key_role] || {};
+  const serves = (f.serves || []).map(fn => `<div>${fnTag(f, fn)} <span class="small">${facetsOf(f, fn).map(k => esc(facetLabel(fn, k))).join(" · ")}</span></div>`).join("");
   return `<dl class="kv">
+    <dt>Key role (键角色)</dt><dd>${roleTag(f.key_role)} <span class="muted small">${esc((FAM[role.family] || {}).label_zh || "")}</span> — ${esc(role.description_zh || "")}
+      <div class="small muted" style="margin-top:2px">graph: ${esc((role.projection || {}).kg || "—")} · tables: ${esc((role.projection || {}).rdb || "—")} · triple: ${esc((role.projection || {}).triple || "—")} · QA/corpus: ${esc((role.projection || {}).qa_corpus || "—")}</div></dd>
+    <dt>Serves (服务功能 · 分面)</dt><dd>${serves}</dd>
+    ${f.card ? `<dt>Card (卡片)</dt><dd>${esc((CARD[f.card] || {}).label_zh || f.card)}</dd>` : ""}
+    ${f.argument_role ? `<dt>Evidence-chain element</dt><dd>${esc((ARG[f.argument_role] || {}).label_en || f.argument_role)} · ${esc((ARG[f.argument_role] || {}).label_zh || "")} <span class="muted small">(TRACE)</span></dd>` : ""}
     <dt>Data source (数据来源)</dt><dd>${esc(f.data_source_zh || "—")}</dd>
     <dt>Downstream (下游用途)</dt><dd>${esc(f.downstream_zh || "—")}</dd>
-    <dt>Since · maturity · origin</dt><dd>${f.since} · ${f.maturity} · ${(f.origin || []).join(", ")}</dd>
+    <dt>Since · maturity · origin</dt><dd>${esc(f.since)} · ${esc(f.maturity)} · ${esc((f.origin || []).join(", "))}</dd>
     ${f.constraints ? `<dt>Constraints</dt><dd class="mono">${esc(JSON.stringify(f.constraints))}</dd>` : ""}
-    ${voc ? `<dt>Vocabulary</dt><dd><a href="#vocab?q=${voc.name}">${voc.name}</a> <span class="tag">${voc.enforcement}</span> <span class="tag">${voc.closure}</span>
+    ${voc ? `<dt>Vocabulary</dt><dd><a href="#vocab?q=${encodeURIComponent(voc.name)}">${esc(voc.name)}</a> <span class="tag">${esc(voc.enforcement)}</span> <span class="tag">${esc(voc.closure)}</span>
       <div class="codes" style="margin-top:6px">${voc.values.slice(0, 40).map(v => `<code title="${esc(v.label_zh || "")}">${esc(v.code)}</code>`).join("")}${voc.values.length > 40 ? ` <span class="muted">+${voc.values.length - 40} more</span>` : ""}</div></dd>` : ""}
     ${rules ? `<dt>Rules</dt><dd>${rules}</dd>` : ""}
     <dt>Profiles (role)</dt><dd>${roles || '<span class="muted">not in any profile</span>'}</dd>
@@ -322,21 +366,94 @@ function renderFieldRows() {
   const rows = C.fields.filter(f =>
     (!FS.group || f.group === FS.group) && FS.av.has(f.availability) && (!prof || prof.roles[f.path]) &&
     (!FS.maturity || f.maturity === FS.maturity) && (!FS.since || f.since === FS.since) && (!FS.req || f.required === FS.req) &&
-    (!q || (f.path + " " + (f.definition_zh || "") + " " + (f.data_source_zh || "") + " " + (f.vocabulary || "")).toLowerCase().includes(q)));
+    (!FS.fn || (f.serves || []).includes(FS.fn)) && (!FS.role || f.key_role === FS.role) &&
+    (!q || (f.path + " " + (f.definition_zh || "") + " " + (f.data_source_zh || "") + " " + (f.vocabulary || "") + " " +
+      (f.key_role || "") + " " + ((ROLE[f.key_role] || {}).label_zh || "")).toLowerCase().includes(q)));
   if (rows.length === 1) FS.open = rows[0].path;
   $("#f-count").textContent = `${rows.length} of ${C.fields.length} fields`;
   $("#f-body").innerHTML = rows.map(f => {
     const [g, n] = [f.group, f.path.slice(f.group.length + 1)];
-    const row = `<tr class="frow" data-path="${f.path}"><td class="path"><span class="g">${g}.</span>${n}${f.maturity === "provisional" ? ' <span class="tag" title="provisional: written by the repository, awaiting confirmation">prov.</span>' : ""}</td>
-      <td class="mono small">${f.type}</td><td>${av(f.availability)}</td><td><b>${f.required}</b></td><td>${esc(f.definition_zh)}</td></tr>`;
-    return row + (FS.open === f.path ? `<tr class="detail"><td colspan="5">${fieldDetail(f)}</td></tr>` : "");
-  }).join("") || `<tr><td colspan="5" class="muted">No field matches these filters.</td></tr>`;
+    const row = `<tr class="frow" data-path="${esc(f.path)}"><td class="path"><span class="g">${esc(g)}.</span>${esc(n)}${f.maturity === "provisional" ? ' <span class="tag" title="provisional: written by the repository, awaiting confirmation">prov.</span>' : ""}</td>
+      <td class="mono small">${esc(f.type)}</td><td>${av(f.availability)}</td><td><b>${esc(f.required)}</b></td>
+      <td style="white-space:nowrap">${roleTag(f.key_role)}<br>${(f.serves || []).map(fn => fnTag(f, fn)).join(" ")}</td><td>${esc(f.definition_zh)}</td></tr>`;
+    return row + (FS.open === f.path ? `<tr class="detail"><td colspan="6">${fieldDetail(f)}</td></tr>` : "");
+  }).join("") || `<tr><td colspan="6" class="muted">No field matches these filters.</td></tr>`;
+}
+
+// ---------------------------------------------------------------- functions & roles
+function renderFunctions() {
+  const serving = fn => C.fields.filter(f => (f.serves || []).includes(fn));
+  const cards = FNS.map(fn => {
+    const fs = serving(fn), src = count(fs, f => !isAdded(f, fn));
+    return `<div class="card pad"><h4><a href="#fields?fn=${encodeURIComponent(fn)}">${esc(FN[fn].label_zh)}</a></h4>
+      <div class="small muted">${esc(FN[fn].label_en || "")}</div>
+      <div style="margin:8px 0 4px"><b style="font-size:22px">${fs.length}</b> <span class="muted small">fields · ${src} stated by the source · ${fs.length - src} added⁺</span></div>
+      <div class="small">${esc(FN[fn].description_zh || "")}</div>
+      <ul class="facets">${Object.entries(FN[fn].facets || {}).map(([k, v]) => `<li><span class="mono">${esc(k)}</span> ${esc(v.label_zh || "")}</li>`).join("")}</ul></div>`;
+  }).join("");
+  const cell = {};
+  let max = 1;
+  for (const f of C.fields) for (const fn of f.serves || []) {
+    const k = f.key_role + "|" + fn; cell[k] = (cell[k] || 0) + 1; max = Math.max(max, cell[k]);
+  }
+  const matrix = Object.keys(FAM).map(fam => Object.entries(ROLE).filter(([, r]) => r.family === fam).map(([k, r], i, arr) => {
+    const total = count(C.fields, f => f.key_role === k);
+    return `<tr>${i === 0 ? `<td rowspan="${arr.length}" class="small">${esc(FAM[fam].label_zh)}</td>` : ""}
+      <td><a href="#fields?role=${encodeURIComponent(k)}">${esc(r.label_zh)}</a> <span class="mono small muted">${esc(k)}</span></td>
+      <td class="num"><b>${total}</b></td>
+      ${FNS.map(fn => { const n = cell[k + "|" + fn] || 0;
+        return n ? `<td class="heat" style="background:color-mix(in srgb, var(--accent) ${Math.round(6 + 34 * n / max)}%, transparent)" title="${esc(r.label_zh)} × ${esc(FN[fn].short_zh || fn)}: ${n} fields · facets ${esc(((r.facets || {})[fn] || []).join(", "))}"><a href="#fields?role=${encodeURIComponent(k)}&fn=${encodeURIComponent(fn)}">${n}</a></td>`
+          : `<td class="heat muted">·</td>`; }).join("")}</tr>`;
+  }).join("")).join("");
+  const proj = Object.entries(ROLE).map(([k, r]) => `<tr><td><a href="#fields?role=${encodeURIComponent(k)}">${esc(r.label_zh)}</a><div class="mono small muted">${esc(k)}</div></td>
+    <td class="small">${esc(r.description_zh || "")}</td>${["kg", "rdb", "triple", "qa_corpus"].map(p => `<td class="small">${esc((r.projection || {})[p] || "—")}</td>`).join("")}</tr>`).join("");
+  const trace = Object.entries(ARG).map(([k, a]) => {
+    const fs = C.fields.filter(f => f.argument_role === k);
+    return `<tr><td><b>${esc(a.label_en || k)}</b><div class="small muted">${esc(a.label_zh || "")}</div></td><td class="small">${esc(a.framework || "")}</td>
+      <td class="small">${esc(a.description_zh || "")}</td><td class="small">${fs.map(f => fieldLink(f.path)).join(" ")}</td></tr>`;
+  }).join("");
+  const cardRows = Object.entries(CARD).map(([k, c]) => {
+    const fs = C.fields.filter(f => f.card === k);
+    return `<tr><td><b>${esc(c.label_zh || k)}</b><div class="mono small muted">${esc(k)}</div></td><td class="num">${fs.length}</td><td class="small">${fs.map(f => fieldLink(f.path)).join(" ")}</td></tr>`;
+  }).join("");
+  $("#view-functions").innerHTML = `<h2>What every key is for</h2>
+    <p class="lead">A record serves four functions: the Topic 2 scientific agent, the Topic 3 skills, derivation into knowledge graphs, relational tables,
+      QA pairs, corpora and triples, and our own iteration (Topic 1: standards, quality, ontology, knowledge fusion). Every field states its
+      <b>key role</b> (what it does, and how it projects into each derived form) and the <b>functions it serves</b>. The facets come from the research contents.
+      ${esc(C.codes.function_note_zh || "")}</p>
+    <div class="fgrid">${cards}</div>
+    <h3>Key role × function</h3>
+    <p class="small muted">Number of fields with each role that serve each function. Darker cells hold more fields. Click a number to list the fields.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Family</th><th>Key role</th><th class="num">Fields</th>${FNS.map(fn => `<th class="num">${esc(FN[fn].short_zh || fn)}</th>`).join("")}</tr></thead><tbody>${matrix}</tbody></table></div>
+    <h3>How each role lands in derived forms</h3>
+    <p class="small muted"><code>bdc derive</code> follows this table: no field list is hard-coded.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Key role</th><th>Description</th><th>Knowledge graph</th><th>Relational DB</th><th>Triples</th><th>QA / corpus</th></tr></thead><tbody>${proj}</tbody></table></div>
+    <h3>Evidence-chain elements (after TRACE)</h3>
+    <p class="small muted">${esc(C.codes.argument_role_source || "")}. The pipeline's audit reports which elements each statement has and which it reaches through its links. It gives no score.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Element</th><th>Framework</th><th>Meaning</th><th>Fields</th></tr></thead><tbody>${trace}</tbody></table></div>
+    <h3>Cards (Topic 2 → Topic 3 card flow)</h3>
+    <p class="small muted">${esc(C.codes.card_note_zh || "")}</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Card</th><th class="num">Fields</th><th>Fields</th></tr></thead><tbody>${cardRows}</tbody></table></div>`;
 }
 
 // ---------------------------------------------------------------- demo
 const V = D.validation;
 const VREC = Object.fromEntries(V.records.map(r => [r.record_id, r]));
 const DS = { sel: null };
+const AS = V.argument_structure || null;
+const AREC = AS ? Object.fromEntries(AS.records.map(r => [r.record_id, r])) : {};
+const RID = Object.fromEntries(D.records.map(r => [r.common.record_id, r]));
+const LINKF = Object.entries(D.record_links || {}).map(([name, s]) => ({ name, path: s.field }));
+const getp = (rec, path) => { const i = path.indexOf("."); return (rec[path.slice(0, i)] || {})[path.slice(i + 1)]; };
+const linksOf = rec => LINKF.map(l => ({ ...l, ids: getp(rec, l.path) || [] })).filter(l => l.ids.length);
+const linkedBy = id => D.records.flatMap(r => linksOf(r).filter(l => l.ids.includes(id)).map(l => ({ id: r.common.record_id, via: l.name })));
+const recBtn = id => RID[id] ? `<button class="linkto" data-sel="${esc(id)}">${esc(RID[id].common.record_kind)}: ${esc(summary(RID[id]).slice(0, 90))}</button>`
+  : `<span class="mono small">${esc(id)}</span> <span class="tag warn">not in this file</span>`;
+const elTags = row => Object.keys(ARG).map(e => row.elements.includes(e) ? `<span class="el own" title="stated by the record">${esc(e)}</span>`
+  : row.chain_elements.includes(e) ? `<span class="el chain" title="reached through links">${esc(e)}</span>` : "").join("");
+const flagTags = row => [...(row.flags || []).map(f => `<span class="tag warn" title="${esc((AS.flag_help || {})[f] || "")}">${esc(f)}</span>`),
+  ...((VREC[row.record_id] || {}).warnings || []).filter(w => w.code.startsWith("CANDIDATE_LINK") || w.code === "CANDIDATE_REF_DUPLICATE")
+    .map(w => `<span class="tag warn" title="${esc(w.message)} (pipeline warning)">${esc(w.code)}</span>`)].join(" ");
 function summary(r) {
   const c = r.common || {}, a = r.agent || {}, s = r.skills || {}, t = r.transform || {}, o = r.omics || {};
   if (a.finding_text) return a.finding_text;
@@ -358,18 +475,21 @@ function items() {
 function renderDemo() {
   const counts = V.counts;
   const its = items();
+  const nSys = count(V.records, r => r.candidate_index == null);
+  const notes = (D.candidates.extraction || {}).notes || "";
   $("#view-demo").innerHTML = `
     <h2>PDF → JSONL, end to end</h2>
     <p class="lead">A run of the real pipeline on <code>${esc(D.file_name)}</code>, a <b>synthetic</b> three-page paper shipped in <code>examples/</code>.
-      The agent read the brief and wrote ${counts.candidates} candidates. One of them was deliberately fabricated, and one was deliberately malformed.
+      The agent read the brief and wrote ${counts.candidates} candidates. <span class="muted">${esc(notes)}</span>
       The pipeline checked every quote against the parsed PDF text, repaired structure, assembled atomic records and validated them against contract
       <b>${esc(D.manifest.contract.schema_version)}</b> (requested: <code>${esc(D.manifest.contract.requested)}</code>). Click a record or a highlighted quote.</p>
     <div class="tiles">
       <div class="tile"><div class="k">Candidates from the agent</div><div class="v">${counts.candidates}</div><div class="s">examples/papers/…candidates.json</div></div>
-      <div class="tile"><div class="k">Records written</div><div class="v">${counts.records}</div><div class="s">incl. 1 system record for the PDF</div></div>
+      <div class="tile"><div class="k">Records written</div><div class="v">${counts.records}</div><div class="s">incl. ${nSys} system record${nSys === 1 ? "" : "s"} for the PDF</div></div>
       <div class="tile"><div class="k">Rejected</div><div class="v">${counts.rejected}</div><div class="s">${Object.keys(counts.rejected_by_code).join(", ") || "—"}</div></div>
       <div class="tile"><div class="k">Pending review</div><div class="v">${counts.by_review_status.pending_review || 0}</div><div class="s">${counts.by_review_status.auto_validated || 0} auto_validated</div></div>
       <div class="tile"><div class="k">Structural repairs</div><div class="v">${V.repairs.length}</div><div class="s">each one logged</div></div>
+      ${AS ? `<div class="tile"><div class="k">Evidence links</div><div class="v">${AS.links.total}</div><div class="s">${AS.statements} statements · ${AS.links.unresolved} unresolved · <a href="#demo" data-jump="d-chain">audit ↓</a></div></div>` : ""}
     </div>
     <div class="demo">
       <div class="card">
@@ -379,16 +499,19 @@ function renderDemo() {
       <div class="card">
         <div class="panel-h"><span>Output: records and rejections</span><span class="muted small">${D.records.length} + ${D.errors.length}</span></div>
         <div class="items" id="d-items">${its.map(it => it.type === "record" ? `
-          <button class="item" data-id="${it.id}"><div class="row1"><span class="tag acc">${it.rec.common.record_kind}</span>${reviewTag(it.rec.common.review_status)}
+          <button class="item" data-id="${esc(it.id)}"><div class="row1"><span class="tag acc">${esc(it.rec.common.record_kind)}</span>${reviewTag(it.rec.common.review_status)}
             ${it.v.warnings && it.v.warnings.length ? `<span class="tag warn">${it.v.warnings.length} warning${it.v.warnings.length > 1 ? "s" : ""}</span>` : ""}
-            ${it.rec.common.source_page ? `<span class="muted small">p.${it.rec.common.source_page}</span>` : ""}</div>
-            <div class="sum">${esc(summary(it.rec))}</div><div class="meta">${it.id}</div></button>` : `
-          <button class="item" data-id="${it.id}"><div class="row1"><span class="tag err">rejected</span><span class="tag">${esc(it.err.stage)}</span><span class="mono small">${esc(it.err.code)}</span></div>
+            ${linksOf(it.rec).length ? `<span class="tag" title="links to other records">→ ${linksOf(it.rec).reduce((n, l) => n + l.ids.length, 0)}</span>` : ""}
+            ${it.rec.common.source_page ? `<span class="muted small">p.${esc(it.rec.common.source_page)}</span>` : ""}</div>
+            <div class="sum">${esc(summary(it.rec))}</div><div class="meta">${esc(it.id)}</div></button>` : `
+          <button class="item" data-id="${esc(it.id)}"><div class="row1"><span class="tag err">rejected</span><span class="tag">${esc(it.err.stage)}</span><span class="mono small">${esc(it.err.code)}</span></div>
             <div class="sum">${esc((it.err.candidate && it.err.candidate.fields && Object.values(it.err.candidate.fields)[0]) || it.err.message)}</div>
-            <div class="meta">candidate #${it.err.candidate_index} · ${esc(it.err.message)}</div></button>`).join("")}</div>
+            <div class="meta">candidate #${esc(it.err.candidate_index)} · ${esc(it.err.message)}</div></button>`).join("")}</div>
       </div>
     </div>
     <div id="d-detail" style="margin-top:16px"></div>
+    ${chainSection()}
+    ${derivedSection()}
     <h3>Repair log</h3>
     <p class="small muted">Structural repairs only: formatting, types, vocabulary labels and pipeline-owned fields. Content is never invented; an unverifiable quote is rejected, not repaired.</p>
     <div class="tbl-wrap"><table><thead><tr><th>Where</th><th>Action</th><th>Field</th><th>From</th><th>To</th></tr></thead><tbody>
@@ -402,7 +525,52 @@ function renderDemo() {
   renderPages();
   $("#d-items").addEventListener("click", e => { const b = e.target.closest(".item"); if (b) selectItem(b.dataset.id, false); });
   $("#d-pages").addEventListener("click", e => { const m = e.target.closest("mark"); if (m) selectItem(m.dataset.ids.split(" ")[0], true); });
+  $("#view-demo").addEventListener("click", e => {
+    const b = e.target.closest(".linkto"); if (b) { selectItem(b.dataset.sel, true); $("#d-detail").scrollIntoView({ block: "start", behavior: "smooth" }); return; }
+    const j = e.target.closest("[data-jump]"); if (j) { e.preventDefault(); document.getElementById(j.dataset.jump).scrollIntoView({ block: "start", behavior: "smooth" }); }
+  });
   selectItem(D.records.find(r => r.common.record_kind === "claim").common.record_id, false);
+}
+function chainSection() {
+  if (!AS) return "";
+  const cov = Object.keys(ARG).map(e => `<tr><td>${esc((ARG[e] || {}).label_en || e)} <span class="muted small">${esc((ARG[e] || {}).label_zh || "")}</span></td>
+    <td class="num">${AS.coverage[e] ? AS.coverage[e].own : 0}</td><td class="num">${AS.coverage[e] ? AS.coverage[e].chain : 0}</td></tr>`).join("");
+  const rows = AS.records.map(r => `<tr><td>${recBtn(r.record_id)}</td><td>${elTags(r)}</td>
+    <td class="small">${Object.entries(r.links || {}).map(([p, ids]) => `${fieldLink(p, p.split(".")[1])}: ${ids.length}`).join("<br>") || '<span class="muted">—</span>'}</td>
+    <td>${flagTags(r) || '<span class="muted small">—</span>'}</td></tr>`).join("");
+  return `<h3 id="d-chain">Evidence chain (after TRACE)</h3>
+    <p class="small muted">From the validation report's <code>argument_structure</code>. Every record that asserts something is listed with the Toulmin/Flavell
+      elements it states <span class="el own">solid</span> and those it reaches through its links <span class="el chain">dashed</span>, e.g. a claim → the LOD result → the
+      mapping method. Links were written by the agent as <code>ref</code> / <code>links</code> and resolved to record IDs by the pipeline. A link to the fabricated
+      candidate was dropped and flagged. Flags are review hints. ${esc(AS.basis)}.</p>
+    <div class="grid21">
+      <div class="tbl-wrap"><table><thead><tr><th>Statement</th><th>Elements</th><th>Links</th><th>Flags</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Element</th><th class="num">stated</th><th class="num">in chain</th></tr></thead><tbody>${cov}</tbody></table></div>
+    </div>`;
+}
+function derivedSection() {
+  const X = D.derived;
+  if (!X) return "";
+  const c = X.counts;
+  const node = v => { v = String(v); return v.startsWith("rec:") && RID[v.slice(4)] ? `<span title="${esc(v)}">${recBtn(v.slice(4))}</span>` : `<span class="mono small">${esc(v)}</span>`; };
+  const trip = t => `<tr><td>${node(t.s)}</td><td class="mono small">${esc(t.p)}</td><td>${node(t.o)}</td><td class="small">${esc(t.o_kind)}</td></tr>`;
+  return `<h3>Derived views (function 3: <code>bdc derive</code>)</h3>
+    <p class="small muted">The same records turned into relational tables, knowledge-graph triples and an evidence corpus. Each field lands where its key role says
+      (<a href="#functions">roles →</a>). Nothing is added that the records do not contain. A statement without a reviewed predicate stays <code>bdc:unlabelled_relation</code>.</p>
+    <div class="tiles">
+      ${["records", "sources", "record_entities", "record_links", "record_values"].map(t => `<div class="tile"><div class="k">table ${esc(t)}</div><div class="v">${c["table:" + t] || 0}</div><div class="s">rows (CSV)</div></div>`).join("")}
+      <div class="tile"><div class="k">triples</div><div class="v">${c.triples}</div><div class="s">JSONL with record provenance</div></div>
+      <div class="tile"><div class="k">corpus chunks</div><div class="v">${c.corpus_chunks}</div><div class="s">one per distinct quote</div></div>
+    </div>
+    <div>
+      <div><h3 style="margin-top:8px">record_links</h3><div class="tbl-wrap"><table><thead><tr><th>From</th><th>Field</th><th>To</th><th>Element</th></tr></thead><tbody>
+        ${X.record_links.map(l => `<tr><td>${recBtn(l.record_id)}</td><td>${fieldLink(l.field, l.field.split(".")[1])}</td><td>${recBtn(l.target_record_id)}</td><td class="small">${esc(l.argument_role || "")}</td></tr>`).join("")}
+      </tbody></table></div></div>
+      <div><h3>Triples: relation statement and one edge per predicate (sample)</h3><div class="tbl-wrap"><table><thead><tr><th>Subject</th><th>Predicate</th><th>Object</th><th>Kind</th></tr></thead><tbody>
+        ${X.statements.map(trip).join("")}${X.entity_triples.map(trip).join("")}
+      </tbody></table></div></div>
+    </div>
+    <details><summary>Corpus chunks (sample)</summary><div class="card"><pre class="json">${jsonHTML(X.corpus)}</pre></div></details>`;
 }
 function renderPages() {
   const spans = D.records.map(r => ({ id: r.common.record_id, s: spanOf(r) })).filter(x => x.s);
@@ -431,20 +599,33 @@ function selectItem(id, fromText) {
     const ci = it.v.candidate_index;
     const cand = ci != null ? D.candidates.candidates[ci] : null;
     const warns = (it.v.warnings || []).map(w => `<li><span class="mono small">${esc(w.code)}</span> ${w.path && F[w.path] ? fieldLink(w.path) : ""} — ${esc(w.message)}</li>`).join("");
+    const lk = linksOf(it.rec), by = linkedBy(id), ar = AREC[id];
+    const chain = lk.length || by.length || ar ? `<div class="small" style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px"><b>Evidence chain</b>
+      ${ar ? `<div style="margin-top:4px">${elTags(ar)} ${flagTags(ar)}</div>` : ""}
+      ${lk.map(l => `<div>${esc(l.name)} → ${l.ids.map(recBtn).join(" · ")}</div>`).join("")}
+      ${by.map(b => `<div>used as ${esc(b.via)} by ← ${recBtn(b.id)}</div>`).join("")}</div>` : "";
     box.innerHTML = `<div class="card pad" style="margin-bottom:12px"><div class="row1" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <span class="tag acc">${it.rec.common.record_kind}</span>${reviewTag(it.rec.common.review_status)}<span class="mono small">${esc(id)}</span>
+        <span class="tag acc">${esc(it.rec.common.record_kind)}</span>${reviewTag(it.rec.common.review_status)}<span class="mono small">${esc(id)}</span>
         <span class="muted small">locator: <span class="mono">${esc(it.rec.common.source_locator)}</span></span></div>
-        ${warns ? `<ul class="issues small">${warns}</ul>` : `<div class="small muted" style="margin-top:6px">No warnings: the quote was found on the stated page and every value appears in it.</div>`}</div>
+        ${warns ? `<ul class="issues small">${warns}</ul>` : `<div class="small muted" style="margin-top:6px">No warnings: the quote was found on the stated page and every value appears in it.</div>`}${chain}</div>
       <div class="grid2">
         <div class="card"><div class="panel-h"><span>Candidate — written by the agent</span><span class="muted small">${cand ? "candidates[" + ci + "]" : "system record"}</span></div>
           <pre class="json">${cand ? jsonHTML(cand) : '<span class="muted">No candidate: the pipeline creates this record for the input PDF itself (profile system record).</span>'}</pre></div>
-        <div class="card"><div class="panel-h"><span>Record — assembled and validated by the pipeline</span><span class="muted small">line ${it.v.line || "?"} of .jsonl</span></div>
+        <div class="card"><div class="panel-h"><span>Record — assembled and validated by the pipeline</span><span class="muted small">line ${esc(it.v.line || "?")} of .jsonl</span></div>
           <pre class="json">${jsonHTML(it.rec)}</pre></div>
       </div>`;
   } else {
     const e = it.err;
+    const why = {
+      EVIDENCE_QUOTE_NOT_FOUND: "The quote does not occur on the stated page or on the pages next to it, so the statement cannot be grounded in the paper.",
+      EVIDENCE_MISSING: "The candidate gives no page or no verbatim quote, so it cannot be grounded in the paper.",
+      RECORD_INVALID: "The assembled record does not satisfy the contract; the issues say which field and rule.",
+    }[e.code] || `The candidate failed at the ${e.stage} stage.`;
+    const lostLinks = D.records.flatMap(r => ((VREC[r.common.record_id] || {}).warnings || []).filter(w => w.code === "CANDIDATE_LINK_UNRESOLVED")
+      .filter(w => e.candidate && w.detail && w.detail.ref === e.candidate.ref).map(() => r.common.record_id));
     box.innerHTML = `<div class="card pad" style="margin-bottom:12px"><span class="tag err">rejected</span> <span class="mono">${esc(e.code)}</span> — ${esc(e.message)}
-        <div class="small muted" style="margin-top:6px">Written to <code>.errors.jsonl</code>, never to the records file. The quote does not occur on the stated page or on the pages next to it, so the claim cannot be grounded in the paper.</div></div>
+        <div class="small muted" style="margin-top:6px">Written to <code>.errors.jsonl</code>, never to the records file. ${esc(why)}</div>
+        ${lostLinks.length ? `<div class="small" style="margin-top:6px">Links to this candidate were dropped, not guessed; the linking record is flagged for review: ${lostLinks.map(recBtn).join(" · ")}</div>` : ""}</div>
       <div class="card"><div class="panel-h"><span>Rejected error record</span><span class="muted small">stage: ${esc(e.stage)}</span></div><pre class="json">${jsonHTML(e)}</pre></div>`;
   }
 }
@@ -455,7 +636,7 @@ function renderRecords() {
     const r = g.record, rows = [];
     for (const grp of Object.keys(r)) for (const [k, v] of Object.entries(r[grp])) rows.push([grp + "." + k, v]);
     return `<div class="card"><div class="pad" style="padding-bottom:8px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <h4 class="mono">${r.common.record_kind}</h4><span class="muted">${esc((C.record_kinds[r.common.record_kind] || {}).label_zh || "")}</span>
+        <h4 class="mono">${esc(r.common.record_kind)}</h4><span class="muted">${esc((C.record_kinds[r.common.record_kind] || {}).label_zh || "")}</span>
         <span class="spacer" style="flex:1"></span><span class="tag">${esc(g.source)}</span></div>
         <div class="small" style="margin-top:4px">${esc(summary(r))}</div><div class="small muted mono">${esc(g.file)}</div></div>
       <div style="max-height:360px;overflow:auto;border-top:1px solid var(--border)"><table class="ftable"><tbody>
@@ -481,9 +662,9 @@ function renderVocab(q = "") {
   const s = q.trim().toLowerCase();
   const used = v => C.fields.filter(f => f.vocabulary === v.name).map(f => fieldLink(f.path)).join(" ");
   $("#v-grid").innerHTML = C.vocabularies.filter(v => !s || JSON.stringify(v).toLowerCase().includes(s)).map(v => `
-    <div class="card pad"><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><b class="mono">${v.name}</b><span class="muted">${esc(v.title_zh || "")}</span></div>
-      <div style="margin:6px 0;display:flex;gap:6px;flex-wrap:wrap"><span class="tag ${v.enforcement === "error" ? "err" : v.enforcement === "warning" ? "warn" : ""}">${v.enforcement}</span>
-        <span class="tag">${v.closure}</span><span class="tag">${v.code_status}</span></div>
+    <div class="card pad"><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><b class="mono">${esc(v.name)}</b><span class="muted">${esc(v.title_zh || "")}</span></div>
+      <div style="margin:6px 0;display:flex;gap:6px;flex-wrap:wrap"><span class="tag ${v.enforcement === "error" ? "err" : v.enforcement === "warning" ? "warn" : ""}">${esc(v.enforcement)}</span>
+        <span class="tag">${esc(v.closure)}</span><span class="tag">${esc(v.code_status)}</span></div>
       <div class="small" style="margin-bottom:6px">${used(v) || '<span class="muted">not bound to a field</span>'}</div>
       <table class="ftable"><tbody>${v.values.map(x => `<tr><td>${esc(x.code)}</td><td style="font-family:inherit">${esc(x.label_zh || "")}${x.aliases ? ` <span class="muted small">(${esc(x.aliases.join(", "))})</span>` : ""}</td></tr>`).join("")}</tbody></table></div>`).join("")
     || '<p class="muted">No vocabulary matches.</p>';
@@ -494,14 +675,14 @@ function renderRules(amb) {
   $("#view-rules").innerHTML = `<h2>Cross-field rules</h2>
     <p class="lead">Rules taken from explicit source statements are <b>errors</b>. Anything only implied by the sources is a <b>warning</b>: the contract never enforces inferred semantics.</p>
     <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Severity</th><th>Basis</th><th>Kind</th><th>Rule (规则)</th><th>Fields</th></tr></thead><tbody>
-      ${C.rules.map(r => `<tr><td class="mono">${r.id}</td><td><span class="tag ${r.severity === "error" ? "err" : "warn"}">${r.severity}</span></td><td class="small">${r.basis}</td>
-        <td class="mono small">${r.kind}</td><td>${esc(r.title_zh)}</td><td class="small">${r.fields.map(p => p === "*" ? "<i>all fields</i>" : fieldLink(p)).join(" ")}</td></tr>`).join("")}
+      ${C.rules.map(r => `<tr><td class="mono">${esc(r.id)}</td><td><span class="tag ${r.severity === "error" ? "err" : "warn"}">${esc(r.severity)}</span></td><td class="small">${esc(r.basis)}</td>
+        <td class="mono small">${esc(r.kind)}</td><td>${esc(r.title_zh)}</td><td class="small">${r.fields.map(p => p === "*" ? "<i>all fields</i>" : fieldLink(p)).join(" ")}</td></tr>`).join("")}
     </tbody></table></div>
     <h3>Ambiguity register</h3>
     <p class="small muted">Where the sources are silent or disagree, the decision is recorded here instead of being made silently. <b>open</b> and <b>provisional</b> items await the data owners.</p>
     <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Status</th><th>Question (问题)</th><th>Finding</th><th>Resolution</th></tr></thead><tbody>
-      ${C.ambiguities.map(a => `<tr id="amb-${a.id}" ${a.id === amb ? 'style="outline:2px solid var(--accent)"' : ""}><td class="mono">${a.id}</td>
-        <td><span class="tag ${a.status === "decided" ? "ok" : a.status === "open" ? "warn" : ""}">${a.status}</span></td>
+      ${C.ambiguities.map(a => `<tr id="amb-${esc(a.id)}" ${a.id === amb ? 'style="outline:2px solid var(--accent)"' : ""}><td class="mono">${esc(a.id)}</td>
+        <td><span class="tag ${a.status === "decided" ? "ok" : a.status === "open" ? "warn" : ""}">${esc(a.status)}</span></td>
         <td>${esc(a.title_zh)}</td><td class="small">${esc(a.finding_zh || "")}</td><td class="small">${esc(a.resolution_zh || "")}</td></tr>`).join("")}
     </tbody></table></div>`;
   if (amb) { const tr = document.getElementById("amb-" + amb); if (tr) tr.scrollIntoView({ block: "center" }); }
@@ -519,11 +700,13 @@ function route() {
   if (name === "fields") {
     if (!rendered.has(name)) renderFieldsShell();
     if (qs !== undefined) {
-      Object.assign(FS, { q: params.get("q") || "", group: params.get("group") || "", profile: "", maturity: "", since: "", req: "", open: null });
+      Object.assign(FS, { q: params.get("q") || "", group: params.get("group") || "", profile: "", maturity: "", since: "", req: "",
+        fn: params.get("fn") || "", role: params.get("role") || "", open: null });
       FS.av = new Set(params.get("av") ? [params.get("av")] : AV);
     }
     syncFieldControls(); renderFieldRows();
   }
+  if (name === "functions" && !rendered.has(name)) renderFunctions();
   if (name === "demo" && !rendered.has(name)) renderDemo();
   if (name === "records" && !rendered.has(name)) renderRecords();
   if (name === "vocab") renderVocab(params.get("q") || ($("#v-q") ? $("#v-q").value : ""));
@@ -533,7 +716,7 @@ function route() {
 }
 $("#repo-link").href = DATA.repo;
 $("#foot").innerHTML = `Generated from release <b>${esc(C.version)}</b> of <span class="mono">${esc(C.name)}</span> and the checked-in examples by
-  <span class="mono">scripts/make_site.py</span>. All example papers and data are synthetic. <a href="${DATA.repo}">Source on GitHub</a>.`;
+  <span class="mono">scripts/make_site.py</span>. All example papers and data are synthetic. <a href="${esc(DATA.repo)}">Source on GitHub</a>.`;
 window.addEventListener("hashchange", route);
 route();
 </script>

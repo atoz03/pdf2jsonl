@@ -18,27 +18,28 @@ from .api import declared_version, resolve_schema
 from .paths import repo_root
 from .util import ContractError, dumps_json, get_path, load_json, utc_now
 
-DOCUMENT_FIELDS = (
-    "common.source_id", "common.source_type", "common.source_document_type", "common.source_title",
-    "common.source_doi", "common.source_pmid", "common.source_year", "common.source_authors",
-    "common.source_affiliations", "common.source_journal", "common.source_volume", "common.source_issue",
-    "common.source_page_range", "common.source_abstract", "common.source_keywords", "common.source_funding",
-    "common.source_language", "common.source_uri", "common.source_file_sha256", "common.source_record_id",
-    "common.crop_name", "common.species_name",
-)
-ENTITY_FIELDS = ("common.gene_names", "common.trait_names", "common.qtl_names", "common.marker_names",
-                 "common.germplasm_names", "common.variety_names", "common.parent_names")
+# Which fields form the document level and the entity index follows the catalog's key_role (never a list here):
+# source identity and bibliographic fields, plus single-valued entity mentions (crop, species) when every record
+# of the document agrees on them; the entity index covers every entity-mention field.
+DOCUMENT_ROLES = ("source_identity", "bibliographic")
+
+
+def document_fields(contract: dict) -> list[str]:
+    return [f["path"] for f in contract["fields"] if f.get("key_role") in DOCUMENT_ROLES
+            or (f.get("key_role") == "entity_mention" and f["type"] == "string")]
+
+
+def entity_fields(contract: dict) -> list[str]:
+    return [f["path"] for f in contract["fields"] if f.get("key_role") == "entity_mention"]
 
 
 def read_records(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def _document_values(recs: list[dict], fields: set[str]) -> dict:
+def _document_values(recs: list[dict], doc_fields: list[str]) -> dict:
     out = {}
-    for p in DOCUMENT_FIELDS:
-        if p not in fields:
-            continue
+    for p in doc_fields:
         vals = [get_path(r, p, None) for r in recs if get_path(r, p, None) is not None]
         if vals and all(v == vals[0] for v in vals):
             out[p] = vals[0]
@@ -54,7 +55,7 @@ def bundle_records(records: list[dict], rc=None) -> dict:
         if v is None:
             raise ContractError("records do not declare common.schema_version")
         rc = resolve_schema(v)
-    fields = {f["path"] for f in rc.fields}
+    doc_fields, ent_fields = document_fields(rc.contract), entity_fields(rc.contract)
     groups: dict[str, list[dict]] = {}
     for r in records:
         groups.setdefault(str(get_path(r, "common.source_id", "unknown")), []).append(r)
@@ -66,8 +67,9 @@ def bundle_records(records: list[dict], rc=None) -> dict:
         for r in recs:
             rid = get_path(r, "common.record_id", None)
             by_kind.setdefault(str(get_path(r, "common.record_kind", "unknown")), []).append(rid)
-            for p in ENTITY_FIELDS:
-                for name in get_path(r, p, []) or []:
+            for p in ent_fields:
+                value = get_path(r, p, None)
+                for name in (value if isinstance(value, list) else [value] if isinstance(value, str) else []):
                     lst = entities.setdefault(p.split(".", 1)[1], [])
                     if name not in lst:
                         lst.append(name)
@@ -78,7 +80,7 @@ def bundle_records(records: list[dict], rc=None) -> dict:
         ev = [{k: v for k, v in (("page", k[0]), ("section", k[1]), ("table_figure", k[2]), ("quote", k[3]),
                                   ("record_ids", ids)) if v is not None}
               for k, ids in sorted(evidence.items(), key=lambda kv: (kv[0][0], str(kv[0][1]), kv[0][3]))]
-        docs.append({"source_id": source_id, "document": _document_values(recs, fields),
+        docs.append({"source_id": source_id, "document": _document_values(recs, doc_fields),
                      "counts": {"records": len(recs), "by_record_kind": {k: len(v) for k, v in sorted(by_kind.items())}},
                      "records_by_kind": dict(sorted(by_kind.items())), "entities": entities, "evidence_index": ev,
                      "records": recs})

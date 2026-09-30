@@ -28,8 +28,13 @@ def load_json(path: Path | str) -> Any:
 
 
 def dumps_json(obj: Any) -> str:
-    """Deterministic, human-readable JSON used for every generated artifact."""
-    return json.dumps(obj, ensure_ascii=False, indent=2) + "\n"
+    """Deterministic, human-readable JSON used for every generated artifact (NaN/Infinity are not JSON)."""
+    return json.dumps(obj, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
+
+
+def dumps_jsonl(rows: Any) -> str:
+    """One compact JSON object per line (NaN/Infinity raise instead of producing invalid JSON)."""
+    return "".join(json.dumps(r, ensure_ascii=False, allow_nan=False) + "\n" for r in rows)
 
 
 def canonical_json(obj: Any) -> str:

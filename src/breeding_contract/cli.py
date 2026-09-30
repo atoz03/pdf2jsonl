@@ -136,6 +136,39 @@ def cmd_bundle(args) -> int:
     return 0
 
 
+def _records_contract(path: Path, version: str | None, root):
+    from .api import resolve_schema
+    records = [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
+    declared = version or next(((r.get("common") or {}).get("schema_version") for r in records
+                                if (r.get("common") or {}).get("schema_version")), None)
+    return records, resolve_schema(declared or "latest", root)
+
+
+def cmd_derive(args) -> int:
+    from .derive import derive_file
+    _, rc = _records_contract(Path(args.file), args.schema_version, args.root)
+    report = derive_file(Path(args.file), Path(args.out), rc)
+    print(dumps_json(report), end="")
+    return 0
+
+
+def cmd_audit(args) -> int:
+    from .argument import argument_audit
+    records, rc = _records_contract(Path(args.file), args.schema_version, args.root)
+    audit = argument_audit(records, rc.contract)
+    if args.json:
+        print(dumps_json(audit), end="")
+        return 0
+    print(f"{audit['statements']} statement(s); links {audit['links']['total']} "
+          f"({audit['links']['unresolved']} unresolved) — {audit['basis']}")
+    print("element      own  chain")
+    for e, c in audit["coverage"].items():
+        print(f"{e:12} {c['own']:4} {c['chain']:6}")
+    for code, n in audit["flags"].items():
+        print(f"flag {code}: {n} — {audit['flag_help'][code]}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="bdc", description="Breeding data contract tooling")
     ap.add_argument("--root", help="repository root (default: auto-detect / $BREEDING_CONTRACT_HOME)")
@@ -186,6 +219,18 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--out")
     p.add_argument("--legacy-v1", action="store_true", help="also project into the legacy v1 document shape")
     p.set_defaults(func=cmd_bundle)
+
+    p = sub.add_parser("derive", help="derive relational tables, KG triples and an evidence corpus from records")
+    p.add_argument("file")
+    p.add_argument("--out", required=True, help="output directory")
+    p.add_argument("--schema-version", help="contract version (default: the version the records declare)")
+    p.set_defaults(func=cmd_derive)
+
+    p = sub.add_parser("audit", help="evidence-chain audit (Toulmin/Flavell elements, after TRACE)")
+    p.add_argument("file")
+    p.add_argument("--schema-version", help="contract version (default: the version the records declare)")
+    p.add_argument("--json", action="store_true", help="print the full audit as JSON")
+    p.set_defaults(func=cmd_audit)
 
     args = ap.parse_args(argv)
     try:

@@ -12,6 +12,54 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and versions
 
 Each heading `## [X.Y.Z] - YYYY-MM-DD` provides the release date that `bdc release` records.
 
+## [3.2.0] - 2026-09-30
+
+This release records **what every key is for**. It follows the data owner's four record functions
+(`sources/project/record_functions.md`) and the research contents of Topics 1–3
+(`sources/project/research_contents.md`). It also adds the fields and rules that the evidence chain and the
+derived views were missing, reviewed through the TRACE argument lens (Toulmin + Flavell, arXiv:2605.29656).
+All additions are provisional. No existing field changes type, availability or meaning.
+
+### Added
+- **Annotations on every field** (AMB-032):
+  - `key_role`: what the key does. There are 25 roles in 6 families. Each role states how it projects into a
+    knowledge graph, relational tables, triples and QA/corpora, and which function facets it feeds.
+  - `serves`: which of the four functions the key serves:
+    - `topic2` — Topic 2 scientific agent;
+    - `topic3` — Topic 3 skills;
+    - `derivation` — KG / relational tables / QA / corpus / triples;
+    - `iteration` — our own iteration, i.e. Topic 1 (confirmed by the data owner: this repository is Topic 1's).
+  - `card`: for Topic 2/3 fields, the hypothesis, experiment-design or result-analysis card the field feeds.
+  - `argument_role`: the Toulmin/Flavell element of the field (AMB-033).
+  - `bdc check` guarantees that functions and cards stated by the v3 downstream column are never dropped or
+    rewritten. Functions added by the repository are listed separately in `docs/generated/field_functions.md`.
+- **Catalog codes**: `codes.function` (with facets taken from the research contents), `codes.key_role`,
+  `codes.key_role_family`, `codes.card` and `codes.argument_role`. Groups `agent`, `skills` and `transform`
+  declare the function they serve.
+- **9 fields**:
+  - Topic 2 evidence chain:
+    - `agent.claim_qualifier_text` (D): the verbatim hedge;
+    - `agent.stated_limitations` (D): limitations stated by the authors;
+    - `skills.method_record_ids` (N): the result → method link.
+  - Derivation:
+    - `transform.entity_links` (type `array_entity_link`): mention → entity ID pairs (AMB-034);
+    - `transform.qa_id` (G).
+  - Iteration / Topic 1:
+    - `common.extraction_profile` (N);
+    - `common.replaces_record_ids` (N);
+    - `common.conflict_resolution_status` (I, new vocabulary `conflict_resolution_status`);
+    - `common.record_updated_at` (N) (AMB-036).
+- **Rules**:
+  - `R031` (warning, definitional; new dataset rule kind `references_resolve`): evidence-chain references
+    must resolve within the dataset.
+  - `R032` (warning, inferred; new condition `matches`): a claim whose quote hedges should keep the qualifier
+    text (AMB-035).
+- **Profile `pdf_extraction`**:
+  - `record_links` (`evidence` → `agent.evidence_record_ids`, `method` → `skills.method_record_ids`);
+    candidates may now carry `ref` and `links`;
+  - system field `common.extraction_profile`.
+- **Ambiguities**: AMB-032 … AMB-036.
+
 ## [3.1.0] - 2026-09-28
 
 The merge release adds the legacy v1 document-level design and the omics 2.0.0 candidate template. Every

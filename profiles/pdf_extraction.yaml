@@ -64,6 +64,8 @@ system_fields:
     rule: resolved_schema_version
   common.schema_name:
     rule: resolved_schema_name
+  common.extraction_profile:
+    rule: profile_name
   common.record_kind:
     rule: candidate_record_kind
   common.record_grain:
@@ -143,6 +145,15 @@ system_records:
       params:
         option: asset_uri
 model_record_kinds: [claim, observation, method, analysis_result, phenotype_observation, environment_observation, genotype_observation]
+record_links:
+  evidence:
+    field: agent.evidence_record_ids
+    target_kinds: [claim, observation, analysis_result, phenotype_observation, environment_observation, genotype_observation]
+    description_zh: 本候选所依据的其他候选（观测、分析结果或更具体的结论）的 ref；只引用同一文献中确实支撑它的候选
+  method:
+    field: skills.method_record_ids
+    target_kinds: [method]
+    description_zh: 产生本结果或观测所用方法候选（record_kind 为 method）的 ref
 evidence_policy:
   required_for_model_records: true
   verify_quote: true

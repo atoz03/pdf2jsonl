@@ -11,7 +11,7 @@ from breeding_contract.release import release, verify_release
 from breeding_contract.sources import load_sources
 from breeding_contract.util import load_json
 
-from helpers import PROBE, add_probe_field, bump_version
+from helpers import CURRENT, NEXT, NEXT_MAJOR, PROBE, add_probe_field, bump_version
 
 
 def test_latest_resolves_to_index_latest(root):
@@ -67,7 +67,7 @@ def test_tampered_release_is_rejected(repo_copy):
 
 
 def test_editing_released_sources_is_an_error(repo_copy):
-    add_probe_field(repo_copy, since="3.1.0")
+    add_probe_field(repo_copy, since=CURRENT)
     msgs = [f.message for f in run_checks(repo_copy) if f.level == "error" and f.check == "freshness"]
     assert any("releases are immutable" in m for m in msgs)
     with pytest.raises(ContractError, match="immutable"):
@@ -75,25 +75,25 @@ def test_editing_released_sources_is_an_error(repo_copy):
 
 
 def test_new_field_flows_through_dev_then_release(repo_copy):
-    add_probe_field(repo_copy, since="3.2.0")
-    bump_version(repo_copy, "3.2.0")
+    add_probe_field(repo_copy, since=NEXT)
+    bump_version(repo_copy, NEXT)
     # before release: latest is unchanged, dev carries the field under an unreleased version
     assert PROBE not in {f["path"] for f in resolve_schema("latest", repo_copy).fields}
     dev = resolve_schema("dev", repo_copy)
-    assert dev.status == "unreleased" and dev.version.startswith("3.2.0-dev.")
+    assert dev.status == "unreleased" and dev.version.startswith(f"{NEXT}-dev.")
     assert PROBE in {f["path"] for f in dev.fields}
     assert PROBE in {f["path"] for f in dev.profile("pdf_extraction")["fields"]}
     warn = [f for f in run_checks(repo_copy) if f.check == "freshness"]
     assert warn and all(f.level == "warning" for f in warn)
     assert any(f.level == "error" and f.check == "freshness" for f in run_checks(repo_copy, strict=True))
     # release
-    assert release(repo_copy) == ("3.2.0", "created")
-    assert release(repo_copy) == ("3.2.0", "unchanged")
+    assert release(repo_copy) == (NEXT, "created")
+    assert release(repo_copy) == (NEXT, "unchanged")
     rc = resolve_schema("latest", repo_copy)
-    assert rc.version == "3.2.0" and PROBE in {f["path"] for f in rc.fields}
+    assert rc.version == NEXT and PROBE in {f["path"] for f in rc.fields}
     # older releases stay byte-identical and resolvable
-    assert PROBE not in {f["path"] for f in resolve_schema("3.1.0", repo_copy).fields}
-    assert verify_release(repo_copy, "3.1.0") == []
+    assert PROBE not in {f["path"] for f in resolve_schema(CURRENT, repo_copy).fields}
+    assert verify_release(repo_copy, CURRENT) == []
 
 
 def test_semver_discipline_between_releases(root):
@@ -113,8 +113,8 @@ def test_breaking_change_needs_a_major_bump(repo_copy):
     f = next(x for x in cat["fields"] if x["path"] == "common.sample_size")
     f["type"] = "string"
     cat_path.write_text(yaml.safe_dump(cat, allow_unicode=True, sort_keys=False), encoding="utf-8")
-    bump_version(repo_copy, "3.2.0")
+    bump_version(repo_copy, NEXT)
     errs = [f.message for f in run_checks(repo_copy) if f.check == "semver"]
     assert errs and "require major" in errs[0] and "common.sample_size" in errs[0]
-    bump_version(repo_copy, "4.0.0")
+    bump_version(repo_copy, NEXT_MAJOR)
     assert not [f for f in run_checks(repo_copy) if f.check == "semver"]

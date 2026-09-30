@@ -9,11 +9,11 @@
   },
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.1.0",
+    "schema_version": "3.2.0",
     "release_status": "released",
-    "requested": "3.1.0",
-    "release_sha256": "eb0027a4236a6f3edcad5f6940e7f6e6dd16937cd04844dbdfe2f71ae43ca476",
-    "source_digest": "88102faf40ff9300e1adc38029dd9110c8e5904808006978c97548c93789bf98"
+    "requested": "3.2.0",
+    "release_sha256": "a2c74ea2b1a5ab73c616addc18967fbd67055a3aa54f8cf16fda0eb8185e3aa2",
+    "source_digest": "6d7a7c67d100998d94393f532c323d8105a5d544328cc168ca2b349b9e6ce6e5"
   },
   "mapping": {
     "id": "omics_to_current",
@@ -31,7 +31,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_deg_instance.migrated.jsonl",
-      "sha256": "86e5c1d042ce4ab7e91c1c4b0d11b297f5d91b89e55266d4bc8a67435990910b"
+      "sha256": "f0146a88248eee5d5719136fbc50e0712e991af5a6a25c7ac51a0c1c90593bcb"
     },
     "errors": {
       "file": "synthetic_deg_instance.migrated.errors.jsonl",

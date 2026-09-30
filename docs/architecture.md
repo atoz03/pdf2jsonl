@@ -37,7 +37,10 @@ with status `unreleased`, so development output can never claim to be a release.
 | API | `api.py` | `resolve_schema`, `load_profile`, `load_field_catalog`, `validate_record`, `declared_version` |
 | Checks | `check.py` | The CI gate (`bdc check --strict`) |
 | Migration | `legacy.py`, `omics.py`, `mappings.py` | Mapping-driven conversion of legacy v1 documents and omics v2 instances |
-| Views | `bundle.py` | `document_bundle` and the legacy v1 projection (derived, never a source of truth) |
+| Views | `bundle.py` | `document_bundle` and the legacy v1 projection (derived, never a source of truth); document and entity fields come from `key_role` |
+| Functions | `functions.py` | Which of the four record functions a field serves according to the sources, its facets, repository additions (see `docs/field_functions.md`) |
+| Derived views | `derive.py` | `bdc derive`: relational tables, triples and an evidence corpus, every field placed by its `key_role` |
+| Evidence-chain audit | `argument.py` | `bdc audit` and the report's `argument_structure`: Toulmin/Flavell elements per statement, link closure, flags (after TRACE) |
 | Runtime schemas | `schemas/runtime/`, `runtime_schemas.py` | Formats of manifests, validation reports, error records, bundles, migration reports |
 | Skill | `skills/pdf2jsonl/` | Workflow (`SKILL.md`), brief template (`prompts/`), runtime (`scripts/pdf2jsonl_skill/`) |
 
@@ -53,12 +56,17 @@ paper.pdf
   │ 4. structural repair                repair.py: flatten nested groups, resolve bare leaf names, coerce types,
   │                                     map vocabulary labels/aliases, drop empties and pipeline-owned fields — logged
   │ 5. evidence verification            quote must occur on the stated page (±1 page → EVIDENCE_PAGE_CORRECTED);
-  │                                     otherwise EVIDENCE_QUOTE_NOT_FOUND → rejected; value-presence warnings
+  │                                     otherwise EVIDENCE_QUOTE_NOT_FOUND → rejected; value-presence warnings;
+  │                                     exact duplicate candidates are merged
   │ 6. assemble atomic records          document values, provenance roles, extracted fields, normalizers
-  │                                     (raw kept, normalized added), generated and system fields via named fill rules
+  │                                     (raw kept, normalized added), generated and system fields via named fill rules;
+  │                                     ordinals of records sharing an anchor follow canonical field order
+  │ 6b. resolve candidate links          `ref` / `links` → record IDs in the profile's `record_links` fields; links to
+  │                                     rejected, self or wrong-kind targets are dropped with CANDIDATE_LINK_* warnings
   │ 7. validate → review fields         validation outcome drives review_status / qc_failure_codes; re-validate
   │ 8. system records, dataset rules    asset_manifest for the input; uniqueness / leakage rules over the file
-  ▼ 9. write outputs                    paper.jsonl · paper.errors.jsonl · paper.validation.json · paper.manifest.json
+  ▼ 9. write outputs                    paper.jsonl · paper.errors.jsonl · paper.validation.json (+ argument_structure)
+                                        · paper.manifest.json
 ```
 
 **Agent mode** splits the run at step 3. `prepare` writes `brief.md` (rendered from the resolved profile:
@@ -79,7 +87,9 @@ rule the Skill does not implement. Adding a field to the catalog therefore needs
 | --- | --- |
 | No field definitions outside the catalog | `check_skill`: no field paths or version literals in `SKILL.md`, prompts or Skill code; the brief is rendered from the release |
 | Records are atomic and provenance-bearing | profile roles + R001 (page + quote for paper evidence) + evidence verification |
-| Never infer | model sees only D fields; I/G/F never exposed (`check_profiles`); unverifiable quotes rejected; migrators skip inferred relations and route I values to review candidates |
+| Never infer | model sees only D fields; I/G/F never exposed (`check_profiles`); unverifiable quotes rejected; unresolvable candidate links are dropped and flagged, never guessed; migrators skip inferred relations and route I values to review candidates |
+| JSON stays finite | NaN/Infinity are validation errors (`VALUE_NOT_FINITE`), repair drops them with a log entry, and output serialisation refuses them |
+| Source-stated functions are kept | `check_field_functions`: `serves` contains every function the v3 group or downstream column states, `card` matches the stated card, every served function receives a facet |
 | Omit missing values | JSON Schema (`minLength`, `minItems`, `minProperties`, no `null` types); repair drops empties with a log entry |
 | Raw vs normalized | normalizers only add `normalized_*` (R015/R016 require the originals); unknown units are not converted |
 | D/N/I/G/F semantics preserved | catalog codes are verbatim from v3; profile roles are checked against availability |
@@ -90,7 +100,8 @@ rule the Skill does not implement. Adding a field to the catalog therefore needs
 ## Checks run by CI (`bdc check --strict`)
 
 `meta` (source files against `schemas/meta/`), `catalog` (paths, types, vocabularies, rules, ambiguities,
-policy: inferred rules must be warnings), `profiles` (no G/F exposed to models, review codes exist),
+policy: inferred rules must be warnings and only warning rules may use regex conditions; key roles, functions,
+cards and argument roles), `profiles` (no G/F exposed to models, review codes exist),
 `version` (CHANGELOG entry, VERSION not older than latest), `releases` (integrity, index, `latest`),
 `freshness` (working tree equals the release of VERSION; strict mode fails on an unreleased VERSION), `skill`
 (supported range, fill rules, no hard-coded paths or versions, known placeholders), `mappings` (every source
@@ -105,7 +116,7 @@ curated examples):
 
 | Item | Convention | Example |
 | --- | --- | --- |
-| `common.record_id` | `rec_` + first 32 hex of sha256 over `source_id ␟ record_kind ␟ locator core ␟ normalized quote ␟ ordinal` | `rec_828955fbf1c3d2acf5c43230fa88afc7` |
+| `common.record_id` | `rec_` + first 32 hex of sha256 over `source_id ␟ record_kind ␟ anchor ␟ normalized quote ␟ ordinal`. The anchor is the locator without the section (`page, table, row, col`), so a respelled heading keeps the ID. The ordinal numbers records that share kind, anchor and quote in canonical field order, so candidate order does not matter. Omics instances without an ID are anchored by the hash of their content. | `rec_828955fbf1c3d2acf5c43230fa88afc7` |
 | `common.source_id` | `doi:<lower-case DOI>`, else `urn:sha256:<file hash>`; migrations keep `urn:legacy-v1:<id>` when no DOI exists | `doi:10.0000/synthetic.2026.001` |
 | `common.source_locator` | `key=value` pairs joined by `;`, keys in order `page, section, table, row, col`; `%`, `;`, `=` are percent-escaped | `page=3;section=Results;table=Table 2;row=RIL-017;col=PH` |
 | `common.source_span` | `page=<n>;char=<start>-<end>` offsets into the parsed page text | `page=1;char=377-499` |

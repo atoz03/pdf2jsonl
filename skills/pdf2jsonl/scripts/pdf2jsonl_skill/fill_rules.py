@@ -65,6 +65,7 @@ class RecordContext:
     ordinal: int = 0
     issues: list = field(default_factory=list)     # Issue objects (validator + pipeline warnings)
     notes: dict = field(default_factory=dict)
+    pre: list = field(default_factory=list)        # pipeline issues that are not re-derived by validation
 
     def value(self, path: str | None) -> Any:
         if not path:
@@ -82,6 +83,11 @@ def _schema_version(ctx: RecordContext, params: dict):
 @rule("resolved_schema_name")
 def _schema_name(ctx: RecordContext, params: dict):
     return ctx.run.rc.name
+
+
+@rule("profile_name")
+def _profile_name(ctx: RecordContext, params: dict):
+    return ctx.run.profile["name"]
 
 
 @rule("candidate_record_kind")
@@ -177,8 +183,12 @@ def _span(ctx: RecordContext, params: dict):
 
 @rule("stable_record_id", order=90)
 def _record_id(ctx: RecordContext, params: dict):
+    """Identity = source + kind + page/table/row/column + normalized quote + ordinal (AMB-011). The section is
+    left out: parsers and agents may or may not supply it, and a heading's spelling must not change the ID."""
     source_id = ctx.value(ctx.run.role("provenance", "document_id"))
-    anchor = _anchor(ctx) if ctx.evidence else "document"
+    e = ctx.evidence
+    anchor = build_locator(page=e.get("page"), table=e.get("table_figure"), row=e.get("row_key"),
+                           col=e.get("column_key")) if e else "document"
     return stable_record_id(str(source_id), ctx.record_kind, anchor, ctx.evidence.get("quote"), ctx.ordinal)
 
 
