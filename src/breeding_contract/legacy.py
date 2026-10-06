@@ -228,6 +228,9 @@ class LegacyMigrator:
         return ev, codes
 
     # ------------------------------------------------------------------ records
+    def additional_records(self, t, doc_values, sections, emit):
+        """Extension point for later source formats; legacy v1 has no additional blocks."""
+
     def record(self, kind: str, doc_values: dict, ev: dict, fields: dict, section: str | None, qc: list[str],
                ordinal: int) -> dict:
         rec: dict = {}
@@ -290,7 +293,7 @@ class LegacyMigrator:
                 fields["common.population_name"] = name
             return name
 
-        def emit(kind, ev, fields, section, qc, source, review=None):
+        def emit(kind, ev, fields, section, qc, source, review=None, extra_errors=None):
             key = (kind, ev.get("page"), section, ev.get("quote"))
             ordinal = ordinals.get(key, 0)
             ordinals[key] = ordinal + 1
@@ -299,12 +302,12 @@ class LegacyMigrator:
             rid = rec["common"]["record_id"]
             if review:
                 candidates[rid] = {"source": source, "values": review}
-            if res.valid:
+            if res.valid and not extra_errors:
                 out.append((rec, source, None))
                 return rid
             rejected.append({"error_format": 1, "stage": "migration", "code": "RECORD_INVALID",
                              "message": "迁移记录未通过契约校验", "source_path": source,
-                             "issues": [i.to_dict() for i in res.errors], "record": rec})
+                             "issues": [i.to_dict() for i in res.errors] + list(extra_errors or []), "record": rec})
             return None
 
         # relations -> claim (S-P-O); inferred relations are skipped
@@ -540,6 +543,8 @@ class LegacyMigrator:
                 if any(isinstance(v, (int, float)) and not isinstance(v, bool) for v in kr.values()):
                     t.used.add(("analyses", i, "key_results"))
 
+        self.additional_records(t, doc_values, sections, emit)
+
         # residue: every non-empty leaf not consumed
         residue = []
         for path, value in _leaves(doc):
@@ -552,7 +557,9 @@ class LegacyMigrator:
                                         if entry else {"status": "not_in_legacy_schema"})})
         return {"records": [r for r, _, _ in out], "record_sources": {r["common"]["record_id"]: src for r, src, _ in out},
                 "rejected": rejected, "review_candidates": candidates,
-                "residue": residue, "notes": doc_notes, "consumed_leaf_paths": sorted({_norm(p) for p, _ in _leaves(doc) if t.consumed(p)})}
+                "residue": residue, "notes": doc_notes,
+                "consumed_paths": sorted(_concrete(p) for p, _ in _leaves(doc) if t.consumed(p)),
+                "consumed_leaf_paths": sorted({_norm(p) for p, _ in _leaves(doc) if t.consumed(p)})}
 
 
 def load_legacy_mapping(root: Path) -> dict:

@@ -17,8 +17,12 @@ repair, migration).
  └─────────────────────────────────┘                 │   RELEASE.json         │        └── downstream (Python API / JSON Schema)
           │ bdc generate                            └────────────────────────┘
           ▼                                          releases/index.json (latest)
- docs/generated/ (dictionary .md/.csv, rules, vocabularies, profiles, ambiguities)
+ FIELD_DEFINITIONS.md + docs/generated/ (dictionary .md/.csv, rules, vocabularies, profiles, ambiguities)
 ```
+
+The root-level [field reference](../FIELD_DEFINITIONS.md) combines catalog definitions with synthetic JSON
+values from `docs/field_examples.yaml`. Generation checks example coverage and field schemas; `bdc check`
+also checks freshness of the root reference. These documentation examples do not change the contract or release hashes.
 
 `resolve_schema("dev")` compiles the working tree on the fly and stamps the version `<VERSION>-dev.<digest8>`
 with status `unreleased`, so development output can never claim to be a release.
@@ -36,7 +40,7 @@ with status `unreleased`, so development output can never claim to be a release.
 | Releases | `release.py` | Immutable `releases/<v>/` with per-file sha256 in `RELEASE.json`; `index.json` records the release hash |
 | API | `api.py` | `resolve_schema`, `load_profile`, `load_field_catalog`, `validate_record`, `declared_version` |
 | Checks | `check.py` | The CI gate (`bdc check --strict`) |
-| Migration | `legacy.py`, `omics.py`, `mappings.py` | Mapping-driven conversion of legacy v1 documents and omics v2 instances |
+| Migration | `legacy.py`, `omics.py`, `merged.py`, `mappings.py` | Mapping-driven conversion of legacy v1, omics v2 and merged v2 inputs; merged observations join samples/assays by explicit IDs |
 | Views | `bundle.py` | `document_bundle` and the legacy v1 projection (derived, never a source of truth); document and entity fields come from `key_role` |
 | Functions | `functions.py` | Which of the four record functions a field serves according to the sources, its facets, repository additions (see `docs/field_functions.md`) |
 | Derived views | `derive.py` | `bdc derive`: relational tables, triples and an evidence corpus, every field placed by its `key_role` |

@@ -12,6 +12,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and versions
 
 Each heading `## [X.Y.Z] - YYYY-MM-DD` provides the release date that `bdc release` records.
 
+## [3.3.0] - 2026-10-06
+
+### Added
+- Three optional provisional sample fields from merged v2: biological replicate ID, technical replicate ID, and verbatim sampling time.
+- Archived merged v2 sources, mapping coverage and a migration command for document/unit inputs, observations, linked omics samples/assays and assets, with rejected records and loss accounting.
+- Integration audit and regression tests for evidence, references, UTC conversion and conflicting values.
+
 ## [3.2.0] - 2026-09-30
 
 This release records **what every key is for**. It follows the data owner's four record functions

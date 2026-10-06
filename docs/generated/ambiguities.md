@@ -44,6 +44,7 @@
 | AMB-034 | open | 实体提及与规范 ID 的逐项对应 | common.gene_names 与 gene_ids、trait_names 与 trait_ids 等数组之间没有逐项对应规则；transform 的 subject/object 一条记录只能表达一对实体，图谱与关系库无法确定每个提及对应哪个节点。 | 新增 transform.entity_links（array_entity_link）逐项记录提及、来源字段、实体类型、规范 ID 与对齐状态；不对 *_names 与 *_ids 做位置对齐假设。item 结构为仓库拟定，待确认。 |
 | AMB-035 | provisional | 结论限定措辞的识别 | 结论中的限定措辞（may、suggesting a possible、可能）若在抽取中丢失，图谱与问答会把假设当作事实；v3 未定义限定措辞字段与词表。 | agent.claim_qualifier_text 逐字保存限定措辞；R032 用仓库拟定的中英文限定词正则提示缺失（warning，inferred），词表待确认。 |
 | AMB-036 | provisional | 知识融合的冲突消解与动态更新 | 课题一的知识融合包括冲突消解与动态更新（research_contents.md），但 v3 只有 conflict_record_ids（哪些记录冲突）与 record_version（修订序号），没有消解结果，也无法在重新抽取使 record_id 变化时追溯新旧记录。 | 新增 common.conflict_resolution_status（I，词表 conflict_resolution_status，代码为仓库拟定）、common.replaces_record_ids（N，新记录指向被取代的旧记录）与 common.record_updated_at（N，版本时间）。旧记录不删除；取代与消解都保留证据链。 |
+| AMB-037 | provisional | merged 样本的重复编号与采样时间 | merged 规范区分生物学重复、技术重复和采样时间，但未规定编号命名空间；采样时间为原文字符串。 | 新增三个可选 D 字段保留原文，不改变已有 replicate_id 或 observation_time 的含义，不推断重复类别或缺失时区。 |
 
 ## 映射层（mappings/legacy_to_current.yaml）
 
@@ -61,6 +62,27 @@
 | LEG-010 | 译文字段 | title_zh/title_en/claim_zh 为译文。 | 译文不是原文证据，不迁移。 |
 | LEG-011 | 区间单位超出规范 | 规范规定 interval.unit 为 cM/bp，示例使用 Mb。 | cM 写入 *_cm；bp/kb/Mb 按 vocabularies/units.yaml 精确换算为整数 bp；其他单位进入残留。 |
 | LEG-012 | 版本号格式 | legacy 版本写作 v1.0.0，当前契约使用不带前缀的语义化版本。 | 迁移记录一律写入解析后的当前契约版本；legacy 版本写入迁移报告。 |
+
+## 映射层（mappings/merged_to_current.yaml）
+
+| ID | 主题 | 发现 | 处理 |
+|---|---|---|---|
+| LEG-001 | agent/skill 同名不同义 | legacy agent/skill 块记录智能体与技能的运行状态；v3 agent/skills 组为论文派生字段。 | 运行状态不迁移；仅极少数可证实来自论文的内容以 partial 迁移。 |
+| LEG-002 | 出版物页码与物理页码 | legacy 页码为期刊页码（示例 2221–2235），v3 source_page 为 PDF 物理页码。 | 迁移证据需 --page-offset（物理页 = 期刊页 − 偏移）；未提供时不填 source_page，该证据记录因 R001 被拒绝并进入错误文件（AMB-029）。 |
+| LEG-003 | 本机路径 | doc_meta.pdf_path 保存本机相对路径。 | 禁止迁移（R020）；PDF 身份用 source_file_sha256，文件名只写入迁移清单。 |
+| LEG-004 | lod 字段混入 -log10(P) | 示例中 GWAS 表格片段为“-log10(P)=8.7”，却写入 qtls[].lod=8.7。 | 仅当产出分析为连锁/QTL 定位时迁移为 lod_score；GWAS 结果进入残留，需人工确认统计量。 |
+| LEG-005 | 推断内容 | relations[].is_inferred=true 的关系、模型生成的假设以及 causal_flag 均可能是推断结果。 | 推断关系与模型生成假设不迁移；因果标记仅作 I 字段审核候选，关联不升级为因果。 |
+| LEG-006 | 规范与 schema 不一致 | 规范列出 document_sections.heading 等字段而 schema 缺失；示例又包含 schema 未定义的字段（如 heading、output_name）；disease_pests 结构未定义。 | 以 schema 叶子为覆盖基准；schema 外字段由迁移工具写入残留报告，不静默丢弃。 |
+| LEG-007 | null 与空值 | legacy 以 null、空串、空数组表示缺失。 | 迁移时一律省略；不产生 null。 |
+| LEG-008 | 实体清单不是原子记录 | breed_entities 为文档级实体清单，与 v3 原子证据记录粒度不同。 | 实体名称写入引用它的记录（关系、QTL 观测等）的名称字段；未被引用的实体属性进入残留。 |
+| LEG-009 | 结论缺少直接证据 | conclusions[] 没有 evidence_spans，只能经 evidence_list/supporting_* 间接引用；text_snippet 含省略号时不是逐字原文。 | 能解析到逐字片段的结论迁移为 claim；否则拒绝并写入错误文件。 |
+| LEG-010 | 译文字段 | title_zh/title_en/claim_zh 为译文。 | 译文不是原文证据，不迁移。 |
+| LEG-011 | 区间单位超出规范 | 规范规定 interval.unit 为 cM/bp，示例使用 Mb。 | cM 写入 *_cm；bp/kb/Mb 按 vocabularies/units.yaml 精确换算为整数 bp；其他单位进入残留。 |
+| LEG-012 | 版本号格式 | legacy 版本写作 v1.0.0，当前契约使用不带前缀的语义化版本。 | 迁移记录一律写入解析后的当前契约版本；legacy 版本写入迁移报告。 |
+| MRG-001 | 文档状态与原子事实分离 | merged 含有智能体运行状态、治理评分、技能注册以及派生视图。 | 保持原子格式；无明确语义或证据绑定的数据进入带原因的残留文件。 |
+| MRG-002 | Schema 通过不等于证据有效 | 原示例页码为 2221 等出版页，部分引文含省略号；资产 SHA-256 为截断字符串。 | 显式偏移换算物理页；不完整引文不进入 source_quote；无效资产摘要拒绝而不修补。 |
+| MRG-003 | 样本和测定引用 | 观测通过 sample_ref/assay_ref 关联上下文，输入没有强制引用完整性。 | 只按明确 ID 关联；重复 ID、已知测定的样本不匹配和冲突字段拒绝；未在输入定义的外部引用保留 ID 并标记。 |
+| MRG-004 | 开放组学对象与类型差异 | omics_feature 可放任意字段，示例 go_term 为数组；部分统计字段无概率范围约束。 | 使用现有同名组学字段，单元素数组可解包，多值不拼接；输出一律经当前契约和数据集规则校验。 |
 
 ## 映射层（mappings/omics_to_current.yaml）
 

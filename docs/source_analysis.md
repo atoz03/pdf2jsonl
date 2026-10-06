@@ -111,6 +111,10 @@ case-insensitive filesystems, so they are stored as `sources/archives/fields_v3_
 
 ## 4. Open questions for the data owners
 
+The later `merged.zip` input is reviewed separately in [merged v2 integration review](merged_v2_review.md).
+Its 1,022 schema leaf paths reorganize much of the same material; 3.3.0 adds three sample fields and an input
+adapter for observations/assets while retaining the atomic contract. Original files are in `sources/merged_v2/`.
+
 Decisions that need a domain owner's confirmation are listed with status `open` or `provisional` in
 `docs/generated/ambiguities.md`. The most consequential are:
 

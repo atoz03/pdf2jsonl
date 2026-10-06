@@ -64,6 +64,8 @@ codes:
       label_zh: legacy v1 文档级 JSONL（Jsonl.zip）
     omics_v2:
       label_zh: 多组学候选模板 2.0.0
+    merged_v2:
+      label_zh: merged 文档与单位行合并规范 v2.0.0
     repository:
       label_zh: 仓库治理需要新增
   function:
@@ -3357,6 +3359,75 @@ fields:
   key_role: lifecycle
   serves: [iteration]
   source_ref: sources/project/research_contents.md#L3
+- path: common.biological_replicate_id
+  type: string
+  availability: D
+  required: N
+  definition_zh: 生物学重复编号原文，标识独立生物材料或样本的重复；与技术重复分开，不从未分类的 replicate_id 推断
+  data_source_zh: 论文样本描述或来源样本元数据
+  downstream_zh: 课题二课题三
+  since: 3.3.0
+  status: active
+  maturity: provisional
+  origin:
+  - merged_v2
+  origin_paths:
+  - breed_entities.omics_samples[].biological_replicate
+  ambiguities:
+  - AMB-037
+  key_role: condition
+  serves:
+  - topic2
+  - topic3
+  - derivation
+  - iteration
+  source_ref: sources/merged_v2/breeding_jsonl_schema_v2.json#/$defs/omics_sample/properties/biological_replicate
+- path: common.technical_replicate_id
+  type: string
+  availability: D
+  required: N
+  definition_zh: 技术重复编号原文，标识同一生物样本的重复测定；与生物学重复分开，不作为独立生物样本计数
+  data_source_zh: 论文样本描述或来源样本元数据
+  downstream_zh: 课题二课题三
+  since: 3.3.0
+  status: active
+  maturity: provisional
+  origin:
+  - merged_v2
+  origin_paths:
+  - breed_entities.omics_samples[].technical_replicate
+  ambiguities:
+  - AMB-037
+  key_role: condition
+  serves:
+  - topic2
+  - topic3
+  - derivation
+  - iteration
+  source_ref: sources/merged_v2/breeding_jsonl_schema_v2.json#/$defs/omics_sample/properties/technical_replicate
+- path: common.sampling_time
+  type: string
+  availability: D
+  required: N
+  definition_zh: 样本采集时间原文；与测量发生时间 observation_time、相对采样时间 sampling_time_relative 及入库时间分开，不补齐原文未给出的日期或时区
+  data_source_zh: 论文样本描述或来源样本元数据
+  downstream_zh: 课题二课题三
+  since: 3.3.0
+  status: active
+  maturity: provisional
+  origin:
+  - merged_v2
+  origin_paths:
+  - breed_entities.omics_samples[].sampling_time
+  ambiguities:
+  - AMB-037
+  key_role: condition
+  serves:
+  - topic2
+  - topic3
+  - derivation
+  - iteration
+  source_ref: sources/merged_v2/breeding_jsonl_schema_v2.json#/$defs/omics_sample/properties/sampling_time
 - path: agent.scientific_question
   type: string
   availability: I
@@ -7313,3 +7384,10 @@ ambiguities:
   finding_zh: 课题一的知识融合包括冲突消解与动态更新（research_contents.md），但 v3 只有 conflict_record_ids（哪些记录冲突）与 record_version（修订序号），没有消解结果，也无法在重新抽取使 record_id 变化时追溯新旧记录。
   resolution_zh: 新增 common.conflict_resolution_status（I，词表 conflict_resolution_status，代码为仓库拟定）、common.replaces_record_ids（N，新记录指向被取代的旧记录）与 common.record_updated_at（N，版本时间）。旧记录不删除；取代与消解都保留证据链。
   since: 3.2.0
+
+- id: AMB-037
+  status: provisional
+  title_zh: merged 样本的重复编号与采样时间
+  finding_zh: merged 规范区分生物学重复、技术重复和采样时间，但未规定编号命名空间；采样时间为原文字符串。
+  resolution_zh: 新增三个可选 D 字段保留原文，不改变已有 replicate_id 或 observation_time 的含义，不推断重复类别或缺失时区。
+  since: 3.3.0

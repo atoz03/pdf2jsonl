@@ -32,5 +32,5 @@ version = { file = "VERSION" }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src", "skills/pdf2jsonl/scripts", "tests"]
+pythonpath = [".", "src", "skills/pdf2jsonl/scripts", "tests"]
 addopts = "-q"

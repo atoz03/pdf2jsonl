@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated from pipeline.html by scripts/export_pipeline_diagram.py. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="pipeline-diagram" viewBox="0 0 1440 1840" width="1440" height="1840" role="img" aria-labelledby="diagram-title diagram-desc" lang="en">
+  <title id="diagram-title">Breeding literature data pipeline</title>
+  <desc id="diagram-desc">A shared versioned contract governs PDF extraction and legacy, omics and merged imports. Extraction parses pages, prepares an agent brief, produces candidates, repairs structure, verifies evidence, builds linked atomic records and validates records and datasets. Accepted JSONL feeds tables, graph triples, evidence corpora and document bundles. Rejections and audit reports support manual review and iteration. OCR text is supplied externally; QA generation is downstream.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 L9 5 L1 9 Z" fill="#8495ac" />
+    </marker>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 L9 5 L1 9 Z" fill="#127b72" />
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 L9 5 L1 9 Z" fill="#c36553" />
+    </marker>
+  </defs>
+  <style>
+  text {font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Segoe UI", Arial, sans-serif; fill: #25354b;}
+  .kicker {font-size: 15px; font-weight: 700; letter-spacing: 2px; fill:#345fd1;}
+  .heading {font-size: 39px; font-weight: 750; letter-spacing: -.6px;}
+  .subtitle {font-size: 20px; fill:#65758b;}
+  .sectiontitle {font-size: 23px; font-weight: 700;}
+  .sectionnote {font-size: 16px; fill:#687a92;}
+  .cardtitle {font-size: 21px; font-weight: 700;}
+  .body {font-size: 18px; fill:#52657e;}
+  .mono {font-size: 13px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;}
+  .tag {font-size: 14px; font-weight: 650;}
+  .stepno {font-size: 14px; font-weight: 750;}
+  .small {font-size: 16px; fill:#65758b;}
+  .footnote {font-size: 15px; fill:#6e7f95;}
+  .step:focus {outline:none;}
+  .step:focus &gt; rect, .step:hover &gt; rect {stroke:#6383cd;}
+</style>
+  <rect width="1440" height="1840" rx="24" fill="#f6f8fc" />
+  <rect x="64" y="51" width="7" height="88" rx="3" fill="#345fd1" />
+  <text x="89" y="70" class="kicker">PDF2JSONL  /  DATA PIPELINE</text>
+  <text x="88" y="118" class="heading">From papers to traceable atomic data</text>
+  <text x="88" y="153" class="subtitle">Contract-driven extraction, evidence checks and auditable outputs</text>
+  <rect x="56" y="190" width="1328" height="220" rx="22" fill="#edf2fc" stroke="#d9e3f5" />
+  <text x="80" y="227" class="sectiontitle">Shared contract and versioning</text>
+  <text x="1357" y="227" class="sectionnote" text-anchor="end">Applies to extraction and migration</text>
+  <rect x="80" y="247" width="400" height="137" rx="14" fill="#ffffff" stroke="#d9e3f5" />
+  <text x="99" y="279" class="cardtitle">Fields &amp; filling rules</text>
+  <text x="99" y="308" class="body">Field catalog / vocabularies / profiles</text>
+  <text x="99" y="333" class="body">Types, availability and cross-field rules</text>
+  <text x="99" y="364" class="mono" style="fill:#345fd1">field_catalog/ · vocabularies/ · profiles/</text>
+  <rect x="520" y="247" width="400" height="137" rx="14" fill="#ffffff" stroke="#d9e3f5" />
+  <text x="539" y="279" class="cardtitle">Compile &amp; freeze</text>
+  <text x="539" y="308" class="body">Compile schemas, freeze and hash releases</text>
+  <text x="539" y="333" class="body">Keep old versions; pin each record version</text>
+  <text x="539" y="364" class="mono" style="fill:#345fd1">bdc release → releases/&lt;version&gt;/</text>
+  <rect x="960" y="247" width="400" height="137" rx="14" fill="#ffffff" stroke="#d9e3f5" />
+  <text x="979" y="279" class="cardtitle">Resolve run constraints</text>
+  <text x="979" y="308" class="body">Load version, profile and filling rules</text>
+  <text x="979" y="333" class="body">Candidate schema and pinned run version</text>
+  <text x="979" y="364" class="mono" style="fill:#345fd1">resolve_schema() · load_profile()</text>
+  <path d="M480 313 H515" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M920 313 H955" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <text x="64" y="463" class="sectiontitle">PDF extraction</text>
+  <text x="64" y="494" class="sectionnote">Default agent mode: prepare → candidates.json → finalize</text>
+  <text x="1072" y="463" class="sectiontitle">Structured-data imports</text>
+  <text x="1072" y="494" class="sectionnote">Same target contract</text>
+  <path d="M360 614 H393" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M696 614 H729" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M884 698 V741" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M736 832 H703" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M400 832 H367" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M212 916 V959" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M360 1050 H393" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M696 1050 H729" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <g class="step">
+    <title>Input documents</title>
+    <rect x="64" y="530" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+    <rect x="82" y="550" width="34" height="30" rx="9" fill="#eaf0ff" stroke="none" />
+    <text x="99" y="571" class="stepno" style="fill:#345fd1" text-anchor="middle">01</text>
+    <text x="128" y="572" class="cardtitle">Input documents</text>
+    <text x="84" y="609" class="body">PDF or extracted text layer</text>
+    <text x="84" y="634" class="body">Scans use external OCR text</text>
+    <text x="84" y="659" class="body">Preserve file identity and hash</text>
+    <text x="84" y="677" class="mono" style="fill:#345fd1">.pdf · .txt · .pages.jsonl</text>
+  </g>
+  <g class="step">
+    <title>Parse &amp; locate</title>
+    <rect x="400" y="530" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+    <rect x="418" y="550" width="34" height="30" rx="9" fill="#eaf0ff" stroke="none" />
+    <text x="435" y="571" class="stepno" style="fill:#345fd1" text-anchor="middle">02</text>
+    <text x="464" y="572" class="cardtitle">Parse &amp; locate</text>
+    <text x="420" y="609" class="body">Read physical pages and text</text>
+    <text x="420" y="634" class="body">Sections, tables and offsets</text>
+    <text x="420" y="659" class="body">Build the text evidence index</text>
+    <text x="420" y="677" class="mono" style="fill:#345fd1">pypdf · parse_document()</text>
+  </g>
+  <g class="step">
+    <title>Prepare extraction</title>
+    <rect x="736" y="530" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+    <rect x="754" y="550" width="34" height="30" rx="9" fill="#eaf0ff" stroke="none" />
+    <text x="771" y="571" class="stepno" style="fill:#345fd1" text-anchor="middle">03</text>
+    <text x="800" y="572" class="cardtitle">Prepare extraction</text>
+    <text x="756" y="609" class="body">Render profile fields and rules</text>
+    <text x="756" y="634" class="body">Directly extractable fields</text>
+    <text x="756" y="659" class="body">Pin source hash and version</text>
+    <text x="756" y="677" class="mono" style="fill:#345fd1">brief.md · candidate.schema.json</text>
+  </g>
+  <g class="step">
+    <title>Extract candidates</title>
+    <rect x="736" y="748" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+    <rect x="754" y="768" width="34" height="30" rx="9" fill="#eaf0ff" stroke="none" />
+    <text x="771" y="789" class="stepno" style="fill:#345fd1" text-anchor="middle">04</text>
+    <text x="800" y="790" class="cardtitle">Extract candidates</text>
+    <text x="756" y="827" class="body">Agent reads source and brief</text>
+    <text x="756" y="852" class="body">Return fields, quotes and links</text>
+    <text x="756" y="877" class="body">Or use files / custom backends</text>
+    <text x="756" y="895" class="mono" style="fill:#345fd1">candidates.json · ref / links</text>
+  </g>
+  <g class="step">
+    <title>Repair structure</title>
+    <rect x="400" y="748" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+    <rect x="418" y="768" width="34" height="30" rx="9" fill="#eaf0ff" stroke="none" />
+    <text x="435" y="789" class="stepno" style="fill:#345fd1" text-anchor="middle">05</text>
+    <text x="464" y="790" class="cardtitle">Repair structure</text>
+    <text x="420" y="827" class="body">Align names, types and codes</text>
+    <text x="420" y="852" class="body">Drop blanks and system keys</text>
+    <text x="420" y="877" class="body">Log every repair for review</text>
+    <text x="420" y="895" class="mono" style="fill:#345fd1">repair_output()</text>
+  </g>
+  <g class="step">
+    <title>Verify evidence</title>
+    <rect x="64" y="748" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+    <rect x="82" y="768" width="34" height="30" rx="9" fill="#e6f5f0" stroke="none" />
+    <text x="99" y="789" class="stepno" style="fill:#127b72" text-anchor="middle">06</text>
+    <text x="128" y="790" class="cardtitle">Verify evidence</text>
+    <text x="84" y="827" class="body">Match quotes to PDF pages</text>
+    <text x="84" y="852" class="body">Locate, check and deduplicate</text>
+    <text x="84" y="877" class="body">Reject unverifiable evidence</text>
+    <text x="84" y="895" class="mono" style="fill:#127b72">verify_evidence()</text>
+  </g>
+  <g class="step">
+    <title>Build &amp; link records</title>
+    <rect x="64" y="966" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+    <rect x="82" y="986" width="34" height="30" rx="9" fill="#e6f5f0" stroke="none" />
+    <text x="99" y="1007" class="stepno" style="fill:#127b72" text-anchor="middle">07</text>
+    <text x="128" y="1008" class="cardtitle">Build &amp; link records</text>
+    <text x="84" y="1045" class="body">Set IDs and provenance</text>
+    <text x="84" y="1070" class="body">Keep raw; normalize by rules</text>
+    <text x="84" y="1095" class="body">Link evidence and methods</text>
+    <text x="84" y="1113" class="mono" style="fill:#127b72">fill_rules · stable_record_id()</text>
+  </g>
+  <g class="step">
+    <title>Validate &amp; review</title>
+    <rect x="400" y="966" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+    <rect x="418" y="986" width="34" height="30" rx="9" fill="#e6f5f0" stroke="none" />
+    <text x="435" y="1007" class="stepno" style="fill:#127b72" text-anchor="middle">08</text>
+    <text x="464" y="1008" class="cardtitle">Validate &amp; review</text>
+    <text x="420" y="1045" class="body">Schema and cross-field checks</text>
+    <text x="420" y="1070" class="body">Check duplicates and leakage</text>
+    <text x="420" y="1095" class="body">Review and audit arguments</text>
+    <text x="420" y="1113" class="mono" style="fill:#127b72">validate · argument_structure</text>
+  </g>
+  <g class="step">
+    <title>Write run outputs</title>
+    <rect x="736" y="966" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+    <rect x="754" y="986" width="34" height="30" rx="9" fill="#e6f5f0" stroke="none" />
+    <text x="771" y="1007" class="stepno" style="fill:#127b72" text-anchor="middle">09</text>
+    <text x="800" y="1008" class="cardtitle">Write run outputs</text>
+    <text x="756" y="1045" class="body">Accepted atomic records</text>
+    <text x="756" y="1070" class="body">Errors, checks and repairs</text>
+    <text x="756" y="1095" class="body">Version, environment, hashes</text>
+    <text x="756" y="1113" class="mono" style="fill:#127b72">JSONL · validation · manifest</text>
+  </g>
+  <rect x="1072" y="530" width="304" height="712" rx="20" fill="#f1eef8" stroke="#e0d9ed" />
+  <rect x="1090" y="554" width="268" height="112" rx="14" fill="#ffffff" stroke="#ded6ed" />
+  <text x="1107" y="586" class="cardtitle" style="fill:#7955b5">Existing structured data</text>
+  <text x="1107" y="616" class="small">Legacy / omics / merged</text>
+  <text x="1107" y="650" class="mono" style="fill:#7955b5">legacy · omics · merged</text>
+  <rect x="1090" y="712" width="268" height="130" rx="14" fill="#ffffff" stroke="#ded6ed" />
+  <text x="1107" y="744" class="cardtitle" style="fill:#7955b5">Map &amp; split records</text>
+  <text x="1107" y="774" class="small">Apply mappings; split records</text>
+  <text x="1107" y="798" class="small">Join samples / assays by ID</text>
+  <text x="1107" y="826" class="mono" style="fill:#7955b5">bdc migrate &lt;source&gt;</text>
+  <rect x="1090" y="888" width="268" height="140" rx="14" fill="#ffffff" stroke="#ded6ed" />
+  <text x="1107" y="920" class="cardtitle" style="fill:#7955b5">Validate target records</text>
+  <text x="1107" y="950" class="small">Fields, references and datasets</text>
+  <text x="1107" y="974" class="small">PDF quotes remain unverified</text>
+  <text x="1107" y="1012" class="mono" style="fill:#7955b5">Schema · rules · review</text>
+  <rect x="1090" y="1074" width="268" height="144" rx="14" fill="#ffffff" stroke="#ded6ed" />
+  <text x="1107" y="1106" class="cardtitle" style="fill:#7955b5">Migration outputs</text>
+  <text x="1107" y="1136" class="small">Accepted and rejected records</text>
+  <text x="1107" y="1160" class="small">Residue and source lineage</text>
+  <text x="1107" y="1202" class="mono" style="fill:#7955b5">JSONL · residue · report</text>
+  <path d="M1224 666 V705" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M1224 842 V881" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M1224 1028 V1067" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <rect x="64" y="1176" width="968" height="66" rx="14" fill="#fcf0e9" stroke="#efd8cb" />
+  <text x="85" y="1203" class="cardtitle" style="fill:#a55b40">Rejected candidates and review evidence</text>
+  <text x="85" y="1228" class="small">Keep reasons and candidates; review manually, revise, then rerun.</text>
+  <path d="M64 832 H42 V1208 H58" fill="none" stroke="#c36553" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 6" marker-end="url(#arrow-red)" />
+  <path d="M548 1134 V1169" fill="none" stroke="#c36553" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 6" marker-end="url(#arrow-red)" />
+  <path d="M64 1208 H23 V315 H73" fill="none" stroke="#c36553" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 6" marker-end="url(#arrow-red)" />
+  <g transform="translate(15 811) rotate(-90)">
+    <text x="0" y="0" class="tag" style="fill:#a55b40" text-anchor="middle">Manual review → revise rules / rerun</text>
+  </g>
+  <path d="M1032 1050 H1052 V1260 H884 V1291" fill="none" stroke="#127b72" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)" />
+  <path d="M1224 1218 V1291" fill="none" stroke="#127b72" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)" />
+  <rect x="64" y="1298" width="1312" height="158" rx="20" fill="#e9f5f0" stroke="#cce4d8" />
+  <text x="88" y="1334" class="sectiontitle" style="fill:#146f60">Traceable atomic records</text>
+  <text x="88" y="1367" class="body">JSONL: one fact, observation, method or asset per line</text>
+  <text x="88" y="1396" class="body">Stable IDs, source locators, version and review status</text>
+  <text x="88" y="1429" class="small">Passing structural checks can still require human review.</text>
+  <path d="M733 1318 V1436" stroke="#c2ded0" />
+  <text x="755" y="1334" class="cardtitle" style="fill:#146f60">Accompanying audit files</text>
+  <text x="755" y="1369" class="body">Extraction: validation / errors / manifest</text>
+  <text x="755" y="1396" class="body">Migration: migration report / errors / residue</text>
+  <text x="755" y="1429" class="small">Input hashes, versions and lineage support reruns.</text>
+  <path d="M720 1456 V1490" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M212 1521 V1490 H1224 V1521" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M212 1490 V1522" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M548 1490 V1522" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M884 1490 V1522" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <path d="M1224 1490 V1522" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)" />
+  <rect x="64" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
+  <text x="83" y="1567" class="cardtitle">Relational tables</text>
+  <text x="83" y="1601" class="small">Records, sources, entities, links</text>
+  <text x="83" y="1626" class="small">CSV for relational databases</text>
+  <text x="83" y="1658" class="mono" style="fill:#127b72">bdc derive → *.tables/*.csv</text>
+  <rect x="400" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
+  <text x="419" y="1567" class="cardtitle">Knowledge graph triples</text>
+  <text x="419" y="1601" class="small">Entities and relations with evidence</text>
+  <text x="419" y="1626" class="small">Support knowledge organization</text>
+  <text x="419" y="1658" class="mono" style="fill:#127b72">bdc derive → *.triples.jsonl</text>
+  <rect x="736" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
+  <text x="755" y="1567" class="cardtitle">Evidence corpus</text>
+  <text x="755" y="1601" class="small">Citable text and record references</text>
+  <text x="755" y="1626" class="small">For retrieval and downstream QA</text>
+  <text x="755" y="1658" class="mono" style="fill:#127b72">bdc derive → *.corpus.jsonl</text>
+  <rect x="1072" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
+  <text x="1091" y="1567" class="cardtitle">Document bundles</text>
+  <text x="1091" y="1601" class="small">Group atomic records by source</text>
+  <text x="1091" y="1626" class="small">Optional legacy document view</text>
+  <text x="1091" y="1658" class="mono" style="fill:#127b72">bdc bundle [--legacy-v1]</text>
+  <text x="64" y="1721" class="sectiontitle">Field function tags · multiple labels allowed</text>
+  <rect x="64" y="1743" width="246" height="29" rx="14" fill="#eaf0ff" stroke="none" />
+  <text x="187.0" y="1763" class="tag" style="fill:#345fd1" text-anchor="middle">Research 1 · data governance</text>
+  <rect x="326" y="1743" width="262" height="29" rx="14" fill="#e6f5f0" stroke="none" />
+  <text x="457.0" y="1763" class="tag" style="fill:#127b72" text-anchor="middle">Research 2 · scientific agents</text>
+  <rect x="604" y="1743" width="200" height="29" rx="14" fill="#f0ebfa" stroke="none" />
+  <text x="704.0" y="1763" class="tag" style="fill:#7955b5" text-anchor="middle">Future iteration</text>
+  <rect x="820" y="1743" width="200" height="29" rx="14" fill="#e9eef4" stroke="none" />
+  <text x="920.0" y="1763" class="tag" style="fill:#52657e" text-anchor="middle">General-purpose fields</text>
+  <text x="64" y="1810" class="footnote">Solid: data processing and outputs   Dashed: rejections and manual feedback   QA generation and OCR are external.</text>
+</svg>

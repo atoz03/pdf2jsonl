@@ -71,7 +71,7 @@
     "semver": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
     "field_path": {"type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"},
     "amb_refs": {"type": "array", "items": {"type": "string", "pattern": "^AMB-\\d{3}$"}, "uniqueItems": true},
-    "origins": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["fields_v3", "legacy_v1", "omics_v2", "repository"]}},
+    "origins": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["fields_v3", "legacy_v1", "omics_v2", "merged_v2", "repository"]}},
     "functions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["topic2", "topic3", "derivation", "iteration"]}},
     "field": {
       "type": "object",

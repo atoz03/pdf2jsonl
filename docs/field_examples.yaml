@@ -1,0 +1,412 @@
+# Curated synthetic values for FIELD_DEFINITIONS.md, not complete records or defaults.
+# Keys use catalog paths; values retain their JSON types. bdc generate validates every value.
+# common.schema_name and common.schema_version are supplied from the compiled contract.
+# Identifiers, quotes, measurements, software versions and licenses here are illustrative only.
+
+# common — identity, provenance, breeding facts, observations, assets and governance
+common.record_id: "rec_0123456789abcdef0123456789abcdef"
+common.record_kind: "claim"
+common.source_id: "urn:example:paper:rice-qtl-2024"
+common.source_type: "paper"
+common.source_title: "水稻株高 QTL 定位研究（合成示例）"
+common.source_doi: "10.0000/example.rice.qtl"
+common.source_year: 2024
+common.source_authors: ["Zhang San", "Li Si"]
+common.source_asset_id: "urn:example:asset:paper-pdf-v1"
+common.source_file_sha256: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+common.source_locator: "page:3;table:2;row:qPH1;column:LOD"
+common.source_page: 3
+common.source_section: "Results"
+common.source_table_figure: "Table 2"
+common.source_table_row_key: "qPH1"
+common.source_table_column_key: "LOD"
+common.source_quote: "qPH1 explained 12.5% of the phenotypic variance in E1."
+common.source_span: "page:3;chars:120-179"
+common.source_language: "en"
+common.extraction_method: "model"
+common.extraction_confidence: 0.93
+common.review_status: "pending_review"
+common.review_note: "表 2 的环境编号不清晰，需人工核对。"
+common.crop_name: "rice"
+common.crop_taxon_id: "NCBITaxon:4530"
+common.species_name: "Oryza sativa"
+common.subspecies: "japonica"
+common.germplasm_names: ["示例材料 A", "示例材料 B"]
+common.variety_names: ["示例品种 A"]
+common.population_name: "示例材料 A × 示例材料 B 重组自交系群体"
+common.population_type: "RIL"
+common.parent_names: ["示例材料 A", "示例材料 B"]
+common.sample_size: 240
+common.trial_year: 2024
+common.location_name: "杭州试验站（示例）"
+common.environmental_conditions: ["昼温 28 °C，夜温 22 °C", "土壤相对含水量 70%"]
+common.growth_stage: "heading stage"
+common.treatment: "150 mM NaCl for 7 days"
+common.trait_names: ["株高", "抽穗期"]
+common.trait_ids: ["urn:example:trait:plant-height", "urn:example:trait:heading-date"]
+common.gene_names: ["OsDEMO1"]
+common.gene_ids: ["urn:example:gene:OsDEMO1"]
+common.marker_names: ["MarkerA", "MarkerB"]
+common.qtl_names: ["qPH1"]
+common.genome_assembly: "IRGSP-1.0"
+common.variant_ids: ["urn:example:variant:IRGSP-1.0:chr1:100001:A:G"]
+common.sequence_accessions: ["AB123456.1"]
+common.genotype_dataset_id: "urn:example:dataset:rice-genotypes"
+common.phenotype_dataset_id: "urn:example:dataset:rice-plant-height"
+common.data_access_uri: "https://example.org/datasets/rice-2024"
+common.original_value: "85 cm"
+common.original_unit: "cm"
+common.normalized_value: 0.85
+common.normalized_min_value: 0.80
+common.normalized_max_value: 0.90
+common.normalized_unit: "m"
+common.missing_fields: {"common.genome_assembly": "not_reported"}
+common.conflict_record_ids: ["rec_11111111111111111111111111111111"]
+common.environment_code: "E1"
+common.environment_count: 3
+common.genetic_background: "japonica background"
+common.population_generation: "F2:3"
+common.donor_parent: "示例供体 A"
+common.recurrent_parent: "示例轮回亲本 B"
+common.chromosome: "1"
+common.locus_interval_start_bp: 1000000
+common.locus_interval_end_bp: 1200000
+common.locus_interval_label: "MarkerA-MarkerB"
+common.trait_measurement_protocol: "成熟期每小区取 10 株，测量地面至穗顶的高度，不含芒。"
+common.dataset_id: "urn:example:dataset:breeding-literature"
+common.dataset_version: "2024-10-01"
+common.record_version: 2
+common.record_grain: "evidence_unit"
+common.ingest_batch_id: "batch_20241001_001"
+common.extraction_run_id: "run_pdf_20241001_001"
+common.source_record_id: "table2-row-qPH1"
+common.source_version: "publisher-version-1"
+common.source_uri: "https://example.org/papers/rice-qtl-2024"
+common.data_modality: "paper"
+common.linked_modalities: ["genotype", "phenotype"]
+common.license_id: "CC-BY-4.0"
+common.access_level: "open"
+common.ingested_at: "2024-10-01T08:00:00Z"
+common.study_id: "urn:example:study:rice-height"
+common.experiment_id: "urn:example:experiment:salt-tolerance"
+common.trial_id: "urn:example:trial:hangzhou-2024-summer"
+common.environment_id: "urn:example:environment:hangzhou-2024-E1"
+common.material_id: "urn:example:material:RIL001"
+common.sample_id: "urn:example:sample:RIL001-leaf-01"
+common.plot_id: "urn:example:plot:block1-plot05"
+common.replicate_id: "bio_rep_1"
+common.treatment_id: "urn:example:treatment:NaCl-150mM-7d"
+common.assay_id: "urn:example:assay:RNAseq-leaf-01"
+common.analysis_run_id: "urn:example:analysis:qtl-run-001"
+common.trait_id: "urn:example:trait:plant-height"
+common.variant_id: "urn:example:variant:IRGSP-1.0:chr1:100001:A:G"
+common.observation_time: "2024-08-15T02:30:00Z"
+common.measurement_name: "株高"
+common.measurement_value: 85.0
+common.measurement_text: "抗病等级 3"
+common.measurement_unit: "cm"
+common.measurement_quality_flag: "accepted"
+common.genotype_call: "0/1"
+common.genotype_dosage: 1
+common.asset_uri: "https://example.org/assets/rice-genotypes.vcf.gz"
+common.asset_kind: "genotype_matrix"
+common.asset_format: "VCF"
+common.asset_compression: "bgzip"
+common.asset_size_bytes: 1048576
+common.asset_sha256: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
+common.asset_row_count: 50000
+common.asset_column_count: 240
+common.asset_schema_ref: "https://example.org/schemas/genotype-matrix/1.0.0"
+common.qc_rule_set_version: "qc-1.2.0"
+common.qc_failure_codes: ["HIGH_MISSING_RATE"]
+common.site_id: "urn:example:site:hangzhou-01"
+common.latitude_deg: 30.25
+common.longitude_deg: 120.15
+common.elevation_m: 12.5
+common.soil_type: "水稻土"
+common.agroecological_zone: "长江中下游稻作区"
+common.trial_season: "2024 年晚稻季"
+common.ploidy: 2
+common.reference_allele: "A"
+common.alternate_allele: "G"
+common.dosage_allele: "G"
+common.source_document_type: "journal_paper"
+common.source_journal: "示例育种学报"
+common.source_volume: "12"
+common.source_issue: "3"
+common.source_page_range: "201-215"
+common.source_abstract: "本研究使用 240 个水稻重组自交系，在三个环境中开展株高 QTL 定位。"
+common.source_keywords: ["rice", "plant height", "QTL mapping"]
+common.source_funding: ["示例育种项目 DEMO-2024-001"]
+common.source_affiliations: ["示例大学作物科学学院"]
+common.locus_interval_start_cm: 12.5
+common.locus_interval_end_cm: 18.2
+common.marker_type: "SSR"
+common.primer_forward: "ATGCGTACGTTAGCTAGCTA"
+common.primer_reverse: "TCGATCGATGCTAGCATGCA"
+common.variety_approval_number: "示例审定编号 DEMO-2024-001"
+common.pedigree_text: "示例品种 A / 示例品种 B // 示例品种 C"
+common.source_pmid: "12345678"
+common.data_accessions: ["GSE123456", "PRJNA123456"]
+common.germplasm_type: "landrace"
+common.germplasm_accessions: ["DEMO-GERM-001"]
+common.population_id: "urn:example:population:rice-RIL-001"
+common.population_size: 240
+common.sample_name: "RIL001_leaf_rep1"
+common.sample_type: "leaf RNA"
+common.batch_id: "RNAseq_batch_01"
+common.sex: "female"
+common.organ: "leaf"
+common.tissue: "leaf mesophyll"
+common.sampling_time_relative: "6 h after treatment"
+common.treatment_type: "salt stress"
+common.treatment_dose: "150 mM NaCl"
+common.treatment_duration: "7 days"
+common.genome_annotation_version: "annotation-release-1.0"
+common.gene_id_system: "RAP-DB"
+common.coordinate_system: "1-based, closed interval"
+common.trait_category: "agronomic"
+common.variant_type: "SNP"
+common.variant_position_bp: 100001
+common.effect_allele: "G"
+common.allele_frequency: 0.30
+common.minor_allele_frequency: 0.20
+common.haplotype_id: "Hap1"
+common.extraction_profile: "pdf_extraction"
+common.replaces_record_ids: ["rec_22222222222222222222222222222222"]
+common.conflict_resolution_status: "context_dependent"
+common.record_updated_at: "2024-10-02T09:00:00Z"
+
+# agent — questions, claims, evidence, hypotheses, experiments and interpretation
+agent.scientific_question: "qPH1 是否与该水稻群体在 E1 环境中的株高变异相关？"
+agent.finding_text: "qPH1 在 E1 环境中解释了 12.5% 的株高表型变异。"
+agent.finding_kind: "association"
+agent.evidence_type: "QTL"
+agent.evidence_strength: "按示例评估规则 EVID-1：单群体统计定位支持，尚无功能验证。"
+agent.supporting_evidence: [{"source_id": "urn:example:paper:rice-qtl-2024", "source_page": 3, "source_table_figure": "Table 2", "source_quote": "qPH1 explained 12.5% of the phenotypic variance in E1."}]
+agent.contradictory_evidence: [{"source_id": "urn:example:paper:rice-qtl-2024", "source_page": 4, "source_quote": "qPH1 was not detected in E3."}]
+agent.hypothesis_stated: "We hypothesized that qPH1 is associated with plant height under salt stress."
+agent.candidate_mechanism: "The candidate gene may affect plant height through gibberellin signaling."
+agent.mechanism_entities: ["OsDEMO1", "gibberellin signaling"]
+agent.causal_direction: "候选方向：OsDEMO1 → 株高；本文仅提供统计关联。"
+agent.association_vs_causation: "统计关联；没有基因编辑或互补实验支持因果结论。"
+agent.assumption_conditions: ["群体结构已纳入模型", "处理组与对照组采用相同测量方法"]
+agent.applicable_population: "示例材料 A × 示例材料 B 的 240 个重组自交系"
+agent.applicable_environment: "2024 年 E1 盐胁迫环境"
+agent.expected_observation: "We expected the donor allele to reduce plant height under salt stress."
+agent.actual_observation: "The donor allele reduced plant height by 5.2 cm in E1."
+agent.alternative_explanations: ["The association may reflect linkage with a neighboring locus."]
+agent.uncertainty_note: "仅在一个群体中定位，尚不能外推至其他遗传背景。"
+agent.falsification_test: "在相同遗传背景下比较候选基因敲除株与野生型的株高。"
+agent.experiment_objective: "检验盐胁迫下 qPH1 与株高的关联。"
+agent.experiment_design: "随机完全区组设计，三个区组，每个处理三个生物学重复。"
+agent.experimental_materials: ["示例近等基因系 NIL-A", "示例受体材料 B"]
+agent.treatment_groups: ["150 mM NaCl，处理 7 天"]
+agent.control_groups: ["0 mM NaCl，其余培养条件一致"]
+agent.replicate_count: 3
+agent.observation_indicators: ["株高（cm）", "存活率（%）"]
+agent.workflow_steps: [{"step_id": "S1", "step_no": 1, "step_name": "表型测定", "step_desc": "处理 7 天后测量每株株高。", "inputs": ["处理组和对照组植株"], "outputs": ["株高表"]}, {"step_id": "S2", "step_no": 2, "step_name": "统计检验", "step_desc": "比较处理组与对照组的株高。", "inputs": ["株高表"], "outputs": ["组间差异检验结果"]}]
+agent.workflow_dependencies: ["S1 -> S2"]
+agent.result_interpretation: "The results suggest an association between qPH1 and plant height in E1."
+agent.breeding_relevance: "该位点可作为后续株高改良标记验证的候选。"
+agent.followup_experiment: "Validate the candidate gene using complementation lines."
+agent.knowledge_gap: "The causal gene underlying qPH1 remains unknown."
+agent.task_tags: ["假设生成", "材料评价"]
+agent.hypothesis_origin: "author_stated"
+agent.candidate_gene_status: "author_proposed"
+agent.statistical_test: "composite interval mapping"
+agent.lod_score: 4.2
+agent.pve_percent: 12.5
+agent.effect_estimate: -5.2
+agent.effect_unit: "cm"
+agent.environment_stability: "qPH1 was detected in E1 and E2, but not in E3."
+agent.validation_methods: ["qRT-PCR", "complementation assay"]
+agent.claim_id: "urn:example:claim:qPH1-plant-height-E1"
+agent.evidence_record_ids: ["rec_33333333333333333333333333333333"]
+agent.external_validity_scope: "仅适用于已测试的水稻 RIL 群体和环境；其他背景尚未验证。"
+agent.effect_type: "additive effect"
+agent.contrast: "150 mM NaCl treatment versus 0 mM NaCl control"
+agent.effect_direction: "decrease"
+agent.standard_error: 1.1
+agent.p_value: 0.003
+agent.q_value: 0.018
+agent.confidence_interval: "95% CI: -7.4 to -3.0 cm"
+agent.replication_status: "replicated in an independent RIL population"
+agent.candidate_gene_window: "100 kb upstream and downstream of the peak marker"
+agent.claim_qualifier_text: "may affect"
+agent.stated_limitations: ["The causal gene has not been functionally validated."]
+
+# skills — analysis tasks, software, parameters, workflows and callable interfaces
+skills.analysis_task: "定位与水稻株高相关的 QTL"
+skills.method_category: "QTL_mapping"
+skills.method_name: "composite interval mapping"
+skills.algorithm_name: "mixed linear model"
+skills.software_name: "R/qtl"
+skills.software_version: "1.60"
+skills.input_modalities: ["genotype", "phenotype"]
+skills.genotype_data_format: "VCF"
+skills.phenotype_data_format: "CSV"
+skills.environment_data_format: "TSV"
+skills.preprocessing_steps: ["删除缺失率过高的标记", "对保留标记进行缺失填补"]
+skills.qc_filters: ["MAF >= 0.05", "marker missing rate <= 0.10"]
+skills.parameters: [{"name": "permutations", "value": 1000, "value_kind": "integer", "constraint": ">= 1", "source": "Methods, page 2"}, {"name": "alpha", "value": 0.05, "value_kind": "number", "source": "Methods, page 2"}]
+skills.population_structure_control: "include the first three principal components as covariates"
+skills.kinship_control: "include the realized kinship matrix as a random effect"
+skills.feature_count: 50000
+skills.training_population: "2023 年测定的 240 个水稻重组自交系"
+skills.training_set_size: 192
+skills.test_set_size: 48
+skills.validation_strategy: "five-fold cross-validation, repeated 10 times"
+skills.folds: 5
+skills.split_basis: "按材料 ID 分组；同一材料的不同环境观测进入同一集合。"
+skills.random_seed: 42
+skills.output_artifacts: ["QTL 结果表", "LOD 曲线图"]
+skills.output_fields: ["qtl_id", "chromosome", "position_cm", "lod", "pve_percent"]
+skills.metric_name: "Pearson correlation"
+skills.metric_value: 0.72
+skills.metric_unit: "dimensionless"
+skills.significance_threshold: "P < 0.05 / number_of_markers"
+skills.method_assumptions: ["residuals are approximately normally distributed", "samples are independent after accounting for kinship"]
+skills.applicability_limit: "本方法在该双亲群体中验证；用于多倍体前需重新评估。"
+skills.reproducibility_assets: ["https://example.org/rice-qtl/code/v1", "https://example.org/rice-qtl/data/v1"]
+skills.tool_description_uri: "https://example.org/skills/qtl-mapping/1.0.0"
+skills.input_schema_ref: "https://example.org/schemas/qtl-input/1.0.0"
+skills.output_schema_ref: "https://example.org/schemas/qtl-output/1.0.0"
+skills.parameter_schema_ref: "https://example.org/schemas/qtl-parameters/1.0.0"
+skills.workflow_steps: [{"step_id": "QC", "step_no": 1, "step_desc": "Filter markers by missing rate and MAF.", "inputs": ["genotypes.vcf"], "outputs": ["filtered.vcf"]}, {"step_id": "MAP", "step_no": 2, "step_desc": "Run QTL mapping using the filtered markers and phenotype table.", "inputs": ["filtered.vcf", "phenotypes.csv"], "outputs": ["qtl_results.csv"], "tool_name": "R/qtl"}]
+skills.genotyping_method: "whole-genome resequencing"
+skills.phenotyping_method: "manual field measurement"
+skills.target_variable: "plant height"
+skills.threshold_calibration: "1,000 permutations at a genome-wide significance level of 0.05"
+skills.skill_spec_id: "urn:example:skill:qtl-mapping"
+skills.skill_spec_version: "1.0.0"
+skills.input_asset_refs: ["urn:example:asset:genotypes-v1", "urn:example:asset:phenotypes-v1"]
+skills.output_asset_refs: ["urn:example:asset:qtl-results-v1"]
+skills.runtime_environment_ref: "https://example.org/environments/qtl-mapping/1.0.0/conda-lock.yml"
+skills.normalization_method: "DESeq2 median-of-ratios normalization"
+skills.tool_input_formats: ["VCF", "CSV"]
+skills.tool_output_formats: ["CSV", "PDF"]
+skills.software_dependencies: ["R 4.3.2", "qtl 1.60"]
+skills.validation_rules: ["样本 ID 在基因型表与表型表中一致", "基因型坐标必须声明参考组装版本"]
+skills.failure_modes: ["样本 ID 不匹配：终止分析并返回未匹配 ID 列表。"]
+skills.method_record_ids: ["rec_44444444444444444444444444444444"]
+
+# transform — entity alignment, graph statements, retrieval chunks and question answering
+transform.subject_mention: "qPH1"
+transform.subject_type: "QTL"
+transform.subject_id: "urn:example:qtl:qPH1"
+transform.predicate_label: "qtl_associated_with_trait"
+transform.predicate_id: "urn:example:relation:qtl-associated-with-trait"
+transform.object_mention: "plant height"
+transform.object_type: "Trait"
+transform.object_id: "urn:example:trait:plant-height"
+transform.relation_polarity: "decrease"
+transform.relation_qualifiers: {"population": "示例 RIL 群体", "environment": "E1", "year": "2024"}
+transform.graph_statement_id: "urn:example:statement:qPH1-height-E1"
+transform.graph_status: "candidate"
+transform.entity_alignment_status: "linked"
+transform.entity_alignment_source: "示例育种本体 v1.0"
+transform.external_graph_ids: ["urn:example:external-graph:qPH1"]
+transform.provenance_record_ids: ["rec_0123456789abcdef0123456789abcdef"]
+transform.chunk_id: "urn:example:chunk:rice-qtl-page3-01"
+transform.chunk_text: "在 2024 年 E1 环境的示例水稻 RIL 群体中，qPH1 解释了 12.5% 的株高变异（合成论文，第 3 页，表 2）。"
+transform.chunk_page: 3
+transform.chunk_section: "Results"
+transform.chunk_start_offset: 120
+transform.chunk_end_offset: 280
+transform.chunk_keywords: ["rice", "qPH1", "plant height"]
+transform.qa_seed_question: "在 E1 环境中，qPH1 解释了多少株高表型变异？"
+transform.qa_seed_answer: "在该研究的 E1 环境和 RIL 群体中，qPH1 解释了 12.5% 的株高表型变异。"
+transform.qa_answerable: true
+transform.qa_support_ids: ["rec_0123456789abcdef0123456789abcdef"]
+transform.qa_reasoning_path_ids: ["urn:example:statement:qPH1-height-E1"]
+transform.qa_difficulty: "single_hop"
+transform.leakage_group_id: "urn:example:leakage-group:rice-qtl-paper"
+transform.transform_review_status: "pending_review"
+transform.relation_evidence_type: "statistical_mapping"
+transform.qa_answer_scope: "2024 年 E1 环境；示例材料 A × B 的 RIL 群体；株高性状。"
+transform.qa_unanswerable_reason: "论文未报告 E3 环境中的效应估计，不能回答该环境下的效应大小。"
+transform.ontology_version: "breeding-ontology-1.0.0"
+transform.corpus_split: "train"
+transform.dedup_group_id: "urn:example:dedup:qPH1-height-E1"
+transform.qa_review_status: "candidate"
+transform.derivative_license_id: "CC-BY-4.0"
+transform.chunk_support_ids: ["rec_0123456789abcdef0123456789abcdef"]
+transform.mapping_type: "exact"
+transform.mapping_confidence: 0.96
+transform.entity_synonyms: ["plant height", "株高"]
+transform.entity_links: [{"mention": "qPH1", "source_field": "common.qtl_names", "entity_type": "QTL", "entity_id": "urn:example:qtl:qPH1", "alignment_status": "linked", "alignment_source": "示例育种本体 v1.0"}]
+transform.qa_id: "urn:example:qa:qPH1-height-E1-pve"
+
+# omics — genomics, transcriptomics, single-cell, epigenomics, proteomics and metabolomics
+omics.omics_type: "transcriptomics"
+omics.assay_type: "RNA-seq"
+omics.library_strategy: "RNA-Seq"
+omics.library_selection: "polyA"
+omics.library_layout: "paired-end"
+omics.platform: "ILLUMINA"
+omics.instrument_model: "NovaSeq 6000"
+omics.sequencing_depth: "30 million read pairs per sample"
+omics.read_length: "2 × 150 bp"
+omics.cell_type: "root hair cell"
+omics.cell_state: "salt-stressed"
+omics.feature_type: "gene"
+omics.feature_id: "DEMO_GENE_001"
+omics.feature_name: "OsDEMO1"
+omics.multiomics_support_count: 2
+omics.ortholog_id: "DEMO_MAIZE_GENE_001"
+omics.ortholog_species: "Zea mays"
+omics.orthology_type: "one-to-one"
+omics.synteny_support: "The orthologs occur in a conserved syntenic block."
+omics.cross_species_evidence: "The ortholog showed a similar expression response in maize."
+omics.genotype_quality: 99
+omics.read_depth: 35
+omics.structural_variant_type: "deletion"
+omics.transcript_id: "DEMO_TRANSCRIPT_001.1"
+omics.raw_count: 1250
+omics.log2_fold_change: 1.8
+omics.base_mean: 320.5
+omics.deg_status: "upregulated"
+omics.deg_threshold: "adjusted P < 0.05 and absolute log2 fold change > 1"
+omics.coexpression_module: "turquoise"
+omics.gene_set: "salt-stress-response genes"
+omics.pathway_id: "phenylpropanoid biosynthesis"
+omics.go_term: "response to salt stress"
+omics.cell_id: "AAACCTGAGAGCTATA-1"
+omics.cluster_id: "cluster_3"
+omics.cell_type_annotation_method: "manual annotation using known marker genes"
+omics.marker_genes: ["DEMO_MARKER_A", "DEMO_MARKER_B"]
+omics.n_counts: 8500
+omics.n_genes: 2400
+omics.mitochondrial_fraction: 0.035
+omics.doublet_status: "singlet"
+omics.integration_method: "Harmony"
+omics.trajectory_method: "Monocle 3"
+omics.pseudotime: 0.64
+omics.cell_cell_interaction_method: "CellChat"
+omics.chromatin_region_id: "peak_001"
+omics.peak_start: 100001
+omics.peak_end: 100500
+omics.histone_mark: "H3K27ac"
+omics.methylation_context: "CG"
+omics.motif_id: "DEMO_MOTIF_001"
+omics.tf_binding_candidate: "DEMO_TF_01"
+omics.linked_regulatory_gene: "OsDEMO1"
+omics.differential_peak_status: "increased accessibility"
+omics.protein_id: "DEMO_PROTEIN_001"
+omics.peptide_id: "AGLQFPVGR"
+omics.protein_fold_change: 1.5
+omics.protein_identification_score: 85.2
+omics.post_translational_modification: "phosphorylation at Ser42"
+omics.interaction_partner: "DEMO_PROTEIN_002"
+omics.metabolite_id: "metabolite_001"
+omics.metabolite_name: "L-proline"
+omics.metabolite_database_id: "KEGG:C00148"
+omics.chemical_formula: "C5H9NO2"
+omics.mz: 116.0706
+omics.retention_time: "3.25 min"
+omics.metabolite_fold_change: 2.1
+omics.metabolite_annotation_level: "MSI level 1"
+common.biological_replicate_id: "bio-rep-1"
+common.technical_replicate_id: "tech-1"
+common.sampling_time: "2022-08-15T14:30:00+08:00"

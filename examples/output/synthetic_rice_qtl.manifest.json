@@ -4,11 +4,11 @@
   "created_at": "2026-09-21T14:13:20Z",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.2.0",
+    "schema_version": "3.3.0",
     "release_status": "released",
-    "requested": "3.2.0",
-    "release_sha256": "a2c74ea2b1a5ab73c616addc18967fbd67055a3aa54f8cf16fda0eb8185e3aa2",
-    "source_digest": "6d7a7c67d100998d94393f532c323d8105a5d544328cc168ca2b349b9e6ce6e5"
+    "requested": "3.3.0",
+    "release_sha256": "5c7193d5d87ab453ddced0b12b857be168880b7677cb9c266dc2fd182c2c8850",
+    "source_digest": "d650c1161f5a38a9b934c4e295422a5a9e0648d4ccc05667c5cd2b0af713a2e6"
   },
   "profile": {
     "name": "pdf_extraction",
@@ -40,7 +40,7 @@
       "validation_outcome",
       "warning_codes"
     ],
-    "field_count": 217
+    "field_count": 220
   },
   "input": {
     "file_name": "synthetic_rice_qtl.pdf",
@@ -66,8 +66,8 @@
   },
   "options": {},
   "environment": {
-    "python": "3.10.12",
-    "platform": "Linux-6.8.0-94-generic-x86_64-with-glibc2.35",
+    "python": "3.13.13",
+    "platform": "macOS-26.3.2",
     "packages": {
       "jsonschema": "4.26.0",
       "PyYAML": "6.0.3",
@@ -83,7 +83,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_rice_qtl.jsonl",
-      "sha256": "d612a68540c8abeb2612f7925898a5a0b053bdaa2e7570eba4612e0bffa2adac"
+      "sha256": "4b69732c0e85a7823aff6e0bef166abf543128022af4e4c5a0230a44320f22b1"
     },
     "errors": {
       "file": "synthetic_rice_qtl.errors.jsonl",
@@ -91,11 +91,11 @@
     },
     "validation": {
       "file": "synthetic_rice_qtl.validation.json",
-      "sha256": "985928b4a3e13d1e38cdf41b5181f1834f57da3310f42edfdcfa3e06f8bad3ab"
+      "sha256": "46f764119470302fc06316779c3192dcf4812b8d22ce231c60115d7180420891"
     },
     "bundle": {
       "file": "synthetic_rice_qtl.bundle.json",
-      "sha256": "b594057d59ac5de4f4b7053b4b1c29df7be38606e5c485e64b294230a5232eae"
+      "sha256": "8a241186e485a73c845507a82f4d8a0c01097d0c88ba026040be27c67f17eeb9"
     }
   }
 }
