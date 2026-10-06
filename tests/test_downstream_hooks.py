@@ -7,9 +7,9 @@ import json
 import pytest
 
 from breeding_contract import resolve_schema
-from breeding_contract.derive import CLOZE_BLANK, Deriver, counts
+from breeding_contract.derive import CLOZE_BLANK, Deriver, _number_span, counts
 from breeding_contract.ids import normalize_text
-from breeding_contract.relations import find_span, predicate_code, span_matches
+from breeding_contract.relations import find_span, negated, predicate_code, relation_context, span_matches
 from breeding_contract.util import del_path, get_path, set_path
 from pdf2jsonl_skill.pipeline import RunOptions, run
 
@@ -52,6 +52,64 @@ def test_predicate_code_needs_one_cue_and_matching_end_types(rc):
     assert predicate_code(voc, "was significantly associated with", [], ["trait"]) is None      # untyped subject
     assert predicate_code(voc, "increased", ["qtl"], ["trait"]) is None                          # no cue: stays verbatim
     assert predicate_code(voc, "disassociated without", ["qtl"], ["trait"]) is None              # cue inside a word
+
+
+def test_a_negated_relation_never_gets_the_positive_code(rc, tmp_path):
+    voc = rc.contract["vocabularies"]["predicate_label"]
+    for mention in ("was not associated with", "wasn\u2019t associated with", "showed no association with", "不相关", "未关联"):
+        assert negated(mention) and predicate_code(voc, mention, ["qtl"], ["trait"]) is None
+    assert not negated("在不同环境中均显著相关")                       # 不同 is not a negation
+    assert predicate_code(voc, "在不同环境中均显著相关", ["qtl"], ["trait"]) == "qtl_associated_with_trait"
+
+    # The negation may sit outside the predicate the model copied: the quote between the two ends is checked too.
+    quote = "qPH7.1 was associated with plant height but not with grain yield in both environments."
+    ends = lambda obj: [{"relation_role": "subject", "start": 0, "end": 6},                               # noqa: E731
+                        {"relation_role": "object", "start": quote.index(obj), "end": quote.index(obj) + len(obj)}]
+    assert relation_context(quote, ends("plant height")) == " was associated with "
+    assert relation_context(quote, ends("plant height")[:1]) == ""
+    assert "not" in relation_context(quote, ends("grain yield"))
+    code = lambda obj: predicate_code(voc, "was associated with", ["qtl"], ["trait"],                    # noqa: E731
+                                      relation_context(quote, ends(obj)))
+    assert code("plant height") == "qtl_associated_with_trait" and code("grain yield") is None
+
+    # End to end: the same sentence through the pipeline.
+    paper = tmp_path / "negated.txt"
+    paper.write_text(quote + "\nqPH3.2 was not associated with plant height.\n", encoding="utf-8")
+
+    def claim(qtl, predicate, trait, text):
+        return {"record_kind": "claim", "evidence": {"page": 1, "quote": text},
+                "fields": {"agent.finding_text": text, "common.qtl_names": [qtl], "common.trait_names": [trait],
+                           "transform.subject_mention": qtl, "transform.predicate_mention": predicate,
+                           "transform.object_mention": trait}}
+    candidates = tmp_path / "negated.candidates.json"
+    candidates.write_text(json.dumps({
+        "extraction": {"method": "model", "model": "test", "backend": "agent"},
+        "document": {"common.source_title": "Negation fixture", "common.source_language": "en",
+                     "common.crop_name": "rice"},
+        "candidates": [claim("qPH7.1", "was associated with", "plant height", quote),
+                       claim("qPH7.1", "was associated with", "grain yield", quote),
+                       claim("qPH3.2", "was not associated with", "plant height",
+                             "qPH3.2 was not associated with plant height.")]}), encoding="utf-8")
+    opts = RunOptions(backend="candidates", candidates_file=str(candidates), out_dir=str(tmp_path / "out"), run_id="run_neg")
+    recs = [r for r in read_jsonl(run(paper, opts).outputs["records"]) if get_path(r, "transform.subject_mention", None)]
+    coded = {(r["transform"]["subject_mention"], r["transform"]["object_mention"]): r["transform"].get("predicate_code")
+             for r in recs}
+    assert coded == {("qPH7.1", "plant height"): "qtl_associated_with_trait", ("qPH7.1", "grain yield"): None,
+                     ("qPH3.2", "plant height"): None}
+    by_status = {s["object_mention"] + "/" + s["subject_mention"]: s for s in Deriver(rc.contract).statements(recs)}
+    assert by_status["plant height/qPH3.2"]["predicate_status"] == "verbatim"
+    assert by_status["plant height/qPH3.2"]["predicate_mention"] == "was not associated with"   # the negation survives
+
+
+def test_a_number_is_only_matched_whole():
+    assert _number_span("increased plant height by 8.6 cm", 8) is None             # not the 8 of 8.6
+    assert _number_span("increased plant height by 8.6 cm", 8.6) == (26, 29)
+    assert _number_span("increased plant height by 8 cm.", 8.0) == (26, 27)
+    assert _number_span("explained 23.50% of the variance", 23.5) == (10, 15)
+    assert _number_span("explained 23.51% and 123.5", 23.5) is None
+    assert _number_span("Genotyping used 1,536 SNP markers.", 536) is None         # thousands separator
+    assert _number_span("Genotyping used 1,536 SNP markers.", 1) is None
+    assert _number_span("grown in 2022, with 180 lines.", 2022) == (9, 13)         # sentence punctuation is fine
 
 
 def test_pipeline_anchors_the_statement_in_the_quote(records):

@@ -426,12 +426,13 @@ class Deriver:
 
 
 def _number_span(text: str, value) -> tuple[int, int] | None:
-    """Offsets of a number as printed in ``text`` (23.5 matches "23.5" and "23.50", never "123.5" or "23.51")."""
+    """Offsets of a number as printed in ``text``: 23.5 matches "23.5" and "23.50", never "123.5" or "23.51";
+    8 never matches the 8 of "8.6", nor 536 the tail of "1,536"."""
     forms = {repr(value), str(value)}
     if isinstance(value, float) and value.is_integer():
         forms.add(str(int(value)))
     for form in sorted(forms, key=len, reverse=True):
-        m = re.search(rf"(?<![\d.]){re.escape(form)}{'0*' if '.' in form else ''}(?![\d])", text)
+        m = re.search(rf"(?<![\d.])(?<!\d,){re.escape(form)}{'0*' if '.' in form else ''}(?!\d|[.,]\d)", text)
         if m:
             return m.start(), m.end()
     return None

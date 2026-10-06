@@ -26,7 +26,8 @@ or meaning, and records of earlier versions stay valid.
     only predicate fields were human judgment (`predicate_label`) or ontology IDs (`predicate_id`), so an
     extracted statement had no predicate at all.
   - `transform.predicate_code` (N): a code of vocabulary `predicate_label`, set only when the cue words and the
-    entity types of both ends match exactly one code. It never replaces the reviewed `predicate_label`.
+    entity types of both ends match exactly one code, and never for a negated relation ("was not associated
+    with" stays verbatim). It never replaces the reviewed `predicate_label`.
   - `transform.predicate_start_offset`, `transform.predicate_end_offset` (N): where the predicate stands in
     `common.source_quote`.
 - **Type `array_entity_link`** (`transform.entity_links`) gains optional `start`, `end` (character offsets of

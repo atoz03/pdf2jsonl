@@ -5,7 +5,8 @@ A record that states a relation carries one statement, subject – predicate –
 Every entity mention of the record is a marker in the ``array_entity_link`` field, with its character offsets in
 the evidence quote and, for the two ends of the statement, its role. Everything here is deterministic: offsets
 come from a literal search, entity types from the field that holds the mention, and the predicate code from
-the cue phrases of the vocabulary bound to the code field. No match means no value; nothing is guessed.
+the cue phrases of the vocabulary bound to the code field. No match means no value; nothing is guessed, and a
+negated relation is never given the code of the positive one.
 
 Shared by the extraction pipeline (fill rule ``relation_anchors``), the validator (rule kind
 ``offsets_match_text``) and the derived views, so all three agree on what an anchor is.
@@ -19,6 +20,9 @@ from .util import get_path
 
 ENTITY_SUFFIX = re.compile(r"(_names|_name|_ids|_id|_accessions)$")
 RELATION_ENDS = ("subject", "object")
+# Words that negate a relation, matched in normalized text. 不同, 不仅, 无论, 非常 and the like do not negate.
+NEGATION = re.compile(r"(?<![a-z0-9])(?:not|no|non|none|never|neither|nor|cannot|without|fail(?:s|ed)? to)(?![a-z0-9])"
+                      r"|n't|未|没|不(?![同仅但断论])|无(?!论)|非(?!常)")
 _ASCII_WORD = "A-Za-z0-9"
 
 
@@ -112,6 +116,24 @@ def end_types(markers: list[dict], role: str) -> list[str]:
                    and m.get("relation_role") == role and m.get("entity_type")})
 
 
+def relation_context(text, markers: list[dict]) -> str:
+    """The stretch of ``text`` between the two anchored ends of the statement ("" unless both are anchored)."""
+    spans: dict[str, tuple[int, int]] = {}
+    for m in markers or []:
+        if isinstance(m, dict) and m.get("relation_role") in RELATION_ENDS and isinstance(m.get("start"), int) \
+                and isinstance(m.get("end"), int):
+            spans.setdefault(m["relation_role"], (m["start"], m["end"]))
+    if not isinstance(text, str) or len(spans) < 2:
+        return ""
+    first, second = sorted(spans.values())
+    return text[first[1]:second[0]]
+
+
+def negated(*texts) -> bool:
+    """True when one of the verbatim texts contains a negation word ("was not associated with", "不相关")."""
+    return any(isinstance(t, str) and NEGATION.search(normalize_text(t)) for t in texts)
+
+
 def _cue_in(cue: str, text: str) -> bool:
     cue = normalize_text(cue)
     if cue.isascii():
@@ -119,14 +141,17 @@ def _cue_in(cue: str, text: str) -> bool:
     return cue in text
 
 
-def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_types: list[str]) -> str | None:
+def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_types: list[str],
+                   context: str | None = None) -> str | None:
     """The code of ``vocabulary`` identified by a verbatim predicate, or None.
 
     A code matches when one of its ``cues`` occurs in the mention and its ``subject_types`` / ``object_types``
     (when declared) include a type of the corresponding end. The longest cue wins; a tie between codes, or no
-    match, gives None: the verbatim predicate stays the only statement of the relation.
+    match, gives None: the verbatim predicate stays the only statement of the relation. So does a negation, in
+    the mention or in ``context`` (the quote between the two ends, see ``relation_context``): the codes name
+    positive relations, and "was not associated with" must not become one. Polarity is a reviewer's call.
     """
-    if not isinstance(mention, str) or not mention.strip():
+    if not isinstance(mention, str) or not mention.strip() or negated(mention, context):
         return None
     text = normalize_text(mention)
     hits: dict[str, int] = {}

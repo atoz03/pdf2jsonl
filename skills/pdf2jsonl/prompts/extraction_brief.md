@@ -80,6 +80,7 @@ state the relation as one statement in the same candidate:
 - All three are copied from the quote. Also list each entity in its own entity field (the QTL among the QTL
   names, the trait among the trait names), spelled exactly as in the statement, so the pipeline can type it.
 - One candidate carries one statement. A sentence that relates several pairs becomes several candidates.
+- A negation is part of the predicate: copy "was not associated with", never only "associated with".
 - Do not normalize the predicate and do not choose a relation code: the pipeline anchors every mention in the
   quote and derives the code from the verbatim words. A relation the quote does not state is not a statement.
 

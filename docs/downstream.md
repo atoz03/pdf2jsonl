@@ -68,8 +68,10 @@ Three rules keep the hooks honest:
   (`src/breeding_contract/relations.py`, fill rule `relation_anchors`), so re-running them never changes the
   meaning of a record.
 - **Never infer.** A mention that does not occur literally in the quote gets a marker without offsets. A
-  predicate that matches no cue, or more than one code, gets no `predicate_code`. A record whose quote relates
-  nothing has no statement.
+  predicate that matches no cue, or more than one code, gets no `predicate_code`. Neither does a negated one:
+  a negation word in the predicate, or in the quote between the two ends, leaves the statement verbatim, so
+  "was not associated with" never becomes `qtl_associated_with_trait`. A record whose quote relates nothing has
+  no statement.
 - **Checked, not trusted.** `R034` verifies that every offset points at its mention; `R033` flags a statement
   that has both ends but no predicate.
 
@@ -88,7 +90,9 @@ A statement keeps every level it has reached, and `bdc derive` reports the highe
 A consumer chooses its own threshold, e.g. load `reviewed` and above into the published graph and keep
 `lexicon` and `verbatim` as candidates. The lexicon lives in `vocabularies/predicate_label.yaml` (`cues`,
 `subject_types`, `object_types`). It is deliberately narrow: "was associated with" between a QTL and a trait is
-coded, "increased" between an allele and a trait is not, because no code fits without interpretation.
+coded, "increased" between an allele and a trait is not, because no code fits without interpretation. The codes
+name positive relations only. Whether a statement is negative is recorded by a reviewer in
+`transform.relation_polarity`; until then the negation is in `predicate_mention`, in the words of the paper.
 
 ## What `bdc derive` builds
 
@@ -168,3 +172,5 @@ A new consumer need becomes a field, never a parser in the consumer:
 - One record carries one statement. A sentence relating several pairs becomes several records, which matches
   "one fact per line" but repeats the quote.
 - Offsets count Unicode characters of `common.source_quote`, start inclusive, end exclusive.
+- The negation words that block a predicate code (`NEGATION` in `src/breeding_contract/relations.py`) are a
+  short list in code. It errs towards no code: "不同" is excluded, but any "not" between the two ends blocks.

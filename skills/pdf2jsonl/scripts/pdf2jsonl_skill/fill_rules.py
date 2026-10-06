@@ -15,7 +15,8 @@ from .contract_link import ensure_contract_importable
 ensure_contract_importable()
 from breeding_contract.ids import build_locator, build_span, stable_record_id  # noqa: E402
 from breeding_contract.normalize import normalize_value  # noqa: E402
-from breeding_contract.relations import end_types, entity_markers, find_span, predicate_code  # noqa: E402
+from breeding_contract.relations import (end_types, entity_markers, find_span, negated, predicate_code,  # noqa: E402
+                                          relation_context)
 from breeding_contract.util import MISSING, get_path  # noqa: E402
 
 REGISTRY: dict[str, "RuleSpec"] = {}
@@ -223,7 +224,8 @@ def _unit_normalization(ctx: RecordContext, params: dict) -> dict:
 @rule("relation_anchors", kind="normalizer")
 def _relation_anchors(ctx: RecordContext, params: dict) -> dict:
     """Downstream hooks (AMB-038): one marker per entity mention with its offsets in the quote, the anchor of the
-    verbatim predicate, and the predicate code when the vocabulary's cue phrases identify exactly one.
+    verbatim predicate, and the predicate code when the vocabulary's cue phrases identify exactly one and neither
+    the predicate nor the quote between the two ends negates the relation.
 
     params = {"inputs": {quote, subject, predicate, object}, "outputs": {markers, predicate_start,
     predicate_end, predicate_code}} -> {path: value}. Literal search only: what is not found is left out."""
@@ -245,12 +247,14 @@ def _relation_anchors(ctx: RecordContext, params: dict) -> dict:
         code_path = outputs.get("predicate_code")
         field = next((f for f in ctx.run.profile["fields"] if f["path"] == code_path), None)
         vocabulary = ctx.run.rc.contract["vocabularies"].get((field or {}).get("vocabulary") or "")
+        context = relation_context(quote, markers)
         code = predicate_code(vocabulary, predicate, end_types(markers, "subject"),
-                              end_types(markers, "object")) if vocabulary else None
+                              end_types(markers, "object"), context) if vocabulary else None
         if code:
             out[code_path] = code
         elif code_path:
-            ctx.notes.setdefault("relation", {})["predicate_code"] = "no_unique_cue_match"
+            ctx.notes.setdefault("relation", {})["predicate_code"] = (
+                "negated" if negated(predicate, context) else "no_unique_cue_match")
     return out
 
 
