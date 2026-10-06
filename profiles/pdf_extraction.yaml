@@ -57,6 +57,9 @@ roles:
     software_version: skills.software_version
     raw_value: common.original_value
     raw_unit: common.original_unit
+    relation_subject: transform.subject_mention
+    relation_predicate: transform.predicate_mention
+    relation_object: transform.object_mention
 system_fields:
   common.record_id:
     rule: stable_record_id
@@ -121,6 +124,17 @@ normalizers:
     min: common.normalized_min_value
     max: common.normalized_max_value
     unit: common.normalized_unit
+- rule: relation_anchors
+  inputs:
+    quote: common.source_quote
+    subject: transform.subject_mention
+    predicate: transform.predicate_mention
+    object: transform.object_mention
+  outputs:
+    markers: transform.entity_links
+    predicate_start: transform.predicate_start_offset
+    predicate_end: transform.predicate_end_offset
+    predicate_code: transform.predicate_code
 generated_fields:
   common.extraction_confidence:
     rule: backend_confidence
@@ -163,5 +177,5 @@ evidence_policy:
   value_presence_exempt: [common.source_language]
 required_fields:
   always: [common.schema_name]
-ambiguities: [AMB-013]
+ambiguities: [AMB-013, AMB-038]
 notes_zh: common.source_abstract 不进入逐行记录（高频行避免重复长文本，见 v3 source_title 定义），由 document_bundle 视图或迁移数据承载；omics 组字段见 pdf_extraction_omics 画像。

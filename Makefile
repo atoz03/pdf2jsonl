@@ -1,15 +1,16 @@
 PY      ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 BDC     := PYTHONPATH=src $(PY) -m breeding_contract.cli
 
-.PHONY: help venv check test generate diagram dashboard readme-art release examples sample-pdf all
+.PHONY: help venv check test generate diagram site dashboard readme-art release examples sample-pdf all
 
 help:
 	@echo "make venv       create .venv with dev dependencies (uv, else venv+pip)"
 	@echo "make check      bdc check --strict (CI gate)"
 	@echo "make test       pytest"
-	@echo "make generate   rebuild FIELD_DEFINITIONS.md and docs/generated from the catalog"
+	@echo "make generate   rebuild docs/generated from the catalog"
 	@echo "make diagram    export Chinese/English pipeline SVGs from the HTML diagram"
-	@echo "make dashboard  refresh dashboard.html from repository PDFs and local runs"
+	@echo "make site       build the Pages site into _site/ (contract browser, papers, pipeline, downstream outputs)"
+	@echo "make dashboard  write an untracked dashboard.html that also covers local run directories"
 	@echo "make readme-art regenerate the breeding-themed README banner and icons"
 	@echo "make release    freeze VERSION as releases/<VERSION> (needs a CHANGELOG entry)"
 	@echo "make examples   regenerate examples/ (records, pipeline output, migrations)"
@@ -31,6 +32,9 @@ generate:
 
 diagram:
 	$(PY) scripts/export_pipeline_diagram.py
+
+site:
+	PYTHONPATH=src $(PY) scripts/make_site.py --out _site
 
 dashboard:
 	$(PY) scripts/make_dashboard.py

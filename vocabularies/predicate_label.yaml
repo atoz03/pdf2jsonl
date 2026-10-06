@@ -10,56 +10,98 @@ origin: [legacy_v1]
 source:
   ref: sources/legacy_v1/breeding_jsonl_spec.md#L429
   quote_zh: A-5 relation_type（本体关系，可扩展）
-notes_zh: 'A-5 仅三项给出英文代码，其余代码由仓库拟定（code_status: proposed）。关联关系不得标为控制关系。'
+notes_zh: 'A-5 仅三项给出英文代码，其余代码由仓库拟定（code_status: proposed）。关联关系不得标为控制关系。cues 为谓词原文中的线索词，subject_types / object_types 为主宾语的实体类型（由实体提及字段名确定，缺省表示不限）；三者仅用于由 predicate_mention 确定性生成 predicate_code，均为仓库拟定（AMB-038）。'
+ambiguities: [AMB-038]
 values:
 - code: genotype_controls_trait
   label_zh: 基因-控制-性状
+  cues: [controls, controlled, 控制]
+  subject_types: [gene]
+  object_types: [trait]
 - code: gene_associated_with_trait
   label_zh: 基因-关联-性状
   code_status: proposed
+  cues: [associated with, association with, 关联, 相关]
+  subject_types: [gene]
+  object_types: [trait]
 - code: gene_interacts_with_gene
   label_zh: 基因-互作-基因
   code_status: proposed
+  cues: [interacts with, interacted with, interaction with, 互作]
+  subject_types: [gene]
+  object_types: [gene]
 - code: qtl_associated_with_trait
   label_zh: QTL-关联-性状
   code_status: proposed
+  cues: [associated with, association with, 关联, 相关]
+  subject_types: [qtl]
+  object_types: [trait]
 - code: marker_linked_to_qtl
   label_zh: 标记-连锁-QTL
   code_status: proposed
+  cues: [linked to, linked with, flanking, 连锁]
+  subject_types: [marker]
+  object_types: [qtl]
 - code: marker_located_at_locus
   label_zh: 标记-定位-位点
   code_status: proposed
+  cues: [located at, located on, mapped to, 定位于, 位于]
+  subject_types: [marker]
 - code: germplasm_carries_allele
   label_zh: 种质-携带-基因
+  cues: [carries, carrying, carried, harbors, 携带]
+  subject_types: [germplasm, variety]
+  object_types: [gene]
 - code: variety_derived_from
   label_zh: 品种-源于-亲本
+  cues: [derived from, developed from, 来源于, 源于, 选育自]
+  subject_types: [variety, germplasm]
+  object_types: [parent, variety, germplasm]
 - code: germplasm_member_of_population
   label_zh: 种质-组成-群体
   code_status: proposed
+  cues: [member of, belongs to, 属于]
+  subject_types: [germplasm]
+  object_types: [population]
 - code: environment_affects_trait
   label_zh: 环境-影响-性状
   code_status: proposed
+  cues: [affects, affected, 影响]
+  object_types: [trait]
 - code: environment_regulates_expression
   label_zh: 环境-调节-基因表达
   code_status: proposed
 - code: gene_expressed_in_tissue
   label_zh: 基因-表达于-组织
   code_status: proposed
+  cues: [expressed in, 表达于]
+  subject_types: [gene]
 - code: gene_located_in_region
   label_zh: 基因-定位于-区段
   code_status: proposed
+  cues: [located in, located on, 定位于, 位于]
+  subject_types: [gene]
 - code: trait_component_of_trait
   label_zh: 性状-构成-上位性状
   code_status: proposed
+  cues: [component of, 构成]
+  subject_types: [trait]
+  object_types: [trait]
 - code: variety_adapted_to_environment
   label_zh: 品种-适应于-环境/区域
   code_status: proposed
+  cues: [adapted to, 适应于]
+  subject_types: [variety]
 - code: material_resistant_to_disease
   label_zh: 材料-抗-病害
   code_status: proposed
+  cues: [resistant to, resistance to, 抗性]
+  subject_types: [germplasm, variety]
 - code: gene_mediates_resistance
   label_zh: 基因-介导-抗病性
   code_status: proposed
+  cues: [mediates, confers, 介导]
+  subject_types: [gene]
 - code: method_based_on_population
   label_zh: 方法-基于-群体
   code_status: proposed

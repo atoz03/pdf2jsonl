@@ -12,6 +12,48 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and versions
 
 Each heading `## [X.Y.Z] - YYYY-MM-DD` provides the release date that `bdc release` records.
 
+## [3.4.0] - 2026-10-06
+
+This release makes the record a **hub** rather than a container: a record now carries the hooks that a
+knowledge graph, a corpus and a QA set are built from, so no consumer has to parse the quote a second time
+(`docs/downstream.md`, AMB-038). All additions are provisional. No existing field changes type, availability
+or meaning, and records of earlier versions stay valid.
+
+### Added
+- **4 fields** (group `transform`, role `relation`):
+  - `transform.predicate_mention` (D): the words of the quote that connect subject and object, verbatim. With
+    `subject_mention` and `object_mention` it makes the statement explicit at extraction time. Until now the
+    only predicate fields were human judgment (`predicate_label`) or ontology IDs (`predicate_id`), so an
+    extracted statement had no predicate at all.
+  - `transform.predicate_code` (N): a code of vocabulary `predicate_label`, set only when the cue words and the
+    entity types of both ends match exactly one code. It never replaces the reviewed `predicate_label`.
+  - `transform.predicate_start_offset`, `transform.predicate_end_offset` (N): where the predicate stands in
+    `common.source_quote`.
+- **Type `array_entity_link`** (`transform.entity_links`) gains optional `start`, `end` (character offsets of
+  the mention in `common.source_quote`) and `relation_role` (`subject` / `object`). The pipeline now writes one
+  marker per entity mention of a record, typed by the field that lists it.
+- **Vocabulary `predicate_label`**: every code gains `cues`, `subject_types` and `object_types`, the lexicon
+  that `predicate_code` is derived from. These are repository proposals (AMB-038).
+- **Rules** (both warnings):
+  - `R033` (inferred): a statement with subject and object should give a predicate.
+  - `R034` (definitional; new rule kind `offsets_match_text`): the offsets of markers and of the predicate must
+    point at their mention in the quote.
+- **Profile `pdf_extraction`**: semantic roles `relation_subject` / `relation_predicate` / `relation_object`
+  and the normalizer `relation_anchors`. The extraction brief gains a "Relations" section built from them.
+- **`bdc derive`** reads the hooks and writes four more outputs: `statements.csv` (one typed, anchored
+  subject–predicate–object row per statement, with `predicate_status`, qualifiers and hedge),
+  `graph.json` (property graph), `qa.jsonl` (cloze QA seeds that cite their records) and entity offsets plus
+  statement IDs on every corpus chunk. Corpus and QA rows are keyed by the `transform.chunk_*` / `qa_*` field
+  names.
+
+### Changed
+- `bdc derive` corpus keys follow the catalog: `text` → `chunk_text`, `support_ids` → `chunk_support_ids`,
+  `page` → `chunk_page`, `section` → `chunk_section`. A statement whose only predicate is verbatim is written
+  as `bdc:stated_relation` with `predicate_mention`; `bdc:unlabelled_relation` remains for statements with no
+  predicate at all. The statement ID is a content hash (`stm_…`) instead of the record node.
+- The generated field reference moved from the repository root (`FIELD_DEFINITIONS.md`) to
+  `docs/generated/field_definitions.md`, next to the other generated documents.
+
 ## [3.3.0] - 2026-10-06
 
 ### Added

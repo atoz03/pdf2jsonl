@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>pdf2jsonl · breeding-literature-record __VERSION__</title>
-<meta name="description" content="Data contract and PDF-to-JSONL demo for breeding-literature records: field catalog, profiles, vocabularies, rules and an end-to-end extraction walk-through.">
+<meta name="description" content="Breeding-literature records as a hub: the data contract, the PDF-to-JSONL pipeline, the importers, and the knowledge graph, corpus, QA seeds and tables derived from the same records.">
 <style>
 :root {
   color-scheme: light;
@@ -15,6 +15,7 @@
   --ok: #1b7f3b; --warn: #a45f00; --err: #c62828; --err-soft: #fdecea; --warn-soft: #fff4e0; --ok-soft: #e6f4ea;
   --av-D: #2a78d6; --av-N: #eb6834; --av-I: #1baf7a; --av-G: #eda100; --av-F: #e87ba4;
   --j-key: #4a3aa7; --j-str: #1b6b3a; --j-num: #b0461a; --j-lit: #8a2c8a;
+  --sp-s: #2a78d6; --sp-p: #b0461a; --sp-o: #1b7f3b; --sp-e: #7a7973;
   --radius: 8px;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
@@ -28,6 +29,7 @@
     --ok: #5cc27a; --warn: #e6a23c; --err: #ef6b6b; --err-soft: #3a1d1d; --warn-soft: #3a2c14; --ok-soft: #173222;
     --av-D: #3987e5; --av-N: #d95926; --av-I: #199e70; --av-G: #c98500; --av-F: #d55181;
     --j-key: #a99ff0; --j-str: #7fd19b; --j-num: #f0a070; --j-lit: #e39be3;
+    --sp-s: #5b9df0; --sp-p: #f0a070; --sp-o: #5cc27a; --sp-e: #8f8e86;
   }
 }
 * { box-sizing: border-box; }
@@ -151,12 +153,62 @@ td.heat a { color: var(--text); display: block; }
 .linkto { font: inherit; font-size: 12.5px; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
 .linkto:hover { text-decoration: underline; }
 .vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; }
+/* hub figure */
+.hub { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.5fr) auto minmax(0, 1.3fr); gap: 10px; align-items: center; margin: 14px 0 6px; }
+@media (max-width: 900px) { .hub { grid-template-columns: 1fr; } .hub .arrow { transform: rotate(90deg); justify-self: center; } }
+.hub .col { display: grid; gap: 8px; }
+.hub .box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+.hub .box b { display: block; font-size: 13px; }
+.hub .box span { color: var(--text-2); font-size: 12.5px; }
+.hub .box.core { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.hub .arrow { color: var(--text-3); font-size: 20px; }
+.hub a.box { color: inherit; }
+.hub a.box:hover { text-decoration: none; border-color: var(--accent); }
+.hooks { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 6px; }
+/* anchored text */
+.sp { border-radius: 3px; padding: 0 1px; box-shadow: inset 0 -2px 0 var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+.sp-subject { --c: var(--sp-s); } .sp-predicate { --c: var(--sp-p); } .sp-object { --c: var(--sp-o); } .sp-entity { --c: var(--sp-e); }
+.blank { display: inline-block; min-width: 46px; border-bottom: 2px solid var(--accent); background: var(--accent-soft); border-radius: 3px 3px 0 0; color: transparent; user-select: none; }
+.quote { font-size: 14px; line-height: 1.75; }
+.stm { margin-bottom: 10px; }
+.spo { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 10px 0 6px; }
+.spo .node { font-family: var(--mono); font-size: 12.5px; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--c); background: color-mix(in srgb, var(--c) 10%, transparent); }
+.spo .edge { color: var(--text-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 12.5px; color: var(--text-2); margin: 6px 0; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+/* graph */
+.graph { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow-x: auto; }
+.graph svg { display: block; width: 100%; min-width: 720px; height: auto; }
+.graph text { font: 11.5px system-ui, sans-serif; fill: var(--text); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+.graph text.el { fill: var(--text-2); font-family: var(--mono); font-size: 10.5px; }
+.graph .e-statement { stroke: var(--accent); stroke-width: 2; fill: none; }
+.graph .e-mention { stroke: var(--border); stroke-width: 1; fill: none; }
+.graph .e-link { stroke: var(--warn); stroke-width: 1.3; stroke-dasharray: 4 3; fill: none; }
+.graph .e-provenance { stroke: var(--text-3); stroke-width: 0.8; stroke-dasharray: 1 3; fill: none; }
+.graph .n-record { fill: var(--surface-2); stroke: var(--text-3); cursor: pointer; }
+.graph .n-source { fill: var(--text-3); }
+.graph a:hover .n-record { stroke: var(--accent); stroke-width: 2; }
+/* importers */
+.bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--surface-2); margin: 6px 0; }
+.bar i { display: block; height: 100%; }
+.imp { margin-bottom: 16px; }
+.imp h3 { margin: 0; }
+.imp .cmd { font-family: var(--mono); font-size: 12px; background: var(--surface-2); border-radius: 6px; padding: 8px 10px; margin: 10px 0; overflow-x: auto; white-space: nowrap; }
+.mini { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 6px 0; }
+.mini div b { font-size: 18px; font-variant-numeric: tabular-nums; }
+.mini div span { color: var(--text-2); font-size: 12px; margin-left: 4px; }
+.sitemap { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin: 14px 0; }
+.sitemap a { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; color: inherit; }
+.sitemap a:hover { border-color: var(--accent); text-decoration: none; }
+.sitemap a b { display: block; }
+.sitemap a span { color: var(--text-2); font-size: 12.5px; }
+img.diagram { display: block; width: 100%; height: auto; background: #fff; border-radius: var(--radius); }
 footer { color: var(--text-3); font-size: 12.5px; border-top: 1px solid var(--border); padding-block: 18px; }
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <h1>pdf2jsonl <span>· breeding literature → atomic JSONL</span></h1>
+  <h1>pdf2jsonl <span>· breeding literature → records → graph, corpus, QA</span></h1>
   <span class="pill" id="ver-pill">contract __VERSION__</span>
   <span class="spacer"></span>
   <a id="repo-link" href="#">GitHub repository →</a>
@@ -166,6 +218,9 @@ footer { color: var(--text-3); font-size: 12.5px; border-top: 1px solid var(--bo
   <a href="#fields" data-view="fields">Field catalog</a>
   <a href="#functions" data-view="functions">Functions &amp; roles</a>
   <a href="#demo" data-view="demo">PDF → JSONL demo</a>
+  <a href="#downstream" data-view="downstream">Downstream outputs</a>
+  <a href="#importers" data-view="importers">Importers</a>
+  <a href="papers.html" title="Paper dashboard: every paper with its runs, records, evidence and exports">Papers ↗</a>
   <a href="#records" data-view="records">Record examples</a>
   <a href="#vocab" data-view="vocab">Vocabularies</a>
   <a href="#rules" data-view="rules">Rules &amp; ambiguities</a>
@@ -175,6 +230,8 @@ footer { color: var(--text-3); font-size: 12.5px; border-top: 1px solid var(--bo
   <section class="view" id="view-fields"></section>
   <section class="view" id="view-functions"></section>
   <section class="view" id="view-demo"></section>
+  <section class="view" id="view-downstream"></section>
+  <section class="view" id="view-importers"></section>
   <section class="view" id="view-records"></section>
   <section class="view" id="view-vocab"></section>
   <section class="view" id="view-rules"></section>
@@ -185,7 +242,7 @@ footer { color: var(--text-3); font-size: 12.5px; border-top: 1px solid var(--bo
 <script>
 "use strict";
 const DATA = JSON.parse(document.getElementById("site-data").textContent);
-const C = DATA.contract, D = DATA.demo;
+const C = DATA.contract, D = DATA.demo, X = D.derived;
 const F = Object.fromEntries(C.fields.map(f => [f.path, f]));
 const GROUPS = Object.keys(C.groups);
 const AV = ["D", "N", "I", "G", "F"];
@@ -202,6 +259,10 @@ const fnTag = (f, fn) => `<span class="tag${isAdded(f, fn) ? "" : " acc"}" title
 const roleTag = r => r ? `<a class="tag" href="#fields?role=${encodeURIComponent(r)}" title="${esc((ROLE[r] || {}).description_zh || "")}">${esc((ROLE[r] || {}).label_zh || r)}</a>` : "";
 const facetsOf = (f, fn) => (((ROLE[f.key_role] || {}).facets || {})[fn] || []);
 const facetLabel = (fn, k) => (((FN[fn] || {}).facets || {})[k] || {}).label_zh || k;
+const TAGS = C.tags || {}, ORIGIN = C.codes.origin || {};
+const docTag = t => `<a class="tag" href="#fields?tag=${encodeURIComponent(t)}" title="${esc((TAGS[t] || {}).description_zh || "")}">${esc((TAGS[t] || {}).label_zh || t)}</a>`;
+const fl = p => F[p] ? fieldLink(p) : `<span class="mono">${esc(p)}</span>`;
+const short = v => typeof v === "string" ? v : JSON.stringify(v);
 
 // ---------------------------------------------------------------- JSON view with field-name links
 function jsonHTML(v, ind = "", parentKey = null, depth = 0) {
@@ -246,9 +307,35 @@ function renderOverview() {
     <td class="small mono">${esc(v.profiles.join(", "))}</td></tr>`).join("");
   $("#view-overview").innerHTML = `
     <h2>${esc(C.title_zh)} <span class="muted">· ${esc(C.name)}</span></h2>
-    <p class="lead">The repository owns the data contract; the <b>pdf2jsonl</b> Skill is the operational entry point.
-      One canonical field catalog generates the JSON Schema, profiles, dictionaries and validation, and the extraction
-      pipeline resolves the contract version at run time. ${esc(C.baseline_zh || "")}</p>
+    <p class="lead">A paper is extracted <b>once</b> into atomic JSONL records and consumed many times. The record is the hub: it carries, as fields,
+      what a knowledge graph, a corpus, a QA set and relational tables each need, so no consumer parses the text a second time.
+      The repository owns that data contract; the <b>pdf2jsonl</b> Skill and the importers are the ways in. ${esc(C.baseline_zh || "")}</p>
+    <div class="hub" role="img" aria-label="Papers and existing data become records; records feed the knowledge graph, corpus, QA seeds and tables">
+      <div class="col">
+        <a class="box" href="#demo"><b>Paper (PDF)</b><span>agent extraction with verbatim evidence</span></a>
+        <a class="box" href="#importers"><b>Existing structured data</b><span>${DATA.importers.map(i => esc(i.command)).join(" · ")} importers</span></a>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="box core"><b>Records · JSONL</b><span>one fact per line, validated against contract ${esc(C.version)}</span>
+        <div class="hooks">${["statement: subject · predicate · object", "entity markers with offsets", "qualifiers and hedge", "record links", "page · quote · span", "stable IDs"].map(h => `<span class="tag acc">${h}</span>`).join("")}</div>
+        <div class="small" style="margin-top:6px"><a href="#downstream">the hooks every consumer reads →</a></div></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="col">
+        <a class="box" href="#downstream?part=graph"><b>Knowledge graph</b><span>${X.counts.statements} statements · ${X.counts.graph_nodes} nodes · ${X.counts.triples} triples</span></a>
+        <a class="box" href="#downstream?part=corpus"><b>Corpus</b><span>${X.counts.corpus_chunks} quotes with entity offsets</span></a>
+        <a class="box" href="#downstream?part=qa"><b>QA seeds</b><span>${X.counts.qa_seeds} cloze items citing their records</span></a>
+        <a class="box" href="#downstream?part=tables"><b>Relational tables</b><span>${Object.keys(X.tables).length} tables (CSV)</span></a>
+      </div>
+    </div>
+    <p class="small muted">Counts are from the example paper of the <a href="#demo">walk-through</a>.</p>
+    <div class="sitemap">
+      <a href="#fields"><b>Field catalog</b><span>${C.fields.length} fields with definition, JSON example and tags</span></a>
+      <a href="#demo"><b>PDF → JSONL demo</b><span>candidates, verification, records, evidence chain</span></a>
+      <a href="#downstream"><b>Downstream outputs</b><span>graph, corpus, QA seeds and tables from the same records</span></a>
+      <a href="papers.html"><b>Papers ↗</b><span>${DATA.papers.papers} paper${DATA.papers.papers === 1 ? "" : "s"} · ${DATA.papers.runs} run${DATA.papers.runs === 1 ? "" : "s"} · ${DATA.papers.records} records, with exports</span></a>
+      <a href="#importers"><b>Importers</b><span>${DATA.importers.length} existing formats mapped leaf by leaf</span></a>
+      <a href="pipeline.html"><b>Pipeline diagram ↗</b><span>every stage, in Chinese and English</span></a>
+    </div>
     <div class="tiles">
       <div class="tile"><div class="k">Fields</div><div class="v">${C.fields.length}</div><div class="s">${nV} verified · ${C.fields.length - nV} provisional</div></div>
       <div class="tile"><div class="k">Field groups</div><div class="v">${GROUPS.length}</div><div class="s">${GROUPS.join(" · ")}</div></div>
@@ -278,12 +365,15 @@ function renderOverview() {
     <ol class="flow">
       <li><b>Resolve</b><div>contract version + profile (<code>latest</code> or an exact release)</div></li>
       <li><b>Prepare</b><div>parse the PDF text layer; render the brief from the profile</div></li>
-      <li><b>Extract</b><div>the agent writes candidates: D fields + page + verbatim quote</div></li>
+      <li><b>Extract</b><div>the agent writes candidates: D fields, the statement as subject · predicate · object, page + verbatim quote</div></li>
       <li><b>Verify &amp; repair</b><div>quotes checked against the page; structural fixes logged</div></li>
-      <li><b>Assemble &amp; link</b><div>IDs, locators, normalized values, review status by rule; candidate links become record IDs</div></li>
+      <li><b>Assemble, anchor &amp; link</b><div>IDs, locators, normalized values by rule; entities and predicate anchored in the quote; candidate links become record IDs</div></li>
       <li><b>Validate &amp; write</b><div>records · errors · validation report with evidence-chain audit · manifest</div></li>
     </ol>
     <p class="small"><a href="#demo">See it run on the synthetic example paper →</a></p>
+    <details><summary>Pipeline diagram: contract, extraction, importers, outputs</summary>
+      <a href="pipeline.html" title="Open the diagram page: language switch, actual size, SVG download"><img class="diagram" src="assets/pipeline.en.svg" loading="lazy"
+        alt="Pipeline: a versioned contract governs PDF extraction and the importers; accepted records feed tables, a knowledge graph, a corpus with QA seeds and document bundles; rejections go to review"></a></details>
     <h3>Record kinds</h3>
     <div class="tbl-wrap"><table><thead><tr><th>record_kind</th><th>名称</th><th>record_grain</th><th>Description</th></tr></thead><tbody>${kinds}</tbody></table></div>
     <h3>Releases</h3>
@@ -291,14 +381,15 @@ function renderOverview() {
 }
 
 // ---------------------------------------------------------------- field catalog
-const FS = { q: "", group: "", profile: "", maturity: "", since: "", req: "", fn: "", role: "", av: new Set(AV), open: null };
+const FS = { q: "", group: "", profile: "", maturity: "", since: "", req: "", fn: "", role: "", tag: "", origin: "", av: new Set(AV), open: null };
 function renderFieldsShell() {
   const profs = Object.keys(C.profiles);
   const sinces = [...new Set(C.fields.map(f => f.since))].sort();
   $("#view-fields").innerHTML = `
     <h2>Field catalog</h2>
     <p class="lead">Every field of contract ${esc(C.version)}, generated from <code>field_catalog/field_catalog.yaml</code>.
-      Records nest by group: the field <code>common.record_id</code> is written <code>{"common": {"record_id": …}}</code>. Click a row for details.</p>
+      Records nest by group: the field <code>common.record_id</code> is written <code>{"common": {"record_id": …}}</code>. Click a row for its
+      JSON example, role, tags, rules and source. Examples are synthetic values for one field, not defaults and not a complete record.</p>
     <div class="controls">
       <input type="search" id="f-q" placeholder="Search field path, definition, source…" aria-label="Search fields">
       <select id="f-group" aria-label="Group"><option value="">All groups</option>${GROUPS.map(g => `<option>${g}</option>`).join("")}</select>
@@ -309,16 +400,19 @@ function renderFieldsShell() {
       <select id="f-fn" aria-label="Function"><option value="">Any function</option>${FNS.map(fn => `<option value="${esc(fn)}">${esc(FN[fn].label_zh)}</option>`).join("")}</select>
       <select id="f-role" aria-label="Key role"><option value="">Any key role</option>${Object.keys(FAM).map(fam => `<optgroup label="${esc(FAM[fam].label_zh)}">${
         Object.entries(ROLE).filter(([, r]) => r.family === fam).map(([k, r]) => `<option value="${esc(k)}">${esc(r.label_zh)} · ${esc(k)}</option>`).join("")}</optgroup>`).join("")}</select>
+      <select id="f-tag" aria-label="Tag"><option value="">Any tag</option>${Object.entries(TAGS).map(([k, t]) => `<option value="${esc(k)}">${esc(t.label_zh)}</option>`).join("")}</select>
+      <select id="f-origin" aria-label="Origin"><option value="">Any origin</option>${Object.entries(ORIGIN).map(([k, o]) => `<option value="${esc(k)}">${esc(k)} — ${esc(o.label_zh || "")}</option>`).join("")}</select>
     </div>
     <div class="controls" role="group" aria-label="Availability">
       ${AV.map(a => `<button class="chip" data-av="${a}" aria-pressed="true">${av(a)} ${esc(C.codes.availability[a].label_en)}</button>`).join("")}
       <span class="spacer" style="flex:1"></span><span class="small muted" id="f-count"></span>
     </div>
-    <p class="small muted">Functions: <span class="tag acc">stated by the source</span> (v3 group or downstream column) · <span class="tag">added⁺</span> by the repository from the key role (AMB-032).</p>
+    <p class="small muted">Functions: <span class="tag acc">stated by the source</span> (v3 group or downstream column) · <span class="tag">added⁺</span> by the repository from the key role (AMB-032).
+      Tags (${Object.values(TAGS).map(t => esc(t.label_zh)).join(" · ")}) are the documentation labels of <code>docs/field_classification.yaml</code>; a field may carry several.</p>
     <div class="tbl-wrap"><table><thead><tr><th>Field path</th><th>Type</th><th>Avail.</th><th>Req.</th><th>Role · functions</th><th>Definition (定义)</th></tr></thead><tbody id="f-body"></tbody></table></div>`;
   const bind = (id, key) => $(id).addEventListener("input", e => { FS[key] = e.target.value; FS.open = null; renderFieldRows(); });
   bind("#f-q", "q"); bind("#f-group", "group"); bind("#f-profile", "profile"); bind("#f-maturity", "maturity"); bind("#f-since", "since"); bind("#f-req", "req");
-  bind("#f-fn", "fn"); bind("#f-role", "role");
+  bind("#f-fn", "fn"); bind("#f-role", "role"); bind("#f-tag", "tag"); bind("#f-origin", "origin");
   $("#view-fields").querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
     const a = b.dataset.av; FS.av.has(a) ? FS.av.delete(a) : FS.av.add(a);
     b.setAttribute("aria-pressed", FS.av.has(a)); renderFieldRows();
@@ -332,7 +426,7 @@ function renderFieldsShell() {
 function syncFieldControls() {
   $("#f-q").value = FS.q; $("#f-group").value = FS.group; $("#f-profile").value = FS.profile;
   $("#f-maturity").value = FS.maturity; $("#f-since").value = FS.since; $("#f-req").value = FS.req;
-  $("#f-fn").value = FS.fn; $("#f-role").value = FS.role;
+  $("#f-fn").value = FS.fn; $("#f-role").value = FS.role; $("#f-tag").value = FS.tag; $("#f-origin").value = FS.origin;
   $("#view-fields").querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", FS.av.has(b.dataset.av)));
 }
 function fieldDetail(f) {
@@ -342,7 +436,11 @@ function fieldDetail(f) {
   const rules = C.rules.filter(r => r.fields.includes(f.path)).map(r => `<span class="tag ${r.severity === "error" ? "err" : "warn"}" title="${esc(r.title_zh)}">${esc(r.id)}</span>`).join(" ");
   const role = ROLE[f.key_role] || {};
   const serves = (f.serves || []).map(fn => `<div>${fnTag(f, fn)} <span class="small">${facetsOf(f, fn).map(k => esc(facetLabel(fn, k))).join(" · ")}</span></div>`).join("");
+  const item = f.type.startsWith("array_") && C.types[f.type] && C.types[f.type].item && C.types[f.type].item.properties;
   return `<dl class="kv">
+    ${f.example !== undefined ? `<dt>JSON example (示例)</dt><dd><pre class="json" style="padding:0;max-height:220px">${jsonHTML({ [f.group]: { [f.path.slice(f.group.length + 1)]: f.example } })}</pre></dd>` : ""}
+    ${item ? `<dt>Item keys</dt><dd class="small">${Object.entries(item).map(([k, v]) => `<code>${esc(k)}</code>${v.description ? " " + esc(v.description) : ""}`).join(" · ")}</dd>` : ""}
+    ${(f.tags || []).length ? `<dt>Tags (功能分类)</dt><dd>${f.tags.map(docTag).join(" ")}</dd>` : ""}
     <dt>Key role (键角色)</dt><dd>${roleTag(f.key_role)} <span class="muted small">${esc((FAM[role.family] || {}).label_zh || "")}</span> — ${esc(role.description_zh || "")}
       <div class="small muted" style="margin-top:2px">graph: ${esc((role.projection || {}).kg || "—")} · tables: ${esc((role.projection || {}).rdb || "—")} · triple: ${esc((role.projection || {}).triple || "—")} · QA/corpus: ${esc((role.projection || {}).qa_corpus || "—")}</div></dd>
     <dt>Serves (服务功能 · 分面)</dt><dd>${serves}</dd>
@@ -350,7 +448,8 @@ function fieldDetail(f) {
     ${f.argument_role ? `<dt>Evidence-chain element</dt><dd>${esc((ARG[f.argument_role] || {}).label_en || f.argument_role)} · ${esc((ARG[f.argument_role] || {}).label_zh || "")} <span class="muted small">(TRACE)</span></dd>` : ""}
     <dt>Data source (数据来源)</dt><dd>${esc(f.data_source_zh || "—")}</dd>
     <dt>Downstream (下游用途)</dt><dd>${esc(f.downstream_zh || "—")}</dd>
-    <dt>Since · maturity · origin</dt><dd>${esc(f.since)} · ${esc(f.maturity)} · ${esc((f.origin || []).join(", "))}</dd>
+    <dt>Since · maturity · origin</dt><dd>${esc(f.since)} · ${esc(f.maturity)} · ${(f.origin || []).map(o => `<a href="#fields?origin=${encodeURIComponent(o)}" title="${esc((ORIGIN[o] || {}).label_zh || "")}">${esc(o)}</a>`).join(", ")}</dd>
+    ${f.notes_zh ? `<dt>Notes</dt><dd class="small">${esc(f.notes_zh)}</dd>` : ""}
     ${f.constraints ? `<dt>Constraints</dt><dd class="mono">${esc(JSON.stringify(f.constraints))}</dd>` : ""}
     ${voc ? `<dt>Vocabulary</dt><dd><a href="#vocab?q=${encodeURIComponent(voc.name)}">${esc(voc.name)}</a> <span class="tag">${esc(voc.enforcement)}</span> <span class="tag">${esc(voc.closure)}</span>
       <div class="codes" style="margin-top:6px">${voc.values.slice(0, 40).map(v => `<code title="${esc(v.label_zh || "")}">${esc(v.code)}</code>`).join("")}${voc.values.length > 40 ? ` <span class="muted">+${voc.values.length - 40} more</span>` : ""}</div></dd>` : ""}
@@ -367,15 +466,18 @@ function renderFieldRows() {
     (!FS.group || f.group === FS.group) && FS.av.has(f.availability) && (!prof || prof.roles[f.path]) &&
     (!FS.maturity || f.maturity === FS.maturity) && (!FS.since || f.since === FS.since) && (!FS.req || f.required === FS.req) &&
     (!FS.fn || (f.serves || []).includes(FS.fn)) && (!FS.role || f.key_role === FS.role) &&
+    (!FS.tag || (f.tags || []).includes(FS.tag)) && (!FS.origin || (f.origin || []).includes(FS.origin)) &&
     (!q || (f.path + " " + (f.definition_zh || "") + " " + (f.data_source_zh || "") + " " + (f.vocabulary || "") + " " +
-      (f.key_role || "") + " " + ((ROLE[f.key_role] || {}).label_zh || "")).toLowerCase().includes(q)));
+      (f.key_role || "") + " " + ((ROLE[f.key_role] || {}).label_zh || "") + " " + (f.tags || []).map(t => (TAGS[t] || {}).label_zh || t).join(" ") +
+      " " + (f.example !== undefined ? short(f.example) : "")).toLowerCase().includes(q)));
   if (rows.length === 1) FS.open = rows[0].path;
   $("#f-count").textContent = `${rows.length} of ${C.fields.length} fields`;
   $("#f-body").innerHTML = rows.map(f => {
     const [g, n] = [f.group, f.path.slice(f.group.length + 1)];
     const row = `<tr class="frow" data-path="${esc(f.path)}"><td class="path"><span class="g">${esc(g)}.</span>${esc(n)}${f.maturity === "provisional" ? ' <span class="tag" title="provisional: written by the repository, awaiting confirmation">prov.</span>' : ""}</td>
       <td class="mono small">${esc(f.type)}</td><td>${av(f.availability)}</td><td><b>${esc(f.required)}</b></td>
-      <td style="white-space:nowrap">${roleTag(f.key_role)}<br>${(f.serves || []).map(fn => fnTag(f, fn)).join(" ")}</td><td>${esc(f.definition_zh)}</td></tr>`;
+      <td style="white-space:nowrap">${roleTag(f.key_role)}<br>${(f.serves || []).map(fn => fnTag(f, fn)).join(" ")}</td><td>${esc(f.definition_zh)}
+        ${f.example !== undefined ? `<div class="mono small muted" style="margin-top:2px;overflow-wrap:anywhere">${esc(short(f.example).slice(0, 110))}${short(f.example).length > 110 ? "…" : ""}</div>` : ""}</td></tr>`;
     return row + (FS.open === f.path ? `<tr class="detail"><td colspan="6">${fieldDetail(f)}</td></tr>` : "");
   }).join("") || `<tr><td colspan="6" class="muted">No field matches these filters.</td></tr>`;
 }
@@ -426,7 +528,7 @@ function renderFunctions() {
     <p class="small muted">Number of fields with each role that serve each function. Darker cells hold more fields. Click a number to list the fields.</p>
     <div class="tbl-wrap"><table><thead><tr><th>Family</th><th>Key role</th><th class="num">Fields</th>${FNS.map(fn => `<th class="num">${esc(FN[fn].short_zh || fn)}</th>`).join("")}</tr></thead><tbody>${matrix}</tbody></table></div>
     <h3>How each role lands in derived forms</h3>
-    <p class="small muted"><code>bdc derive</code> follows this table: no field list is hard-coded.</p>
+    <p class="small muted"><code>bdc derive</code> follows this table: no field list is hard-coded. <a href="#downstream">See what it builds from the example records →</a></p>
     <div class="tbl-wrap"><table><thead><tr><th>Key role</th><th>Description</th><th>Knowledge graph</th><th>Relational DB</th><th>Triples</th><th>QA / corpus</th></tr></thead><tbody>${proj}</tbody></table></div>
     <h3>Evidence-chain elements (after TRACE)</h3>
     <p class="small muted">${esc(C.codes.argument_role_source || "")}. The pipeline's audit reports which elements each statement has and which it reaches through its links. It gives no score.</p>
@@ -548,29 +650,52 @@ function chainSection() {
       <div class="tbl-wrap"><table><thead><tr><th>Element</th><th class="num">stated</th><th class="num">in chain</th></tr></thead><tbody>${cov}</tbody></table></div>
     </div>`;
 }
+// ---------------------------------------------------------------- anchors: a quote with the spans the record carries
+const STM = Object.fromEntries(X.statements.map(st => [st.record_id, st]));
+const CHUNK = {};
+for (const c of X.corpus) for (const id of c.chunk_support_ids) CHUNK[id] = c;
+const ENDS = ["subject", "predicate", "object"];
+function annotate(text, spans) {
+  const cuts = [...new Set([0, text.length, ...spans.flatMap(x => [x.start, x.end])])].filter(n => n >= 0 && n <= text.length).sort((a, b) => a - b);
+  let html = "";
+  for (let k = 0; k < cuts.length - 1; k++) {
+    const [a, b] = [cuts[k], cuts[k + 1]], seg = esc(text.slice(a, b));
+    const hit = spans.find(x => x.start <= a && x.end >= b);
+    html += hit ? `<span class="sp ${hit.cls}" title="${esc(hit.title)}">${seg}</span>` : seg;
+  }
+  return html;
+}
+const stmSpans = st => ENDS.filter(k => (st.anchors || {})[k]).map(k => ({ start: st.anchors[k][0], end: st.anchors[k][1], cls: "sp-" + k,
+  title: k === "predicate" ? `predicate · ${st.predicate}` : `${k} · ${st[k + "_type"] || "untyped"} · ${st[k]}` }));
+const entSpans = c => (c.entities || []).map(e => ({ start: e.start, end: e.end, cls: "sp-entity", title: `${e.entity_type || "entity"}${e.source_field ? " · " + e.source_field : ""}` }));
+const STATUS = { ontology: ["ok", "aligned to a relation ontology"], reviewed: ["ok", "code chosen by a reviewer"], lexicon: ["acc", "cue words and the entity types of both ends match exactly one code"],
+  verbatim: ["", "only the words of the paper; no code fits without interpretation"], unlabelled: ["warn", "subject and object without any predicate"] };
+const statusTag = k => `<span class="tag ${(STATUS[k] || [""])[0]}" title="${esc((STATUS[k] || ["", ""])[1])}">${esc(k)}</span>`;
+const recLink = id => RID[id] ? `<a href="#demo?rec=${encodeURIComponent(id)}" title="${esc(id)}">${esc(RID[id].common.record_kind)}: ${esc(summary(RID[id]).slice(0, 80))}</a>` : `<span class="mono small">${esc(id)}</span>`;
+function statementCard(st, withRecord) {
+  const quals = Object.entries(st.qualifiers || {}).map(([k, v]) => `<span class="tag" title="qualifier · ${esc(k)}">${esc(k.split(".").pop())} = ${esc(short(v))}</span>`).join(" ");
+  return `<div class="card pad stm">
+    <div class="quote">${annotate(st.source_quote || "", stmSpans(st))}</div>
+    <div class="spo"><span class="node sp-subject" title="${esc(st.subject_mention || "")}">${esc(st.subject)}</span>
+      <span class="edge">— <b class="mono">${esc(st.predicate)}</b> ${statusTag(st.predicate_status)} →</span>
+      <span class="node sp-object" title="${esc(st.object_mention || "")}">${esc(st.object)}</span></div>
+    <div class="small">${st.hedge ? `<span class="tag warn" title="verbatim hedge: this statement is not a finding">hedged</span> <i>${esc(st.hedge)}</i><br>` : ""}
+      ${quals ? `qualifiers ${quals}<br>` : ""}
+      <span class="muted">p.${esc(st.source_page ?? "?")} · <span class="mono">${esc(st.statement_id)}</span>${st.relation_polarity ? " · polarity " + esc(st.relation_polarity) : ""}</span>
+      ${withRecord ? ` · ${recLink(st.record_id)}` : ""}</div></div>`;
+}
 function derivedSection() {
-  const X = D.derived;
-  if (!X) return "";
   const c = X.counts;
-  const node = v => { v = String(v); return v.startsWith("rec:") && RID[v.slice(4)] ? `<span title="${esc(v)}">${recBtn(v.slice(4))}</span>` : `<span class="mono small">${esc(v)}</span>`; };
-  const trip = t => `<tr><td>${node(t.s)}</td><td class="mono small">${esc(t.p)}</td><td>${node(t.o)}</td><td class="small">${esc(t.o_kind)}</td></tr>`;
-  return `<h3>Derived views (function 3: <code>bdc derive</code>)</h3>
-    <p class="small muted">The same records turned into relational tables, knowledge-graph triples and an evidence corpus. Each field lands where its key role says
-      (<a href="#functions">roles →</a>). Nothing is added that the records do not contain. A statement without a reviewed predicate stays <code>bdc:unlabelled_relation</code>.</p>
+  return `<h3>Downstream outputs (function 3: <code>bdc derive</code>)</h3>
+    <p class="small muted">The same records, without another pass over the text: every row below is read from a field the records already carry.</p>
     <div class="tiles">
-      ${["records", "sources", "record_entities", "record_links", "record_values"].map(t => `<div class="tile"><div class="k">table ${esc(t)}</div><div class="v">${c["table:" + t] || 0}</div><div class="s">rows (CSV)</div></div>`).join("")}
-      <div class="tile"><div class="k">triples</div><div class="v">${c.triples}</div><div class="s">JSONL with record provenance</div></div>
-      <div class="tile"><div class="k">corpus chunks</div><div class="v">${c.corpus_chunks}</div><div class="s">one per distinct quote</div></div>
+      <a class="tile" href="#downstream?part=statements" style="color:inherit"><div class="k">statements</div><div class="v">${c.statements}</div><div class="s">subject · predicate · object</div></a>
+      <a class="tile" href="#downstream?part=graph" style="color:inherit"><div class="k">graph</div><div class="v">${c.graph_nodes}</div><div class="s">nodes · ${c.graph_edges} edges · ${c.triples} triples</div></a>
+      <a class="tile" href="#downstream?part=corpus" style="color:inherit"><div class="k">corpus chunks</div><div class="v">${c.corpus_chunks}</div><div class="s">quotes with entity offsets</div></a>
+      <a class="tile" href="#downstream?part=qa" style="color:inherit"><div class="k">QA seeds</div><div class="v">${c.qa_seeds}</div><div class="s">cloze items citing records</div></a>
+      <a class="tile" href="#downstream?part=tables" style="color:inherit"><div class="k">tables</div><div class="v">${Object.keys(X.tables).length}</div><div class="s">${Object.values(X.tables).reduce((n, t) => n + t.total, 0)} rows (CSV)</div></a>
     </div>
-    <div>
-      <div><h3 style="margin-top:8px">record_links</h3><div class="tbl-wrap"><table><thead><tr><th>From</th><th>Field</th><th>To</th><th>Element</th></tr></thead><tbody>
-        ${X.record_links.map(l => `<tr><td>${recBtn(l.record_id)}</td><td>${fieldLink(l.field, l.field.split(".")[1])}</td><td>${recBtn(l.target_record_id)}</td><td class="small">${esc(l.argument_role || "")}</td></tr>`).join("")}
-      </tbody></table></div></div>
-      <div><h3>Triples: relation statement and one edge per predicate (sample)</h3><div class="tbl-wrap"><table><thead><tr><th>Subject</th><th>Predicate</th><th>Object</th><th>Kind</th></tr></thead><tbody>
-        ${X.statements.map(trip).join("")}${X.entity_triples.map(trip).join("")}
-      </tbody></table></div></div>
-    </div>
-    <details><summary>Corpus chunks (sample)</summary><div class="card"><pre class="json">${jsonHTML(X.corpus)}</pre></div></details>`;
+    <p class="small"><a href="#downstream">Open the downstream outputs →</a></p>`;
 }
 function renderPages() {
   const spans = D.records.map(r => ({ id: r.common.record_id, s: spanOf(r) })).filter(x => x.s);
@@ -600,6 +725,11 @@ function selectItem(id, fromText) {
     const cand = ci != null ? D.candidates.candidates[ci] : null;
     const warns = (it.v.warnings || []).map(w => `<li><span class="mono small">${esc(w.code)}</span> ${w.path && F[w.path] ? fieldLink(w.path) : ""} — ${esc(w.message)}</li>`).join("");
     const lk = linksOf(it.rec), by = linkedBy(id), ar = AREC[id];
+    const st = STM[id], ch = CHUNK[id];
+    const hooks = st || (ch && (ch.entities || []).length) ? `<div class="small" style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px"><b>Hooks for downstream</b>
+      <span class="muted">— anchored by the pipeline in the quote (<a href="#downstream">what they feed →</a>)</span>
+      <div class="quote" style="margin-top:4px">${annotate(it.rec.common.source_quote || "", [...(st ? stmSpans(st) : []), ...(ch && ch.chunk_text === it.rec.common.source_quote ? entSpans(ch) : [])])}</div>
+      ${st ? `<div style="margin-top:4px"><span class="mono">${esc(st.subject)}</span> — <b class="mono">${esc(st.predicate)}</b> ${statusTag(st.predicate_status)} → <span class="mono">${esc(st.object)}</span></div>` : ""}</div>` : "";
     const chain = lk.length || by.length || ar ? `<div class="small" style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px"><b>Evidence chain</b>
       ${ar ? `<div style="margin-top:4px">${elTags(ar)} ${flagTags(ar)}</div>` : ""}
       ${lk.map(l => `<div>${esc(l.name)} → ${l.ids.map(recBtn).join(" · ")}</div>`).join("")}
@@ -607,7 +737,7 @@ function selectItem(id, fromText) {
     box.innerHTML = `<div class="card pad" style="margin-bottom:12px"><div class="row1" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <span class="tag acc">${esc(it.rec.common.record_kind)}</span>${reviewTag(it.rec.common.review_status)}<span class="mono small">${esc(id)}</span>
         <span class="muted small">locator: <span class="mono">${esc(it.rec.common.source_locator)}</span></span></div>
-        ${warns ? `<ul class="issues small">${warns}</ul>` : `<div class="small muted" style="margin-top:6px">No warnings: the quote was found on the stated page and every value appears in it.</div>`}${chain}</div>
+        ${warns ? `<ul class="issues small">${warns}</ul>` : `<div class="small muted" style="margin-top:6px">No warnings: the quote was found on the stated page and every value appears in it.</div>`}${chain}${hooks}</div>
       <div class="grid2">
         <div class="card"><div class="panel-h"><span>Candidate — written by the agent</span><span class="muted small">${cand ? "candidates[" + ci + "]" : "system record"}</span></div>
           <pre class="json">${cand ? jsonHTML(cand) : '<span class="muted">No candidate: the pipeline creates this record for the input PDF itself (profile system record).</span>'}</pre></div>
@@ -630,6 +760,232 @@ function selectItem(id, fromText) {
   }
 }
 
+// ---------------------------------------------------------------- downstream outputs
+const HOOKS = [
+  ["Statement", ["transform.subject_mention", "transform.predicate_mention", "transform.object_mention"], "the model, verbatim from the quote", "graph edges · QA"],
+  ["Entity markers", ["transform.entity_links"], "the pipeline: type from the field that lists the mention, offsets in the quote, role in the statement", "graph nodes · corpus annotation · QA answer spans"],
+  ["Relation anchor", ["transform.predicate_start_offset", "transform.predicate_end_offset"], "the pipeline", "corpus annotation · relation-extraction data"],
+  ["Normalised predicate", ["transform.predicate_code", "transform.predicate_label", "transform.predicate_id"], "lexicon (pipeline) → reviewer → ontology alignment", "graph edge type"],
+  ["Typed, aligned ends", ["transform.subject_type", "transform.object_type", "transform.subject_id", "transform.object_id"], "reviewers and entity alignment (Topic 1)", "graph node identity"],
+  ["Hedge and limits", ["agent.claim_qualifier_text", "agent.stated_limitations"], "the model, verbatim", "every consumer: a hedged statement is not a finding"],
+  ["Record links", ["agent.evidence_record_ids", "skills.method_record_ids"], "the pipeline, from candidate links", "edges between records · multi-hop QA"],
+  ["Evidence", ["common.source_id", "common.source_page", "common.source_quote", "common.source_span"], "the pipeline and the model", "provenance of every derived row"],
+];
+const PALETTE = ["var(--av-D)", "var(--av-N)", "var(--av-I)", "var(--av-G)", "var(--av-F)", "var(--j-key)", "var(--j-lit)", "var(--text-3)"];
+const GS = { kinds: new Set(["statement", "mention", "link"]) };
+function graphLayout(nodes, edges, W, H) {
+  const idx = Object.fromEntries(nodes.map((n, i) => [n.id, i]));
+  const ents = nodes.filter(n => n.kind === "entity"), rest = nodes.filter(n => n.kind !== "entity");
+  ents.forEach((n, i) => { const a = 2 * Math.PI * i / Math.max(1, ents.length); n.x = W / 2 + 0.3 * W * Math.cos(a); n.y = H / 2 + 0.3 * H * Math.sin(a); });
+  rest.forEach((n, i) => { const a = 2 * Math.PI * i / Math.max(1, rest.length) + 0.3; n.x = W / 2 + 0.45 * W * Math.cos(a); n.y = H / 2 + 0.45 * H * Math.sin(a); });
+  const deg = {};
+  for (const e of edges) { deg[e.s] = (deg[e.s] || 0) + 1; deg[e.o] = (deg[e.o] || 0) + 1; }
+  // a hub mentioned by many records gets longer spokes, so its records spread around it instead of piling up
+  const springs = edges.map(e => [idx[e.s], idx[e.o], e.kind === "statement" ? 250 : e.kind === "mention" ? 90 + 7 * Math.min(22, deg[e.o] || 0) : 170])
+    .filter(l => l[0] != null && l[1] != null && l[0] !== l[1]);
+  const STEPS = 520;
+  for (let it = 0; it < STEPS; it++) {
+    const dx = nodes.map(() => 0), dy = nodes.map(() => 0);
+    for (let a = 0; a < nodes.length; a++) for (let b = a + 1; b < nodes.length; b++) {
+      const x = nodes[a].x - nodes[b].x || 0.5, y = nodes[a].y - nodes[b].y || 0.5, d2 = x * x + y * y, d = Math.sqrt(d2), f = 30000 / d2;
+      dx[a] += x / d * f; dy[a] += y / d * f; dx[b] -= x / d * f; dy[b] -= y / d * f;
+    }
+    for (const [a, b, len] of springs) {
+      const x = nodes[b].x - nodes[a].x, y = nodes[b].y - nodes[a].y, d = Math.sqrt(x * x + y * y) || 1, f = (d - len) * 0.04;
+      dx[a] += x / d * f; dy[a] += y / d * f; dx[b] -= x / d * f; dy[b] -= y / d * f;
+    }
+    nodes.forEach((n, k) => {
+      dx[k] += (W / 2 - n.x) * 0.004; dy[k] += (H / 2 - n.y) * 0.012;
+      const m = Math.sqrt(dx[k] * dx[k] + dy[k] * dy[k]) || 1, step = Math.min(m, 30 * (1 - it / STEPS) + 1);
+      n.x = Math.min(W - 90, Math.max(90, n.x + dx[k] / m * step)); n.y = Math.min(H - 30, Math.max(30, n.y + dy[k] / m * step));
+    });
+  }
+  return idx;
+}
+function graphSVG() {
+  const W = 1040, H = 660, G = X.graph;
+  const edges = G.edges.filter(e => GS.kinds.has(e.kind));
+  const used = new Set(edges.flatMap(e => [e.s, e.o]));
+  const nodes = G.nodes.filter(n => used.has(n.id)).map(n => ({ ...n }));
+  const idx = graphLayout(nodes, edges, W, H);
+  const types = [...new Set(G.nodes.filter(n => n.kind === "entity").map(n => n.type || "entity"))];
+  const color = t => PALETTE[types.indexOf(t) % PALETTE.length];
+  const pairs = {};
+  const lines = edges.map(e => {
+    const a = nodes[idx[e.s]], b = nodes[idx[e.o]];
+    if (!a || !b) return "";
+    const key = [e.s, e.o].sort().join("|") + "|" + e.kind, k = pairs[key] = (pairs[key] || 0) + 1;
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+    const bend = e.kind === "statement" ? 26 * k : e.kind === "link" ? 14 : 0, cx = mx - (b.y - a.y) / len * bend, cy = my + (b.x - a.x) / len * bend;
+    const label = e.kind === "statement" ? `<text class="el" x="${(mx + cx) / 2}" y="${(my + cy) / 2 - 4}" text-anchor="middle">${esc(e.predicate_mention || e.p.replace(/^bdc:/, ""))}</text>` : "";
+    return `<path class="e-${e.kind}" d="M${a.x.toFixed(1)} ${a.y.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}"${e.kind === "statement" ? ' marker-end="url(#g-arrow)"' : e.kind === "link" ? ' marker-end="url(#g-arrow-l)"' : ""}>
+      <title>${esc(e.s)} — ${esc(e.p)} → ${esc(e.o)}${e.predicate_status ? " · " + esc(e.predicate_status) : ""}${e.argument_role ? " · " + esc(e.argument_role) : ""}</title></path>${label}`;
+  }).join("");
+  const dots = nodes.map(n => {
+    if (n.kind === "entity") {
+      const r = 8 + Math.min(8, n.mentions || 1);
+      return `<g><circle cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="${r}" fill="${color(n.type || "entity")}" fill-opacity="0.85"><title>${esc(n.id)} · ${esc(n.type || "entity")} · mentioned by ${n.mentions || 0} record(s)${n.entity_id ? " · " + esc(n.entity_id) : ""}</title></circle>
+        <text x="${n.x.toFixed(1)}" y="${(n.y + r + 13).toFixed(1)}" text-anchor="middle">${esc((n.label || n.id).slice(0, 34))}</text></g>`;
+    }
+    if (n.kind === "record") {
+      const id = n.id.slice(4);
+      return `<a href="#demo?rec=${encodeURIComponent(id)}"><rect class="n-record" x="${(n.x - 6).toFixed(1)}" y="${(n.y - 6).toFixed(1)}" width="12" height="12" rx="3"><title>${esc(n.type || "record")}: ${esc((n.label || n.id).slice(0, 120))}</title></rect></a>`;
+    }
+    return `<circle class="n-source" cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="7"><title>source · ${esc(n.label || n.id)}</title></circle>`;
+  }).join("");
+  return { svg: `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Property graph of the example records: entities, records and the statements, mentions and links between them">
+      <defs><marker id="g-arrow" viewBox="0 0 10 10" refX="19" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker>
+        <marker id="g-arrow-l" viewBox="0 0 10 10" refX="14" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--warn)"/></marker></defs>
+      ${lines}${dots}</svg>`, types, color, shown: { nodes: nodes.length, edges: edges.length } };
+}
+function renderGraph() {
+  const g = graphSVG();
+  $("#g-box").innerHTML = g.svg;
+  $("#g-legend").innerHTML = g.types.map(t => `<span><i style="background:${g.color(t)}"></i>${esc(t)}</span>`).join("") +
+    `<span><i style="background:var(--surface-2);border:1px solid var(--text-3);border-radius:3px"></i>record (click to open)</span><span class="muted">${g.shown.nodes} nodes · ${g.shown.edges} edges shown</span>`;
+}
+function renderDownstream() {
+  const c = X.counts, first = X.statements[0];
+  const cand = first && D.candidates.candidates[(VREC[first.record_id] || {}).candidate_index];
+  const rel = Object.values(D.relation_roles || {});
+  const wrote = cand ? Object.fromEntries(Object.entries(cand.fields).filter(([k]) => rel.includes(k))) : null;
+  const built = first ? RID[first.record_id].transform : null;
+  const ladder = Object.keys(STATUS).map(k => `<tr><td>${statusTag(k)}</td><td class="small">${esc(STATUS[k][1])}</td><td class="num">${count(X.statements, st => st.predicate_status === k) || '<span class="muted">·</span>'}</td></tr>`).join("");
+  const kinds = [...new Set(X.graph.edges.map(e => e.kind))];
+  const chunkHTML = ch => `<div class="card pad stm"><div class="quote">${annotate(ch.chunk_text, entSpans(ch))}</div>
+    <div class="small muted" style="margin-top:6px">p.${esc(ch.chunk_page ?? "?")}${ch.chunk_section ? " · " + esc(ch.chunk_section) : ""} · supports ${ch.chunk_support_ids.map(recLink).join(" · ")}
+      ${(ch.statement_ids || []).length ? ` · ${ch.statement_ids.length} statement${ch.statement_ids.length > 1 ? "s" : ""}` : ""} · <span class="mono">${esc(ch.chunk_id)}</span></div></div>`;
+  const annotated = X.corpus.filter(ch => (ch.entities || []).length), plain = X.corpus.filter(ch => !(ch.entities || []).length);
+  const qaRow = q => `<tr><td>${esc(q.qa_seed_question).replace("____", '<span class="blank">____</span>')}</td><td><b>${esc(q.qa_seed_answer)}</b></td>
+    <td class="small"><span class="tag ${q.qa_slot === "value" ? "" : "acc"}">${esc(q.qa_slot)}</span> ${F[q.answer_type] ? fieldLink(q.answer_type, q.answer_type.split(".")[1]) : esc(q.answer_type)}</td>
+    <td class="small">${q.qa_support_ids.map(recLink).join("<br>")}${(q.qa_reasoning_path_ids || []).length ? `<div class="mono muted">${q.qa_reasoning_path_ids.map(esc).join(" ")}</div>` : ""}</td></tr>`;
+  const tablePrev = ([name, t]) => `<details><summary><span class="mono">${esc(name)}.csv</span> <span class="muted small">${t.total} row${t.total === 1 ? "" : "s"} · ${t.columns.length} columns</span></summary>
+    <div class="tbl-wrap"><table><thead><tr>${t.columns.map(col => `<th class="mono">${esc(col)}</th>`).join("")}</tr></thead><tbody>
+      ${t.rows.map(r => `<tr>${t.columns.map(col => `<td class="small" style="max-width:260px;overflow-wrap:anywhere">${r[col] === undefined ? "" : esc(short(r[col]).slice(0, 140))}</td>`).join("")}</tr>`).join("")}
+    </tbody></table></div>${t.total > t.rows.length ? `<p class="small muted">First ${t.rows.length} of ${t.total} rows.</p>` : ""}</details>`;
+  $("#view-downstream").innerHTML = `
+    <h2>One set of records, several downstream outputs</h2>
+    <p class="lead">A record is extracted once and consumed many times. If it were only a container for extraction results, every consumer would have to parse the
+      quote again: which entity is the subject, what the relation is, where each mention stands. Instead the record states all of it as fields, the <b>hooks</b>,
+      and <code>bdc derive</code> builds every output below from them without reading text a second time. Where a record has no hook, the output has no row: nothing is guessed.
+      The data shown is the output of the <a href="#demo">walk-through</a> on the synthetic example paper.</p>
+    <div class="tiles">
+      <div class="tile"><div class="k">Statements</div><div class="v">${c.statements}</div><div class="s">subject · predicate · object</div></div>
+      <div class="tile"><div class="k">Graph</div><div class="v">${c.graph_nodes}</div><div class="s">nodes · ${c.graph_edges} edges</div></div>
+      <div class="tile"><div class="k">Triples</div><div class="v">${c.triples}</div><div class="s">with record provenance</div></div>
+      <div class="tile"><div class="k">Corpus chunks</div><div class="v">${c.corpus_chunks}</div><div class="s">${annotated.length} with entity offsets</div></div>
+      <div class="tile"><div class="k">QA seeds</div><div class="v">${c.qa_seeds}</div><div class="s">cloze · single hop · candidates</div></div>
+      <div class="tile"><div class="k">Tables</div><div class="v">${Object.keys(X.tables).length}</div><div class="s">${Object.values(X.tables).reduce((n, t) => n + t.total, 0)} rows (CSV)</div></div>
+    </div>
+    <h3 id="ds-hooks">The hooks a record carries</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>Hook</th><th>Fields</th><th>Filled by</th><th>Read by</th></tr></thead><tbody>
+      ${HOOKS.map(([name, fields, by, read]) => `<tr><td><b>${esc(name)}</b></td><td class="small">${fields.map(fl).join(" ")}</td><td class="small">${esc(by)}</td><td class="small">${esc(read)}</td></tr>`).join("")}
+      <tr><td><b>Qualifiers</b></td><td class="small">${count(C.fields, f => f.key_role === "condition" || f.key_role === "context_key")} fields of role <a href="#fields?role=condition">condition</a> or <a href="#fields?role=context_key">context_key</a></td><td class="small">the model / the pipeline</td><td class="small">statement qualifiers · QA answer scope</td></tr>
+    </tbody></table></div>
+    <p class="small muted">The model copies, the pipeline computes: offsets, entity types, relation roles and the predicate code are deterministic functions of the record and its quote.
+      Two warning rules keep them honest: ${["R033", "R034"].filter(id => C.rules.some(r => r.id === id)).map(id => `<a href="#rules">${id}</a> ${esc(C.rules.find(r => r.id === id).title_zh)}`).join(" · ")}.</p>
+    ${wrote && built ? `<div class="grid2" style="margin-top:12px">
+      <div class="card"><div class="panel-h"><span>What the agent wrote</span><span class="muted small">three verbatim strings</span></div><pre class="json">${jsonHTML(wrote)}</pre></div>
+      <div class="card"><div class="panel-h"><span>What the record carries</span><span class="muted small">transform block of the record</span></div><pre class="json">${jsonHTML({ transform: built })}</pre></div>
+    </div>` : ""}
+    <h3 id="ds-statements">Statements: explicit subject, predicate, object</h3>
+    <p class="small muted">One row of <code>statements.csv</code> per statement. Colours mark the anchors in the quote:
+      <span class="sp sp-subject">subject</span> <span class="sp sp-predicate">predicate</span> <span class="sp sp-object">object</span>.
+      A statement keeps every level its predicate has reached; consumers pick their own threshold.</p>
+    <div class="grid21">
+      <div>${X.statements.map(st => statementCard(st, true)).join("") || '<p class="muted">The example records state no relation.</p>'}</div>
+      <div class="tbl-wrap"><table><thead><tr><th>predicate_status</th><th>Meaning</th><th class="num">here</th></tr></thead><tbody>${ladder}</tbody></table></div>
+    </div>
+    <h3 id="ds-graph">Knowledge graph</h3>
+    <p class="small muted"><code>graph.json</code>: entities are keyed by type and mention, records and sources are nodes too. Statement edges carry predicate status, qualifiers and hedge;
+      mention edges carry offsets; link edges carry their evidence-chain element. An aligned ID is a node property: merging entities is a fusion decision left to the consumer.</p>
+    <div class="controls" role="group" aria-label="Edge kinds">${kinds.map(k => `<button class="chip" data-kind="${esc(k)}" aria-pressed="${GS.kinds.has(k)}">${esc(k)} <span class="muted">${count(X.graph.edges, e => e.kind === k)}</span></button>`).join("")}</div>
+    <div class="graph" id="g-box"></div>
+    <div class="legend" id="g-legend"></div>
+    <details><summary>Triples: one edge per predicate that points at an entity or a record (sample of ${c.triples})</summary>
+      <div class="tbl-wrap"><table><thead><tr><th>Subject</th><th>Predicate</th><th>Object</th></tr></thead><tbody>
+        ${X.entity_triples.map(t => `<tr><td class="small">${t.s.startsWith("rec:") ? recLink(t.s.slice(4)) : `<span class="mono">${esc(t.s)}</span>`}</td><td class="mono small">${esc(t.p)}</td>
+          <td class="small">${String(t.o).startsWith("rec:") ? recLink(String(t.o).slice(4)) : `<span class="mono">${esc(t.o)}</span>`}</td></tr>`).join("")}
+      </tbody></table></div></details>
+    <h3 id="ds-corpus">Corpus: quotes that are already annotated</h3>
+    <p class="small muted"><code>corpus.jsonl</code>: one chunk per distinct quote with the records it supports, <span class="sp sp-entity">entity offsets</span>, statement IDs, licence and a leakage group
+      (one per paper, so a paper never straddles a train/test split). Keys follow the <code>transform.chunk_*</code> fields.</p>
+    ${annotated.map(chunkHTML).join("")}
+    ${plain.length ? `<details><summary>${plain.length} chunk${plain.length > 1 ? "s" : ""} without entity offsets (table cells, methods)</summary>${plain.map(chunkHTML).join("")}</details>` : ""}
+    <h3 id="ds-qa">QA seeds: cloze items that cite their records</h3>
+    <p class="small muted"><code>qa.jsonl</code>: the quote with one anchored answer masked. The answer is always a span of the quote and the supporting records are always cited,
+      so an item can be checked without the paper. Keys follow the <code>transform.qa_*</code> fields. Seeds are candidates: natural-language questions, multi-hop and unanswerable items are generated downstream.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Question</th><th>Answer</th><th>Slot · type</th><th>Supports · reasoning path</th></tr></thead><tbody>${X.qa.map(qaRow).join("")}</tbody></table></div>
+    <h3 id="ds-tables">Relational tables</h3>
+    <p class="small muted">Each field lands where its <a href="#functions">key role</a> says. Name and ID arrays are never paired by position; explicit pairs come from the entity markers.</p>
+    ${Object.entries(X.tables).map(tablePrev).join("")}
+    <h3>Files</h3>
+    <p class="small muted">Written by <code>bdc derive examples/output/synthetic_rice_qtl.jsonl --out derived/</code> when this site was built (derive format ${esc(X.derive_format)}).</p>
+    <div class="codes">${X.files.map(f => `<a class="mono small" href="${esc(f)}" style="margin-right:10px">${esc(f.replace(/^derived\//, ""))}</a>`).join("")}</div>
+    <h3>What stays downstream</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>Step</th><th>Why it is not in the record</th><th>Where it lands</th></tr></thead><tbody>
+      <tr><td>Natural-language, multi-hop and unanswerable QA</td><td class="small">generation (availability ${av("G")})</td><td class="small">${["transform.qa_seed_question", "transform.qa_difficulty", "transform.qa_unanswerable_reason"].map(fl).join(" ")}</td></tr>
+      <tr><td>Entity alignment to ontologies and databases</td><td class="small">Topic 1 fusion, needs external sources</td><td class="small">${["transform.subject_id", "transform.object_id", "transform.entity_alignment_status"].map(fl).join(" ")}</td></tr>
+      <tr><td>Reviewed predicate, entity types, polarity</td><td class="small">human judgment (availability ${av("I")})</td><td class="small">${["transform.predicate_label", "transform.subject_type", "transform.relation_polarity"].map(fl).join(" ")}</td></tr>
+      <tr><td>Train / validation / test split</td><td class="small">a dataset decision</td><td class="small">${["transform.corpus_split", "transform.leakage_group_id"].map(fl).join(" ")}</td></tr>
+    </tbody></table></div>`;
+  $("#view-downstream").querySelectorAll(".chip[data-kind]").forEach(b => b.addEventListener("click", () => {
+    const k = b.dataset.kind; GS.kinds.has(k) ? GS.kinds.delete(k) : GS.kinds.add(k);
+    b.setAttribute("aria-pressed", GS.kinds.has(k)); renderGraph();
+  }));
+  renderGraph();
+}
+
+// ---------------------------------------------------------------- importers
+const MAPCOL = { mapped: "var(--av-I)", merged: "var(--av-D)", transformed: "var(--av-G)", partial: "var(--av-N)", control: "var(--text-3)", view_only: "var(--text-3)", unmapped: "var(--border)", forbidden: "var(--err)" };
+const MAPHELP = { mapped: "copied to one contract field", merged: "lands in a field shared with other origins", transformed: "converted by a named rule", partial: "kept where the value fits, otherwise residue",
+  control: "run or governance state, reported not migrated", view_only: "a derived view, rebuilt on demand", unmapped: "no contract field; kept in the residue file", forbidden: "must not be migrated" };
+function renderImporters() {
+  const card = m => {
+    const order = Object.keys(MAPCOL).filter(k => m.status[k]);
+    const cmd = `bdc migrate ${m.command} ${m.input} --out out/${m.command}${m.args ? " " + m.args : ""}`;
+    return `<div class="card pad imp">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><h3 class="mono">bdc migrate ${esc(m.command)}</h3><span class="tag acc">${esc(m.origin)}</span>
+        <span class="muted">${esc(m.title_zh)}${m.version && !m.title_zh.includes(String(m.version).replace(/^v/, "")) ? " · " + esc(m.version) : ""}</span></div>
+      <div class="small" style="margin-top:4px">Input: ${esc(m.shape)}.</div>
+      <div class="cmd">${esc(cmd)}</div>
+      <div class="grid2">
+        <div><b class="small">Mapping</b> <span class="small muted mono">${esc(m.mapping_file)}</span>
+          <div class="bar" role="img" aria-label="Mapping status of ${m.leaves} source leaves">${order.map(k => `<i style="width:${(100 * m.status[k] / m.leaves).toFixed(2)}%;background:${MAPCOL[k]}" title="${esc(k)}: ${m.status[k]}"></i>`).join("")}</div>
+          <div class="legend">${order.map(k => `<span title="${esc(MAPHELP[k] || "")}"><i style="background:${MAPCOL[k]}"></i>${esc(k)} ${m.status[k]}</span>`).join("")}</div>
+          <div class="small muted">${m.leaves} source leaves accounted for · ${m.targets} contract fields reached ·
+            <a href="#fields?origin=${encodeURIComponent(m.origin)}">${m.fields_shared} field${m.fields_shared === 1 ? "" : "s"} list this origin</a>${m.fields_added ? ` (${m.fields_added} added by it)` : ""}</div></div>
+        <div><b class="small">Example run</b> <span class="small muted mono">${esc(m.example_dir)}/</span>
+          <div class="mini"><div><b>${m.counts.records}</b><span>records</span></div><div><b>${m.counts.rejected}</b><span>rejected</span></div>
+            <div><b>${m.counts.residue_leaves}</b><span>residue leaves</span></div>${m.counts.review_candidates != null ? `<div><b>${m.counts.review_candidates}</b><span>flagged for review</span></div>` : ""}</div>
+          <div class="small">${Object.entries(m.by_kind).map(([k, n]) => `<span class="tag">${esc(k)} ${n}</span>`).join(" ")}</div>
+          ${Object.keys(m.rejected_by_code).length ? `<div class="small muted" style="margin-top:4px">rejected: ${Object.entries(m.rejected_by_code).map(([k, n]) => `${esc(k)} ${n}`).join(" · ")}</div>` : ""}
+          <div class="small muted" style="margin-top:4px">validated against contract ${esc(m.contract_version)}</div></div>
+      </div>
+      <details><summary>Principles and issue register (${m.issues.length})</summary>
+        <ul class="issues small">${m.principles_zh.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+        <div class="tbl-wrap" style="margin-top:8px"><table><thead><tr><th>ID</th><th>Issue</th><th>Finding</th><th>Resolution</th></tr></thead><tbody>
+          ${m.issues.map(x => `<tr><td class="mono">${esc(x.id)}</td><td>${esc(x.title_zh || "")}</td><td class="small">${esc(x.finding_zh || "")}</td><td class="small">${esc(x.resolution_zh || "")}</td></tr>`).join("")}
+        </tbody></table></div></details>
+      <details><summary>A migrated record</summary><div class="card"><pre class="json">${jsonHTML(m.sample)}</pre></div></details>
+    </div>`;
+  };
+  $("#view-importers").innerHTML = `<h2>Importers: existing data into the same records</h2>
+    <p class="lead">Data that already exists in another shape enters through an importer, not through a second schema. Each importer reads one archived source format,
+      follows a mapping that accounts for <b>every</b> leaf of that format, splits documents into atomic records and validates them against the same contract as extracted records.
+      What cannot be mapped is kept in a residue file and what fails validation in an errors file: nothing is dropped silently, and nothing is invented to fill a required field.</p>
+    <ol class="flow">
+      <li><b>Check the source</b><div>input validated against the archived source schema and version</div></li>
+      <li><b>Map</b><div>every source leaf has a status in <code>mappings/*.yaml</code>; <code>bdc check</code> fails on an uncovered leaf</div></li>
+      <li><b>Split &amp; join</b><div>one record per fact; samples, assays and assets joined by explicit IDs only</div></li>
+      <li><b>Validate</b><div>same schema, rules and vocabularies as extracted records; all imports start as <code>pending_review</code></div></li>
+      <li><b>Account</b><div>records · errors · residue · a migration report with source and mapping hashes</div></li>
+    </ol>
+    ${DATA.importers.map(card).join("")}
+    <p class="small muted">Imported records appear next to extracted ones in <a href="#records">Record examples</a>. The archived source files and their hashes are listed in <code>sources/SOURCES.md</code>;
+      the differences between the sources and the merge decisions are in <code>docs/source_analysis.md</code>.</p>`;
+}
+
 // ---------------------------------------------------------------- record gallery
 function renderRecords() {
   const html = DATA.gallery.map(g => {
@@ -644,7 +1000,7 @@ function renderRecords() {
       </tbody></table></div></div>`;
   }).join("");
   $("#view-records").innerHTML = `<h2>Record examples</h2>
-    <p class="lead">One valid record per kind and origin: curated examples, pdf2jsonl output, legacy v1 migration and omics v2 migration. Every record
+    <p class="lead">One valid record per kind and way in: curated examples, pdf2jsonl output and each <a href="#importers">importer</a>. Every record
       carries <code>schema_name</code> + <code>schema_version</code>, a stable <code>record_id</code> and provenance, and omits missing values. Field names link to the catalog.</p>
     <div class="gal">${html}</div>`;
 }
@@ -701,13 +1057,23 @@ function route() {
     if (!rendered.has(name)) renderFieldsShell();
     if (qs !== undefined) {
       Object.assign(FS, { q: params.get("q") || "", group: params.get("group") || "", profile: "", maturity: "", since: "", req: "",
-        fn: params.get("fn") || "", role: params.get("role") || "", open: null });
+        fn: params.get("fn") || "", role: params.get("role") || "", tag: params.get("tag") || "", origin: params.get("origin") || "", open: null });
       FS.av = new Set(params.get("av") ? [params.get("av")] : AV);
     }
     syncFieldControls(); renderFieldRows();
   }
   if (name === "functions" && !rendered.has(name)) renderFunctions();
-  if (name === "demo" && !rendered.has(name)) renderDemo();
+  if (name === "demo") {
+    if (!rendered.has(name)) renderDemo();
+    const rec = params.get("rec");
+    if (rec && RID[rec]) { selectItem(rec, true); $("#d-detail").scrollIntoView({ block: "start" }); }
+  }
+  if (name === "downstream") {
+    if (!rendered.has(name)) renderDownstream();
+    const part = document.getElementById("ds-" + params.get("part"));
+    if (part) part.scrollIntoView({ block: "start" });
+  }
+  if (name === "importers" && !rendered.has(name)) renderImporters();
   if (name === "records" && !rendered.has(name)) renderRecords();
   if (name === "vocab") renderVocab(params.get("q") || ($("#v-q") ? $("#v-q").value : ""));
   if (name === "rules") renderRules(params.get("amb"));
@@ -716,7 +1082,8 @@ function route() {
 }
 $("#repo-link").href = DATA.repo;
 $("#foot").innerHTML = `Generated from release <b>${esc(C.version)}</b> of <span class="mono">${esc(C.name)}</span> and the checked-in examples by
-  <span class="mono">scripts/make_site.py</span>. All example papers and data are synthetic. <a href="${esc(DATA.repo)}">Source on GitHub</a>.`;
+  <span class="mono">scripts/make_site.py</span>. All example papers and data are synthetic.
+  <a href="papers.html">Papers</a> · <a href="pipeline.html">Pipeline diagram</a> · <a href="${esc(DATA.repo)}">Source on GitHub</a>.`;
 window.addEventListener("hashchange", route);
 route();
 </script>

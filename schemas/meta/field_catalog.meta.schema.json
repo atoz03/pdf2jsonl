@@ -139,7 +139,7 @@
       "additionalProperties": false,
       "properties": {
         "id": {"type": "string", "pattern": "^R\\d{3}$"},
-        "kind": {"enum": ["required_when", "require_any_when", "paired", "mutually_exclusive", "lte", "equals_any_field", "forbid_pattern", "grain_matches_kind", "unique_within_dataset", "single_value_per_group", "references_resolve"]},
+        "kind": {"enum": ["required_when", "require_any_when", "paired", "mutually_exclusive", "lte", "equals_any_field", "forbid_pattern", "grain_matches_kind", "unique_within_dataset", "single_value_per_group", "references_resolve", "offsets_match_text"]},
         "severity": {"enum": ["error", "warning"]},
         "basis": {"enum": ["explicit", "definitional", "inferred"]},
         "title_zh": {"type": "string"},
@@ -152,6 +152,16 @@
         "group_by": {"$ref": "#/$defs/field_path"},
         "target": {"$ref": "#/$defs/field_path"},
         "pattern": {"type": "string"},
+        "spans": {
+          "type": "array",
+          "description": "offsets_match_text: scalar (mention, start, end) fields checked against the text in `field`; `fields` lists arrays whose items carry mention/start/end",
+          "items": {
+            "type": "object",
+            "required": ["mention", "start", "end"],
+            "additionalProperties": false,
+            "properties": {"mention": {"$ref": "#/$defs/field_path"}, "start": {"$ref": "#/$defs/field_path"}, "end": {"$ref": "#/$defs/field_path"}}
+          }
+        },
         "since": {"$ref": "#/$defs/semver"},
         "source_zh": {"type": "string"},
         "ambiguities": {"$ref": "#/$defs/amb_refs"}

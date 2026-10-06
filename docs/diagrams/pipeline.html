@@ -33,7 +33,7 @@
   <div class="canvas" id="canvas">
 <svg id="pipeline-diagram" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1840" width="1440" height="1840" role="img" aria-labelledby="diagram-title diagram-desc" lang="zh-CN">
 <title id="diagram-title" data-en="Breeding literature data pipeline">育种文献数据管线全景</title>
-<desc id="diagram-desc" data-en="A shared versioned contract governs PDF extraction and legacy, omics and merged imports. Extraction parses pages, prepares an agent brief, produces candidates, repairs structure, verifies evidence, builds linked atomic records and validates records and datasets. Accepted JSONL feeds tables, graph triples, evidence corpora and document bundles. Rejections and audit reports support manual review and iteration. OCR text is supplied externally; QA generation is downstream.">统一版本化契约约束 PDF 抽取及 legacy、omics、merged 数据迁移。文献依次经过解析、任务准备、候选抽取、结构修复、证据核验、原子记录组装与关联、记录及数据集校验，输出 JSONL、审计报告和错误记录。有效记录派生关系表、图谱三元组、证据语料和文档聚合，错误经人工复核支持后续迭代。OCR 文本由外部提供，QA 由下游生成。</desc>
+<desc id="diagram-desc" data-en="A shared versioned contract governs PDF extraction and legacy, omics and merged imports. Extraction parses pages, prepares an agent brief, produces candidates, repairs structure, verifies evidence, builds linked atomic records and validates records and datasets. Accepted JSONL carries explicit statements and entity anchors and feeds tables, a knowledge graph, an annotated corpus, QA seeds and document bundles. Rejections and audit reports support manual review and iteration. OCR text is supplied externally; natural-language QA generation is downstream.">统一版本化契约约束 PDF 抽取及 legacy、omics、merged 数据迁移。文献依次经过解析、任务准备、候选抽取、结构修复、证据核验、原子记录组装与关联、记录及数据集校验，输出 JSONL、审计报告和错误记录。有效记录带有显式关系语句与实体锚点，派生关系表、知识图谱、带标注的证据语料、问答种子和文档聚合，错误经人工复核支持后续迭代。OCR 文本由外部提供，自然语言问答由下游生成。</desc>
 <defs>
   <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z" fill="#8495ac"/></marker>
   <marker id="arrow-teal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z" fill="#127b72"/></marker>
@@ -134,7 +134,7 @@
 <text x="771" y="789" class="stepno" style="fill:#345fd1" text-anchor="middle">04</text>
 <text x="800" y="790" class="cardtitle" data-en="Extract candidates">生成候选记录</text>
 <text x="756" y="827" class="body" data-en="Agent reads source and brief">智能体读取原文与任务说明</text>
-<text x="756" y="852" class="body" data-en="Return fields, quotes and links">给出字段、原句、页码与引用</text>
+<text x="756" y="852" class="body" data-en="Fields, quotes, statements, links">给出字段、原句、关系语句与引用</text>
 <text x="756" y="877" class="body" data-en="Or use files / custom backends">也支持候选文件与自定义后端</text>
 <text x="756" y="895" class="mono" style="fill:#345fd1">candidates.json · ref / links</text>
 </g>
@@ -168,8 +168,8 @@
 <text x="128" y="1008" class="cardtitle" data-en="Build &amp; link records">组装与关联</text>
 <text x="84" y="1045" class="body" data-en="Set IDs and provenance">生成稳定 ID 与来源信息</text>
 <text x="84" y="1070" class="body" data-en="Keep raw; normalize by rules">保留原值，按规则标准化</text>
-<text x="84" y="1095" class="body" data-en="Link evidence and methods">解析支撑证据与方法记录引用</text>
-<text x="84" y="1113" class="mono" style="fill:#127b72">fill_rules · stable_record_id()</text>
+<text x="84" y="1095" class="body" data-en="Anchor entities; resolve links">锚定实体与谓词，解析记录引用</text>
+<text x="84" y="1113" class="mono" style="fill:#127b72">fill_rules · relation_anchors</text>
 </g>
 <g class="step" data-step="08" tabindex="0">
 <title data-en="Validate &amp; review">校验与复核</title>
@@ -196,12 +196,12 @@
 <rect x="1072" y="530" width="304" height="712" rx="20" fill="#f1eef8" stroke="#e0d9ed" />
 <rect x="1090" y="554" width="268" height="112" rx="14" fill="#ffffff" stroke="#ded6ed" />
 <text x="1107" y="586" class="cardtitle" data-en="Existing structured data" style="fill:#7955b5">已有结构化数据</text>
-<text x="1107" y="616" class="small" data-en="Legacy / omics / merged">旧文档、多组学模板、合并规范</text>
+<text x="1107" y="616" class="small" data-en="Document, omics and merged inputs">文档级、多组学与合并格式输入</text>
 <text x="1107" y="650" class="mono" style="fill:#7955b5">legacy · omics · merged</text>
 <rect x="1090" y="712" width="268" height="130" rx="14" fill="#ffffff" stroke="#ded6ed" />
 <text x="1107" y="744" class="cardtitle" data-en="Map &amp; split records" style="fill:#7955b5">映射与原子化</text>
 <text x="1107" y="774" class="small" data-en="Apply mappings; split records">按来源映射，拆分记录</text>
-<text x="1107" y="798" class="small" data-en="Join samples / assays by ID">merged 按 ID 关联样本与测定</text>
+<text x="1107" y="798" class="small" data-en="Join samples / assays by ID">按显式 ID 关联样本与测定</text>
 <text x="1107" y="826" class="mono" style="fill:#7955b5">bdc migrate &lt;source&gt;</text>
 <rect x="1090" y="888" width="268" height="140" rx="14" fill="#ffffff" stroke="#ded6ed" />
 <text x="1107" y="920" class="cardtitle" data-en="Validate target records" style="fill:#7955b5">目标契约校验</text>
@@ -249,15 +249,15 @@
 <text x="83" y="1626" class="small" data-en="CSV for relational databases">可导入关系数据库</text>
 <text x="83" y="1658" class="mono" style="fill:#127b72">bdc derive → *.tables/*.csv</text>
 <rect x="400" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
-<text x="419" y="1567" class="cardtitle" data-en="Knowledge graph triples">知识图谱与三元组</text>
-<text x="419" y="1601" class="small" data-en="Entities and relations with evidence">实体与关系保留证据关联</text>
-<text x="419" y="1626" class="small" data-en="Support knowledge organization">支持知识组织与融合</text>
-<text x="419" y="1658" class="mono" style="fill:#127b72">bdc derive → *.triples.jsonl</text>
+<text x="419" y="1567" class="cardtitle" data-en="Knowledge graph">知识图谱</text>
+<text x="419" y="1601" class="small" data-en="Explicit subject–predicate–object">显式主语、谓词、宾语语句</text>
+<text x="419" y="1626" class="small" data-en="Typed entities; evidence on edges">类型化实体，边上保留证据</text>
+<text x="419" y="1658" class="mono" style="fill:#127b72">bdc derive → triples · graph</text>
 <rect x="736" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
-<text x="755" y="1567" class="cardtitle" data-en="Evidence corpus">证据语料</text>
-<text x="755" y="1601" class="small" data-en="Citable text and record references">带出处的文本与记录引用</text>
-<text x="755" y="1626" class="small" data-en="For retrieval and downstream QA">供检索及下游 QA 生成使用</text>
-<text x="755" y="1658" class="mono" style="fill:#127b72">bdc derive → *.corpus.jsonl</text>
+<text x="755" y="1567" class="cardtitle" data-en="Corpus &amp; QA seeds">证据语料与问答种子</text>
+<text x="755" y="1601" class="small" data-en="Quotes with entity offsets">带实体偏移标注的引文</text>
+<text x="755" y="1626" class="small" data-en="Cloze QA citing its records">完形问答种子，引用支撑记录</text>
+<text x="755" y="1658" class="mono" style="fill:#127b72">bdc derive → corpus · qa</text>
 <rect x="1072" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
 <text x="1091" y="1567" class="cardtitle" data-en="Document bundles">文档聚合视图</text>
 <text x="1091" y="1601" class="small" data-en="Group atomic records by source">按来源聚合原子记录</text>
@@ -272,7 +272,7 @@
 <text x="704.0" y="1763" class="tag" data-en="Future iteration" style="fill:#7955b5" text-anchor="middle">迭代优化</text>
 <rect x="820" y="1743" width="200" height="29" rx="14" fill="#e9eef4" stroke="none" />
 <text x="920.0" y="1763" class="tag" data-en="General-purpose fields" style="fill:#52657e" text-anchor="middle">通用字段</text>
-<text x="64" y="1810" class="footnote" data-en="Solid: data processing and outputs   Dashed: rejections and manual feedback   QA generation and OCR are external.">实线：数据处理与输出    虚线：拒绝分支及人工反馈    QA 生成与外部 OCR 位于本管线之外。</text>
+<text x="64" y="1810" class="footnote" data-en="Solid: data processing and outputs   Dashed: rejections and manual feedback   Natural-language QA and OCR are external.">实线：数据处理与输出    虚线：拒绝分支及人工反馈    自然语言问答生成与外部 OCR 位于本管线之外。</text>
 </svg>
   </div>
   <footer id="page-note">图源为可编辑的 HTML 内嵌矢量图。浏览器支持中英文切换、原始尺寸查看与 SVG 下载；仓库中的静态图由 <code>make diagram</code> 从本文件导出。</footer>

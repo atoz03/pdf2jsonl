@@ -17,12 +17,26 @@ repair, migration).
  └─────────────────────────────────┘                 │   RELEASE.json         │        └── downstream (Python API / JSON Schema)
           │ bdc generate                            └────────────────────────┘
           ▼                                          releases/index.json (latest)
- FIELD_DEFINITIONS.md + docs/generated/ (dictionary .md/.csv, rules, vocabularies, profiles, ambiguities)
+ docs/generated/ (field reference, dictionary .md/.csv, rules, vocabularies, profiles, ambiguities)
 ```
 
-The root-level [field reference](../FIELD_DEFINITIONS.md) combines catalog definitions with synthetic JSON
-values from `docs/field_examples.yaml`. Generation checks example coverage and field schemas; `bdc check`
-also checks freshness of the root reference. These documentation examples do not change the contract or release hashes.
+The generated [field reference](generated/field_definitions.md) combines catalog definitions with synthetic
+JSON values from `docs/field_examples.yaml` and the tags of `docs/field_classification.yaml`. Generation checks
+example coverage and field schemas; `bdc check` checks that every generated document is current. These
+documentation examples do not change the contract or release hashes.
+
+Records are the hub between the ways in and the ways out (`docs/downstream.md`):
+
+```
+ paper (PDF) ── pdf2jsonl Skill ──┐                            ┌─► statements, triples, graph   (knowledge graph)
+                                  ├─► records (JSONL, hooks) ──┼─► corpus with entity offsets
+ existing data ── bdc migrate ────┘        bdc derive          ├─► cloze QA seeds
+ (legacy · omics · merged)                                     └─► relational tables
+```
+
+The GitHub Pages site shows all of it in one place and is built by `scripts/make_site.py` from the latest
+release and the checked-in examples: the contract browser (`index.html`), the paper dashboard (`papers.html`),
+the pipeline diagram (`pipeline.html`) and the derived files of the example paper (`derived/`).
 
 `resolve_schema("dev")` compiles the working tree on the fly and stamps the version `<VERSION>-dev.<digest8>`
 with status `unreleased`, so development output can never claim to be a release.
@@ -40,13 +54,14 @@ with status `unreleased`, so development output can never claim to be a release.
 | Releases | `release.py` | Immutable `releases/<v>/` with per-file sha256 in `RELEASE.json`; `index.json` records the release hash |
 | API | `api.py` | `resolve_schema`, `load_profile`, `load_field_catalog`, `validate_record`, `declared_version` |
 | Checks | `check.py` | The CI gate (`bdc check --strict`) |
-| Migration | `legacy.py`, `omics.py`, `merged.py`, `mappings.py` | Mapping-driven conversion of legacy v1, omics v2 and merged v2 inputs; merged observations join samples/assays by explicit IDs |
+| Importers | `legacy.py`, `omics.py`, `merged.py`, `mappings.py` | `bdc migrate`: mapping-driven conversion of existing data (document lines, omics template instances, documents with observation/sample/assay/asset arrays joined by explicit IDs) |
 | Views | `bundle.py` | `document_bundle` and the legacy v1 projection (derived, never a source of truth); document and entity fields come from `key_role` |
 | Functions | `functions.py` | Which of the four record functions a field serves according to the sources, its facets, repository additions (see `docs/field_functions.md`) |
-| Derived views | `derive.py` | `bdc derive`: relational tables, triples and an evidence corpus, every field placed by its `key_role` |
+| Derived views | `derive.py`, `relations.py` | `bdc derive`: relational tables, statements, triples, a property graph, an entity-annotated corpus and QA seeds. Every field is placed by its `key_role`; `relations.py` holds the anchor logic shared with the pipeline and the validator (spans, entity markers, predicate lexicon) |
 | Evidence-chain audit | `argument.py` | `bdc audit` and the report's `argument_structure`: Toulmin/Flavell elements per statement, link closure, flags (after TRACE) |
 | Runtime schemas | `schemas/runtime/`, `runtime_schemas.py` | Formats of manifests, validation reports, error records, bundles, migration reports |
 | Skill | `skills/pdf2jsonl/` | Workflow (`SKILL.md`), brief template (`prompts/`), runtime (`scripts/pdf2jsonl_skill/`) |
+| Site | `scripts/make_site.py`, `scripts/make_dashboard.py`, `site/` | The Pages site: contract browser, paper dashboard, pipeline diagram, downstream outputs, importers |
 
 ## The pdf2jsonl pipeline
 

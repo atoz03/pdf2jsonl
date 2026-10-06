@@ -35,7 +35,8 @@ See `docs/source_analysis.md` for the structural analysis and the inconsistencie
 
 ## merged v2 archive (supplied 2026-10-06)
 
-Original combined document/unit-row design, preserved verbatim; see `docs/merged_v2_review.md` for the integration audit.
+Original combined document/unit-row design, preserved verbatim. `docs/source_analysis.md` records what was
+found in it and what the contract took from it; `docs/migration.md` describes its importer.
 
 | Path | sha256 |
 | --- | --- |

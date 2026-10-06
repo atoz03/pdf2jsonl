@@ -13,8 +13,12 @@ PLACEHOLDERS = frozenset({
     "contract_name", "schema_version", "release_status", "profile_name", "profile_title", "profile_description",
     "record_kinds_table", "document_fields_table", "evidence_roles_table", "extract_fields_table", "field_count",
     "vocabularies_block", "rules_block", "system_fields_list", "candidate_schema_file", "pages_file",
-    "candidates_file", "argument_block", "record_links_block",
+    "candidates_file", "argument_block", "record_links_block", "relation_block",
 })
+RELATION_ROLES = (("relation_subject", "the entity the statement is about, as printed"),
+                  ("relation_predicate", "the words of the quote that connect subject and object, verbatim "
+                                         "(e.g. `was associated with`, `调控`); never a paraphrase or a code"),
+                  ("relation_object", "the entity the subject is related to, as printed"))
 ARGUMENT_ORDER = ("claim", "data", "warrant", "backing", "qualifier", "rebuttal")
 
 ROLE_HELP = {
@@ -129,6 +133,15 @@ def record_links_block(profile: dict) -> str:
     return "\n".join(lines)
 
 
+def relation_block(profile: dict) -> str:
+    """The three fields of a statement, resolved from the profile's semantic roles (AMB-038)."""
+    sem = (profile.get("roles") or {}).get("semantic") or {}
+    rows = [f"- `{sem[role]}`: {text}" for role, text in RELATION_ROLES if role in sem]
+    if len(rows) < len(RELATION_ROLES):
+        return "(this profile does not capture relations as statements)"
+    return "\n".join(rows)
+
+
 def system_list(profile: dict) -> str:
     return ", ".join(f"`{f['path']}`" for f in profile["fields"]
                      if f["role"] in ("system", "linked", "normalized", "generated"))
@@ -156,6 +169,7 @@ def render_brief(rc, profile: dict, pages_file: str, candidates_file: str, candi
         "candidates_file": candidates_file,
         "argument_block": argument_block(rc.contract, profile),
         "record_links_block": record_links_block(profile),
+        "relation_block": relation_block(profile),
     }
     assert set(values) == PLACEHOLDERS
 

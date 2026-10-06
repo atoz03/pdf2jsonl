@@ -1,18 +1,19 @@
 # Source analysis
 
-This analysis was done before the repository was built. It covers the three designs that were supplied, where
-they disagree, and how the merge resolved each point. The original files are kept byte-identical in `sources/`
-(see `sources/SOURCES.md` for the hashes). Every unresolved point is registered as an ambiguity (`AMB-*`) in
-the catalog, or as a mapping issue (`LEG-*`, `OMX-*`) in `mappings/`. The generated register is
-`docs/generated/ambiguities.md`.
+This analysis covers the designs that were supplied, where they disagree, and how the contract resolved each
+point. The first three were analysed before the repository was built; the fourth arrived with 3.3.0 and was
+handled the same way. The original files are kept byte-identical in `sources/` (see `sources/SOURCES.md` for
+the hashes). Every unresolved point is registered as an ambiguity (`AMB-*`) in the catalog, or as a mapping
+issue (`LEG-*`, `OMX-*`, `MRG-*`) in `mappings/`. The generated register is `docs/generated/ambiguities.md`.
 
-## 1. The three sources
+## 1. The sources
 
 | Source | Files | Shape | Status in the repository |
 | --- | --- | --- | --- |
 | **fields_v3** (v3.0.0) | `sources/fields_v3/breeding_fields_259_{final,intro}.md`, `…_compact_{final,intro}.md` | Flat field dictionary: 259 unique logical fields in four groups (`common` 127, `agent` 46, `skills` 46, `transform` 40), each with type, availability D/N/I/G/F, requirement Y/C/N, data source, downstream use, definition. Sparse atomic records (one claim, observation, method, result or asset per line). The 157-field compact set is a hand-picked subset. | **Authoritative baseline.** Imported verbatim as release 3.0.0 (`maturity: verified`, per-field source line references; `tests/test_catalog_fidelity.py` compares the catalog with the markdown). |
 | **legacy_v1** (v1.0.0) | `sources/legacy_v1/` spec, JSON Schema, template, example, README | Document-centric: **one paper per JSONL line** with 12–14 top-level blocks (`record_info`, `doc_meta`, `breed_entities`, `relations`, `experiments`, `analyses`, `conclusions`, `pipeline`, `governance`, `provenance`, `agent`, `skill`); 713 schema leaves. | Superseded design. Content fields merged as 17 provisional fields (3.1.0); the rest is covered by `mappings/legacy_to_current.yaml`. Converted by `bdc migrate legacy`, and re-derivable as a view with `bdc bundle --legacy-v1`. |
 | **omics_v2** (2.0.0) | `sources/omics_v2/omics_metadata_template.json` | A template of 27 groups and 252 field names, all values `null`. It has no definitions, types, units or requirements. | Candidate extension. Merged as 111 provisional fields (68 in the new `omics` group), plus `mappings/omics_to_current.yaml`. Converted by `bdc migrate omics`. |
+| **merged_v2** (v2.0.0) | `sources/merged_v2/` README, spec, JSON Schema, template, JSON/JSONL example, mapping note | A combined design over the three above: the legacy document line extended with observation, sample, assay and asset arrays, plus unit rows that point at a parent document; 1,022 schema leaves (317 more than legacy v1; the count includes attributes repeated across entity, evidence and observation objects). | An input format, not a second schema. Three sample fields added as provisional (AMB-037), plus `mappings/merged_to_current.yaml`. Converted by `bdc migrate merged`. |
 
 Two project documents were added later, in 3.2.0. They define what the records are for rather than new fields.
 They are also kept verbatim, under `sources/project/`:
@@ -76,7 +77,24 @@ case-insensitive filesystems, so they are stored as `sources/archives/fields_v3_
 | The `null` convention contradicts omit-missing. | OMX-008 |
 | Units of `qtl_start` / `qtl_end` are unstated. | OMX-009 |
 
-### 2.4 Across sources
+### 2.4 Inside merged v2
+
+Passing the source schema only shows that the input has the structure of that source. The archived example
+passes it; the empty template produces 56 errors.
+
+| Finding | Resolution | Issue |
+| --- | --- | --- |
+| Document state mixed with atomic facts: agent run state, governance scores, skill registry status, translations, vectors and derived views sit next to paper content. | The atomic record stays the format. Values without a stated meaning or evidence binding go to the residue file with a reason. | MRG-001 |
+| `source_locations` and evidence objects carry journal pages (2221–2234), not physical PDF pages. | Converted only with an explicit `--page-offset`; without one no physical page is written. | MRG-002 |
+| Some quotes contain `...`; `sec-result` has no section definition in the document. | An incomplete quote never becomes `source_quote`; a dangling section is flagged for review. Every imported quote awaits verification against the PDF. | MRG-002 |
+| Two asset digests are truncated strings (`f6e0ba80c14e...`, `7c3d...`). | The two asset candidates are rejected with the original value and the reason; nothing is patched. | MRG-002 |
+| Observations reach their context through `sample_ref` / `assay_ref`, and the input does not enforce referential integrity. | Joined by explicit ID only. Duplicate IDs, conflicting values and a sample that does not belong to the named assay reject the candidate; a reference defined outside the input keeps its ID and gets a review flag. | MRG-003 |
+| Observation times use `+08:00`; the contract's `observation_time` is UTC. | Converted deterministically when the zone is explicit; a string without a zone is never assigned one. | MRG-003 |
+| `omics_feature` is an open object and the example's `go_term` is an array; some statistics lack range constraints. | Fields with the same name as a contract field are used; a single-element array may be unwrapped, several values are kept in the residue rather than joined. Probability, dosage and ploidy rules of the contract still apply. | MRG-004 |
+| Document-level locations, reasoning notes and QA / graph references are not bound to individual facts. | Not broadcast to records. They stay in the residue until a binding and an ID rewrite are defined. | MRG-001 |
+| The source README says v1 inputs are compatible as they are; the legacy example does not pass the new schema. | The source version is checked (`v2.0.0`) and never guessed from a file name. | MRG-001 |
+
+### 2.5 Across sources
 
 | Finding | Resolution |
 | --- | --- |
@@ -108,12 +126,16 @@ case-insensitive filesystems, so they are stored as `sources/archives/fields_v3_
    record the origin. See `docs/migration.md`.
 6. **Profiles select; they do not define.** `compact` keeps the exact 157-field list (AMB-025).
    `pdf_extraction` exposes only D fields to models. `pdf_extraction_omics` adds the omics group.
+7. **A later source is another importer.** The merged design reorganises material the contract already holds, so
+   it added three optional D fields that were missing (biological replicate ID, technical replicate ID and
+   verbatim sampling time, AMB-037) and an importer for its observation, sample, assay and asset arrays. The 397
+   field definitions that existed before it are unchanged. Cross-paper confidence scores, agent run state, skill
+   registry status, translations and vectors are not mixed into paper facts; they remain in the source files
+   and in the residue. Standalone `transform` rows and runtime `tool_spec` rows are reported as unsupported.
+   Still open for this source: an ID rewrite for its QA and graph references, per-fact evidence for
+   document-level reasoning, and source definitions for entity kinds such as pests and diseases.
 
 ## 4. Open questions for the data owners
-
-The later `merged.zip` input is reviewed separately in [merged v2 integration review](merged_v2_review.md).
-Its 1,022 schema leaf paths reorganize much of the same material; 3.3.0 adds three sample fields and an input
-adapter for observations/assets while retaining the atomic contract. Original files are in `sources/merged_v2/`.
 
 Decisions that need a domain owner's confirmation are listed with status `open` or `provisional` in
 `docs/generated/ambiguities.md`. The most consequential are:
@@ -127,6 +149,9 @@ Decisions that need a domain owner's confirmation are listed with status `open` 
   be consolidated.
 - AMB-032 … 036: the function assignment of every key (source statement versus repository addition), the TRACE
   argument roles, the entity-link structure, the hedge lexicon, and the conflict-resolution codes.
+- AMB-037: the namespace of replicate IDs taken from the merged source.
+- AMB-038: the hooks for downstream derivation (verbatim predicate, entity and predicate offsets, the cue
+  lexicon behind `predicate_code`); see `docs/downstream.md`.
 
 Confirming a provisional field (`provisional` → `verified`) is a MINOR release. Changing its meaning is a
 MAJOR release (`docs/versioning.md`).

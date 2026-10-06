@@ -4,11 +4,11 @@
   "created_at": "2026-09-21T14:13:20Z",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.3.0",
+    "schema_version": "3.4.0",
     "release_status": "released",
-    "requested": "3.3.0",
-    "release_sha256": "5c7193d5d87ab453ddced0b12b857be168880b7677cb9c266dc2fd182c2c8850",
-    "source_digest": "d650c1161f5a38a9b934c4e295422a5a9e0648d4ccc05667c5cd2b0af713a2e6"
+    "requested": "3.4.0",
+    "release_sha256": "75c97e35f5d86c3ad2ad51fd1e1b383374a351e8295c1939d0b4d16e74ba2eda",
+    "source_digest": "9183f3660d63bd53c8a5854eaad44c0075283a2d8916eefc6b0b525f8e2e00d3"
   },
   "profile": {
     "name": "pdf_extraction",
@@ -32,6 +32,7 @@
       "missing_audit",
       "profile_name",
       "qc_rule_set_version",
+      "relation_anchors",
       "resolved_schema_name",
       "resolved_schema_version",
       "run_id",
@@ -40,7 +41,7 @@
       "validation_outcome",
       "warning_codes"
     ],
-    "field_count": 220
+    "field_count": 225
   },
   "input": {
     "file_name": "synthetic_rice_qtl.pdf",
@@ -52,11 +53,11 @@
       "name": "pypdf",
       "version": "6.19.0"
     },
-    "candidates_sha256": "299d7b8b546750621aa02b5662af3a33b9f28e14608abfe0d65711acb89bfb3f"
+    "candidates_sha256": "b0602804db9d8b386f31629e2609ba3c75d1a964202555d4e18ce69d2cf3ecca"
   },
   "pipeline": {
     "name": "pdf2jsonl",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "contract_tooling": "1.0.0"
   },
   "backend": {
@@ -66,8 +67,8 @@
   },
   "options": {},
   "environment": {
-    "python": "3.13.13",
-    "platform": "macOS-26.3.2",
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-94-generic-x86_64-with-glibc2.35",
     "packages": {
       "jsonschema": "4.26.0",
       "PyYAML": "6.0.3",
@@ -83,7 +84,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_rice_qtl.jsonl",
-      "sha256": "4b69732c0e85a7823aff6e0bef166abf543128022af4e4c5a0230a44320f22b1"
+      "sha256": "6decf1d51640c80c3fdae4f76d16b148ed7bdcdb4a90d3adef4f516d69618371"
     },
     "errors": {
       "file": "synthetic_rice_qtl.errors.jsonl",
@@ -91,11 +92,11 @@
     },
     "validation": {
       "file": "synthetic_rice_qtl.validation.json",
-      "sha256": "46f764119470302fc06316779c3192dcf4812b8d22ce231c60115d7180420891"
+      "sha256": "7196bbb4c27a6b1f82e0e8e45c9ba1c6037ba14dbd609590801f2974582d66fd"
     },
     "bundle": {
       "file": "synthetic_rice_qtl.bundle.json",
-      "sha256": "8a241186e485a73c845507a82f4d8a0c01097d0c88ba026040be27c67f17eeb9"
+      "sha256": "70f2de6665b0a34dd976637eb03d32fb292e289171c301585788c4356c25631b"
     }
   }
 }

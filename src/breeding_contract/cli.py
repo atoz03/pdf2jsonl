@@ -183,7 +183,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--strict", action="store_true", help="treat an unreleased VERSION as an error")
     p.set_defaults(func=cmd_check)
 
-    p = sub.add_parser("generate", help="regenerate FIELD_DEFINITIONS.md and docs/generated from the catalog")
+    p = sub.add_parser("generate", help="regenerate docs/generated (field reference, dictionary, rules, vocabularies) from the catalog")
     p.add_argument("--xlsx", metavar="PATH", help="also write an Excel field dictionary (needs openpyxl)")
     p.set_defaults(func=cmd_generate)
 
@@ -225,7 +225,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--legacy-v1", action="store_true", help="also project into the legacy v1 document shape")
     p.set_defaults(func=cmd_bundle)
 
-    p = sub.add_parser("derive", help="derive relational tables, KG triples and an evidence corpus from records")
+    p = sub.add_parser("derive", help="derive relational tables, statements, KG triples, a property graph, an evidence corpus and QA seeds from records")
     p.add_argument("file")
     p.add_argument("--out", required=True, help="output directory")
     p.add_argument("--schema-version", help="contract version (default: the version the records declare)")

@@ -78,5 +78,6 @@ agent mode, `prepare` pins the resolved version in `request.json`, and `finalize
 | 3.1.0 | Merge of legacy v1 and omics v2: 129 provisional fields (legacy 17, omics 111, `schema_name`), 6 vocabularies, R027–R030, `pdf_extraction_omics`, mappings |
 | 3.2.0 | Key roles and functions on every field (`key_role`, `serves`, `card`, `argument_role`); 9 provisional fields for the evidence chain, derivation and Topic 1 fusion; R031–R032; vocabulary `conflict_resolution_status`; profile `record_links` |
 | 3.3.0 | Three optional provisional sample fields from merged v2 (biological replicate, technical replicate, sampling time); merged input mapping and migration; the 397 existing field definitions remain unchanged |
+| 3.4.0 | Downstream hooks (AMB-038): `transform.predicate_mention` (D), `predicate_code` and predicate offsets (N), offsets and relation roles on `transform.entity_links`, cue lexicon on vocabulary `predicate_label`, R033–R034; `bdc derive` adds statements, a property graph and QA seeds |
 
 See `CHANGELOG.md` for details.

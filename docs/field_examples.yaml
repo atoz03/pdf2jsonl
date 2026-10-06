@@ -1,4 +1,4 @@
-# Curated synthetic values for FIELD_DEFINITIONS.md, not complete records or defaults.
+# Curated synthetic values for docs/generated/field_definitions.md, not complete records or defaults.
 # Keys use catalog paths; values retain their JSON types. bdc generate validates every value.
 # common.schema_name and common.schema_version are supplied from the compiled contract.
 # Identifiers, quotes, measurements, software versions and licenses here are illustrative only.
@@ -297,6 +297,10 @@ transform.subject_type: "QTL"
 transform.subject_id: "urn:example:qtl:qPH1"
 transform.predicate_label: "qtl_associated_with_trait"
 transform.predicate_id: "urn:example:relation:qtl-associated-with-trait"
+transform.predicate_mention: "explained"
+transform.predicate_code: "qtl_associated_with_trait"
+transform.predicate_start_offset: 5
+transform.predicate_end_offset: 14
 transform.object_mention: "plant height"
 transform.object_type: "Trait"
 transform.object_id: "urn:example:trait:plant-height"
@@ -335,7 +339,7 @@ transform.chunk_support_ids: ["rec_0123456789abcdef0123456789abcdef"]
 transform.mapping_type: "exact"
 transform.mapping_confidence: 0.96
 transform.entity_synonyms: ["plant height", "株高"]
-transform.entity_links: [{"mention": "qPH1", "source_field": "common.qtl_names", "entity_type": "QTL", "entity_id": "urn:example:qtl:qPH1", "alignment_status": "linked", "alignment_source": "示例育种本体 v1.0"}]
+transform.entity_links: [{"mention": "qPH1", "source_field": "common.qtl_names", "entity_type": "qtl", "start": 0, "end": 4, "relation_role": "subject", "entity_id": "urn:example:qtl:qPH1", "alignment_status": "linked", "alignment_source": "示例育种本体 v1.0"}]
 transform.qa_id: "urn:example:qa:qPH1-height-E1-pve"
 
 # omics — genomics, transcriptomics, single-cell, epigenomics, proteomics and metabolomics

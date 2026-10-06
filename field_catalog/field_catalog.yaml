@@ -17,7 +17,7 @@ contract:
   title_zh: 生物育种文献原子化 JSONL 数据契约
   record_layout: nested_groups
   missing_value_policy: omit
-  baseline_zh: v3.0.0 已验证字段基线（259 个逻辑字段）；3.1.0 起合并 legacy v1 与 omics 2.0.0 候选字段（provisional）
+  baseline_zh: 259 个字段为已验证基线（verified，定义逐字保留）；其后新增的字段均为 provisional，待数据负责人确认
   ambiguities: [AMB-001, AMB-003]
 codes:
   availability:
@@ -716,6 +716,17 @@ types:
         alignment_source:
           type: string
           minLength: 1
+        start:
+          type: integer
+          minimum: 0
+          description: 提及在 common.source_quote 中的起始字符偏移（含）
+        end:
+          type: integer
+          minimum: 1
+          description: 提及在 common.source_quote 中的结束字符偏移（不含）
+        relation_role:
+          enum: [subject, object]
+          description: 该提及在本记录关系语句中的角色
       required: [mention, source_field]
 fields:
 - path: common.record_id
@@ -5212,6 +5223,69 @@ fields:
   key_role: relation
   serves: [derivation]
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L230
+- path: transform.predicate_mention
+  type: string
+  availability: D
+  required: N
+  definition_zh: 关系谓词的原文表述：source_quote 中连接主语与宾语的逐字词语（如 was associated with、调控），不改写、不归一
+  data_source_zh: 结论原文
+  since: 3.4.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-038]
+  key_role: relation
+  serves: [derivation]
+  source_ref: docs/downstream.md
+- path: transform.predicate_code
+  type: string
+  availability: N
+  required: N
+  definition_zh: 由 predicate_mention 与主宾语实体类型按 predicate_label 词表的线索词确定性匹配得到的关系代码；仅在恰好命中一个代码时填写，未经人工审核，不替代 predicate_label
+  data_source_zh: predicate_mention 与 predicate_label 词表线索词
+  since: 3.4.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: predicate_label
+  ambiguities: [AMB-038]
+  key_role: relation
+  serves: [derivation]
+  source_ref: docs/downstream.md
+- path: transform.predicate_start_offset
+  type: integer
+  availability: N
+  required: N
+  definition_zh: predicate_mention 在 common.source_quote 中的起始字符偏移（含）
+  data_source_zh: source_quote 逐字定位
+  since: 3.4.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  constraints:
+    minimum: 0
+    basis: definitional
+  ambiguities: [AMB-038]
+  key_role: relation
+  serves: [derivation]
+  source_ref: docs/downstream.md
+- path: transform.predicate_end_offset
+  type: integer
+  availability: N
+  required: N
+  definition_zh: predicate_mention 在 common.source_quote 中的结束字符偏移（不含）
+  data_source_zh: source_quote 逐字定位
+  since: 3.4.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  constraints:
+    minimum: 1
+    basis: definitional
+  ambiguities: [AMB-038]
+  key_role: relation
+  serves: [derivation]
+  source_ref: docs/downstream.md
 - path: transform.object_mention
   type: string
   availability: D
@@ -5785,14 +5859,14 @@ fields:
   type: array_entity_link
   availability: N
   required: N
-  definition_zh: 本记录每个实体提及与规范实体的逐项对应：提及原文、来源字段、实体类型、规范 ID、对齐状态与来源；不对 *_names 与 *_ids 数组做位置对齐假设
-  data_source_zh: 实体对齐过程
+  definition_zh: 本记录每个实体提及与规范实体的逐项对应：提及原文、来源字段、实体类型、规范 ID、对齐状态与来源，以及提及在 source_quote 中的字符偏移和在关系语句中的角色；不对 *_names 与 *_ids 数组做位置对齐假设
+  data_source_zh: 实体提及字段逐字定位；实体对齐过程
   since: 3.2.0
   status: active
   maturity: provisional
   origin: [repository]
-  notes_zh: item.alignment_status 取 entity_alignment_status 词表代码
-  ambiguities: [AMB-034]
+  notes_zh: item.alignment_status 取 entity_alignment_status 词表代码；item.start/end 为 common.source_quote 内的字符偏移（提及未逐字出现在引文中时省略）；item.relation_role 标出关系语句的主语与宾语
+  ambiguities: [AMB-034, AMB-038]
   key_role: entity_alignment
   serves: [derivation]
   source_ref: docs/field_functions.md
@@ -7167,6 +7241,33 @@ rules:
   source_zh: 填写原则5：关联证据不能自动升级为因果结论；TRACE（arXiv:2605.29656）Qualifier 要素
   since: 3.2.0
   ambiguities: [AMB-035]
+- id: R033
+  kind: require_any_when
+  severity: warning
+  basis: inferred
+  title_zh: 关系的主语与宾语齐备时应给出谓词（原文、规范名称或本体 ID 之一）
+  when:
+    all:
+    - present: transform.subject_mention
+    - present: transform.object_mention
+  require_any: [transform.predicate_mention, transform.predicate_label, transform.predicate_id]
+  source_zh: transform 分组用途：知识图谱三元组须有主语、谓词与宾语；无谓词的关系只能派生为未标注边
+  since: 3.4.0
+  ambiguities: [AMB-038]
+- id: R034
+  kind: offsets_match_text
+  severity: warning
+  basis: definitional
+  title_zh: 实体标记与谓词的字符偏移应与 source_quote 中的原文一致
+  field: common.source_quote
+  fields: [transform.entity_links]
+  spans:
+  - mention: transform.predicate_mention
+    start: transform.predicate_start_offset
+    end: transform.predicate_end_offset
+  source_zh: transform.entity_links 与 predicate_*_offset 定义：偏移为 common.source_quote 内的字符位置
+  since: 3.4.0
+  ambiguities: [AMB-038]
 ambiguities:
 - id: AMB-001
   status: decided
@@ -7391,3 +7492,9 @@ ambiguities:
   finding_zh: merged 规范区分生物学重复、技术重复和采样时间，但未规定编号命名空间；采样时间为原文字符串。
   resolution_zh: 新增三个可选 D 字段保留原文，不改变已有 replicate_id 或 observation_time 的含义，不推断重复类别或缺失时区。
   since: 3.3.0
+- id: AMB-038
+  status: provisional
+  title_zh: 面向下游派生的关系与实体锚点
+  finding_zh: 记录要派生为知识图谱、语料与问答，但抽取时谓词不可得（predicate_label 为人工判断，不暴露给模型），实体提及只是字符串数组，在引文中没有位置，也不知道哪个提及是关系的主语或宾语；下游只能对原文二次解析（延续 AMB-034）。
+  resolution_zh: 新增 transform.predicate_mention（D，逐字谓词）；管线确定性生成 transform.entity_links 的 start/end/relation_role、transform.predicate_start_offset/predicate_end_offset 与 transform.predicate_code。predicate_code 只在 predicate_label 词表的线索词（cues）与主宾语实体类型恰好命中一个代码时填写，不替代人工审核的 predicate_label；线索词与各代码的主宾语类型为仓库拟定，待确认。R033、R034 为提示级规则。
+  since: 3.4.0

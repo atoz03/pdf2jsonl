@@ -31,6 +31,9 @@ Launcher: `scripts/pdf2jsonl` in this skill directory. It works through a symlin
    method), give the target candidate a short `ref` and list it under the source candidate's `links`. The
    brief names the link types the profile allows. Keep the author's hedging words and stated limitations
    verbatim in the fields the brief lists under "Evidence chain".
+   When a quote relates two entities, state the relation as subject, verbatim predicate and object in the
+   fields the brief lists under "Relations". Do not leave it inside the finding text and do not choose a
+   relation code: the pipeline anchors the mentions in the quote and derives the code.
 4. **Finalize.** Run the same command as in step 2 again (or `scripts/pdf2jsonl finalize out/paper.work`).
    The pipeline then:
    - verifies every quote against the PDF text;
@@ -70,6 +73,9 @@ Launcher: `scripts/pdf2jsonl` in this skill directory. It works through a symlin
   later generation or future sources are not exposed to you and are never fabricated.
 - **Raw and normalized stay separate.** You copy raw values and units as printed. Normalization is
   deterministic, uses the repository unit table, and is done by the pipeline.
+- **Records are consumed downstream without a second parse.** Knowledge-graph edges, corpus annotations and QA
+  items are built from fields, so a relation that is only prose in a finding does not exist for them. You
+  write the three verbatim parts of a statement; offsets, entity types and relation codes are computed.
 - **Contract-driven.** Use only the fields, record kinds and vocabulary codes listed in the brief for the
   resolved version. Never reuse an old brief or field list: after a new contract release, the next run follows
   it automatically.
@@ -85,4 +91,5 @@ Launcher: `scripts/pdf2jsonl` in this skill directory. It works through a symlin
 - `scripts/pdf2jsonl validate out/paper.jsonl`: validates each record against the version it declares.
 - `scripts/pdf2jsonl bundle out/paper.jsonl [--legacy-v1]`: derives the per-paper `document_bundle` view.
 - `bdc derive out/paper.jsonl --out derived/` and `bdc audit out/paper.jsonl` (repository CLI): relational tables,
-  triples and an evidence corpus, and the evidence-chain audit on any record set.
+  statements, triples, a property graph, an entity-annotated corpus and QA seeds, and the evidence-chain audit
+  on any record set.

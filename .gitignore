@@ -17,5 +17,7 @@ __pycache__/
 .idea/
 .vscode/
 
-# demo site build output (scripts/make_site.py; deployed by .github/workflows/pages.yml)
+# site build output (scripts/make_site.py; deployed by .github/workflows/pages.yml)
 /_site/
+# local paper dashboard (make dashboard); the published one is the site's papers.html
+/dashboard.html
