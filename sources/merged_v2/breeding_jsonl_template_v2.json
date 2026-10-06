@@ -1,0 +1,905 @@
+{
+  "record_id": "",
+  "schema_version": "v2.0.0",
+  "record_kind": "document",
+  "record_parent_id": "",
+  "observations": [
+    {
+      "observation_id": "",
+      "observation_type": "",
+      "sample_ref": "",
+      "material_ref": "",
+      "trait_ref": "",
+      "environment_ref": "",
+      "assay_ref": "",
+      "experiment_ref": "",
+      "treatment_ref": "",
+      "observation_time": "",
+      "stage": "",
+      "replicate_id": "",
+      "plot_id": "",
+      "sample_size": 0,
+      "measurement": {
+        "name": "",
+        "value": 0,
+        "text": "",
+        "unit": "",
+        "quality_flag": ""
+      },
+      "original_value": "",
+      "original_unit": "",
+      "normalized_value": 0,
+      "normalized_min_value": 0,
+      "normalized_max_value": 0,
+      "normalized_unit": "",
+      "feature_type": "",
+      "feature_id": "",
+      "feature_name": "",
+      "feature_value": 0,
+      "feature_unit": "",
+      "statistic": {
+        "contrast": "",
+        "effect_direction": "",
+        "effect_size": 0,
+        "effect_unit": "",
+        "standard_error": 0,
+        "p_value": 0,
+        "q_value": 0,
+        "confidence_interval": [],
+        "replication_status": "",
+        "cross_doc_support_count": 0
+      },
+      "variant": {
+        "chromosome": "",
+        "position": 0,
+        "start_position": 0,
+        "end_position": 0,
+        "variant_id": "",
+        "variant_type": "",
+        "ref_allele": "",
+        "alt_allele": "",
+        "effect_allele": "",
+        "genotype_call": "",
+        "allele_frequency": 0,
+        "minor_allele_frequency": 0,
+        "genotype_quality": 0,
+        "read_depth": 0,
+        "haplotype_id": "",
+        "structural_variant_type": "",
+        "genome_assembly": ""
+      },
+      "genotype": {
+        "ploidy": 0,
+        "call": "",
+        "dosage": 0,
+        "ref_allele": "",
+        "alt_allele": "",
+        "dosage_allele": "",
+        "quality_flag": ""
+      },
+      "omics_type": "",
+      "omics_feature": {},
+      "confidence": 0,
+      "quality_flag": "",
+      "evidence_spans": []
+    }
+  ],
+  "assets": [
+    {
+      "asset_id": "",
+      "asset_uri": "",
+      "asset_kind": "",
+      "asset_format": "",
+      "asset_compression": "",
+      "asset_size_bytes": 0,
+      "asset_sha256": "",
+      "asset_row_count": 0,
+      "asset_column_count": 0,
+      "asset_schema_ref": "",
+      "asset_accession": [],
+      "data_availability": "",
+      "related_dataset_id": "",
+      "related_record_ids": [],
+      "description": "",
+      "confidence": 0,
+      "evidence_spans": []
+    }
+  ],
+  "transform": {
+    "graph_statements": [
+      {
+        "graph_statement_id": "",
+        "subject_mention": "",
+        "subject_type": "",
+        "subject_id": "",
+        "predicate_label": "",
+        "predicate_id": "",
+        "object_mention": "",
+        "object_type": "",
+        "object_id": "",
+        "relation_polarity": "",
+        "relation_qualifiers": {},
+        "graph_status": "",
+        "entity_alignment_status": "",
+        "entity_alignment_source": "",
+        "external_graph_ids": [],
+        "provenance_record_ids": [],
+        "relation_evidence_type": ""
+      }
+    ],
+    "corpus_chunks": [
+      {
+        "chunk_id": "",
+        "chunk_text": "",
+        "chunk_page": 0,
+        "chunk_section": "",
+        "chunk_start_offset": 0,
+        "chunk_end_offset": 0,
+        "chunk_keywords": [],
+        "chunk_support_ids": []
+      }
+    ],
+    "qa_pairs": [
+      {
+        "qa_id": "",
+        "seed_question": "",
+        "seed_answer": "",
+        "answerable": false,
+        "support_ids": [],
+        "reasoning_path_ids": [],
+        "difficulty": "",
+        "answer_scope": "",
+        "unanswerable_reason": "",
+        "review_status": ""
+      }
+    ],
+    "corpus_split": "",
+    "leakage_group_id": "",
+    "dedup_group_id": "",
+    "ontology_version": "",
+    "derivative_license_id": "",
+    "transform_review_status": ""
+  },
+  "record_info": {
+    "doc_type": "",
+    "lang": "",
+    "created_at": "",
+    "updated_at": ""
+  },
+  "doc_meta": {
+    "title": "",
+    "title_zh": "",
+    "title_en": "",
+    "authors": [],
+    "affiliations": [],
+    "journal": "",
+    "journal_meta": {
+      "issn": "",
+      "category": "",
+      "sci_quarter": "",
+      "cas_zone": ""
+    },
+    "year": 0,
+    "volume": "",
+    "issue": "",
+    "pages": "",
+    "doi": "",
+    "url": "",
+    "pdf_path": "",
+    "abstract": "",
+    "keywords": [],
+    "funding": [],
+    "species_list": [],
+    "field": [],
+    "sources": [],
+    "document_sections": [],
+    "section_vectors": [],
+    "citation_count": 0,
+    "cited_by": [],
+    "related_docs": [],
+    "source_id": "",
+    "source_uri": "",
+    "source_type": "",
+    "dataset_id": "",
+    "dataset_version": "",
+    "record_version": 0,
+    "study_id": "",
+    "trial_id": "",
+    "data_modality": "",
+    "linked_modalities": [],
+    "crop_primary": ""
+  },
+  "breed_entities": {
+    "genes": [
+      {
+        "entity_id": "",
+        "gene_symbol": "",
+        "gene_type": "",
+        "chromosome": "",
+        "position": {
+          "ref_genome": "",
+          "start_bp": 0,
+          "end_bp": 0,
+          "strand": ""
+        },
+        "annotation": {},
+        "alleles": [],
+        "expression_pattern": {},
+        "ortholog_in_model": [],
+        "linked_traits": [],
+        "mutant_resources": [],
+        "ontology_id": [],
+        "aliases": [],
+        "name": "",
+        "canonical_name": "",
+        "description": "",
+        "confidence": 0,
+        "evidence_spans": [],
+        "candidate_status": ""
+      }
+    ],
+    "traits": [
+      {
+        "entity_id": "",
+        "trait_name": "",
+        "trait_abbr": "",
+        "trait_category": [],
+        "trait_class": "",
+        "data_type": "",
+        "measurement_detail": {
+          "unit": "",
+          "stage": "",
+          "organ": "",
+          "method_standard": "",
+          "device": "",
+          "survey_numbers": 0,
+          "scoring_scheme": ""
+        },
+        "direction_of_improvement": "",
+        "heritability_h2_estimate": 0,
+        "component_of": [],
+        "related_marker_genes": [],
+        "ontology_id": [],
+        "trait_ontology_id": [],
+        "name": "",
+        "canonical_name": "",
+        "aliases": [],
+        "description": "",
+        "confidence": 0,
+        "evidence_spans": []
+      }
+    ],
+    "germplasm": [
+      {
+        "entity_id": "",
+        "germplasm_name": "",
+        "accession_number": [],
+        "species_info": {
+          "species": "",
+          "sub_species": "",
+          "ploidy": "",
+          "genomic_type": ""
+        },
+        "origin_region": {
+          "country": "",
+          "region": "",
+          "ecotype": "",
+          "altitude_range": ""
+        },
+        "pedigree_text": "",
+        "parents": [],
+        "breeding_method": "",
+        "breeding_unit": "",
+        "breeder": "",
+        "release_status": {
+          "review_level": "",
+          "year_registered": 0,
+          "status": ""
+        },
+        "key_traits_profile": [],
+        "latitude_longitude": {
+          "lat": 0,
+          "lon": 0
+        },
+        "name": "",
+        "canonical_name": "",
+        "aliases": [],
+        "description": "",
+        "confidence": 0,
+        "evidence_spans": []
+      }
+    ],
+    "varieties": [
+      {
+        "entity_id": "",
+        "variety_name": "",
+        "approved_number": "",
+        "variety_type": "",
+        "parentage": [],
+        "breeding_lines": [],
+        "release_info": {
+          "release_year": 0,
+          "region_suitable": [],
+          "approved_area": "",
+          "promotion_area_ha": 0
+        },
+        "suitable_regions": [],
+        "major_traits": [],
+        "disease_resistance_profile": [],
+        "name": "",
+        "canonical_name": "",
+        "aliases": [],
+        "description": "",
+        "confidence": 0,
+        "evidence_spans": []
+      }
+    ],
+    "populations": [
+      {
+        "entity_id": "",
+        "population_id": "",
+        "population_name": "",
+        "pop_type": "",
+        "parents": [],
+        "population_size": 0,
+        "generation": "",
+        "marker_density": {
+          "markers_count": 0,
+          "platform": "",
+          "average_distance_kb": 0,
+          "coverage": ""
+        },
+        "construction_purpose": "",
+        "name": "",
+        "canonical_name": "",
+        "aliases": [],
+        "description": "",
+        "confidence": 0,
+        "evidence_spans": []
+      }
+    ],
+    "environments": [
+      {
+        "entity_id": "",
+        "env_id": "",
+        "env_name": "",
+        "location": {
+          "site": "",
+          "province": "",
+          "country": "",
+          "lat": 0,
+          "lon": 0,
+          "altitude_m": 0,
+          "ecosystem_type": ""
+        },
+        "season": "",
+        "year": 0,
+        "soil": {
+          "soil_type": "",
+          "texture": "",
+          "ph": 0,
+          "organic_matter": "",
+          "fertility_level": "",
+          "saline_alkali": ""
+        },
+        "climate": {
+          "avg_temp_c": 0,
+          "rainfall_mm": 0,
+          "sunshine_h": 0,
+          "gdd": 0,
+          "extreme_events": []
+        },
+        "irrigation": "",
+        "stress_conditions": [],
+        "cropping_system": "",
+        "env_code_in_paper": "",
+        "name": "",
+        "canonical_name": "",
+        "aliases": [],
+        "description": "",
+        "confidence": 0,
+        "evidence_spans": []
+      }
+    ],
+    "markers": [
+      {
+        "entity_id": "",
+        "marker_id": "",
+        "marker_name": "",
+        "marker_type": "",
+        "platform": {
+          "platform": "",
+          "array_name": ""
+        },
+        "chromosome": "",
+        "position_bp": 0,
+        "flanking_sequence": "",
+        "allele_frequency": {
+          "minor_allele_frequency": 0,
+          "red_missing_rate": 0
+        },
+        "is_core_marker": false,
+        "linked_gene": [],
+        "primer": {
+          "forward": "",
+          "reverse": "",
+          "annealing_temp": 0,
+          "product_size": 0
+        },
+        "name": "",
+        "canonical_name": "",
+        "aliases": [],
+        "description": "",
+        "confidence": 0,
+        "evidence_spans": []
+      }
+    ],
+    "qtls": [
+      {
+        "entity_id": "",
+        "qtl_id": "",
+        "qtl_name": "",
+        "chromosome": "",
+        "interval": {
+          "unit": "",
+          "start": 0,
+          "end": 0,
+          "ci_type": "",
+          "label": ""
+        },
+        "lod": 0,
+        "p_value": 0,
+        "pve": 0,
+        "additive_effect": 0,
+        "dominance_effect": 0,
+        "qtl_type": "",
+        "population_used": "",
+        "confidence_interval": {
+          "start": 0,
+          "end": 0,
+          "unit": "",
+          "overlap_by": 0
+        },
+        "candidate_genes": [],
+        "nearest_markers": [],
+        "pleiotropy": [],
+        "analysis_ref": [],
+        "name": "",
+        "canonical_name": "",
+        "aliases": [],
+        "description": "",
+        "confidence": 0,
+        "evidence_spans": [],
+        "ref_genome": ""
+      }
+    ],
+    "disease_pests": [],
+    "other_entities": [],
+    "omics_samples": [
+      {
+        "sample_id": "",
+        "sample_name": "",
+        "sample_type": "",
+        "biological_replicate": "",
+        "technical_replicate": "",
+        "batch_id": "",
+        "sex": "",
+        "ploidy": "",
+        "organ": "",
+        "tissue": "",
+        "cell_type": "",
+        "cell_state": "",
+        "development_stage": "",
+        "sampling_time": "",
+        "sampling_time_relative": "",
+        "material_ref": "",
+        "treatment_ref": "",
+        "evidence_spans": []
+      }
+    ],
+    "omics_experiments": [
+      {
+        "omics_experiment_id": "",
+        "omics_type": "",
+        "assay_type": "",
+        "design": "",
+        "library_strategy": "",
+        "library_selection": "",
+        "library_layout": "",
+        "platform": "",
+        "instrument_model": "",
+        "sequencing_depth": "",
+        "read_length": "",
+        "reference_genome": "",
+        "reference_genome_version": "",
+        "annotation_version": "",
+        "gene_id_system": "",
+        "coordinate_system": "",
+        "sample_ids": [],
+        "experiment_ref": "",
+        "confidence": 0,
+        "evidence_spans": []
+      }
+    ],
+    "cross_species": [
+      {
+        "ortholog_id": "",
+        "ortholog_species": "",
+        "orthology_type": "",
+        "synteny_support": "",
+        "cross_species_evidence": "",
+        "ortholog_gene_ref": ""
+      }
+    ]
+  },
+  "relations": [
+    {
+      "relation_id": "",
+      "subject": {
+        "entity_id": "",
+        "entity_type": ""
+      },
+      "object": {
+        "entity_id": "",
+        "entity_type": ""
+      },
+      "relation_type": "",
+      "relation_mechanism": "",
+      "effect_direction": "",
+      "relation_confidence": 0,
+      "evidence_spans": [],
+      "supporting_method": [],
+      "ontology_relation_mapping": {},
+      "is_inferred": false,
+      "inferred_from": [],
+      "source_section": ""
+    }
+  ],
+  "experiments": [
+    {
+      "experiment_id": "",
+      "experiment_name": "",
+      "experiment_objective": "",
+      "experiment_type": "",
+      "materials_used": [],
+      "experimental_design": {
+        "design_type": "",
+        "replicates": 0,
+        "blocks_count": 0,
+        "plots_count": 0,
+        "randomization_method": "",
+        "control": "",
+        "partial_balance": false,
+        "design_yield": 0
+      },
+      "treatments": [],
+      "env_used": [],
+      "trait_measurements": [],
+      "data_collection": {
+        "method": "",
+        "instrument": "",
+        "timepoints": [],
+        "person_role": "",
+        "data_num": 0
+      },
+      "experimental_steps": [],
+      "field_layout": {
+        "plot_size": "",
+        "row_spacing": "",
+        "plant_density": 0,
+        "layout_type": "",
+        "pest_management": "",
+        "fertilizer_scheme": ""
+      },
+      "experiment_notes": "",
+      "dataset_link": {
+        "dataset_id": "",
+        "repository": "",
+        "release_date": "",
+        "data_access": ""
+      },
+      "experiment_card_ref": ""
+    }
+  ],
+  "analyses": [
+    {
+      "analysis_id": "",
+      "analysis_name": "",
+      "analysis_type": "",
+      "statistical_class": "",
+      "model_name": "",
+      "model_equation": "",
+      "model_assumptions": [],
+      "software_tools": [],
+      "parameters": [],
+      "inputs": [],
+      "outputs": [],
+      "significance_thresholds": [],
+      "key_results": {},
+      "validation_design": {
+        "strategy": "",
+        "k_folds": 0,
+        "training_set": "",
+        "testing_set": "",
+        "metric": "",
+        "repeats": 0
+      },
+      "model_fit_stats": {
+        "aic": "",
+        "bic": "",
+        "loglik": "",
+        "rmse": "",
+        "r_squared": 0,
+        "genomic_h2": 0
+      },
+      "analysis_notes": "",
+      "analysis_card_ref": "",
+      "experiments_used": []
+    }
+  ],
+  "conclusions": [
+    {
+      "conclusion_id": "",
+      "conclusion_type": "",
+      "claim_text": "",
+      "claim_zh": "",
+      "logic_type": "",
+      "evidence_list": [],
+      "supporting_relations": [],
+      "supporting_analyses": [],
+      "confidence_level": "",
+      "novelty": "",
+      "scope_constraints": [],
+      "causal_flag": false,
+      "contradiction_note": "",
+      "breeding_recommendations": [],
+      "hypothesis_refs": []
+    }
+  ],
+  "pipeline": {
+    "upstream_refs": [],
+    "downstream_refs": [],
+    "ontology_mapping": [],
+    "kg_node_id": "",
+    "kg_subgraph_id": "",
+    "fusion_status": "",
+    "fusion_group_id": "",
+    "conflict_statements": [],
+    "resolution_statement": "",
+    "canonical_entity_links": [],
+    "update_chain": [],
+    "task_association": {
+      "tasks": [],
+      "priority_level": ""
+    }
+  },
+  "governance": {
+    "ontology_ref": [],
+    "knowledge_units": [],
+    "curation_status": "",
+    "curation_history": [],
+    "domain_tags": [],
+    "technical_scope": [],
+    "quality_grade": "",
+    "consistency_checks": [],
+    "duplicates_group": "",
+    "freshness_level": "",
+    "retention_policy": "",
+    "next_review_date": "",
+    "pending_updates": [],
+    "access_level": ""
+  },
+  "provenance": {
+    "extraction": {
+      "method": "",
+      "pipeline_version": "",
+      "llm_model": "",
+      "llm_prompt_version": "",
+      "extractor_config_hash": "",
+      "extraction_datetime": "",
+      "parser_tool": "",
+      "confidence": 0
+    },
+    "source_locations": [],
+    "field_level_confidence": [],
+    "quality_scores": {
+      "completeness": 0,
+      "accuracy": 0,
+      "consistency": 0,
+      "uniqueness": 0,
+      "timeliness": 0,
+      "interpretability": 0,
+      "retrieval_ai_ready": 0,
+      "provenance_completeness": 0,
+      "overall": 0
+    },
+    "verification": {
+      "status": "",
+      "verifier": "",
+      "date": "",
+      "notes": "",
+      "cross_doc_support_count": 0
+    },
+    "conflicts": [],
+    "corrections": [],
+    "data_license": {
+      "license_name": "",
+      "copyright_note": "",
+      "allowed_usage": [],
+      "restrictions": []
+    },
+    "integrity": {
+      "record_sha256": "",
+      "source_file_hash": "",
+      "algorithm": ""
+    },
+    "provenance_chain": [],
+    "missing_fields": {},
+    "ingested_at": "",
+    "ingest_batch_id": "",
+    "extraction_run_id": "",
+    "source_record_id": "",
+    "source_version": "",
+    "qc_rule_set_version": "",
+    "source_file_asset_id": "",
+    "qc_failure_codes": []
+  },
+  "agent": {
+    "agent_state": {
+      "problem_statement": "",
+      "state_known": [],
+      "state_unknowns": [],
+      "evidence_citation": [],
+      "solved_problem_types": []
+    },
+    "hypotheses": [],
+    "causal_model": [],
+    "reasoning_premises": {
+      "premises": [],
+      "inference_type": "",
+      "inference_steps": [],
+      "conclusion_refs": [],
+      "uncertainty": 0,
+      "retrieval_keys": []
+    },
+    "planning": [],
+    "memory": {
+      "episodic": [],
+      "semantic": [],
+      "procedural": []
+    },
+    "tool_calls": [],
+    "feedback_loop": {
+      "reward_score": 0,
+      "policy_update": "",
+      "next_action_recommendation": "",
+      "iteration_no": 0
+    },
+    "knowledge_state_hash": "",
+    "scientific_reasoning": {
+      "scientific_question": "",
+      "finding_text": "",
+      "finding_kind": "",
+      "evidence_type": "",
+      "evidence_strength": "",
+      "supporting_evidence": [],
+      "contradictory_evidence": [],
+      "hypothesis_stated": "",
+      "candidate_mechanism": "",
+      "mechanism_entities": [],
+      "causal_direction": "",
+      "association_vs_causation": "",
+      "assumption_conditions": [],
+      "applicable_population": "",
+      "applicable_environment": "",
+      "expected_observation": "",
+      "actual_observation": "",
+      "alternative_explanations": [],
+      "uncertainty_note": "",
+      "falsification_test": "",
+      "experiment_objective": "",
+      "result_interpretation": "",
+      "breeding_relevance": "",
+      "followup_experiment": "",
+      "knowledge_gap": "",
+      "task_tags": [],
+      "hypothesis_origin": "",
+      "candidate_gene_status": "",
+      "statistical_test": "",
+      "lod_score": 0,
+      "pve_percent": 0,
+      "effect_estimate": 0,
+      "effect_unit": "",
+      "environment_stability": "",
+      "validation_methods": [],
+      "claim_id": "",
+      "evidence_record_ids": [],
+      "external_validity_scope": ""
+    }
+  },
+  "skill": {
+    "skill_id": "",
+    "skill_name": "",
+    "skill_category": "",
+    "experiment_cards": [],
+    "analysis_cards": [],
+    "hypothesis_cards": [],
+    "workflow_orchestration": {
+      "workflow_id": "",
+      "workflow_name": "",
+      "dag_steps": [],
+      "execution_mode": "",
+      "version": "",
+      "rollback_strategy": ""
+    },
+    "tool_bindings": [],
+    "io_adapter": {
+      "standard_input_formats": [],
+      "standard_output_formats": [],
+      "unit_conversion": "",
+      "missing_value_convention": "",
+      "sample_key_format": "",
+      "encoding": ""
+    },
+    "model_profiles": [],
+    "result_visualizations": [],
+    "execution_feedback": {
+      "execution_records": [],
+      "success_rate": 0,
+      "avg_duration": 0,
+      "error_logs": [],
+      "optimization_suggestions": [],
+      "skill_upgrade_version": ""
+    },
+    "method_profile": {
+      "analysis_task": "",
+      "method_category": "",
+      "method_name": "",
+      "algorithm_name": "",
+      "software_name": "",
+      "software_version": "",
+      "input_modalities": [],
+      "genotype_data_format": "",
+      "phenotype_data_format": "",
+      "environment_data_format": "",
+      "preprocessing_steps": [],
+      "qc_filters": [],
+      "parameters": [],
+      "population_structure_control": "",
+      "kinship_control": "",
+      "feature_count": 0,
+      "significance_threshold": "",
+      "threshold_calibration": "",
+      "method_assumptions": [],
+      "applicability_limit": "",
+      "reproducibility_assets": [],
+      "genotyping_method": "",
+      "phenotyping_method": "",
+      "target_variable": "",
+      "output_artifacts": [],
+      "output_fields": [],
+      "workflow_steps": []
+    },
+    "validation": {
+      "training_population": "",
+      "training_set_size": 0,
+      "test_set_size": 0,
+      "strategy": "",
+      "folds": 0,
+      "split_basis": "",
+      "random_seed": 0,
+      "metrics": []
+    },
+    "skill_registry": {
+      "skill_spec_id": "",
+      "skill_spec_version": "",
+      "tool_description_uri": "",
+      "input_schema_ref": "",
+      "output_schema_ref": "",
+      "parameter_schema_ref": "",
+      "input_asset_refs": [],
+      "output_asset_refs": [],
+      "runtime_environment_ref": ""
+    }
+  }
+}

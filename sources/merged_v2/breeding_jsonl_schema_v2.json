@@ -1,0 +1,5538 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://breeding-ontology.local/schemas/breeding-jsonl-v2.0.0.json",
+  "title": "Breeding AI-Ready JSONL (merged) v2.0.0",
+  "description": "生物育种 AI-Ready JSONL 合并规范 v2.0.0：文档行主锚 + 单位行扩展 + 多组学/观测/资产/图谱转换。半开放结构，record_kind 条件必填。",
+  "type": "object",
+  "required": [
+    "record_id",
+    "schema_version",
+    "record_kind"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schema_version": {
+      "const": "v2.0.0"
+    },
+    "record_kind": {
+      "type": "string",
+      "enum": [
+        "document",
+        "claim",
+        "observation",
+        "asset_manifest",
+        "analysis_result",
+        "tool_spec",
+        "transform"
+      ]
+    },
+    "record_parent_id": {
+      "type": "string"
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/observation"
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    },
+    "transform": {
+      "$ref": "#/$defs/transform"
+    },
+    "record_info": {
+      "$ref": "#/$defs/record_info"
+    },
+    "doc_meta": {
+      "$ref": "#/$defs/doc_meta"
+    },
+    "breed_entities": {
+      "$ref": "#/$defs/breed_entities"
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relation"
+      }
+    },
+    "experiments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/experiment"
+      }
+    },
+    "analyses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/analysis"
+      }
+    },
+    "conclusions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/conclusion"
+      }
+    },
+    "pipeline": {
+      "$ref": "#/$defs/pipeline"
+    },
+    "governance": {
+      "$ref": "#/$defs/governance"
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "agent": {
+      "$ref": "#/$defs/agent"
+    },
+    "skill": {
+      "$ref": "#/$defs/skill"
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "document"
+          }
+        },
+        "required": [
+          "record_kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "record_info",
+          "doc_meta",
+          "breed_entities",
+          "relations",
+          "experiments",
+          "analyses",
+          "conclusions",
+          "observations",
+          "assets",
+          "transform",
+          "pipeline",
+          "governance",
+          "provenance",
+          "agent",
+          "skill"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "observation"
+          }
+        },
+        "required": [
+          "record_kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "record_parent_id",
+          "observations"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "claim"
+          }
+        },
+        "required": [
+          "record_kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "record_parent_id",
+          "conclusions"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "asset_manifest"
+          }
+        },
+        "required": [
+          "record_kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "record_parent_id",
+          "assets"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "analysis_result"
+          }
+        },
+        "required": [
+          "record_kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "record_parent_id",
+          "analyses"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "tool_spec"
+          }
+        },
+        "required": [
+          "record_kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "record_parent_id",
+          "skill"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "transform"
+          }
+        },
+        "required": [
+          "record_kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "record_parent_id",
+          "transform"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "record_info": {
+      "type": "object",
+      "required": [
+        "doc_type",
+        "lang",
+        "created_at"
+      ],
+      "properties": {
+        "doc_type": {
+          "enum": [
+            "journal_paper",
+            "conference_paper",
+            "dissertation",
+            "experiment_report",
+            "review",
+            "patent",
+            "dataset_paper",
+            "technical_report",
+            "book_chapter",
+            "other"
+          ]
+        },
+        "lang": {
+          "enum": [
+            "zh",
+            "en",
+            "zh_en"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": true
+    },
+    "doc_meta": {
+      "type": "object",
+      "required": [
+        "title"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "title_zh": {
+          "type": "string"
+        },
+        "title_en": {
+          "type": "string"
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rank": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "name_id": {
+                "type": "string"
+              },
+              "affiliation_name": {
+                "type": "string"
+              },
+              "affiliation_id": {
+                "type": "string"
+              },
+              "corresponding": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "affiliations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "journal": {
+          "type": "string"
+        },
+        "journal_meta": {
+          "type": "object",
+          "properties": {
+            "issn": {
+              "type": "string"
+            },
+            "category": {
+              "enum": [
+                "SCI",
+                "EI",
+                "核心",
+                "普刊",
+                ""
+              ]
+            },
+            "sci_quarter": {
+              "enum": [
+                "Q1",
+                "Q2",
+                "Q3",
+                "Q4",
+                "NA",
+                ""
+              ]
+            },
+            "cas_zone": {
+              "enum": [
+                "1区",
+                "2区",
+                "3区",
+                "4区",
+                "NA",
+                ""
+              ]
+            }
+          },
+          "additionalProperties": true
+        },
+        "year": {
+          "type": "integer"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "issue": {
+          "type": "string"
+        },
+        "pages": {
+          "type": "string"
+        },
+        "doi": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "pdf_path": {
+          "type": "string"
+        },
+        "abstract": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "funding": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "species_list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "name_zh": {
+                "type": "string"
+              },
+              "ncbi_tax_id": {
+                "type": "integer"
+              },
+              "crop_group": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "field": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "document_sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "text_snippet": {
+                "type": "string"
+              },
+              "char_start_end": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "section_id"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "section_vectors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "embedding_model": {
+                "type": "string"
+              },
+              "dim": {
+                "type": "integer"
+              },
+              "vector": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "citation_count": {
+          "type": "integer"
+        },
+        "cited_by": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "related_docs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "source_uri": {
+          "type": "string"
+        },
+        "source_type": {
+          "type": "string"
+        },
+        "dataset_id": {
+          "type": "string"
+        },
+        "dataset_version": {
+          "type": "string"
+        },
+        "record_version": {
+          "type": "integer"
+        },
+        "study_id": {
+          "type": "string"
+        },
+        "trial_id": {
+          "type": "string"
+        },
+        "data_modality": {
+          "type": "string"
+        },
+        "linked_modalities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "crop_primary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "breed_entities": {
+      "type": "object",
+      "properties": {
+        "genes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gene"
+          }
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/trait"
+          }
+        },
+        "germplasm": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/germplasm"
+          }
+        },
+        "varieties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/variety"
+          }
+        },
+        "populations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/population"
+          }
+        },
+        "environments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/environment"
+          }
+        },
+        "markers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/marker"
+          }
+        },
+        "qtls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/qtl"
+          }
+        },
+        "disease_pests": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "other_entities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "entity_id",
+              "entity_type",
+              "name"
+            ],
+            "properties": {
+              "entity_id": {
+                "type": "string"
+              },
+              "entity_type": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "entity_attributes": {
+                "type": "object"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "evidence_spans": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "section_id": {
+                      "type": "string"
+                    },
+                    "block_type": {
+                      "type": "string"
+                    },
+                    "block_id": {
+                      "type": "string"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "line_range": {
+                      "type": "string"
+                    },
+                    "char_span": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "maxItems": 2
+                    },
+                    "text_snippet": {
+                      "type": "string"
+                    },
+                    "char_start_end": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "maxItems": 2
+                    }
+                  },
+                  "required": [
+                    "section_id"
+                  ],
+                  "additionalProperties": true
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "omics_samples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/omics_sample"
+          }
+        },
+        "omics_experiments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/omics_experiment"
+          }
+        },
+        "cross_species": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cross_species"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "gene": {
+      "type": "object",
+      "required": [
+        "entity_id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "pattern": "^gene:"
+        },
+        "gene_symbol": {
+          "type": "string"
+        },
+        "gene_type": {
+          "enum": [
+            "编码基因",
+            "转录因子",
+            "非编码RNA",
+            "候选基因",
+            "克隆基因",
+            "未克隆QTL区段基因",
+            ""
+          ]
+        },
+        "chromosome": {
+          "type": "string"
+        },
+        "position": {
+          "type": "object",
+          "properties": {
+            "ref_genome": {
+              "type": "string"
+            },
+            "start_bp": {
+              "type": "integer"
+            },
+            "end_bp": {
+              "type": "integer"
+            },
+            "strand": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "annotation": {
+          "type": "object"
+        },
+        "alleles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "allele_name": {
+                "type": "string"
+              },
+              "variant_type": {
+                "type": "string"
+              },
+              "effect": {
+                "enum": [
+                  "有利",
+                  "不利",
+                  "中性"
+                ]
+              },
+              "effect_value": {
+                "type": "string"
+              },
+              "functional_impact": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "expression_pattern": {
+          "type": "object"
+        },
+        "ortholog_in_model": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "linked_traits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mutant_resources": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "ontology_id": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "canonical_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "text_snippet": {
+                "type": "string"
+              },
+              "char_start_end": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "section_id"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "candidate_status": {
+          "type": "string",
+          "enum": [
+            "proximity_only",
+            "author_proposed",
+            "expression_supported",
+            "fine_mapped",
+            "functional_validated",
+            "field_validated"
+          ]
+        }
+      }
+    },
+    "trait": {
+      "type": "object",
+      "required": [
+        "entity_id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "pattern": "^trait:"
+        },
+        "trait_name": {
+          "type": "string"
+        },
+        "trait_abbr": {
+          "type": "string"
+        },
+        "trait_category": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trait_class": {
+          "enum": [
+            "定性",
+            "定量",
+            "定性有序",
+            "比率"
+          ]
+        },
+        "data_type": {
+          "enum": [
+            "连续",
+            "计数",
+            "二值",
+            "有序等级",
+            "组成成分",
+            "缺失比例"
+          ]
+        },
+        "measurement_detail": {
+          "type": "object",
+          "properties": {
+            "unit": {
+              "type": "string"
+            },
+            "stage": {
+              "type": "string"
+            },
+            "organ": {
+              "type": "string"
+            },
+            "method_standard": {
+              "type": "string"
+            },
+            "device": {
+              "type": "string"
+            },
+            "survey_numbers": {
+              "type": "integer"
+            },
+            "scoring_scheme": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "direction_of_improvement": {
+          "enum": [
+            "越大越好",
+            "越小越好",
+            "适中值优",
+            "定向"
+          ]
+        },
+        "heritability_h2_estimate": {
+          "type": "number"
+        },
+        "component_of": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "related_marker_genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ontology_id": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "trait_ontology_id": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "canonical_name": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "text_snippet": {
+                "type": "string"
+              },
+              "char_start_end": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "section_id"
+            ],
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "germplasm": {
+      "type": "object",
+      "required": [
+        "entity_id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "pattern": "^germplasm:"
+        },
+        "germplasm_name": {
+          "type": "string"
+        },
+        "accession_number": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "db": {
+                "type": "string"
+              },
+              "accno": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "species_info": {
+          "type": "object",
+          "properties": {
+            "species": {
+              "type": "string"
+            },
+            "sub_species": {
+              "type": "string"
+            },
+            "ploidy": {
+              "type": "string"
+            },
+            "genomic_type": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "origin_region": {
+          "type": "object",
+          "properties": {
+            "country": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            },
+            "ecotype": {
+              "type": "string"
+            },
+            "altitude_range": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "pedigree_text": {
+          "type": "string"
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "breeding_method": {
+          "type": "string"
+        },
+        "breeding_unit": {
+          "type": "string"
+        },
+        "breeder": {
+          "type": "string"
+        },
+        "release_status": {
+          "type": "object",
+          "properties": {
+            "review_level": {
+              "enum": [
+                "国审",
+                "省审",
+                "登记",
+                "未审定"
+              ]
+            },
+            "year_registered": {
+              "type": "integer"
+            },
+            "status": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "key_traits_profile": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "latitude_longitude": {
+          "type": "object",
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lon": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "canonical_name": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "text_snippet": {
+                "type": "string"
+              },
+              "char_start_end": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "section_id"
+            ],
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "variety": {
+      "type": "object",
+      "required": [
+        "entity_id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "pattern": "^variety:"
+        },
+        "variety_name": {
+          "type": "string"
+        },
+        "approved_number": {
+          "type": "string"
+        },
+        "variety_type": {
+          "enum": [
+            "杂交组合",
+            "常规品种",
+            "自交系",
+            "克隆家系",
+            "核心种质",
+            "审定品种"
+          ]
+        },
+        "parentage": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "breeding_lines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "release_info": {
+          "type": "object",
+          "properties": {
+            "release_year": {
+              "type": "integer"
+            },
+            "region_suitable": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "approved_area": {
+              "type": "string"
+            },
+            "promotion_area_ha": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": true
+        },
+        "suitable_regions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "major_traits": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "disease_resistance_profile": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "canonical_name": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "text_snippet": {
+                "type": "string"
+              },
+              "char_start_end": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "section_id"
+            ],
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "population": {
+      "type": "object",
+      "required": [
+        "entity_id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "pattern": "^pop:"
+        },
+        "population_id": {
+          "type": "string"
+        },
+        "population_name": {
+          "type": "string"
+        },
+        "pop_type": {
+          "enum": [
+            "natural_pop",
+            "F2",
+            "BC",
+            "RIL",
+            "DH",
+            "NIL",
+            "BIL",
+            "CSSL",
+            "MAGIC",
+            "NAM",
+            "TIL",
+            "异源群体",
+            "其他"
+          ]
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "population_size": {
+          "type": "integer"
+        },
+        "generation": {
+          "type": "string"
+        },
+        "marker_density": {
+          "type": "object",
+          "properties": {
+            "markers_count": {
+              "type": "integer"
+            },
+            "platform": {
+              "type": "string"
+            },
+            "average_distance_kb": {
+              "type": "number"
+            },
+            "coverage": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "construction_purpose": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "canonical_name": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "text_snippet": {
+                "type": "string"
+              },
+              "char_start_end": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "section_id"
+            ],
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "required": [
+        "entity_id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "pattern": "^env:"
+        },
+        "env_id": {
+          "type": "string"
+        },
+        "env_name": {
+          "type": "string"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "site": {
+              "type": "string"
+            },
+            "province": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            },
+            "lat": {
+              "type": "number"
+            },
+            "lon": {
+              "type": "number"
+            },
+            "altitude_m": {
+              "type": "number"
+            },
+            "ecosystem_type": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "season": {
+          "type": "string"
+        },
+        "year": {
+          "type": "integer"
+        },
+        "soil": {
+          "type": "object",
+          "properties": {
+            "soil_type": {
+              "type": "string"
+            },
+            "texture": {
+              "type": "string"
+            },
+            "ph": {
+              "type": "number"
+            },
+            "organic_matter": {
+              "type": "string"
+            },
+            "fertility_level": {
+              "type": "string"
+            },
+            "saline_alkali": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "climate": {
+          "type": "object",
+          "properties": {
+            "avg_temp_c": {
+              "type": "number"
+            },
+            "rainfall_mm": {
+              "type": "number"
+            },
+            "sunshine_h": {
+              "type": "number"
+            },
+            "gdd": {
+              "type": "number"
+            },
+            "extreme_events": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "irrigation": {
+          "enum": [
+            "雨养",
+            "灌溉",
+            "旱作",
+            "渍水",
+            "水旱轮作"
+          ]
+        },
+        "stress_conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stress_type": {
+                "type": "string"
+              },
+              "severity": {
+                "type": "string"
+              },
+              "duration": {
+                "type": "string"
+              },
+              "method": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "cropping_system": {
+          "type": "string"
+        },
+        "env_code_in_paper": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "canonical_name": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "text_snippet": {
+                "type": "string"
+              },
+              "char_start_end": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "section_id"
+            ],
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "marker": {
+      "type": "object",
+      "required": [
+        "entity_id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "pattern": "^marker:"
+        },
+        "marker_id": {
+          "type": "string"
+        },
+        "marker_name": {
+          "type": "string"
+        },
+        "marker_type": {
+          "enum": [
+            "SNP",
+            "SSR",
+            "InDel",
+            "AFLP",
+            "RAPD",
+            "CAPS",
+            "KASP",
+            "DArT",
+            "SV",
+            "CNV",
+            "GBS位点",
+            "芯片探针"
+          ]
+        },
+        "platform": {
+          "type": "object",
+          "properties": {
+            "platform": {
+              "type": "string"
+            },
+            "array_name": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "chromosome": {
+          "type": "string"
+        },
+        "position_bp": {
+          "type": "integer"
+        },
+        "flanking_sequence": {
+          "type": "string"
+        },
+        "allele_frequency": {
+          "type": "object",
+          "properties": {
+            "minor_allele_frequency": {
+              "type": "number"
+            },
+            "red_missing_rate": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": true
+        },
+        "is_core_marker": {
+          "type": "boolean"
+        },
+        "linked_gene": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "primer": {
+          "type": "object",
+          "properties": {
+            "forward": {
+              "type": "string"
+            },
+            "reverse": {
+              "type": "string"
+            },
+            "annealing_temp": {
+              "type": "number"
+            },
+            "product_size": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "canonical_name": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "text_snippet": {
+                "type": "string"
+              },
+              "char_start_end": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "section_id"
+            ],
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "qtl": {
+      "type": "object",
+      "required": [
+        "entity_id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "pattern": "^qtl:"
+        },
+        "qtl_id": {
+          "type": "string"
+        },
+        "qtl_name": {
+          "type": "string"
+        },
+        "chromosome": {
+          "type": "string"
+        },
+        "interval": {
+          "type": "object",
+          "properties": {
+            "unit": {
+              "enum": [
+                "cM",
+                "Mb",
+                "bp"
+              ]
+            },
+            "start": {
+              "type": "number"
+            },
+            "end": {
+              "type": "number"
+            },
+            "ci_type": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "lod": {
+          "type": "number"
+        },
+        "p_value": {
+          "type": "number"
+        },
+        "pve": {
+          "type": "number"
+        },
+        "additive_effect": {
+          "type": "number"
+        },
+        "dominance_effect": {
+          "type": "number"
+        },
+        "qtl_type": {
+          "enum": [
+            "主效QTL",
+            "微效QTL",
+            "环境互作型",
+            "上位性QTL"
+          ]
+        },
+        "population_used": {
+          "type": "string"
+        },
+        "confidence_interval": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "number"
+            },
+            "end": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string"
+            },
+            "overlap_by": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": true
+        },
+        "candidate_genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nearest_markers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pleiotropy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "analysis_ref": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "canonical_name": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "text_snippet": {
+                "type": "string"
+              },
+              "char_start_end": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "section_id"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "ref_genome": {
+          "type": "string"
+        }
+      }
+    },
+    "relation": {
+      "type": "object",
+      "required": [
+        "relation_id",
+        "subject",
+        "object",
+        "relation_type"
+      ],
+      "properties": {
+        "relation_id": {
+          "type": "string",
+          "pattern": "^rel:"
+        },
+        "subject": {
+          "type": "object",
+          "required": [
+            "entity_id",
+            "entity_type"
+          ],
+          "properties": {
+            "entity_id": {
+              "type": "string"
+            },
+            "entity_type": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "object": {
+          "type": "object",
+          "required": [
+            "entity_id",
+            "entity_type"
+          ],
+          "properties": {
+            "entity_id": {
+              "type": "string"
+            },
+            "entity_type": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "relation_type": {
+          "enum": [
+            "基因-控制-性状",
+            "基因-关联-性状",
+            "基因-互作-基因",
+            "QTL-关联-性状",
+            "标记-连锁-QTL",
+            "标记-连锁-基因",
+            "标记-定位-位点",
+            "种质-携带-基因",
+            "品种-源于-亲本",
+            "种质-组成-群体",
+            "环境-影响-性状",
+            "环境-调节-基因表达",
+            "基因-表达于-组织",
+            "基因-定位于-区段",
+            "性状-构成-上位性状",
+            "品种-适应于-环境",
+            "材料-抗-病害",
+            "基因-介导-抗病性",
+            "方法-基于-群体",
+            "分析-产出-结论",
+            "结论-支持-假设",
+            "材料-登记于-数据库",
+            "同义-实体",
+            "跨组学-调控"
+          ]
+        },
+        "relation_mechanism": {
+          "enum": [
+            "加性效应",
+            "显性效应",
+            "上位效应",
+            "完全显性",
+            "不完全显性",
+            "剂量效应",
+            "负调控",
+            "连锁",
+            "环境互作",
+            "未知"
+          ]
+        },
+        "effect_direction": {
+          "enum": [
+            "正向",
+            "负向",
+            "方向依赖环境",
+            "中性"
+          ]
+        },
+        "relation_confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "text_snippet": {
+                "type": "string"
+              },
+              "char_start_end": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "section_id"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "supporting_method": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ontology_relation_mapping": {
+          "type": "object"
+        },
+        "is_inferred": {
+          "type": "boolean"
+        },
+        "inferred_from": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_section": {
+          "enum": [
+            "摘要",
+            "引言",
+            "材料与方法",
+            "结果",
+            "讨论",
+            "图表",
+            "补充材料",
+            "正文"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "experiment": {
+      "type": "object",
+      "required": [
+        "experiment_id",
+        "experiment_name",
+        "experiment_type"
+      ],
+      "properties": {
+        "experiment_id": {
+          "type": "string",
+          "pattern": "^exp:"
+        },
+        "experiment_name": {
+          "type": "string"
+        },
+        "experiment_objective": {
+          "type": "string"
+        },
+        "experiment_type": {
+          "enum": [
+            "田间试验",
+            "区域试验",
+            "温室试验",
+            "大棚试验",
+            "盆栽试验",
+            "分子标记辅助选择(MAS)",
+            "群体构建",
+            "杂交配组",
+            "自交纯化",
+            "回交转育",
+            "诱变处理",
+            "基因编辑",
+            "转基因",
+            "离体组织培养",
+            "品质测定",
+            "逆境筛选",
+            "代谢组感测",
+            "根系试验",
+            "人工接种抗性鉴定",
+            "表型自动化平台",
+            "动物选育核心群",
+            "发酵饲料试验"
+          ]
+        },
+        "materials_used": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "record_id_ref": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "experimental_design": {
+          "type": "object",
+          "properties": {
+            "design_type": {
+              "type": "string"
+            },
+            "replicates": {
+              "type": "integer"
+            },
+            "blocks_count": {
+              "type": "integer"
+            },
+            "plots_count": {
+              "type": "integer"
+            },
+            "randomization_method": {
+              "type": "string"
+            },
+            "control": {
+              "type": "string"
+            },
+            "partial_balance": {
+              "type": "boolean"
+            },
+            "design_yield": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": true
+        },
+        "treatments": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "env_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trait_measurements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trait_ref": {
+                "type": "string"
+              },
+              "measurement_time": {
+                "type": "string"
+              },
+              "stage": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "device": {
+                "type": "string"
+              },
+              "samples": {
+                "type": "integer"
+              },
+              "protocol_ref": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "data_collection": {
+          "type": "object",
+          "properties": {
+            "method": {
+              "type": "string"
+            },
+            "instrument": {
+              "type": "string"
+            },
+            "timepoints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "person_role": {
+              "type": "string"
+            },
+            "data_num": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": true
+        },
+        "experimental_steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step_no": {
+                "type": "integer"
+              },
+              "step_name": {
+                "type": "string"
+              },
+              "step_desc": {
+                "type": "string"
+              },
+              "duration": {
+                "type": "string"
+              },
+              "condition": {
+                "type": "string"
+              },
+              "tool_if_used": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "field_layout": {
+          "type": "object",
+          "properties": {
+            "plot_size": {
+              "type": "string"
+            },
+            "row_spacing": {
+              "type": "string"
+            },
+            "plant_density": {
+              "type": "number"
+            },
+            "layout_type": {
+              "type": "string"
+            },
+            "pest_management": {
+              "type": "string"
+            },
+            "fertilizer_scheme": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "experiment_notes": {
+          "type": "string"
+        },
+        "dataset_link": {
+          "type": "object",
+          "properties": {
+            "dataset_id": {
+              "type": "string"
+            },
+            "repository": {
+              "type": "string"
+            },
+            "release_date": {
+              "type": "string"
+            },
+            "data_access": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "experiment_card_ref": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "analysis": {
+      "type": "object",
+      "required": [
+        "analysis_id",
+        "analysis_name",
+        "analysis_type"
+      ],
+      "properties": {
+        "analysis_id": {
+          "type": "string",
+          "pattern": "^ana:"
+        },
+        "analysis_name": {
+          "type": "string"
+        },
+        "analysis_type": {
+          "type": "string"
+        },
+        "statistical_class": {
+          "enum": [
+            "经典统计",
+            "混合线性模型",
+            "贝叶斯",
+            "机器学习",
+            "深度学习",
+            "连锁分析",
+            "关联分析",
+            "全基因组选择",
+            "群体遗传",
+            "进化统计学"
+          ]
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_equation": {
+          "type": "string"
+        },
+        "model_assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "software_tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tool_name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "sdk": {
+                "type": "string"
+              },
+              "command_template": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "param_name": {
+                "type": "string"
+              },
+              "param_type": {
+                "type": "string"
+              },
+              "param_value": {},
+              "param_default": {},
+              "param_range": {
+                "type": "string"
+              },
+              "param_meaning": {
+                "type": "string"
+              },
+              "is_required": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "input_name": {
+                "type": "string"
+              },
+              "input_kind": {
+                "type": "string"
+              },
+              "format": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "desc": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "significance_thresholds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              },
+              "correction_method": {
+                "enum": [
+                  "Bonferroni",
+                  "FDR",
+                  "Permutation"
+                ]
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "key_results": {
+          "type": "object"
+        },
+        "validation_design": {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "type": "string"
+            },
+            "k_folds": {
+              "type": "integer"
+            },
+            "training_set": {
+              "type": "string"
+            },
+            "testing_set": {
+              "type": "string"
+            },
+            "metric": {
+              "type": "string"
+            },
+            "repeats": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": true
+        },
+        "model_fit_stats": {
+          "type": "object",
+          "properties": {
+            "aic": {},
+            "bic": {},
+            "loglik": {},
+            "rmse": {},
+            "r_squared": {
+              "type": "number"
+            },
+            "genomic_h2": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": true
+        },
+        "analysis_notes": {
+          "type": "string"
+        },
+        "analysis_card_ref": {
+          "type": "string"
+        },
+        "experiments_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "conclusion": {
+      "type": "object",
+      "required": [
+        "conclusion_id",
+        "claim_text"
+      ],
+      "properties": {
+        "conclusion_id": {
+          "type": "string",
+          "pattern": "^clu:"
+        },
+        "conclusion_type": {
+          "enum": [
+            "基因-性状关联结论",
+            "遗传效应结论",
+            "QTL定位结论",
+            "预测模型与精度结论",
+            "品种适应性结论",
+            "育种策略建议",
+            "种质多样性结论",
+            "驯化与进化结论",
+            "抗逆性结论",
+            "品质结论",
+            "生理机理结论",
+            "综述归纳结论",
+            "方法学结论",
+            "可重复性结论"
+          ]
+        },
+        "claim_text": {
+          "type": "string"
+        },
+        "claim_zh": {
+          "type": "string"
+        },
+        "logic_type": {
+          "enum": [
+            "关联",
+            "因果",
+            "统计推断",
+            "经验总结",
+            "综述归纳",
+            "预测"
+          ]
+        },
+        "evidence_list": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "evidence_type": {
+                "type": "string"
+              },
+              "reference_id": {
+                "type": "string"
+              },
+              "strength": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "supporting_relations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "supporting_analyses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "confidence_level": {
+          "enum": [
+            "高",
+            "中",
+            "低"
+          ]
+        },
+        "novelty": {
+          "enum": [
+            "无",
+            "低",
+            "中",
+            "高"
+          ]
+        },
+        "scope_constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "causal_flag": {
+          "type": "boolean"
+        },
+        "contradiction_note": {
+          "type": "string"
+        },
+        "breeding_recommendations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string"
+              },
+              "target_trait": {
+                "type": "string"
+              },
+              "rational_evidence": {
+                "type": "string"
+              },
+              "expected_gain_level": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "hypothesis_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "pipeline": {
+      "type": "object",
+      "properties": {
+        "upstream_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "record_kind": {
+                "type": "string"
+              },
+              "record_id": {
+                "type": "string"
+              },
+              "relation": {
+                "type": "string"
+              },
+              "from_id": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "downstream_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "record_kind": {
+                "type": "string"
+              },
+              "record_id": {
+                "type": "string"
+              },
+              "relation": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "ontology_mapping": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "concept_name": {
+                "type": "string"
+              },
+              "ontology_id": {
+                "type": "string"
+              },
+              "ontology_version": {
+                "type": "string"
+              },
+              "match_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "mapping_status": {
+                "enum": [
+                  "直配",
+                  "近配",
+                  "新概念"
+                ]
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "kg_node_id": {
+          "type": "string"
+        },
+        "kg_subgraph_id": {
+          "type": "string"
+        },
+        "fusion_status": {
+          "enum": [
+            "独立",
+            "已并入",
+            "被并入",
+            "合并",
+            "冲突待解",
+            "已消解",
+            ""
+          ]
+        },
+        "fusion_group_id": {
+          "type": "string"
+        },
+        "conflict_statements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "other_record_id": {
+                "type": "string"
+              },
+              "topic": {
+                "type": "string"
+              },
+              "statement_a": {
+                "type": "string"
+              },
+              "statement_b": {
+                "type": "string"
+              },
+              "difference_reason": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "resolution_statement": {
+          "type": "string"
+        },
+        "canonical_entity_links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "alias": {
+                "type": "string"
+              },
+              "canonical_entity_id": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "update_chain": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "revision_no": {
+                "type": "integer"
+              },
+              "changed_time": {
+                "type": "string"
+              },
+              "change_type": {
+                "type": "string"
+              },
+              "changed_field_paths": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "old_value": {},
+              "new_value": {},
+              "operator": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "task_association": {
+          "type": "object",
+          "properties": {
+            "tasks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "priority_level": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "governance": {
+      "type": "object",
+      "properties": {
+        "ontology_ref": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ontology_name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "namespace": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "knowledge_units": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "curation_status": {
+          "enum": [
+            "原始抽取",
+            "机器清洗",
+            "人工审核",
+            "已发布",
+            "已过期",
+            "已废弃"
+          ]
+        },
+        "curation_history": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "domain_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "technical_scope": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "常规育种",
+              "分子标记辅助",
+              "双单倍体",
+              "转基因",
+              "基因编辑",
+              "全基因组选择",
+              "智能育种",
+              "大数据"
+            ]
+          }
+        },
+        "quality_grade": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D",
+            ""
+          ]
+        },
+        "consistency_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "check_name": {
+                "type": "string"
+              },
+              "result": {
+                "type": "string"
+              },
+              "detail": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "duplicates_group": {
+          "type": "string"
+        },
+        "freshness_level": {
+          "enum": [
+            "新",
+            "活跃",
+            "过时占位",
+            ""
+          ]
+        },
+        "retention_policy": {
+          "type": "string"
+        },
+        "next_review_date": {
+          "type": "string"
+        },
+        "pending_updates": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "access_level": {
+          "type": "string",
+          "enum": [
+            "open",
+            "controlled",
+            "restricted"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "extraction"
+      ],
+      "properties": {
+        "extraction": {
+          "type": "object",
+          "required": [
+            "method"
+          ],
+          "properties": {
+            "method": {
+              "enum": [
+                "LLM抽取",
+                "规则",
+                "词典",
+                "人工",
+                "混合(LLM+规则)",
+                "混合"
+              ]
+            },
+            "pipeline_version": {
+              "type": "string"
+            },
+            "llm_model": {
+              "type": "string"
+            },
+            "llm_prompt_version": {
+              "type": "string"
+            },
+            "extractor_config_hash": {
+              "type": "string"
+            },
+            "extraction_datetime": {
+              "type": "string"
+            },
+            "parser_tool": {
+              "type": "string"
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "source_locations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "locator": {
+                "type": "string"
+              },
+              "table_row_key": {
+                "type": "string"
+              },
+              "table_column_key": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "field_level_confidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field_path": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "basis": {
+                "type": "string"
+              },
+              "flags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "quality_scores": {
+          "type": "object",
+          "properties": {
+            "completeness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "accuracy": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "consistency": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "uniqueness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "timeliness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "interpretability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "retrieval_ai_ready": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "provenance_completeness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "overall": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "verification": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "待核验",
+                "已核验",
+                "核验失败",
+                "无需"
+              ]
+            },
+            "verifier": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "string"
+            },
+            "cross_doc_support_count": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": true
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "corrections": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "data_license": {
+          "type": "object",
+          "properties": {
+            "license_name": {
+              "type": "string"
+            },
+            "copyright_note": {
+              "type": "string"
+            },
+            "allowed_usage": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "restrictions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "integrity": {
+          "type": "object",
+          "properties": {
+            "record_sha256": {
+              "type": "string"
+            },
+            "source_file_hash": {
+              "type": "string"
+            },
+            "algorithm": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "provenance_chain": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hop_no": {
+                "type": "integer"
+              },
+              "action": {
+                "type": "string"
+              },
+              "actor": {
+                "type": "string"
+              },
+              "tool": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "string"
+              },
+              "input_ref": {
+                "type": "string"
+              },
+              "output_ref": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "missing_fields": {
+          "type": "object"
+        },
+        "ingested_at": {
+          "type": "string"
+        },
+        "ingest_batch_id": {
+          "type": "string"
+        },
+        "extraction_run_id": {
+          "type": "string"
+        },
+        "source_record_id": {
+          "type": "string"
+        },
+        "source_version": {
+          "type": "string"
+        },
+        "qc_rule_set_version": {
+          "type": "string"
+        },
+        "source_file_asset_id": {
+          "type": "string"
+        },
+        "qc_failure_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "agent": {
+      "type": "object",
+      "properties": {
+        "agent_state": {
+          "type": "object",
+          "properties": {
+            "problem_statement": {
+              "type": "string"
+            },
+            "state_known": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "state_unknowns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "evidence_citation": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "solved_problem_types": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "hypotheses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "hypothesis_id",
+              "hypothesis_text"
+            ],
+            "properties": {
+              "hypothesis_id": {
+                "type": "string",
+                "pattern": "^hyp:"
+              },
+              "hypothesis_text": {
+                "type": "string"
+              },
+              "hypothesis_type": {
+                "enum": [
+                  "因果",
+                  "预测",
+                  "优化",
+                  "可证伪",
+                  "效应方向"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "待验证",
+                  "已验证",
+                  "已反驳",
+                  "已采纳",
+                  "供检验"
+                ]
+              },
+              "basis_evidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "phenotype_prediction": {
+                "type": "string"
+              },
+              "direction": {
+                "type": "string"
+              },
+              "testability_design": {
+                "type": "string"
+              },
+              "generation_model": {
+                "type": "string"
+              },
+              "refs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "causal_model": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "cause_entity_id",
+              "effect_entity_id"
+            ],
+            "properties": {
+              "edge_id": {
+                "type": "string"
+              },
+              "cause_entity_id": {
+                "type": "string"
+              },
+              "effect_entity_id": {
+                "type": "string"
+              },
+              "mechanism": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "evidence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "is_confirmed": {
+                "type": "boolean"
+              },
+              "is_directional": {
+                "type": "boolean"
+              },
+              "mediation_entities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "moderators": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "env_entity_id": {
+                      "type": "string"
+                    },
+                    "moderation": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "reasoning_premises": {
+          "type": "object",
+          "properties": {
+            "premises": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "inference_type": {
+              "enum": [
+                "演绎",
+                "归纳",
+                "类比",
+                "反事实"
+              ]
+            },
+            "inference_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "conclusion_refs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "uncertainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "retrieval_keys": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "planning": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "plan_id"
+            ],
+            "properties": {
+              "plan_id": {
+                "type": "string",
+                "pattern": "^plan:"
+              },
+              "goal": {
+                "type": "string"
+              },
+              "task_steps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "task_id": {
+                      "type": "string"
+                    },
+                    "task_type": {
+                      "type": "string"
+                    },
+                    "inputs_state_ref": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "expected_output": {
+                      "type": "string"
+                    },
+                    "tools_used": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "dependencies": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "schedule": {
+                "type": "string"
+              },
+              "success_criteria": {
+                "type": "string"
+              },
+              "risk_points": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "memory": {
+          "type": "object",
+          "properties": {
+            "episodic": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "semantic": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "fact_id": {
+                    "type": "string"
+                  },
+                  "fact": {
+                    "type": "string"
+                  },
+                  "source_ref": {
+                    "type": "string"
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "procedural": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "skill_id": {
+                    "type": "string"
+                  },
+                  "skill_name": {
+                    "type": "string"
+                  },
+                  "condition": {
+                    "type": "string"
+                  },
+                  "action": {
+                    "type": "string"
+                  },
+                  "effect": {
+                    "type": "string"
+                  },
+                  "success_rate": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "tool_calls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "call_id": {
+                "type": "string",
+                "pattern": "^call:"
+              },
+              "tool_name": {
+                "type": "string"
+              },
+              "endpoint": {
+                "type": "string"
+              },
+              "params": {
+                "type": "object"
+              },
+              "param_hash": {
+                "type": "string"
+              },
+              "result_summary": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "latency_ms": {
+                "type": "number"
+              },
+              "feedback": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "feedback_loop": {
+          "type": "object",
+          "properties": {
+            "reward_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "policy_update": {
+              "type": "string"
+            },
+            "next_action_recommendation": {
+              "type": "string"
+            },
+            "iteration_no": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": true
+        },
+        "knowledge_state_hash": {
+          "type": "string"
+        },
+        "scientific_reasoning": {
+          "$ref": "#/$defs/scientific_reasoning"
+        }
+      },
+      "additionalProperties": true
+    },
+    "skill": {
+      "type": "object",
+      "properties": {
+        "skill_id": {
+          "type": "string"
+        },
+        "skill_name": {
+          "type": "string"
+        },
+        "skill_category": {
+          "enum": [
+            "基因组预测(GS)",
+            "全基因组关联分析(GWAS)",
+            "QTL定位",
+            "群体遗传分析",
+            "表型数据分析",
+            "序列处理",
+            "分子标记开发",
+            "分子设计育种",
+            "数据预处理",
+            "可视化",
+            "环境相似性",
+            "合成优化"
+          ]
+        },
+        "experiment_cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "card_id",
+              "mission"
+            ],
+            "properties": {
+              "card_id": {
+                "type": "string"
+              },
+              "mission": {
+                "type": "string"
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "inputs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "outputs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "parameters": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "expected_results": {
+                "type": "string"
+              },
+              "failure_handling": {
+                "type": "string"
+              },
+              "alternatives": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "analysis_cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "card_id",
+              "analysis_type"
+            ],
+            "properties": {
+              "card_id": {
+                "type": "string"
+              },
+              "analysis_type": {
+                "type": "string"
+              },
+              "model_ref": {
+                "type": "string"
+              },
+              "tool_bindings": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "parameter_schema": {
+                "type": "object"
+              },
+              "io_schema": {
+                "type": "object"
+              },
+              "quality_checks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "outputs_spec": {
+                "type": "object"
+              },
+              "visualization_spec": {
+                "type": "object"
+              },
+              "docs_ref": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "hypothesis_cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "card_id",
+              "linked_hypothesis_id"
+            ],
+            "properties": {
+              "card_id": {
+                "type": "string"
+              },
+              "linked_hypothesis_id": {
+                "type": "string"
+              },
+              "testable_predictions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "experiment_spec_ref": {
+                "type": "string"
+              },
+              "success_definition": {
+                "type": "string"
+              },
+              "metrics": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "workflow_orchestration": {
+          "type": "object",
+          "properties": {
+            "workflow_id": {
+              "type": "string"
+            },
+            "workflow_name": {
+              "type": "string"
+            },
+            "dag_steps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "step_id": {
+                    "type": "string"
+                  },
+                  "step_type": {
+                    "type": "string"
+                  },
+                  "tool_ref": {
+                    "type": "string"
+                  },
+                  "parameter_ref": {
+                    "type": "string"
+                  },
+                  "input_ref": {
+                    "type": "string"
+                  },
+                  "output_ref": {
+                    "type": "string"
+                  },
+                  "depends_on": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "execution_mode": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "rollback_strategy": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "tool_bindings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tool_id": {
+                "type": "string",
+                "pattern": "^tool:"
+              },
+              "tool_name": {
+                "type": "string"
+              },
+              "interface_type": {
+                "enum": [
+                  "CLI",
+                  "API",
+                  "容器",
+                  "函数",
+                  "服务"
+                ]
+              },
+              "spec": {
+                "type": "object"
+              },
+              "input_schema": {
+                "type": "object"
+              },
+              "output_schema": {
+                "type": "object"
+              },
+              "parameter_schema": {
+                "type": "object"
+              },
+              "version": {
+                "type": "string"
+              },
+              "docs_url": {
+                "type": "string"
+              },
+              "sdk": {
+                "type": "string"
+              },
+              "docker_image": {
+                "type": "string"
+              },
+              "resource_requirement": {
+                "type": "string"
+              },
+              "error_handling": {
+                "type": "string"
+              },
+              "rate_limit": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "io_adapter": {
+          "type": "object",
+          "properties": {
+            "standard_input_formats": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "standard_output_formats": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "unit_conversion": {
+              "type": "string"
+            },
+            "missing_value_convention": {
+              "type": "string"
+            },
+            "sample_key_format": {
+              "type": "string"
+            },
+            "encoding": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "model_profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "model_id": {
+                "type": "string"
+              },
+              "model_name": {
+                "type": "string"
+              },
+              "model_kind": {
+                "enum": [
+                  "GS",
+                  "GWAS",
+                  "深度学习",
+                  "经典"
+                ]
+              },
+              "input_spec": {
+                "type": "object"
+              },
+              "training_data_ref": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "hyperparameters": {
+                "type": "object"
+              },
+              "validation_design": {
+                "type": "string"
+              },
+              "metrics": {
+                "type": "object"
+              },
+              "version": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "result_visualizations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "result_id": {
+                "type": "string"
+              },
+              "chart_kind": {
+                "enum": [
+                  "曼哈顿图",
+                  "QQ图",
+                  "LD热图",
+                  "群体结构图",
+                  "双标图",
+                  "表型分布图",
+                  "箱线图"
+                ]
+              },
+              "data_spec": {
+                "type": "string"
+              },
+              "annotation_spec": {
+                "type": "string"
+              },
+              "output_formats": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "interpretation_hints": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "execution_feedback": {
+          "type": "object",
+          "properties": {
+            "execution_records": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "time": {
+                    "type": "string"
+                  },
+                  "workflow_ref": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "success_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "avg_duration": {
+              "type": "number"
+            },
+            "error_logs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "optimization_suggestions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "skill_upgrade_version": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "method_profile": {
+          "$ref": "#/$defs/method_profile"
+        },
+        "validation": {
+          "$ref": "#/$defs/skill_validation"
+        },
+        "skill_registry": {
+          "$ref": "#/$defs/skill_registry"
+        }
+      },
+      "additionalProperties": true
+    },
+    "feature_measurement": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        },
+        "text": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "quality_flag": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "suspect",
+            "rejected",
+            "unreviewed"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": true
+    },
+    "statistic": {
+      "type": "object",
+      "properties": {
+        "contrast": {
+          "type": "string"
+        },
+        "effect_direction": {
+          "type": "string",
+          "enum": [
+            "增加",
+            "降低",
+            "无显著效应",
+            "未知"
+          ]
+        },
+        "effect_size": {
+          "type": "number"
+        },
+        "effect_unit": {
+          "type": "string"
+        },
+        "standard_error": {
+          "type": "number"
+        },
+        "p_value": {
+          "type": "number"
+        },
+        "q_value": {
+          "type": "number"
+        },
+        "confidence_interval": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "replication_status": {
+          "type": "string"
+        },
+        "cross_doc_support_count": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "variant_obs": {
+      "type": "object",
+      "properties": {
+        "chromosome": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "start_position": {
+          "type": "integer"
+        },
+        "end_position": {
+          "type": "integer"
+        },
+        "variant_id": {
+          "type": "string"
+        },
+        "variant_type": {
+          "type": "string",
+          "enum": [
+            "SNP",
+            "InDel",
+            "缺失",
+            "SV",
+            "CNV",
+            "其他"
+          ]
+        },
+        "ref_allele": {
+          "type": "string"
+        },
+        "alt_allele": {
+          "type": "string"
+        },
+        "effect_allele": {
+          "type": "string"
+        },
+        "genotype_call": {
+          "type": "string"
+        },
+        "allele_frequency": {
+          "type": "number"
+        },
+        "minor_allele_frequency": {
+          "type": "number"
+        },
+        "genotype_quality": {
+          "type": "number"
+        },
+        "read_depth": {
+          "type": "number"
+        },
+        "haplotype_id": {
+          "type": "string"
+        },
+        "structural_variant_type": {
+          "type": "string"
+        },
+        "genome_assembly": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "genotype_obs": {
+      "type": "object",
+      "properties": {
+        "ploidy": {
+          "type": "integer"
+        },
+        "call": {
+          "type": "string"
+        },
+        "dosage": {
+          "type": "number"
+        },
+        "ref_allele": {
+          "type": "string"
+        },
+        "alt_allele": {
+          "type": "string"
+        },
+        "dosage_allele": {
+          "type": "string"
+        },
+        "quality_flag": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "suspect",
+            "rejected",
+            "unreviewed"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "observation": {
+      "type": "object",
+      "properties": {
+        "observation_id": {
+          "type": "string"
+        },
+        "observation_type": {
+          "type": "string",
+          "enum": [
+            "phenotype",
+            "environment",
+            "genotype",
+            "omics_feature"
+          ]
+        },
+        "sample_ref": {
+          "type": "string"
+        },
+        "material_ref": {
+          "type": "string"
+        },
+        "trait_ref": {
+          "type": "string"
+        },
+        "environment_ref": {
+          "type": "string"
+        },
+        "assay_ref": {
+          "type": "string"
+        },
+        "experiment_ref": {
+          "type": "string"
+        },
+        "treatment_ref": {
+          "type": "string"
+        },
+        "observation_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "stage": {
+          "type": "string"
+        },
+        "replicate_id": {
+          "type": "string"
+        },
+        "plot_id": {
+          "type": "string"
+        },
+        "sample_size": {
+          "type": "integer"
+        },
+        "measurement": {
+          "$ref": "#/$defs/feature_measurement"
+        },
+        "original_value": {
+          "type": "string"
+        },
+        "original_unit": {
+          "type": "string"
+        },
+        "normalized_value": {
+          "type": "number"
+        },
+        "normalized_min_value": {
+          "type": "number"
+        },
+        "normalized_max_value": {
+          "type": "number"
+        },
+        "normalized_unit": {
+          "type": "string"
+        },
+        "feature_type": {
+          "type": "string"
+        },
+        "feature_id": {
+          "type": "string"
+        },
+        "feature_name": {
+          "type": "string"
+        },
+        "feature_value": {
+          "type": "number"
+        },
+        "feature_unit": {
+          "type": "string"
+        },
+        "statistic": {
+          "$ref": "#/$defs/statistic"
+        },
+        "variant": {
+          "$ref": "#/$defs/variant_obs"
+        },
+        "genotype": {
+          "$ref": "#/$defs/genotype_obs"
+        },
+        "omics_type": {
+          "type": "string",
+          "enum": [
+            "genomics",
+            "transcriptomics",
+            "single_cell",
+            "epigenomics",
+            "proteomics",
+            "metabolomics"
+          ]
+        },
+        "omics_feature": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "quality_flag": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "suspect",
+            "rejected",
+            "unreviewed"
+          ]
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "table_row_key": {
+                "type": "string"
+              },
+              "table_column_key": {
+                "type": "string"
+              },
+              "text_snippet": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "observation_id",
+        "observation_type"
+      ],
+      "additionalProperties": true
+    },
+    "asset": {
+      "type": "object",
+      "properties": {
+        "asset_id": {
+          "type": "string"
+        },
+        "asset_uri": {
+          "type": "string"
+        },
+        "asset_kind": {
+          "type": "string"
+        },
+        "asset_format": {
+          "type": "string"
+        },
+        "asset_compression": {
+          "type": "string"
+        },
+        "asset_size_bytes": {
+          "type": "integer"
+        },
+        "asset_sha256": {
+          "type": "string"
+        },
+        "asset_row_count": {
+          "type": "integer"
+        },
+        "asset_column_count": {
+          "type": "integer"
+        },
+        "asset_schema_ref": {
+          "type": "string"
+        },
+        "asset_accession": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data_availability": {
+          "type": "string"
+        },
+        "related_dataset_id": {
+          "type": "string"
+        },
+        "related_record_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "table_row_key": {
+                "type": "string"
+              },
+              "table_column_key": {
+                "type": "string"
+              },
+              "text_snippet": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "asset_id",
+        "asset_uri"
+      ],
+      "additionalProperties": true
+    },
+    "graph_statement": {
+      "type": "object",
+      "properties": {
+        "graph_statement_id": {
+          "type": "string"
+        },
+        "subject_mention": {
+          "type": "string"
+        },
+        "subject_type": {
+          "type": "string"
+        },
+        "subject_id": {
+          "type": "string"
+        },
+        "predicate_label": {
+          "type": "string"
+        },
+        "predicate_id": {
+          "type": "string"
+        },
+        "object_mention": {
+          "type": "string"
+        },
+        "object_type": {
+          "type": "string"
+        },
+        "object_id": {
+          "type": "string"
+        },
+        "relation_polarity": {
+          "type": "string",
+          "enum": [
+            "增加",
+            "降低",
+            "无显著效应",
+            "未知"
+          ]
+        },
+        "relation_qualifiers": {
+          "type": "object"
+        },
+        "graph_status": {
+          "type": "string",
+          "enum": [
+            "候选",
+            "已审核",
+            "已发布"
+          ]
+        },
+        "entity_alignment_status": {
+          "type": "string"
+        },
+        "entity_alignment_source": {
+          "type": "string"
+        },
+        "external_graph_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance_record_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "relation_evidence_type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "graph_statement_id"
+      ],
+      "additionalProperties": true
+    },
+    "corpus_chunk": {
+      "type": "object",
+      "properties": {
+        "chunk_id": {
+          "type": "string"
+        },
+        "chunk_text": {
+          "type": "string"
+        },
+        "chunk_page": {
+          "type": "integer"
+        },
+        "chunk_section": {
+          "type": "string"
+        },
+        "chunk_start_offset": {
+          "type": "integer"
+        },
+        "chunk_end_offset": {
+          "type": "integer"
+        },
+        "chunk_keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "chunk_support_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "chunk_id"
+      ],
+      "additionalProperties": true
+    },
+    "qa_pair": {
+      "type": "object",
+      "properties": {
+        "qa_id": {
+          "type": "string"
+        },
+        "seed_question": {
+          "type": "string"
+        },
+        "seed_answer": {
+          "type": "string"
+        },
+        "answerable": {
+          "type": "boolean"
+        },
+        "support_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reasoning_path_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": [
+            "单跳",
+            "多跳",
+            "跨模态"
+          ]
+        },
+        "answer_scope": {
+          "type": "string"
+        },
+        "unanswerable_reason": {
+          "type": "string"
+        },
+        "review_status": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "qa_id"
+      ],
+      "additionalProperties": true
+    },
+    "transform": {
+      "type": "object",
+      "properties": {
+        "graph_statements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/graph_statement"
+          }
+        },
+        "corpus_chunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/corpus_chunk"
+          }
+        },
+        "qa_pairs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/qa_pair"
+          }
+        },
+        "corpus_split": {
+          "type": "string",
+          "enum": [
+            "train",
+            "validation",
+            "test"
+          ]
+        },
+        "leakage_group_id": {
+          "type": "string"
+        },
+        "dedup_group_id": {
+          "type": "string"
+        },
+        "ontology_version": {
+          "type": "string"
+        },
+        "derivative_license_id": {
+          "type": "string"
+        },
+        "transform_review_status": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "omics_sample": {
+      "type": "object",
+      "properties": {
+        "sample_id": {
+          "type": "string"
+        },
+        "sample_name": {
+          "type": "string"
+        },
+        "sample_type": {
+          "type": "string"
+        },
+        "biological_replicate": {
+          "type": "string"
+        },
+        "technical_replicate": {
+          "type": "string"
+        },
+        "batch_id": {
+          "type": "string"
+        },
+        "sex": {
+          "type": "string"
+        },
+        "ploidy": {
+          "type": "string"
+        },
+        "organ": {
+          "type": "string"
+        },
+        "tissue": {
+          "type": "string"
+        },
+        "cell_type": {
+          "type": "string"
+        },
+        "cell_state": {
+          "type": "string"
+        },
+        "development_stage": {
+          "type": "string"
+        },
+        "sampling_time": {
+          "type": "string"
+        },
+        "sampling_time_relative": {
+          "type": "string"
+        },
+        "material_ref": {
+          "type": "string"
+        },
+        "treatment_ref": {
+          "type": "string"
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "table_row_key": {
+                "type": "string"
+              },
+              "table_column_key": {
+                "type": "string"
+              },
+              "text_snippet": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "sample_id"
+      ],
+      "additionalProperties": true
+    },
+    "omics_experiment": {
+      "type": "object",
+      "properties": {
+        "omics_experiment_id": {
+          "type": "string"
+        },
+        "omics_type": {
+          "type": "string",
+          "enum": [
+            "genomics",
+            "transcriptomics",
+            "single_cell",
+            "epigenomics",
+            "proteomics",
+            "metabolomics"
+          ]
+        },
+        "assay_type": {
+          "type": "string"
+        },
+        "design": {
+          "type": "string"
+        },
+        "library_strategy": {
+          "type": "string"
+        },
+        "library_selection": {
+          "type": "string"
+        },
+        "library_layout": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "instrument_model": {
+          "type": "string"
+        },
+        "sequencing_depth": {
+          "type": "string"
+        },
+        "read_length": {
+          "type": "string"
+        },
+        "reference_genome": {
+          "type": "string"
+        },
+        "reference_genome_version": {
+          "type": "string"
+        },
+        "annotation_version": {
+          "type": "string"
+        },
+        "gene_id_system": {
+          "type": "string"
+        },
+        "coordinate_system": {
+          "type": "string"
+        },
+        "sample_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "experiment_ref": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "section_id": {
+                "type": "string"
+              },
+              "block_type": {
+                "type": "string"
+              },
+              "block_id": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "line_range": {
+                "type": "string"
+              },
+              "char_span": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2
+              },
+              "table_row_key": {
+                "type": "string"
+              },
+              "table_column_key": {
+                "type": "string"
+              },
+              "text_snippet": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "omics_experiment_id"
+      ],
+      "additionalProperties": true
+    },
+    "cross_species": {
+      "type": "object",
+      "properties": {
+        "ortholog_id": {
+          "type": "string"
+        },
+        "ortholog_species": {
+          "type": "string"
+        },
+        "orthology_type": {
+          "type": "string"
+        },
+        "synteny_support": {
+          "type": "string"
+        },
+        "cross_species_evidence": {
+          "type": "string"
+        },
+        "ortholog_gene_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ortholog_id"
+      ],
+      "additionalProperties": true
+    },
+    "scientific_reasoning": {
+      "type": "object",
+      "properties": {
+        "scientific_question": {
+          "type": "string"
+        },
+        "finding_text": {
+          "type": "string"
+        },
+        "finding_kind": {
+          "type": "string",
+          "enum": [
+            "关联",
+            "预测",
+            "功能验证",
+            "机制发现"
+          ]
+        },
+        "evidence_type": {
+          "type": "string"
+        },
+        "evidence_strength": {
+          "type": "string"
+        },
+        "supporting_evidence": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "contradictory_evidence": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "hypothesis_stated": {
+          "type": "string"
+        },
+        "candidate_mechanism": {
+          "type": "string"
+        },
+        "mechanism_entities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "causal_direction": {
+          "type": "string"
+        },
+        "association_vs_causation": {
+          "type": "string"
+        },
+        "assumption_conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "applicable_population": {
+          "type": "string"
+        },
+        "applicable_environment": {
+          "type": "string"
+        },
+        "expected_observation": {
+          "type": "string"
+        },
+        "actual_observation": {
+          "type": "string"
+        },
+        "alternative_explanations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "uncertainty_note": {
+          "type": "string"
+        },
+        "falsification_test": {
+          "type": "string"
+        },
+        "experiment_objective": {
+          "type": "string"
+        },
+        "result_interpretation": {
+          "type": "string"
+        },
+        "breeding_relevance": {
+          "type": "string"
+        },
+        "followup_experiment": {
+          "type": "string"
+        },
+        "knowledge_gap": {
+          "type": "string"
+        },
+        "task_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hypothesis_origin": {
+          "type": "string"
+        },
+        "candidate_gene_status": {
+          "type": "string",
+          "enum": [
+            "proximity_only",
+            "author_proposed",
+            "expression_supported",
+            "fine_mapped",
+            "functional_validated",
+            "field_validated"
+          ]
+        },
+        "statistical_test": {
+          "type": "string"
+        },
+        "lod_score": {
+          "type": "number"
+        },
+        "pve_percent": {
+          "type": "number"
+        },
+        "effect_estimate": {
+          "type": "number"
+        },
+        "effect_unit": {
+          "type": "string"
+        },
+        "environment_stability": {
+          "type": "string"
+        },
+        "validation_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "claim_id": {
+          "type": "string"
+        },
+        "evidence_record_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "external_validity_scope": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "method_profile": {
+      "type": "object",
+      "properties": {
+        "analysis_task": {
+          "type": "string"
+        },
+        "method_category": {
+          "type": "string"
+        },
+        "method_name": {
+          "type": "string"
+        },
+        "algorithm_name": {
+          "type": "string"
+        },
+        "software_name": {
+          "type": "string"
+        },
+        "software_version": {
+          "type": "string"
+        },
+        "input_modalities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "genotype_data_format": {
+          "type": "string"
+        },
+        "phenotype_data_format": {
+          "type": "string"
+        },
+        "environment_data_format": {
+          "type": "string"
+        },
+        "preprocessing_steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "qc_filters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "population_structure_control": {
+          "type": "string"
+        },
+        "kinship_control": {
+          "type": "string"
+        },
+        "feature_count": {
+          "type": "integer"
+        },
+        "significance_threshold": {
+          "type": "string"
+        },
+        "threshold_calibration": {
+          "type": "string"
+        },
+        "method_assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "applicability_limit": {
+          "type": "string"
+        },
+        "reproducibility_assets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "genotyping_method": {
+          "type": "string"
+        },
+        "phenotyping_method": {
+          "type": "string"
+        },
+        "target_variable": {
+          "type": "string"
+        },
+        "output_artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "output_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "workflow_steps": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "skill_validation": {
+      "type": "object",
+      "properties": {
+        "training_population": {
+          "type": "string"
+        },
+        "training_set_size": {
+          "type": "integer"
+        },
+        "test_set_size": {
+          "type": "integer"
+        },
+        "strategy": {
+          "type": "string"
+        },
+        "folds": {
+          "type": "integer"
+        },
+        "split_basis": {
+          "type": "string"
+        },
+        "random_seed": {
+          "type": "integer"
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "skill_registry": {
+      "type": "object",
+      "properties": {
+        "skill_spec_id": {
+          "type": "string"
+        },
+        "skill_spec_version": {
+          "type": "string"
+        },
+        "tool_description_uri": {
+          "type": "string"
+        },
+        "input_schema_ref": {
+          "type": "string"
+        },
+        "output_schema_ref": {
+          "type": "string"
+        },
+        "parameter_schema_ref": {
+          "type": "string"
+        },
+        "input_asset_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "output_asset_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_environment_ref": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

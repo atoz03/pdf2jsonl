@@ -14,7 +14,7 @@
       "required": ["id", "version", "leaf_source", "file"],
       "additionalProperties": false,
       "properties": {
-        "id": {"enum": ["legacy_v1", "omics_v2"]},
+        "id": {"enum": ["legacy_v1", "omics_v2", "merged_v2"]},
         "title_zh": {"type": "string"},
         "version": {"type": "string"},
         "leaf_source": {"enum": ["json_schema", "template_groups"]},

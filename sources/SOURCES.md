@@ -32,3 +32,18 @@ The original upload names `jsonl.zip` and `Jsonl.zip` differ only by case, which
 case-insensitive filesystems; they are stored under distinct prefixed names.
 
 See `docs/source_analysis.md` for the structural analysis and the inconsistencies found.
+
+## merged v2 archive (supplied 2026-10-06)
+
+Original combined document/unit-row design, preserved verbatim; see `docs/merged_v2_review.md` for the integration audit.
+
+| Path | sha256 |
+| --- | --- |
+| `archives/merged_v2__merged.zip` | `a42f4b442a0845d89578f29673530904a11dc5fd14e6fec4dd32958e6faf3da0` |
+| `merged_v2/README.md` | `9512818f6867fb9917ea38cff6c1c6bbac9f51c9305b588b30587650609f10b3` |
+| `merged_v2/breeding_jsonl_example_v2.json` | `0bd04c6da25abef8f826e83b6cb1f2c7a863f286279bee32958bb25c6e2e346d` |
+| `merged_v2/breeding_jsonl_example_v2.jsonl` | `0c67eaf677b9dc808fdfa41793ef8e42de1199fe017edde202c9bef6d84a177c` |
+| `merged_v2/breeding_jsonl_schema_v2.json` | `45a3009e881468862a443910c225d09a891cea6b8c6d70f36b75cd93b9faadc4` |
+| `merged_v2/breeding_jsonl_spec_v2.md` | `addb194233753913e3ee174cc934f95209bd1df737916098a024eee18f44b458` |
+| `merged_v2/breeding_jsonl_template_v2.json` | `a1acf4380a6ef90397b2ab1daf0d3d175dd2597e13430f8655ded61254726e84` |
+| `merged_v2/to_merged_mapping.md` | `04daf397a949e68c136aa30519ba7a8aeccccf9a90b5d84f79e8144c8d073eb1` |

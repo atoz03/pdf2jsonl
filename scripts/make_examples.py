@@ -24,6 +24,7 @@ from breeding_contract.api import resolve_schema  # noqa: E402
 from breeding_contract.bundle import bundle_file  # noqa: E402
 from breeding_contract.ids import build_locator, stable_record_id  # noqa: E402
 from breeding_contract.legacy import migrate_legacy_file  # noqa: E402
+from breeding_contract.merged import migrate_merged_file  # noqa: E402
 from breeding_contract.omics import migrate_omics_file  # noqa: E402
 from breeding_contract.util import set_path  # noqa: E402
 
@@ -135,6 +136,9 @@ def main() -> None:
         if p.suffix != ".json" or p.name.count(".") > 1:
             p.unlink()
     migrate_omics_file(om / "synthetic_deg_instance.json", om, version, root=ROOT)
+    # 5. merged document: existing paper content plus observations, sample/assay links and assets.
+    migrate_merged_file(ROOT / "sources/merged_v2/breeding_jsonl_example_v2.json",
+                        EX / "migration/merged_v2", version, page_offset=2220, root=ROOT)
     print(f"examples regenerated against {version}")
 
 

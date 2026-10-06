@@ -1,0 +1,1569 @@
+{
+  "migration_format": 1,
+  "run_id": "mig_20260921T141320Z_0bd04c6d",
+  "created_at": "2026-09-21T14:13:20Z",
+  "source": {
+    "file_name": "breeding_jsonl_example_v2.json",
+    "sha256": "0bd04c6da25abef8f826e83b6cb1f2c7a863f286279bee32958bb25c6e2e346d",
+    "documents": 1,
+    "schema_version": "v2.0.0"
+  },
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.3.0",
+    "release_status": "released",
+    "requested": "3.3.0",
+    "release_sha256": "5c7193d5d87ab453ddced0b12b857be168880b7677cb9c266dc2fd182c2c8850",
+    "source_digest": "d650c1161f5a38a9b934c4e295422a5a9e0648d4ccc05667c5cd2b0af713a2e6"
+  },
+  "mapping": {
+    "id": "merged_to_current",
+    "sha256": "5ae2467c85a3613774d8b13fd3624b47888531dea9f735fe392b8f895b7722cc"
+  },
+  "source_schema_sha256": "45a3009e881468862a443910c225d09a891cea6b8c6d70f36b75cd93b9faadc4",
+  "options": {
+    "page_offset": 2220,
+    "dataset_id": null,
+    "source_file_sha256": null
+  },
+  "counts": {
+    "records": 18,
+    "rejected": 14,
+    "residue_leaves": 1227,
+    "review_candidates": 7
+  },
+  "notes": [],
+  "consumed_paths": [
+    {
+      "input_line": 1,
+      "path": "analyses[0].analysis_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].key_results.effective_parents"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].key_results.heritability"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].key_results.ld_decay_distance_kb"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].key_results.population_structure_k"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].key_results.prediction_accuracy"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].model_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].parameters[0].param_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].parameters[0].param_type"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].parameters[0].param_value"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].parameters[1].param_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].parameters[1].param_type"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].parameters[1].param_value"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].parameters[2].param_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].parameters[2].param_type"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].parameters[2].param_value"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].significance_thresholds[0].correction_method"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].significance_thresholds[0].metric"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].significance_thresholds[0].value"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].software_tools[0].tool_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].software_tools[0].version"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].validation_design.k_folds"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].validation_design.metric"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[0].validation_design.strategy"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[1].analysis_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[1].analysis_type"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[1].key_results.heritability"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[1].key_results.population_structure_k"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[1].model_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[1].parameters[0].param_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[1].parameters[0].param_type"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[1].parameters[0].param_value"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[1].software_tools[0].tool_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[1].software_tools[0].version"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].analysis_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].analysis_type"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].key_results.prediction_accuracy"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].model_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].parameters[0].param_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].parameters[0].param_type"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].parameters[0].param_value"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].software_tools[0].tool_name"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].software_tools[0].version"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].validation_design.k_folds"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].validation_design.metric"
+    },
+    {
+      "input_line": 1,
+      "path": "analyses[2].validation_design.strategy"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[0].asset_column_count"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[0].asset_compression"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[0].asset_format"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[0].asset_id"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[0].asset_kind"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[0].asset_row_count"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[0].asset_schema_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[0].asset_sha256"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[0].asset_size_bytes"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[0].asset_uri"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[1].asset_column_count"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[1].asset_compression"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[1].asset_format"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[1].asset_id"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[1].asset_kind"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[1].asset_row_count"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[1].asset_schema_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[1].asset_sha256"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[1].asset_size_bytes"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[1].asset_uri"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[2].asset_format"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[2].asset_id"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[2].asset_kind"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[2].asset_schema_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[2].asset_size_bytes"
+    },
+    {
+      "input_line": 1,
+      "path": "assets[2].asset_uri"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[0].chromosome"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[0].evidence_spans[0].page"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[0].evidence_spans[0].section_id"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[0].evidence_spans[0].text_snippet"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[0].gene_symbol"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[0].linked_traits"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[0].name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[0].position.end_bp"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[0].position.ref_genome"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[0].position.start_bp"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[1].chromosome"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[1].evidence_spans[0].page"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[1].evidence_spans[0].section_id"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[1].evidence_spans[0].text_snippet"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[1].gene_symbol"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[1].linked_traits"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[1].name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[1].position.end_bp"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[1].position.ref_genome"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.genes[1].position.start_bp"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.markers[0].marker_name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.markers[1].marker_name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].annotation_version"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].assay_type"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].coordinate_system"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].design"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].experiment_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].gene_id_system"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].instrument_model"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].library_layout"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].library_selection"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].library_strategy"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].omics_experiment_id"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].omics_type"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].platform"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].read_length"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].reference_genome_version"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].sample_ids"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_experiments[0].sequencing_depth"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].batch_id"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].biological_replicate"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].development_stage"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].material_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].organ"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].sample_id"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].sample_name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].sample_type"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].sampling_time"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].technical_replicate"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].tissue"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[0].treatment_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[1].batch_id"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[1].biological_replicate"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[1].development_stage"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[1].material_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[1].organ"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[1].sample_id"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[1].sample_name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.omics_samples[1].sample_type"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.populations[0].name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.populations[0].population_name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].additive_effect"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].candidate_genes"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].chromosome"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].dominance_effect"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].interval.end"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].interval.start"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].interval.unit"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].nearest_markers"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].p_value"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].population_used"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].pve"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.qtls[0].qtl_name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[0].evidence_spans[0].page"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[0].evidence_spans[0].section_id"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[0].evidence_spans[0].text_snippet"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[0].heritability_h2_estimate"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[0].measurement_detail.method_standard"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[0].measurement_detail.organ"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[0].measurement_detail.stage"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[0].trait_category"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[0].trait_name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[1].evidence_spans[0].page"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[1].evidence_spans[0].section_id"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[1].evidence_spans[0].text_snippet"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[1].heritability_h2_estimate"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[1].measurement_detail.method_standard"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[1].measurement_detail.organ"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[1].measurement_detail.stage"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[1].name"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[1].trait_category"
+    },
+    {
+      "input_line": 1,
+      "path": "breed_entities.traits[1].trait_name"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[0].causal_flag"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[0].claim_text"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[0].conclusion_type"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[0].confidence_level"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[0].contradiction_note"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[0].scope_constraints"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[0].supporting_relations"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[1].causal_flag"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[1].claim_text"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[1].conclusion_type"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[1].confidence_level"
+    },
+    {
+      "input_line": 1,
+      "path": "conclusions[1].supporting_relations"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.abstract"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.affiliations[0].name"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.affiliations[1].name"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.authors[0].affiliation_name"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.authors[0].name"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.authors[0].rank"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.authors[1].affiliation_name"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.authors[1].name"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.authors[1].rank"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.data_modality"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.dataset_id"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.dataset_version"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.doi"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.funding"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.issue"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.journal"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.keywords"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.linked_modalities"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.pages"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.source_id"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.source_type"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.source_uri"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.species_list[0].name"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.species_list[0].name_zh"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.study_id"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.title"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.volume"
+    },
+    {
+      "input_line": 1,
+      "path": "doc_meta.year"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].confidence"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].environment_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].evidence_spans[0].block_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].evidence_spans[0].page"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].evidence_spans[0].section_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].evidence_spans[0].table_column_key"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].evidence_spans[0].table_row_key"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].evidence_spans[0].text_snippet"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].experiment_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].material_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].measurement.name"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].measurement.quality_flag"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].measurement.unit"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].measurement.value"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].normalized_unit"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].normalized_value"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].observation_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].observation_time"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].observation_type"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].original_unit"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].original_value"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].sample_size"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].stage"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[0].trait_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].assay_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].confidence"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].evidence_spans[0].page"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].evidence_spans[0].section_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].evidence_spans[0].text_snippet"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].experiment_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].genotype.alt_allele"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].genotype.call"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].genotype.dosage"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].genotype.dosage_allele"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].genotype.ploidy"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].genotype.quality_flag"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].genotype.ref_allele"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].material_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].observation_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].observation_type"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].sample_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].variant.allele_frequency"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].variant.alt_allele"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].variant.chromosome"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].variant.genome_assembly"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].variant.genotype_call"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].variant.minor_allele_frequency"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].variant.ref_allele"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].variant.start_position"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].variant.variant_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[1].variant.variant_type"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].confidence"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].environment_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].evidence_spans[0].page"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].evidence_spans[0].section_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].evidence_spans[0].text_snippet"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].measurement.name"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].measurement.quality_flag"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].measurement.unit"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].measurement.value"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].observation_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].observation_time"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].observation_type"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].original_unit"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].original_value"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].sample_size"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[2].stage"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].assay_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].confidence"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].environment_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].evidence_spans[0].page"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].evidence_spans[0].section_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].evidence_spans[0].text_snippet"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].feature_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].feature_name"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].feature_type"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].feature_unit"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].feature_value"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].material_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].observation_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].observation_time"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].observation_type"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].omics_feature.base_mean"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].omics_feature.deg_status"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].omics_feature.deg_threshold"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].omics_feature.gene_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].omics_feature.go_term"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].omics_feature.log2_fold_change"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].omics_feature.pathway_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].omics_feature.raw_count"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].omics_feature.transcript_id"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].omics_type"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].sample_ref"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].statistic.confidence_interval"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].statistic.contrast"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].statistic.effect_direction"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].statistic.effect_size"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].statistic.q_value"
+    },
+    {
+      "input_line": 1,
+      "path": "observations[3].statistic.standard_error"
+    },
+    {
+      "input_line": 1,
+      "path": "provenance.extraction.method"
+    },
+    {
+      "input_line": 1,
+      "path": "record_id"
+    },
+    {
+      "input_line": 1,
+      "path": "record_info.doc_type"
+    },
+    {
+      "input_line": 1,
+      "path": "record_info.lang"
+    },
+    {
+      "input_line": 1,
+      "path": "record_kind"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].effect_direction"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].evidence_spans[0].page"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].evidence_spans[0].section_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].evidence_spans[0].text_snippet"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].is_inferred"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].object.entity_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].object.entity_type"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].relation_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].relation_mechanism"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].relation_type"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].source_section"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].subject.entity_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].subject.entity_type"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[0].supporting_method"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].effect_direction"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].is_inferred"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].object.entity_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].object.entity_type"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].relation_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].relation_mechanism"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].relation_type"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].source_section"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].subject.entity_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].subject.entity_type"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[1].supporting_method"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].effect_direction"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].evidence_spans[0].page"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].evidence_spans[0].section_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].evidence_spans[0].text_snippet"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].is_inferred"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].object.entity_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].object.entity_type"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].relation_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].relation_mechanism"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].relation_type"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].source_section"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].subject.entity_id"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].subject.entity_type"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[2].supporting_method"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[3].is_inferred"
+    },
+    {
+      "input_line": 1,
+      "path": "relations[4].is_inferred"
+    },
+    {
+      "input_line": 1,
+      "path": "schema_version"
+    }
+  ],
+  "record_sources": {
+    "rec_03724b4d838a204c72b9f6eb79f97596": {
+      "input_line": 1,
+      "source_path": "relations[0]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "rel:ric:r01"
+    },
+    "rec_19e2a000b39a59888c5cd69ee1002d28": {
+      "input_line": 1,
+      "source_path": "relations[2]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "rel:ric:r03"
+    },
+    "rec_4909b279c2b61b6bbf2b9059c9d33759": {
+      "input_line": 1,
+      "source_path": "conclusions[0]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "clu:ric:cl01"
+    },
+    "rec_ad52c95e493d7c0cdfa09a704d4529bc": {
+      "input_line": 1,
+      "source_path": "conclusions[1]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "clu:ric:cl02"
+    },
+    "rec_8d3a8dec750cadc5787e9afc7490d09a": {
+      "input_line": 1,
+      "source_path": "breed_entities.qtls[0]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "qtl:ric:qPH3"
+    },
+    "rec_f1af759495e747935362c387e63a43f6": {
+      "input_line": 1,
+      "source_path": "breed_entities.qtls[0].additive_effect",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "qtl:ric:qPH3"
+    },
+    "rec_527d93aac600e9dfe681c116976391bf": {
+      "input_line": 1,
+      "source_path": "breed_entities.qtls[0].dominance_effect",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "qtl:ric:qPH3"
+    },
+    "rec_bf1e503d911c5877608db904c5067017": {
+      "input_line": 1,
+      "source_path": "breed_entities.genes[0]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "gene:ric:sd1"
+    },
+    "rec_7fefdada2f8350012f4bc983ebe40815": {
+      "input_line": 1,
+      "source_path": "breed_entities.genes[1]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "gene:ric:Os03g0229400"
+    },
+    "rec_da4ecc4c9528f5f156e7206fbb0c4514": {
+      "input_line": 1,
+      "source_path": "breed_entities.traits[0].heritability_h2_estimate",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "trait:ric:plant_height"
+    },
+    "rec_47bcb48ca6c4c634554c2f972b5dedfd": {
+      "input_line": 1,
+      "source_path": "breed_entities.traits[0]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "trait:ric:plant_height"
+    },
+    "rec_ab154cb53029d9d7b9b554bc002e6167": {
+      "input_line": 1,
+      "source_path": "breed_entities.traits[1].heritability_h2_estimate",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "trait:ric:grain_yield"
+    },
+    "rec_ecd1abda719f008663e31ba49689b164": {
+      "input_line": 1,
+      "source_path": "breed_entities.traits[1]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "trait:ric:grain_yield"
+    },
+    "rec_dffebe2b5b95ec4ac335537c727a7ca3": {
+      "input_line": 1,
+      "source_path": "observations[0]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "obs:ric:ph01"
+    },
+    "rec_492809823900ef3aa8533fe568be37e2": {
+      "input_line": 1,
+      "source_path": "observations[1]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "obs:ric:gt01"
+    },
+    "rec_d080a6760edb53bb913d24a88c44e565": {
+      "input_line": 1,
+      "source_path": "observations[2]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "obs:ric:env01"
+    },
+    "rec_848b474526822e7c2a732bd678055fb7": {
+      "input_line": 1,
+      "source_path": "observations[3]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "obs:ric:trs01"
+    },
+    "rec_7cd67fdac6227ef8580f6523ba92f9d3": {
+      "input_line": 1,
+      "source_path": "assets[2]",
+      "source_document_id": "example-ric-gwas-ph-yield-2026",
+      "source_item_id": "asset:ric:trs_counts"
+    }
+  },
+  "outputs": {
+    "records": {
+      "file": "breeding_jsonl_example_v2.migrated.jsonl",
+      "sha256": "6775380cd75b5a9bb0d02fb502417c56df7dcc8b3e5c76066d34073cffe73908"
+    },
+    "errors": {
+      "file": "breeding_jsonl_example_v2.migrated.errors.jsonl",
+      "sha256": "1ef09f724e62c93da4421f04cf47179182b9beaa296ce26e10d325badabcb166"
+    },
+    "residue": {
+      "file": "breeding_jsonl_example_v2.residue.json",
+      "sha256": "d20d3967fc052e600e9c1c1aadcbb849a09a4d4e857a52bcd0b8cc9a094eb9cf"
+    }
+  },
+  "tooling": {
+    "breeding_contract": "1.0.0"
+  }
+}

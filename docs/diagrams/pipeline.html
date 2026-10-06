@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>育种文献数据管线 / Breeding literature data pipeline</title>
+<style>
+  * {box-sizing:border-box} body {margin:0;background:#e8edf5;color:#25354b;font-family:system-ui,-apple-system,"PingFang SC",sans-serif}
+  header {padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:18px;background:#fff;border-bottom:1px solid #d7e0ed;position:sticky;top:0;z-index:1;flex-wrap:wrap}
+  header strong {font-size:16px} nav {display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  button,a {font:inherit;font-size:14px;border:1px solid #d4ddea;background:#fff;color:#345fd1;border-radius:9px;padding:9px 13px;text-decoration:none;cursor:pointer}
+  button[aria-pressed="true"],button.primary {background:#345fd1;color:white;border-color:#345fd1}
+  button:focus-visible,a:focus-visible {outline:3px solid #9cbbff;outline-offset:3px}
+  main {padding:24px;max-width:1536px;margin:auto} .canvas {border:1px solid #d7e0ed;border-radius:24px;overflow:auto;background:#f6f8fc;box-shadow:0 12px 40px #273c5c0c}
+  #pipeline-diagram {display:block;width:100%;height:auto} .actual #pipeline-diagram {min-width:1440px}
+  footer {padding:20px 2px;color:#64748b;font-size:14px;line-height:1.7} footer a {padding:0;border:0;background:transparent}
+  @media(max-width:720px) {main {padding:10px}.canvas{border-radius:16px}header{padding:12px}}
+  @media print {header,footer {display:none}main{max-width:none;padding:0}.canvas{border:0;box-shadow:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<header>
+  <strong id="page-label">数据管线全景</strong>
+  <nav aria-label="Diagram controls">
+    <button type="button" data-lang="zh" aria-pressed="true">简体中文</button>
+    <button type="button" data-lang="en" aria-pressed="false">English</button>
+    <button type="button" id="size-toggle" aria-pressed="false">原始尺寸</button>
+    <button type="button" id="download" class="primary">下载 SVG</button>
+    <a href="../../README.md" id="readme-link">返回 README</a>
+  </nav>
+</header>
+<main>
+  <div class="canvas" id="canvas">
+<svg id="pipeline-diagram" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1840" width="1440" height="1840" role="img" aria-labelledby="diagram-title diagram-desc" lang="zh-CN">
+<title id="diagram-title" data-en="Breeding literature data pipeline">育种文献数据管线全景</title>
+<desc id="diagram-desc" data-en="A shared versioned contract governs PDF extraction and legacy, omics and merged imports. Extraction parses pages, prepares an agent brief, produces candidates, repairs structure, verifies evidence, builds linked atomic records and validates records and datasets. Accepted JSONL feeds tables, graph triples, evidence corpora and document bundles. Rejections and audit reports support manual review and iteration. OCR text is supplied externally; QA generation is downstream.">统一版本化契约约束 PDF 抽取及 legacy、omics、merged 数据迁移。文献依次经过解析、任务准备、候选抽取、结构修复、证据核验、原子记录组装与关联、记录及数据集校验，输出 JSONL、审计报告和错误记录。有效记录派生关系表、图谱三元组、证据语料和文档聚合，错误经人工复核支持后续迭代。OCR 文本由外部提供，QA 由下游生成。</desc>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z" fill="#8495ac"/></marker>
+  <marker id="arrow-teal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z" fill="#127b72"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z" fill="#c36553"/></marker>
+</defs>
+<style>
+  text {font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Segoe UI", Arial, sans-serif; fill: #25354b;}
+  .kicker {font-size: 15px; font-weight: 700; letter-spacing: 2px; fill:#345fd1;}
+  .heading {font-size: 39px; font-weight: 750; letter-spacing: -.6px;}
+  .subtitle {font-size: 20px; fill:#65758b;}
+  .sectiontitle {font-size: 23px; font-weight: 700;}
+  .sectionnote {font-size: 16px; fill:#687a92;}
+  .cardtitle {font-size: 21px; font-weight: 700;}
+  .body {font-size: 18px; fill:#52657e;}
+  .mono {font-size: 13px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;}
+  .tag {font-size: 14px; font-weight: 650;}
+  .stepno {font-size: 14px; font-weight: 750;}
+  .small {font-size: 16px; fill:#65758b;}
+  .footnote {font-size: 15px; fill:#6e7f95;}
+  .step:focus {outline:none;}
+  .step:focus > rect, .step:hover > rect {stroke:#6383cd;}
+</style>
+<rect width="1440" height="1840" rx="24" fill="#f6f8fc"/>
+<rect x="64" y="51" width="7" height="88" rx="3" fill="#345fd1"/>
+
+<text x="89" y="70" class="kicker">PDF2JSONL  /  DATA PIPELINE</text>
+<text x="88" y="118" class="heading" data-en="From papers to traceable atomic data">从育种文献到可追溯的原子数据</text>
+<text x="88" y="153" class="subtitle" data-en="Contract-driven extraction, evidence checks and auditable outputs">规范驱动 · 证据约束 · 全程留痕</text>
+<rect x="56" y="190" width="1328" height="220" rx="22" fill="#edf2fc" stroke="#d9e3f5" />
+<text x="80" y="227" class="sectiontitle" data-en="Shared contract and versioning">统一规范与版本</text>
+<text x="1357" y="227" class="sectionnote" data-en="Applies to extraction and migration" text-anchor="end">同时约束抽取与迁移</text>
+<rect x="80" y="247" width="400" height="137" rx="14" fill="#ffffff" stroke="#d9e3f5" />
+<text x="99" y="279" class="cardtitle" data-en="Fields &amp; filling rules">字段与填写规则</text>
+<text x="99" y="308" class="body" data-en="Field catalog / vocabularies / profiles">字段目录 / 词表 / 抽取画像</text>
+<text x="99" y="333" class="body" data-en="Types, availability and cross-field rules">类型、可获得性、必填与跨字段规则</text>
+<text x="99" y="364" class="mono" style="fill:#345fd1">field_catalog/ · vocabularies/ · profiles/</text>
+<rect x="520" y="247" width="400" height="137" rx="14" fill="#ffffff" stroke="#d9e3f5" />
+<text x="539" y="279" class="cardtitle" data-en="Compile &amp; freeze">编译与不可变发布</text>
+<text x="539" y="308" class="body" data-en="Compile schemas, freeze and hash releases">编译 Schema，冻结版本并校验哈希</text>
+<text x="539" y="333" class="body" data-en="Keep old versions; pin each record version">历史版本保留；记录声明具体版本</text>
+<text x="539" y="364" class="mono" style="fill:#345fd1">bdc release → releases/&lt;version&gt;/</text>
+<rect x="960" y="247" width="400" height="137" rx="14" fill="#ffffff" stroke="#d9e3f5" />
+<text x="979" y="279" class="cardtitle" data-en="Resolve run constraints">解析运行约束</text>
+<text x="979" y="308" class="body" data-en="Load version, profile and filling rules">读取指定版本、画像和填充规则</text>
+<text x="979" y="333" class="body" data-en="Candidate schema and pinned run version">生成候选约束；运行时固定版本</text>
+<text x="979" y="364" class="mono" style="fill:#345fd1">resolve_schema() · load_profile()</text>
+<path d="M480 313 H515" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M920 313 H955" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="64" y="463" class="sectiontitle" data-en="PDF extraction">文献抽取主线</text>
+<text x="64" y="494" class="sectionnote" data-en="Default agent mode: prepare → candidates.json → finalize">默认 agent 模式：prepare → candidates.json → finalize</text>
+<text x="1072" y="463" class="sectiontitle" data-en="Structured-data imports">存量数据迁移</text>
+<text x="1072" y="494" class="sectionnote" data-en="Same target contract">与抽取共用目标契约</text>
+<path d="M360 614 H393" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M696 614 H729" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M884 698 V741" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M736 832 H703" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M400 832 H367" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M212 916 V959" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M360 1050 H393" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M696 1050 H729" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<g class="step" data-step="01" tabindex="0">
+<title data-en="Input documents">输入文献</title>
+<rect x="64" y="530" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<rect x="82" y="550" width="34" height="30" rx="9" fill="#eaf0ff" stroke="none" />
+<text x="99" y="571" class="stepno" style="fill:#345fd1" text-anchor="middle">01</text>
+<text x="128" y="572" class="cardtitle" data-en="Input documents">输入文献</text>
+<text x="84" y="609" class="body" data-en="PDF or extracted text layer">PDF 或已提取的文本层</text>
+<text x="84" y="634" class="body" data-en="Scans use external OCR text">扫描件可接入外部 OCR 结果</text>
+<text x="84" y="659" class="body" data-en="Preserve file identity and hash">保留原始文件身份与指纹</text>
+<text x="84" y="677" class="mono" style="fill:#345fd1">.pdf · .txt · .pages.jsonl</text>
+</g>
+<g class="step" data-step="02" tabindex="0">
+<title data-en="Parse &amp; locate">解析与定位</title>
+<rect x="400" y="530" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<rect x="418" y="550" width="34" height="30" rx="9" fill="#eaf0ff" stroke="none" />
+<text x="435" y="571" class="stepno" style="fill:#345fd1" text-anchor="middle">02</text>
+<text x="464" y="572" class="cardtitle" data-en="Parse &amp; locate">解析与定位</text>
+<text x="420" y="609" class="body" data-en="Read physical pages and text">识别物理页码与文本内容</text>
+<text x="420" y="634" class="body" data-en="Sections, tables and offsets">记录章节、表图及字符偏移</text>
+<text x="420" y="659" class="body" data-en="Build the text evidence index">为证据回查建立文本索引</text>
+<text x="420" y="677" class="mono" style="fill:#345fd1">pypdf · parse_document()</text>
+</g>
+<g class="step" data-step="03" tabindex="0">
+<title data-en="Prepare extraction">准备抽取任务</title>
+<rect x="736" y="530" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<rect x="754" y="550" width="34" height="30" rx="9" fill="#eaf0ff" stroke="none" />
+<text x="771" y="571" class="stepno" style="fill:#345fd1" text-anchor="middle">03</text>
+<text x="800" y="572" class="cardtitle" data-en="Prepare extraction">准备抽取任务</text>
+<text x="756" y="609" class="body" data-en="Render profile fields and rules">按画像生成字段与规则说明</text>
+<text x="756" y="634" class="body" data-en="Directly extractable fields">约束模型抽取可直接获得的信息</text>
+<text x="756" y="659" class="body" data-en="Pin source hash and version">固定输入哈希与契约版本</text>
+<text x="756" y="677" class="mono" style="fill:#345fd1">brief.md · candidate.schema.json</text>
+</g>
+<g class="step" data-step="04" tabindex="0">
+<title data-en="Extract candidates">生成候选记录</title>
+<rect x="736" y="748" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<rect x="754" y="768" width="34" height="30" rx="9" fill="#eaf0ff" stroke="none" />
+<text x="771" y="789" class="stepno" style="fill:#345fd1" text-anchor="middle">04</text>
+<text x="800" y="790" class="cardtitle" data-en="Extract candidates">生成候选记录</text>
+<text x="756" y="827" class="body" data-en="Agent reads source and brief">智能体读取原文与任务说明</text>
+<text x="756" y="852" class="body" data-en="Return fields, quotes and links">给出字段、原句、页码与引用</text>
+<text x="756" y="877" class="body" data-en="Or use files / custom backends">也支持候选文件与自定义后端</text>
+<text x="756" y="895" class="mono" style="fill:#345fd1">candidates.json · ref / links</text>
+</g>
+<g class="step" data-step="05" tabindex="0">
+<title data-en="Repair structure">结构修复</title>
+<rect x="400" y="748" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<rect x="418" y="768" width="34" height="30" rx="9" fill="#eaf0ff" stroke="none" />
+<text x="435" y="789" class="stepno" style="fill:#345fd1" text-anchor="middle">05</text>
+<text x="464" y="790" class="cardtitle" data-en="Repair structure">结构修复</text>
+<text x="420" y="827" class="body" data-en="Align names, types and codes">字段别名、类型与词表对齐</text>
+<text x="420" y="852" class="body" data-en="Drop blanks and system keys">清理空值与不应由模型填写的键</text>
+<text x="420" y="877" class="body" data-en="Log every repair for review">所有修复动作写入运行报告</text>
+<text x="420" y="895" class="mono" style="fill:#345fd1">repair_output()</text>
+</g>
+<g class="step" data-step="06" tabindex="0">
+<title data-en="Verify evidence">证据核验</title>
+<rect x="64" y="748" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<rect x="82" y="768" width="34" height="30" rx="9" fill="#e6f5f0" stroke="none" />
+<text x="99" y="789" class="stepno" style="fill:#127b72" text-anchor="middle">06</text>
+<text x="128" y="790" class="cardtitle" data-en="Verify evidence">证据核验</text>
+<text x="84" y="827" class="body" data-en="Match quotes to PDF pages">核对原句与物理页码</text>
+<text x="84" y="852" class="body" data-en="Locate, check and deduplicate">检查定位、数值线索并去重</text>
+<text x="84" y="877" class="body" data-en="Reject unverifiable evidence">无法回查的候选进入拒绝记录</text>
+<text x="84" y="895" class="mono" style="fill:#127b72">verify_evidence()</text>
+</g>
+<g class="step" data-step="07" tabindex="0">
+<title data-en="Build &amp; link records">组装与关联</title>
+<rect x="64" y="966" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<rect x="82" y="986" width="34" height="30" rx="9" fill="#e6f5f0" stroke="none" />
+<text x="99" y="1007" class="stepno" style="fill:#127b72" text-anchor="middle">07</text>
+<text x="128" y="1008" class="cardtitle" data-en="Build &amp; link records">组装与关联</text>
+<text x="84" y="1045" class="body" data-en="Set IDs and provenance">生成稳定 ID 与来源信息</text>
+<text x="84" y="1070" class="body" data-en="Keep raw; normalize by rules">保留原值，按规则标准化</text>
+<text x="84" y="1095" class="body" data-en="Link evidence and methods">解析支撑证据与方法记录引用</text>
+<text x="84" y="1113" class="mono" style="fill:#127b72">fill_rules · stable_record_id()</text>
+</g>
+<g class="step" data-step="08" tabindex="0">
+<title data-en="Validate &amp; review">校验与复核</title>
+<rect x="400" y="966" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<rect x="418" y="986" width="34" height="30" rx="9" fill="#e6f5f0" stroke="none" />
+<text x="435" y="1007" class="stepno" style="fill:#127b72" text-anchor="middle">08</text>
+<text x="464" y="1008" class="cardtitle" data-en="Validate &amp; review">校验与复核</text>
+<text x="420" y="1045" class="body" data-en="Schema and cross-field checks">Schema 与跨字段约束</text>
+<text x="420" y="1070" class="body" data-en="Check duplicates and leakage">数据集唯一性、防泄漏规则</text>
+<text x="420" y="1095" class="body" data-en="Review and audit arguments">复核状态与证据链结构审计</text>
+<text x="420" y="1113" class="mono" style="fill:#127b72">validate · argument_structure</text>
+</g>
+<g class="step" data-step="09" tabindex="0">
+<title data-en="Write run outputs">写出运行产物</title>
+<rect x="736" y="966" width="296" height="168" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<rect x="754" y="986" width="34" height="30" rx="9" fill="#e6f5f0" stroke="none" />
+<text x="771" y="1007" class="stepno" style="fill:#127b72" text-anchor="middle">09</text>
+<text x="800" y="1008" class="cardtitle" data-en="Write run outputs">写出运行产物</text>
+<text x="756" y="1045" class="body" data-en="Accepted atomic records">通过校验的原子记录</text>
+<text x="756" y="1070" class="body" data-en="Errors, checks and repairs">拒绝原因、校验和修复报告</text>
+<text x="756" y="1095" class="body" data-en="Version, environment, hashes">记录环境、版本与输出哈希</text>
+<text x="756" y="1113" class="mono" style="fill:#127b72">JSONL · validation · manifest</text>
+</g>
+<rect x="1072" y="530" width="304" height="712" rx="20" fill="#f1eef8" stroke="#e0d9ed" />
+<rect x="1090" y="554" width="268" height="112" rx="14" fill="#ffffff" stroke="#ded6ed" />
+<text x="1107" y="586" class="cardtitle" data-en="Existing structured data" style="fill:#7955b5">已有结构化数据</text>
+<text x="1107" y="616" class="small" data-en="Legacy / omics / merged">旧文档、多组学模板、合并规范</text>
+<text x="1107" y="650" class="mono" style="fill:#7955b5">legacy · omics · merged</text>
+<rect x="1090" y="712" width="268" height="130" rx="14" fill="#ffffff" stroke="#ded6ed" />
+<text x="1107" y="744" class="cardtitle" data-en="Map &amp; split records" style="fill:#7955b5">映射与原子化</text>
+<text x="1107" y="774" class="small" data-en="Apply mappings; split records">按来源映射，拆分记录</text>
+<text x="1107" y="798" class="small" data-en="Join samples / assays by ID">merged 按 ID 关联样本与测定</text>
+<text x="1107" y="826" class="mono" style="fill:#7955b5">bdc migrate &lt;source&gt;</text>
+<rect x="1090" y="888" width="268" height="140" rx="14" fill="#ffffff" stroke="#ded6ed" />
+<text x="1107" y="920" class="cardtitle" data-en="Validate target records" style="fill:#7955b5">目标契约校验</text>
+<text x="1107" y="950" class="small" data-en="Fields, references and datasets">检查字段、引用冲突与数据集规则</text>
+<text x="1107" y="974" class="small" data-en="PDF quotes remain unverified">导入不执行 PDF 原文核验</text>
+<text x="1107" y="1012" class="mono" style="fill:#7955b5">Schema · rules · review</text>
+<rect x="1090" y="1074" width="268" height="144" rx="14" fill="#ffffff" stroke="#ded6ed" />
+<text x="1107" y="1106" class="cardtitle" data-en="Migration outputs" style="fill:#7955b5">迁移产物</text>
+<text x="1107" y="1136" class="small" data-en="Accepted and rejected records">有效记录与被拒绝候选</text>
+<text x="1107" y="1160" class="small" data-en="Residue and source lineage">保留未转换内容与来源追踪</text>
+<text x="1107" y="1202" class="mono" style="fill:#7955b5">JSONL · residue · report</text>
+<path d="M1224 666 V705" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1224 842 V881" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1224 1028 V1067" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="64" y="1176" width="968" height="66" rx="14" fill="#fcf0e9" stroke="#efd8cb" />
+<text x="85" y="1203" class="cardtitle" data-en="Rejected candidates and review evidence" style="fill:#a55b40">拒绝记录与复核依据</text>
+<text x="85" y="1228" class="small" data-en="Keep reasons and candidates; review manually, revise, then rerun.">保留原因与候选；依据报告人工修订，再重新抽取 / 校验。</text>
+<path d="M64 832 H42 V1208 H58" fill="none" stroke="#c36553" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 6" marker-end="url(#arrow-red)"/>
+<path d="M548 1134 V1169" fill="none" stroke="#c36553" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 6" marker-end="url(#arrow-red)"/>
+<path d="M64 1208 H23 V315 H73" fill="none" stroke="#c36553" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 6" marker-end="url(#arrow-red)"/>
+<g transform="translate(15 811) rotate(-90)">
+<text x="0" y="0" class="tag" data-en="Manual review → revise rules / rerun" style="fill:#a55b40" text-anchor="middle">人工复核 → 修订规则 / 重跑</text>
+</g>
+<path d="M1032 1050 H1052 V1260 H884 V1291" fill="none" stroke="#127b72" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<path d="M1224 1218 V1291" fill="none" stroke="#127b72" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+<rect x="64" y="1298" width="1312" height="158" rx="20" fill="#e9f5f0" stroke="#cce4d8" />
+<text x="88" y="1334" class="sectiontitle" data-en="Traceable atomic records" style="fill:#146f60">可追溯的原子记录</text>
+<text x="88" y="1367" class="body" data-en="JSONL: one fact, observation, method or asset per line">JSONL：每行一条独立事实 / 观测 / 方法 / 资产</text>
+<text x="88" y="1396" class="body" data-en="Stable IDs, source locators, version and review status">包含稳定 ID、来源定位、规范版本与复核状态</text>
+<text x="88" y="1429" class="small" data-en="Passing structural checks can still require human review.">通过结构校验的记录仍可能需要人工复核。</text>
+<path d="M733 1318 V1436" stroke="#c2ded0"/>
+<text x="755" y="1334" class="cardtitle" data-en="Accompanying audit files" style="fill:#146f60">随行审计文件</text>
+<text x="755" y="1369" class="body" data-en="Extraction: validation / errors / manifest">抽取：校验报告 / 错误记录 / 运行清单</text>
+<text x="755" y="1396" class="body" data-en="Migration: migration report / errors / residue">迁移：迁移报告 / 错误记录 / 残留内容</text>
+<text x="755" y="1429" class="small" data-en="Input hashes, versions and lineage support reruns.">输入哈希、版本与来源信息支持回查和重跑。</text>
+<path d="M720 1456 V1490" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M212 1521 V1490 H1224 V1521" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M212 1490 V1522" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M548 1490 V1522" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M884 1490 V1522" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1224 1490 V1522" fill="none" stroke="#8495ac" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="64" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<text x="83" y="1567" class="cardtitle" data-en="Relational tables">关系表</text>
+<text x="83" y="1601" class="small" data-en="Records, sources, entities, links">记录 / 来源 / 实体 / 关联</text>
+<text x="83" y="1626" class="small" data-en="CSV for relational databases">可导入关系数据库</text>
+<text x="83" y="1658" class="mono" style="fill:#127b72">bdc derive → *.tables/*.csv</text>
+<rect x="400" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<text x="419" y="1567" class="cardtitle" data-en="Knowledge graph triples">知识图谱与三元组</text>
+<text x="419" y="1601" class="small" data-en="Entities and relations with evidence">实体与关系保留证据关联</text>
+<text x="419" y="1626" class="small" data-en="Support knowledge organization">支持知识组织与融合</text>
+<text x="419" y="1658" class="mono" style="fill:#127b72">bdc derive → *.triples.jsonl</text>
+<rect x="736" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<text x="755" y="1567" class="cardtitle" data-en="Evidence corpus">证据语料</text>
+<text x="755" y="1601" class="small" data-en="Citable text and record references">带出处的文本与记录引用</text>
+<text x="755" y="1626" class="small" data-en="For retrieval and downstream QA">供检索及下游 QA 生成使用</text>
+<text x="755" y="1658" class="mono" style="fill:#127b72">bdc derive → *.corpus.jsonl</text>
+<rect x="1072" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
+<text x="1091" y="1567" class="cardtitle" data-en="Document bundles">文档聚合视图</text>
+<text x="1091" y="1601" class="small" data-en="Group atomic records by source">按来源聚合原子记录</text>
+<text x="1091" y="1626" class="small" data-en="Optional legacy document view">可导出 legacy 文档视图</text>
+<text x="1091" y="1658" class="mono" style="fill:#127b72">bdc bundle [--legacy-v1]</text>
+<text x="64" y="1721" class="sectiontitle" data-en="Field function tags · multiple labels allowed">字段功能标签 · 允许重叠</text>
+<rect x="64" y="1743" width="246" height="29" rx="14" fill="#eaf0ff" stroke="none" />
+<text x="187.0" y="1763" class="tag" data-en="Research 1 · data governance" style="fill:#345fd1" text-anchor="middle">研究内容1 · 数据与知识治理</text>
+<rect x="326" y="1743" width="262" height="29" rx="14" fill="#e6f5f0" stroke="none" />
+<text x="457.0" y="1763" class="tag" data-en="Research 2 · scientific agents" style="fill:#127b72" text-anchor="middle">研究内容2 · 科学智能体</text>
+<rect x="604" y="1743" width="200" height="29" rx="14" fill="#f0ebfa" stroke="none" />
+<text x="704.0" y="1763" class="tag" data-en="Future iteration" style="fill:#7955b5" text-anchor="middle">迭代优化</text>
+<rect x="820" y="1743" width="200" height="29" rx="14" fill="#e9eef4" stroke="none" />
+<text x="920.0" y="1763" class="tag" data-en="General-purpose fields" style="fill:#52657e" text-anchor="middle">通用字段</text>
+<text x="64" y="1810" class="footnote" data-en="Solid: data processing and outputs   Dashed: rejections and manual feedback   QA generation and OCR are external.">实线：数据处理与输出    虚线：拒绝分支及人工反馈    QA 生成与外部 OCR 位于本管线之外。</text>
+</svg>
+  </div>
+  <footer id="page-note">图源为可编辑的 HTML 内嵌矢量图。浏览器支持中英文切换、原始尺寸查看与 SVG 下载；仓库中的静态图由 <code>make diagram</code> 从本文件导出。</footer>
+</main>
+<script>
+  const diagram = document.getElementById('pipeline-diagram');
+  const translatable = [...diagram.querySelectorAll('[data-en]')];
+  for (const node of translatable) node.dataset.zh = node.textContent;
+  let locale = 'zh';
+  const labels = {
+    zh: {title:'数据管线全景',size:'原始尺寸',fit:'适应宽度',download:'下载 SVG',back:'返回 README',note:'图源为可编辑的 HTML 内嵌矢量图。支持中英文切换、原始尺寸查看和 SVG 下载；运行 make diagram 可重新生成仓库中的静态图。'},
+    en: {title:'Data pipeline overview',size:'Actual size',fit:'Fit to width',download:'Download SVG',back:'Back to README',note:'Editable HTML with inline vectors. Switch language, inspect at actual size, or download SVG. Run make diagram to regenerate the repository images.'}
+  };
+  function applyLanguage(lang) {
+    locale = lang === 'en' ? 'en' : 'zh';
+    document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
+    diagram.setAttribute('lang', document.documentElement.lang);
+    for (const node of translatable) node.textContent = node.dataset[locale];
+    document.querySelectorAll('[data-lang]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.lang === locale)));
+    document.getElementById('page-label').textContent = labels[locale].title;
+    document.getElementById('download').textContent = labels[locale].download;
+    document.getElementById('readme-link').textContent = labels[locale].back;
+    document.getElementById('readme-link').href = locale === 'zh' ? '../../README.md' : '../../README.en.md';
+    document.getElementById('page-note').textContent = labels[locale].note;
+    updateSizeLabel();
+  }
+  function updateSizeLabel() {
+    const actual = document.getElementById('canvas').classList.contains('actual');
+    const button = document.getElementById('size-toggle');
+    button.textContent = labels[locale][actual ? 'fit' : 'size'];
+    button.setAttribute('aria-pressed',String(actual));
+  }
+  document.querySelectorAll('[data-lang]').forEach(button => button.addEventListener('click',() => applyLanguage(button.dataset.lang)));
+  document.getElementById('size-toggle').addEventListener('click',() => {
+    document.getElementById('canvas').classList.toggle('actual'); updateSizeLabel();
+  });
+  document.getElementById('download').addEventListener('click',() => {
+    const copy = diagram.cloneNode(true);
+    copy.querySelectorAll('[data-en],[data-zh]').forEach(node => {node.removeAttribute('data-en');node.removeAttribute('data-zh');});
+    const blob = new Blob(['<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(copy)],{type:'image/svg+xml;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a'); link.href=url; link.download=locale==='zh'?'pipeline.svg':'pipeline.en.svg';
+    link.click(); setTimeout(() => URL.revokeObjectURL(url),1000);
+  });
+  applyLanguage(new URLSearchParams(location.search).get('lang'));
+</script>
+</body>
+</html>

@@ -304,10 +304,14 @@ def check_semver(src: Sources) -> list[Finding]:
 
 def check_docs(src: Sources) -> list[Finding]:
     out = []
-    for rel, text in generate_docs(src).items():
-        p = src.root / "docs/generated" / rel
+    try:
+        docs = generate_docs(src)
+    except ContractError as e:
+        return [Finding("error", "docs", str(e))]
+    for rel, text in docs.items():
+        p = src.root / rel
         if not p.exists() or p.read_text(encoding="utf-8") != text:
-            out.append(Finding("error", "docs", f"docs/generated/{rel} is stale; run `bdc generate`"))
+            out.append(Finding("error", "docs", f"{rel} is stale; run `bdc generate`"))
     return out
 
 

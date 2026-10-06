@@ -120,6 +120,11 @@ def cmd_migrate(args) -> int:
         report = migrate_legacy_file(Path(args.file), Path(args.out), version=args.schema_version,
                                      page_offset=args.page_offset, dataset_id=args.dataset_id,
                                      source_file_sha256=args.source_file_sha256, root=args.root)
+    elif args.source == "merged":
+        from .merged import migrate_merged_file
+        report = migrate_merged_file(Path(args.file), Path(args.out), version=args.schema_version,
+                                     page_offset=args.page_offset, dataset_id=args.dataset_id,
+                                     source_file_sha256=args.source_file_sha256, root=args.root)
     else:
         from .omics import migrate_omics_file
         report = migrate_omics_file(Path(args.file), Path(args.out), version=args.schema_version,
@@ -178,7 +183,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--strict", action="store_true", help="treat an unreleased VERSION as an error")
     p.set_defaults(func=cmd_check)
 
-    p = sub.add_parser("generate", help="regenerate docs/generated from the catalog")
+    p = sub.add_parser("generate", help="regenerate FIELD_DEFINITIONS.md and docs/generated from the catalog")
     p.add_argument("--xlsx", metavar="PATH", help="also write an Excel field dictionary (needs openpyxl)")
     p.set_defaults(func=cmd_generate)
 
@@ -202,14 +207,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("new")
     p.set_defaults(func=cmd_diff)
 
-    p = sub.add_parser("migrate", help="convert legacy v1 documents or omics template instances to atomic records")
-    p.add_argument("source", choices=["legacy", "omics"])
+    p = sub.add_parser("migrate", help="convert legacy/merged documents or omics template instances to atomic records")
+    p.add_argument("source", choices=["legacy", "omics", "merged"])
     p.add_argument("file")
     p.add_argument("--out", required=True, help="output directory")
     p.add_argument("--schema-version", default="latest")
     p.add_argument("--page-offset", type=int,
-                   help="legacy only: physical PDF page = journal page - OFFSET (required to fill source_page)")
-    p.add_argument("--source-file-sha256", help="legacy only: SHA-256 of the source PDF")
+                   help="legacy/merged: physical PDF page = source page - OFFSET (use 0 for physical source pages)")
+    p.add_argument("--source-file-sha256", help="legacy/merged: SHA-256 of the source PDF")
     p.add_argument("--record-kind", help="omics only: record kind when the instance has no valid record_type")
     p.add_argument("--dataset-id")
     p.set_defaults(func=cmd_migrate)

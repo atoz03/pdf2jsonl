@@ -1,0 +1,1875 @@
+# Source mappings; executable transfers and retained source data are distinguished below.
+mapping_format: 1
+id: merged_to_current
+title_zh: merged v2 文档与单位行 → 当前原子契约
+source:
+  id: merged_v2
+  version: v2.0.0
+  leaf_source: json_schema
+  file: sources/merged_v2/breeding_jsonl_schema_v2.json
+target:
+  contract: breeding-literature-record
+  min_version: 3.3.0
+principles_zh:
+- 保留当前原子记录格式，merged 作为输入来源，不覆盖已有定义。
+- 继承 legacy 事实迁移，新增观测、资产及显式引用的样本/测定上下文。
+- 每个非空源叶子均可在已消费路径、拒绝记录或残留中追踪。
+entries:
+- source: record_id
+  status: mapped
+  target: common.source_record_id
+  scope: document
+  note_zh: legacy 文档记录 ID 作为来源对象 ID 保留；新记录 ID 按仓库约定重算
+- source: schema_version
+  status: control
+  note_zh: 必须为 v2.0.0；输出版本由当前契约确定。
+- source: record_info.doc_type
+  status: mapped
+  target: common.source_document_type
+  scope: document
+- source: record_info.lang
+  status: mapped
+  target: common.source_language
+  scope: document
+  note_zh: zh/en/zh_en 原样保留
+- source: record_info.created_at
+  status: unmapped
+  note_zh: 旧管线运行时间，写入迁移报告
+- source: record_info.updated_at
+  status: unmapped
+  note_zh: 旧管线运行时间，写入迁移报告
+- source: doc_meta.title
+  status: mapped
+  target: common.source_title
+  scope: document
+- source: doc_meta.title_zh
+  status: unmapped
+  note_zh: 译名不是原文证据
+  issues:
+  - LEG-010
+- source: doc_meta.title_en
+  status: unmapped
+  note_zh: 译名不是原文证据
+  issues:
+  - LEG-010
+- source: doc_meta.authors[].**
+  status: unmapped
+  note_zh: ORCID、机构 ID、通信作者标记无对应字段
+- source: doc_meta.authors[].name
+  status: transformed
+  target: common.source_authors
+  scope: document
+  note_zh: 按 rank 排序后组成作者姓名数组
+  transform: compose
+- source: doc_meta.authors[].rank
+  status: transformed
+  target: common.source_authors
+  scope: document
+  note_zh: 仅用于作者排序
+  transform: compose
+- source: doc_meta.authors[].affiliation_name
+  status: mapped
+  target: common.source_affiliations
+  scope: document
+  note_zh: 去重后并入机构名称数组
+- source: doc_meta.affiliations
+  status: mapped
+  target: common.source_affiliations
+  scope: document
+  note_zh: 仅保留机构名称；地址、国家、机构 ID 不迁移
+- source: doc_meta.journal
+  status: mapped
+  target: common.source_journal
+  scope: document
+- source: doc_meta.journal_meta.**
+  status: unmapped
+  note_zh: 期刊分级（SCI 分区、中科院分区等）属外部评价而非论文内容，不作为可信度先验写入记录
+- source: doc_meta.year
+  status: mapped
+  target: common.source_year
+  scope: document
+- source: doc_meta.volume
+  status: mapped
+  target: common.source_volume
+  scope: document
+- source: doc_meta.issue
+  status: mapped
+  target: common.source_issue
+  scope: document
+- source: doc_meta.pages
+  status: mapped
+  target: common.source_page_range
+  scope: document
+  note_zh: 出版物页码范围，绝不写入 source_page
+  issues:
+  - LEG-002
+- source: doc_meta.doi
+  status: mapped
+  target: common.source_doi
+  scope: document
+- source: doc_meta.url
+  status: partial
+  target: common.source_uri
+  scope: document
+  note_zh: 仅持久 URI（DOI 链接、仓储地址）；含凭证或临时签名的 URL 不迁移
+- source: doc_meta.pdf_path
+  status: forbidden
+  note_zh: 本机相对/绝对路径，契约禁止（R020）；文件身份改用 source_file_sha256
+  issues:
+  - LEG-003
+- source: doc_meta.abstract
+  status: mapped
+  target: common.source_abstract
+  scope: document
+- source: doc_meta.keywords
+  status: mapped
+  target: common.source_keywords
+  scope: document
+  note_zh: 原样保留，不做小写归一
+- source: doc_meta.funding
+  status: mapped
+  target: common.source_funding
+  scope: document
+- source: doc_meta.species_list[].name
+  status: partial
+  target: common.species_name
+  note_zh: 多物种文献需按记录分别确定物种；无法确定时不填
+  issues:
+  - LEG-008
+- source: doc_meta.species_list[].name_zh
+  status: partial
+  target: common.crop_name
+  note_zh: 中文物种名作为作物名称原文
+  issues:
+  - LEG-008
+- source: doc_meta.species_list[].ncbi_tax_id
+  status: partial
+  target: common.crop_taxon_id
+  note_zh: 仅当物种即作物时迁移
+  issues:
+  - LEG-008
+- source: doc_meta.species_list[].crop_group
+  status: unmapped
+  note_zh: 粮食/油料等大类无对应字段
+- source: doc_meta.field
+  status: partial
+  target: common.crop_name
+  note_zh: A-2 育种领域即作物/畜禽类别，按 crop_name 词表映射；多值时取与记录对应者
+  issues:
+  - LEG-008
+- source: doc_meta.sources
+  status: unmapped
+  note_zh: 采集渠道属管线元数据，写入迁移报告
+- source: doc_meta.document_sections[].**
+  status: unmapped
+  note_zh: 解析分块内部定位信息；迁移时仅用于解析 evidence_spans 引用
+  issues:
+  - LEG-006
+- source: doc_meta.document_sections[].page
+  status: partial
+  target: common.source_page
+  note_zh: 实体/关系的证据片段：page 为出版物页码，需 --page-offset 换算为物理页；text_snippet 仅在逐字时作为 source_quote
+  issues:
+  - LEG-002
+- source: doc_meta.document_sections[].text_snippet
+  status: partial
+  target: common.source_quote
+  note_zh: 仅在为逐字原文（不含省略号）时迁移
+  issues:
+  - LEG-009
+- source: doc_meta.section_vectors[].**
+  status: unmapped
+  note_zh: 向量嵌入不写入 JSONL 记录（v3 原则 6：大对象不内嵌）
+- source: doc_meta.citation_count
+  status: unmapped
+  note_zh: 外部引文指标，非论文内容
+- source: doc_meta.cited_by
+  status: unmapped
+  note_zh: 外部引文指标，非论文内容
+- source: doc_meta.related_docs
+  status: unmapped
+  note_zh: 文献间关联属治理层，非论文内容
+- source: breed_entities.genes[].**
+  status: unmapped
+  note_zh: 实体清单中未单独映射的属性，写入残留报告
+  issues:
+  - LEG-008
+- source: breed_entities.genes[].name
+  status: transformed
+  target: common.gene_names
+  note_zh: 实体名称写入引用该实体的记录的名称字段
+  transform: resolve_reference
+  issues:
+  - LEG-008
+- source: breed_entities.genes[].aliases
+  status: mapped
+  target: transform.entity_synonyms
+  note_zh: 同义名称
+  issues:
+  - LEG-008
+- source: breed_entities.genes[].canonical_name
+  status: partial
+  target: transform.entity_synonyms
+  note_zh: 规范名作为同义名称之一保存；规范 ID 另行对齐
+  issues:
+  - LEG-008
+- source: breed_entities.genes[].entity_id
+  status: unmapped
+  note_zh: legacy 内部实体 ID，仅用于解析引用
+- source: breed_entities.genes[].description
+  status: unmapped
+  note_zh: 抽取器生成的实体摘要，不是原文证据
+- source: breed_entities.genes[].confidence
+  status: unmapped
+  note_zh: 实体级置信度不对应单条记录
+- source: breed_entities.genes[].evidence_spans[].page
+  status: partial
+  target: common.source_page
+  note_zh: 实体/关系的证据片段：page 为出版物页码，需 --page-offset 换算为物理页；text_snippet 仅在逐字时作为 source_quote
+  issues:
+  - LEG-002
+- source: breed_entities.genes[].evidence_spans[].text_snippet
+  status: partial
+  target: common.source_quote
+  note_zh: 实体/关系的证据片段：page 为出版物页码，需 --page-offset 换算为物理页；text_snippet 仅在逐字时作为 source_quote
+  issues:
+  - LEG-009
+- source: breed_entities.genes[].evidence_spans[].**
+  status: unmapped
+  note_zh: 分块内部定位信息，迁移时用于解析证据
+  issues:
+  - LEG-006
+- source: breed_entities.genes[].evidence_spans[].section_id
+  status: control
+  note_zh: 解析为 doc_meta.document_sections 中对应分块的页码与片段（证据定位）；ID 本身不迁移
+- source: breed_entities.traits[].**
+  status: unmapped
+  note_zh: 实体清单中未单独映射的属性，写入残留报告
+  issues:
+  - LEG-008
+- source: breed_entities.traits[].name
+  status: transformed
+  target: common.trait_names
+  note_zh: 实体名称写入引用该实体的记录的名称字段
+  transform: resolve_reference
+  issues:
+  - LEG-008
+- source: breed_entities.traits[].aliases
+  status: mapped
+  target: transform.entity_synonyms
+  note_zh: 同义名称
+  issues:
+  - LEG-008
+- source: breed_entities.traits[].canonical_name
+  status: partial
+  target: transform.entity_synonyms
+  note_zh: 规范名作为同义名称之一保存；规范 ID 另行对齐
+  issues:
+  - LEG-008
+- source: breed_entities.traits[].entity_id
+  status: unmapped
+  note_zh: legacy 内部实体 ID，仅用于解析引用
+- source: breed_entities.traits[].description
+  status: unmapped
+  note_zh: 抽取器生成的实体摘要，不是原文证据
+- source: breed_entities.traits[].confidence
+  status: unmapped
+  note_zh: 实体级置信度不对应单条记录
+- source: breed_entities.traits[].evidence_spans[].page
+  status: partial
+  target: common.source_page
+  note_zh: 实体/关系的证据片段：page 为出版物页码，需 --page-offset 换算为物理页；text_snippet 仅在逐字时作为 source_quote
+  issues:
+  - LEG-002
+- source: breed_entities.traits[].evidence_spans[].text_snippet
+  status: partial
+  target: common.source_quote
+  note_zh: 实体/关系的证据片段：page 为出版物页码，需 --page-offset 换算为物理页；text_snippet 仅在逐字时作为 source_quote
+  issues:
+  - LEG-009
+- source: breed_entities.traits[].evidence_spans[].**
+  status: unmapped
+  note_zh: 分块内部定位信息，迁移时用于解析证据
+  issues:
+  - LEG-006
+- source: breed_entities.traits[].evidence_spans[].section_id
+  status: control
+  note_zh: 解析为 doc_meta.document_sections 中对应分块的页码与片段（证据定位）；ID 本身不迁移
+- source: breed_entities.germplasm[].**
+  status: unmapped
+  note_zh: 实体清单中未单独映射的属性，写入残留报告
+  issues:
+  - LEG-008
+- source: breed_entities.germplasm[].name
+  status: transformed
+  target: common.germplasm_names
+  note_zh: 实体名称写入引用该实体的记录的名称字段
+  transform: resolve_reference
+  issues:
+  - LEG-008
+- source: breed_entities.germplasm[].aliases
+  status: mapped
+  target: transform.entity_synonyms
+  note_zh: 同义名称
+  issues:
+  - LEG-008
+- source: breed_entities.germplasm[].canonical_name
+  status: partial
+  target: transform.entity_synonyms
+  note_zh: 规范名作为同义名称之一保存；规范 ID 另行对齐
+  issues:
+  - LEG-008
+- source: breed_entities.germplasm[].entity_id
+  status: unmapped
+  note_zh: legacy 内部实体 ID，仅用于解析引用
+- source: breed_entities.germplasm[].description
+  status: unmapped
+  note_zh: 抽取器生成的实体摘要，不是原文证据
+- source: breed_entities.germplasm[].confidence
+  status: unmapped
+  note_zh: 实体级置信度不对应单条记录
+- source: breed_entities.varieties[].**
+  status: unmapped
+  note_zh: 实体清单中未单独映射的属性，写入残留报告
+  issues:
+  - LEG-008
+- source: breed_entities.varieties[].name
+  status: transformed
+  target: common.variety_names
+  note_zh: 实体名称写入引用该实体的记录的名称字段
+  transform: resolve_reference
+  issues:
+  - LEG-008
+- source: breed_entities.varieties[].aliases
+  status: mapped
+  target: transform.entity_synonyms
+  note_zh: 同义名称
+  issues:
+  - LEG-008
+- source: breed_entities.varieties[].canonical_name
+  status: partial
+  target: transform.entity_synonyms
+  note_zh: 规范名作为同义名称之一保存；规范 ID 另行对齐
+  issues:
+  - LEG-008
+- source: breed_entities.varieties[].entity_id
+  status: unmapped
+  note_zh: legacy 内部实体 ID，仅用于解析引用
+- source: breed_entities.varieties[].description
+  status: unmapped
+  note_zh: 抽取器生成的实体摘要，不是原文证据
+- source: breed_entities.varieties[].confidence
+  status: unmapped
+  note_zh: 实体级置信度不对应单条记录
+- source: breed_entities.populations[].**
+  status: unmapped
+  note_zh: 实体清单中未单独映射的属性，写入残留报告
+  issues:
+  - LEG-008
+- source: breed_entities.populations[].name
+  status: transformed
+  target: common.population_name
+  note_zh: 实体名称写入引用该实体的记录的名称字段
+  transform: resolve_reference
+  issues:
+  - LEG-008
+- source: breed_entities.populations[].aliases
+  status: mapped
+  target: transform.entity_synonyms
+  note_zh: 同义名称
+  issues:
+  - LEG-008
+- source: breed_entities.populations[].canonical_name
+  status: partial
+  target: transform.entity_synonyms
+  note_zh: 规范名作为同义名称之一保存；规范 ID 另行对齐
+  issues:
+  - LEG-008
+- source: breed_entities.populations[].entity_id
+  status: unmapped
+  note_zh: legacy 内部实体 ID，仅用于解析引用
+- source: breed_entities.populations[].description
+  status: unmapped
+  note_zh: 抽取器生成的实体摘要，不是原文证据
+- source: breed_entities.populations[].confidence
+  status: unmapped
+  note_zh: 实体级置信度不对应单条记录
+- source: breed_entities.environments[].**
+  status: unmapped
+  note_zh: 实体清单中未单独映射的属性，写入残留报告
+  issues:
+  - LEG-008
+- source: breed_entities.environments[].name
+  status: transformed
+  target: common.environment_code
+  note_zh: 实体名称写入引用该实体的记录的名称字段
+  transform: resolve_reference
+  issues:
+  - LEG-008
+- source: breed_entities.environments[].aliases
+  status: mapped
+  target: transform.entity_synonyms
+  note_zh: 同义名称
+  issues:
+  - LEG-008
+- source: breed_entities.environments[].canonical_name
+  status: partial
+  target: transform.entity_synonyms
+  note_zh: 规范名作为同义名称之一保存；规范 ID 另行对齐
+  issues:
+  - LEG-008
+- source: breed_entities.environments[].entity_id
+  status: unmapped
+  note_zh: legacy 内部实体 ID，仅用于解析引用
+- source: breed_entities.environments[].description
+  status: unmapped
+  note_zh: 抽取器生成的实体摘要，不是原文证据
+- source: breed_entities.environments[].confidence
+  status: unmapped
+  note_zh: 实体级置信度不对应单条记录
+- source: breed_entities.markers[].**
+  status: unmapped
+  note_zh: 实体清单中未单独映射的属性，写入残留报告
+  issues:
+  - LEG-008
+- source: breed_entities.markers[].name
+  status: transformed
+  target: common.marker_names
+  note_zh: 实体名称写入引用该实体的记录的名称字段
+  transform: resolve_reference
+  issues:
+  - LEG-008
+- source: breed_entities.markers[].aliases
+  status: mapped
+  target: transform.entity_synonyms
+  note_zh: 同义名称
+  issues:
+  - LEG-008
+- source: breed_entities.markers[].canonical_name
+  status: partial
+  target: transform.entity_synonyms
+  note_zh: 规范名作为同义名称之一保存；规范 ID 另行对齐
+  issues:
+  - LEG-008
+- source: breed_entities.markers[].entity_id
+  status: unmapped
+  note_zh: legacy 内部实体 ID，仅用于解析引用
+- source: breed_entities.markers[].description
+  status: unmapped
+  note_zh: 抽取器生成的实体摘要，不是原文证据
+- source: breed_entities.markers[].confidence
+  status: unmapped
+  note_zh: 实体级置信度不对应单条记录
+- source: breed_entities.qtls[].**
+  status: unmapped
+  note_zh: 实体清单中未单独映射的属性，写入残留报告
+  issues:
+  - LEG-008
+- source: breed_entities.qtls[].name
+  status: transformed
+  target: common.qtl_names
+  note_zh: 实体名称写入引用该实体的记录的名称字段
+  transform: resolve_reference
+  issues:
+  - LEG-008
+- source: breed_entities.qtls[].aliases
+  status: mapped
+  target: transform.entity_synonyms
+  note_zh: 同义名称
+  issues:
+  - LEG-008
+- source: breed_entities.qtls[].canonical_name
+  status: partial
+  target: transform.entity_synonyms
+  note_zh: 规范名作为同义名称之一保存；规范 ID 另行对齐
+  issues:
+  - LEG-008
+- source: breed_entities.qtls[].entity_id
+  status: unmapped
+  note_zh: legacy 内部实体 ID，仅用于解析引用
+- source: breed_entities.qtls[].description
+  status: unmapped
+  note_zh: 抽取器生成的实体摘要，不是原文证据
+- source: breed_entities.qtls[].confidence
+  status: unmapped
+  note_zh: 实体级置信度不对应单条记录
+- source: breed_entities.genes[].gene_symbol
+  status: transformed
+  target: common.gene_names
+  note_zh: 基因符号原文
+  transform: structure
+- source: breed_entities.genes[].chromosome
+  status: mapped
+  target: common.chromosome
+- source: breed_entities.genes[].position.ref_genome
+  status: mapped
+  target: common.genome_assembly
+- source: breed_entities.genes[].position.start_bp
+  status: mapped
+  target: common.locus_interval_start_bp
+- source: breed_entities.genes[].position.end_bp
+  status: mapped
+  target: common.locus_interval_end_bp
+- source: breed_entities.genes[].alleles[].variant_type
+  status: mapped
+  target: common.variant_type
+- source: breed_entities.genes[].alleles[].effect_value
+  status: partial
+  target: agent.effect_estimate
+  note_zh: 仅当效应值与记录的性状/环境条件匹配时迁移
+- source: breed_entities.genes[].alleles[].effect
+  status: partial
+  target: agent.effect_direction
+  note_zh: 效应描述原文
+- source: breed_entities.genes[].linked_traits
+  status: transformed
+  target: common.trait_names
+  note_zh: 与基因同记录的性状名称
+  transform: structure
+- source: breed_entities.genes[].ontology_id
+  status: partial
+  target: common.gene_ids
+  note_zh: 仅当 ID 属于公认基因数据库时迁移
+- source: breed_entities.genes[].ortholog_in_model
+  status: partial
+  target: omics.ortholog_id
+  note_zh: 模式物种直系同源基因
+- source: breed_entities.traits[].trait_name
+  status: transformed
+  target: common.trait_names
+  transform: structure
+- source: breed_entities.traits[].trait_abbr
+  status: partial
+  target: transform.entity_synonyms
+  note_zh: 性状缩写作为同义名称
+- source: breed_entities.traits[].trait_category
+  status: mapped
+  target: common.trait_category
+  note_zh: A-3 中文类名按 trait_category 词表映射；多选时逐条记录
+- source: breed_entities.traits[].measurement_detail.unit
+  status: partial
+  target: common.measurement_unit
+  note_zh: 仅迁移到该性状的单值观测记录
+- source: breed_entities.traits[].measurement_detail.stage
+  status: mapped
+  target: common.growth_stage
+- source: breed_entities.traits[].measurement_detail.organ
+  status: mapped
+  target: common.organ
+- source: breed_entities.traits[].measurement_detail.method_standard
+  status: mapped
+  target: common.trait_measurement_protocol
+- source: breed_entities.traits[].measurement_detail.device
+  status: partial
+  target: common.trait_measurement_protocol
+  note_zh: 与测量方法合并为方案原文
+- source: breed_entities.traits[].measurement_detail.scoring_scheme
+  status: partial
+  target: common.trait_measurement_protocol
+  note_zh: 与测量方法合并为方案原文
+- source: breed_entities.traits[].measurement_detail.survey_numbers
+  status: partial
+  target: common.sample_size
+  note_zh: 调查株数仅在对应单条结果时迁移
+- source: breed_entities.traits[].heritability_h2_estimate
+  status: transformed
+  targets:
+  - skills.metric_name
+  - skills.metric_value
+  note_zh: 生成 analysis_result：metric_name=遗传力
+  transform: split_records
+- source: breed_entities.traits[].related_marker_genes
+  status: partial
+  target: common.gene_names
+  note_zh: 相关基因名称原文
+- source: breed_entities.traits[].ontology_id
+  status: transformed
+  target: common.trait_ids
+  transform: structure
+- source: breed_entities.traits[].trait_ontology_id
+  status: transformed
+  target: common.trait_ids
+  transform: structure
+- source: breed_entities.germplasm[].germplasm_name
+  status: transformed
+  target: common.germplasm_names
+  transform: structure
+- source: breed_entities.germplasm[].accession_number[].accno
+  status: mapped
+  target: common.germplasm_accessions
+- source: breed_entities.germplasm[].accession_number[].db
+  status: transformed
+  target: common.germplasm_accessions
+  note_zh: 与 accno 组合为“库名:登记号”
+  transform: compose
+- source: breed_entities.germplasm[].species_info.species
+  status: mapped
+  target: common.species_name
+- source: breed_entities.germplasm[].species_info.sub_species
+  status: mapped
+  target: common.subspecies
+- source: breed_entities.germplasm[].species_info.ploidy
+  status: partial
+  target: common.ploidy
+  note_zh: v3 ploidy 限定为基因型调用的倍性
+- source: breed_entities.germplasm[].pedigree_text
+  status: mapped
+  target: common.pedigree_text
+- source: breed_entities.germplasm[].parents
+  status: transformed
+  target: common.parent_names
+  transform: structure
+- source: breed_entities.germplasm[].origin_region.**
+  status: unmapped
+  note_zh: 种质来源地与试验地点不同，v3 无对应字段
+- source: breed_entities.germplasm[].latitude_longitude.**
+  status: unmapped
+  note_zh: 种质来源地坐标；v3 坐标字段仅用于试验地点
+- source: breed_entities.varieties[].variety_name
+  status: transformed
+  target: common.variety_names
+  transform: structure
+- source: breed_entities.varieties[].approved_number
+  status: mapped
+  target: common.variety_approval_number
+- source: breed_entities.varieties[].parentage
+  status: mapped
+  target: common.pedigree_text
+  note_zh: 品种亲本组合原文
+- source: breed_entities.varieties[].breeding_lines
+  status: partial
+  target: common.germplasm_names
+  note_zh: 育种品系名称
+- source: breed_entities.varieties[].suitable_regions
+  status: partial
+  target: agent.applicable_environment
+  note_zh: 适宜区域原文
+- source: breed_entities.varieties[].major_traits
+  status: partial
+  target: common.trait_names
+  note_zh: 主要性状名称
+- source: breed_entities.populations[].population_id
+  status: mapped
+  target: common.population_id
+- source: breed_entities.populations[].population_name
+  status: mapped
+  target: common.population_name
+- source: breed_entities.populations[].pop_type
+  status: mapped
+  target: common.population_type
+  note_zh: A-4 代码（natural_pop 为 natural_population 的别名）
+- source: breed_entities.populations[].parents
+  status: transformed
+  target: common.parent_names
+  transform: structure
+- source: breed_entities.populations[].population_size
+  status: mapped
+  target: common.population_size
+- source: breed_entities.populations[].generation
+  status: mapped
+  target: common.population_generation
+- source: breed_entities.populations[].marker_density.markers_count
+  status: partial
+  target: skills.feature_count
+  note_zh: 仅在用于该分析的标记数时迁移
+- source: breed_entities.populations[].marker_density.platform
+  status: partial
+  target: skills.genotyping_method
+  note_zh: 分型平台原文
+- source: breed_entities.environments[].env_code_in_paper
+  status: mapped
+  target: common.environment_code
+- source: breed_entities.environments[].env_id
+  status: partial
+  target: common.environment_id
+  note_zh: legacy ID 非稳定命名空间，需重新登记
+- source: breed_entities.environments[].location.site
+  status: mapped
+  target: common.location_name
+- source: breed_entities.environments[].location.province
+  status: partial
+  target: common.location_name
+  note_zh: 与 site、country 组合为地点原文
+- source: breed_entities.environments[].location.country
+  status: partial
+  target: common.location_name
+  note_zh: 与 site、province 组合为地点原文
+- source: breed_entities.environments[].location.lat
+  status: mapped
+  target: common.latitude_deg
+- source: breed_entities.environments[].location.lon
+  status: mapped
+  target: common.longitude_deg
+- source: breed_entities.environments[].location.altitude_m
+  status: mapped
+  target: common.elevation_m
+- source: breed_entities.environments[].season
+  status: mapped
+  target: common.trial_season
+- source: breed_entities.environments[].year
+  status: mapped
+  target: common.trial_year
+- source: breed_entities.environments[].soil.soil_type
+  status: mapped
+  target: common.soil_type
+- source: breed_entities.environments[].soil.**
+  status: partial
+  target: common.environmental_conditions
+  note_zh: '土壤属性以“名称: 原文值”写入环境条件数组'
+- source: breed_entities.environments[].climate.**
+  status: partial
+  target: common.environmental_conditions
+  note_zh: '气候属性以“名称: 原文值”写入环境条件数组'
+- source: breed_entities.environments[].irrigation
+  status: partial
+  target: common.environmental_conditions
+  note_zh: 灌溉条件原文
+- source: breed_entities.environments[].cropping_system
+  status: partial
+  target: common.environmental_conditions
+  note_zh: 种植制度原文
+- source: breed_entities.environments[].stress_conditions[].**
+  status: partial
+  target: common.treatment
+  note_zh: 胁迫类型、强度、持续时间与方法合并为处理原文
+- source: breed_entities.markers[].marker_name
+  status: transformed
+  target: common.marker_names
+  transform: structure
+- source: breed_entities.markers[].marker_id
+  status: partial
+  target: common.marker_names
+  note_zh: 标记编号作为标记名称原文
+- source: breed_entities.markers[].marker_type
+  status: mapped
+  target: common.marker_type
+- source: breed_entities.markers[].platform.**
+  status: partial
+  target: skills.genotyping_method
+  note_zh: 分型平台或芯片名称原文
+- source: breed_entities.markers[].chromosome
+  status: mapped
+  target: common.chromosome
+- source: breed_entities.markers[].position_bp
+  status: mapped
+  target: common.variant_position_bp
+- source: breed_entities.markers[].allele_frequency.minor_allele_frequency
+  status: mapped
+  target: common.minor_allele_frequency
+- source: breed_entities.markers[].linked_gene
+  status: transformed
+  target: common.gene_names
+  transform: structure
+- source: breed_entities.markers[].primer.forward
+  status: mapped
+  target: common.primer_forward
+- source: breed_entities.markers[].primer.reverse
+  status: mapped
+  target: common.primer_reverse
+- source: breed_entities.qtls[].qtl_name
+  status: transformed
+  target: common.qtl_names
+  transform: structure
+- source: breed_entities.qtls[].qtl_id
+  status: partial
+  target: common.qtl_names
+  note_zh: 持久 ID 与原文名称不同时只保留原文名称
+- source: breed_entities.qtls[].chromosome
+  status: mapped
+  target: common.chromosome
+- source: breed_entities.qtls[].interval.unit
+  status: transformed
+  targets:
+  - common.locus_interval_start_cm
+  - common.locus_interval_start_bp
+  note_zh: 决定区间写入 *_cm 或 *_bp；Mb/kb 按单位表精确换算为 bp
+  transform: compose
+  issues:
+  - LEG-011
+- source: breed_entities.qtls[].interval.start
+  status: transformed
+  targets:
+  - common.locus_interval_start_cm
+  - common.locus_interval_start_bp
+  note_zh: 按 interval.unit 写入
+  transform: compose
+  issues:
+  - LEG-011
+- source: breed_entities.qtls[].interval.end
+  status: transformed
+  targets:
+  - common.locus_interval_end_cm
+  - common.locus_interval_end_bp
+  note_zh: 按 interval.unit 写入
+  transform: compose
+  issues:
+  - LEG-011
+- source: breed_entities.qtls[].interval.ci_type
+  status: unmapped
+  note_zh: 置信区间类型（LOD-1/2）无对应字段，写入残留
+- source: breed_entities.qtls[].confidence_interval.**
+  status: unmapped
+  note_zh: 与 interval 重复且口径不明；写入残留
+  issues:
+  - LEG-006
+- source: breed_entities.qtls[].lod
+  status: partial
+  target: agent.lod_score
+  note_zh: 仅当产出分析为连锁/QTL 定位时迁移；GWAS 的 -log10(P) 不得写入 lod_score
+  issues:
+  - LEG-004
+- source: breed_entities.qtls[].p_value
+  status: mapped
+  target: agent.p_value
+- source: breed_entities.qtls[].pve
+  status: mapped
+  target: agent.pve_percent
+- source: breed_entities.qtls[].additive_effect
+  status: transformed
+  targets:
+  - agent.effect_estimate
+  - agent.effect_type
+  note_zh: 每个效应一条记录，effect_type 写“additive_effect”原文字段名
+  transform: split_records
+- source: breed_entities.qtls[].dominance_effect
+  status: transformed
+  targets:
+  - agent.effect_estimate
+  - agent.effect_type
+  note_zh: 每个效应一条记录，effect_type 写“dominance_effect”原文字段名
+  transform: split_records
+- source: breed_entities.qtls[].population_used
+  status: partial
+  target: common.population_name
+  note_zh: 解析群体引用后写入群体名称
+- source: breed_entities.qtls[].candidate_genes
+  status: partial
+  target: common.gene_names
+  note_zh: 候选基因名称；候选层级不自动推断
+- source: breed_entities.qtls[].nearest_markers
+  status: transformed
+  target: common.marker_names
+  transform: structure
+- source: breed_entities.qtls[].pleiotropy
+  status: partial
+  target: common.trait_names
+  note_zh: 多效性状名称；多效性结论需原文支持
+- source: breed_entities.disease_pests
+  status: unmapped
+  note_zh: legacy schema 未定义其结构，无可迁移子字段
+  issues:
+  - LEG-006
+- source: breed_entities.other_entities[].**
+  status: unmapped
+  note_zh: 开放扩展实体，写入残留
+- source: breed_entities.other_entities[].name
+  status: partial
+  target: transform.subject_mention
+  note_zh: 仅当作为关系主语/宾语被引用时迁移
+- source: breed_entities.other_entities[].entity_type
+  status: partial
+  target: transform.subject_type
+  note_zh: 仅作候选本体类型
+- source: relations[].relation_id
+  status: control
+  note_zh: 用于把 conclusions 的支持关系解析到新记录；新记录 ID 按仓库约定重算，原 ID 写入迁移报告 record_sources.source_item_id
+- source: relations[].subject.entity_id
+  status: transformed
+  target: transform.subject_mention
+  note_zh: 解析实体引用后写入主语原文名称
+  transform: relation_claim
+- source: relations[].subject.entity_type
+  status: partial
+  target: transform.subject_type
+  note_zh: 仅作候选本体类型
+- source: relations[].object.entity_id
+  status: transformed
+  target: transform.object_mention
+  note_zh: 解析实体引用后写入宾语原文名称
+  transform: relation_claim
+- source: relations[].object.entity_type
+  status: partial
+  target: transform.object_type
+  note_zh: 仅作候选本体类型
+- source: relations[].relation_type
+  status: partial
+  target: transform.predicate_label
+  note_zh: A-5 中文关系名按 predicate_label 词表映射
+  issues:
+  - LEG-005
+- source: relations[].relation_mechanism
+  status: partial
+  target: agent.candidate_mechanism
+  note_zh: 仅当为作者提出的机制时迁移
+- source: relations[].effect_direction
+  status: partial
+  target: transform.relation_polarity
+  note_zh: 仅 increase/decrease/no_significant_effect/unknown 可迁移
+- source: relations[].relation_confidence
+  status: unmapped
+  note_zh: 抽取器置信度不对应 v3 字段含义
+- source: relations[].supporting_method
+  status: partial
+  target: agent.validation_methods
+  note_zh: 验证方式原文
+- source: relations[].ontology_relation_mapping
+  status: partial
+  target: transform.predicate_id
+  note_zh: 仅当为规范谓词 ID 时迁移
+- source: relations[].is_inferred
+  status: control
+  note_zh: 过滤条件：is_inferred=true 的关系是推断结果，整条不迁移
+  issues:
+  - LEG-005
+- source: relations[].inferred_from
+  status: unmapped
+  note_zh: 推断来源；推断关系不迁移
+  issues:
+  - LEG-005
+- source: relations[].source_section
+  status: mapped
+  target: common.source_section
+  note_zh: A-6 章节名原文
+- source: relations[].evidence_spans[].page
+  status: partial
+  target: common.source_page
+  note_zh: 实体/关系的证据片段：page 为出版物页码，需 --page-offset 换算为物理页；text_snippet 仅在逐字时作为 source_quote
+  issues:
+  - LEG-002
+- source: relations[].evidence_spans[].text_snippet
+  status: partial
+  target: common.source_quote
+  note_zh: 实体/关系的证据片段：page 为出版物页码，需 --page-offset 换算为物理页；text_snippet 仅在逐字时作为 source_quote
+  issues:
+  - LEG-009
+- source: relations[].evidence_spans[].**
+  status: unmapped
+  note_zh: 分块内部定位信息，迁移时用于解析证据
+  issues:
+  - LEG-006
+- source: relations[].evidence_spans[].section_id
+  status: control
+  note_zh: 解析为 doc_meta.document_sections 中对应分块的页码与片段（证据定位）；ID 本身不迁移
+- source: experiments[].**
+  status: unmapped
+  note_zh: 实验卡片内部属性，写入残留
+- source: experiments[].experiment_objective
+  status: mapped
+  target: agent.experiment_objective
+- source: experiments[].experiment_name
+  status: partial
+  target: skills.method_name
+  note_zh: 实验名称作为方法名称原文
+- source: experiments[].experiment_type
+  status: partial
+  target: agent.experiment_design
+  note_zh: A-7 实验形态并入试验设计原文
+- source: experiments[].materials_used[].**
+  status: partial
+  target: agent.experimental_materials
+  note_zh: 解析材料引用后写入材料名称
+- source: experiments[].experimental_design.replicates
+  status: mapped
+  target: agent.replicate_count
+- source: experiments[].experimental_design.control
+  status: transformed
+  target: agent.control_groups
+  note_zh: 标量转为数组
+  transform: wrap_array
+- source: experiments[].experimental_design.**
+  status: partial
+  target: agent.experiment_design
+  note_zh: 设计类型、区组、小区、随机化等合并为设计原文
+- source: experiments[].treatments
+  status: transformed
+  target: agent.treatment_groups
+  transform: structure
+- source: experiments[].env_used
+  status: partial
+  target: common.environment_code
+  note_zh: 解析环境引用后写入试验环境编号
+- source: experiments[].trait_measurements[].trait_ref
+  status: transformed
+  target: common.trait_names
+  note_zh: 解析性状引用
+  transform: resolve_reference
+- source: experiments[].trait_measurements[].stage
+  status: mapped
+  target: common.growth_stage
+- source: experiments[].trait_measurements[].unit
+  status: partial
+  target: common.measurement_unit
+  note_zh: 仅迁移到对应单值观测
+- source: experiments[].trait_measurements[].measurement_time
+  status: partial
+  target: common.observation_time
+  note_zh: 仅 ISO 8601 时间可迁移
+- source: experiments[].trait_measurements[].samples
+  status: partial
+  target: common.sample_size
+  note_zh: 样本数仅在对应单条结果时迁移
+- source: experiments[].trait_measurements[].device
+  status: partial
+  target: common.trait_measurement_protocol
+  note_zh: 测量设备并入方案原文
+- source: experiments[].data_collection.**
+  status: partial
+  target: common.trait_measurement_protocol
+  note_zh: 数据采集方法并入测量方案原文
+- source: experiments[].experimental_steps[].step_no
+  status: transformed
+  target: agent.workflow_steps
+  note_zh: array_step.step_no
+  transform: structure
+- source: experiments[].experimental_steps[].step_name
+  status: transformed
+  target: agent.workflow_steps
+  note_zh: array_step.step_name
+  transform: structure
+- source: experiments[].experimental_steps[].step_desc
+  status: transformed
+  target: agent.workflow_steps
+  note_zh: array_step.step_desc
+  transform: structure
+- source: experiments[].experimental_steps[].tool_if_used
+  status: transformed
+  target: agent.workflow_steps
+  note_zh: array_step.tool_name
+  transform: structure
+- source: experiments[].experimental_steps[].duration
+  status: partial
+  target: agent.workflow_steps
+  note_zh: 并入 step_desc 原文
+- source: experiments[].experimental_steps[].condition
+  status: partial
+  target: agent.workflow_steps
+  note_zh: 并入 step_desc 原文
+- source: experiments[].field_layout.**
+  status: partial
+  target: agent.experiment_design
+  note_zh: 田间布局并入设计原文
+- source: experiments[].dataset_link.dataset_id
+  status: partial
+  target: common.data_accessions
+  note_zh: 仅公共数据库登录号可迁移
+- source: analyses[].**
+  status: unmapped
+  note_zh: 分析卡片内部属性，写入残留
+- source: analyses[].analysis_name
+  status: mapped
+  target: skills.method_name
+- source: analyses[].analysis_type
+  status: transformed
+  target: skills.method_category
+  note_zh: A-9 中文类名按 method_category 词表映射
+  transform: compose
+- source: analyses[].model_name
+  status: mapped
+  target: skills.algorithm_name
+- source: analyses[].model_assumptions
+  status: partial
+  target: skills.method_assumptions
+  note_zh: method_assumptions 为 I；仅作审核候选
+- source: analyses[].software_tools[].tool_name
+  status: mapped
+  target: skills.software_name
+  note_zh: 每个软件一条 method 记录
+- source: analyses[].software_tools[].version
+  status: mapped
+  target: skills.software_version
+- source: analyses[].parameters[].param_name
+  status: transformed
+  target: skills.parameters
+  note_zh: array_parameter.name
+  transform: structure
+- source: analyses[].parameters[].param_value
+  status: transformed
+  target: skills.parameters
+  note_zh: array_parameter.value
+  transform: structure
+- source: analyses[].parameters[].param_type
+  status: transformed
+  target: skills.parameters
+  note_zh: array_parameter.value_kind
+  transform: structure
+- source: analyses[].parameters[].**
+  status: partial
+  target: skills.parameters
+  note_zh: 默认值、范围、含义并入 array_parameter.constraint
+- source: analyses[].inputs[].**
+  status: partial
+  target: skills.input_modalities
+  note_zh: 输入类型原文
+- source: analyses[].outputs
+  status: partial
+  target: skills.output_artifacts
+  note_zh: 仅输出名称；key_value 等结果另行生成 analysis_result
+- source: analyses[].significance_thresholds[].**
+  status: transformed
+  target: skills.significance_threshold
+  note_zh: 组合为“指标 值 校正方法”原样表达式
+  transform: compose
+- source: analyses[].key_results
+  status: transformed
+  target: agent.finding_text
+  note_zh: 每条关键结果生成一条 analysis_result 记录
+  transform: split_records
+- source: analyses[].validation_design.strategy
+  status: mapped
+  target: skills.validation_strategy
+- source: analyses[].validation_design.k_folds
+  status: mapped
+  target: skills.folds
+- source: analyses[].validation_design.training_set
+  status: partial
+  target: skills.training_set_size
+  note_zh: 仅样本数可迁移
+- source: analyses[].validation_design.testing_set
+  status: partial
+  target: skills.test_set_size
+  note_zh: 仅样本数可迁移
+- source: analyses[].validation_design.metric
+  status: mapped
+  target: skills.metric_name
+- source: analyses[].model_fit_stats.**
+  status: transformed
+  targets:
+  - skills.metric_name
+  - skills.metric_value
+  note_zh: 每个统计量一条 analysis_result 记录
+  transform: split_records
+- source: conclusions[].**
+  status: unmapped
+  note_zh: 结论卡片内部属性，写入残留
+- source: conclusions[].claim_text
+  status: mapped
+  target: agent.finding_text
+  note_zh: 结论原文；无法解析到逐字证据时整条拒绝
+  issues:
+  - LEG-009
+- source: conclusions[].claim_zh
+  status: unmapped
+  note_zh: 译文不是原文证据
+  issues:
+  - LEG-010
+- source: conclusions[].conclusion_type
+  status: partial
+  target: agent.finding_kind
+  note_zh: A-11 类型与 finding_kind 词表不同；仅作审核候选
+- source: conclusions[].evidence_list[].**
+  status: partial
+  target: agent.supporting_evidence
+  note_zh: 解析引用到原文片段后写入 array_evidence
+  issues:
+  - LEG-009
+- source: conclusions[].supporting_relations
+  status: transformed
+  target: agent.evidence_record_ids
+  note_zh: 替换为迁移后关系 claim 记录的新 ID
+  transform: resolve_reference
+- source: conclusions[].supporting_analyses
+  status: transformed
+  target: agent.evidence_record_ids
+  note_zh: 替换为迁移后分析记录的新 ID
+  transform: resolve_reference
+- source: conclusions[].confidence_level
+  status: partial
+  target: agent.evidence_strength
+  note_zh: evidence_strength 为 I；仅作审核候选
+- source: conclusions[].scope_constraints
+  status: partial
+  target: agent.external_validity_scope
+  note_zh: 适用范围限定原文；external_validity_scope 为 I
+- source: conclusions[].causal_flag
+  status: partial
+  target: agent.association_vs_causation
+  note_zh: association_vs_causation 为 I；causal_flag=true 需有功能验证原文支持才迁移
+  issues:
+  - LEG-005
+- source: conclusions[].contradiction_note
+  status: partial
+  target: agent.uncertainty_note
+  note_zh: 矛盾说明原文
+- source: conclusions[].breeding_recommendations[].**
+  status: partial
+  target: agent.breeding_relevance
+  note_zh: 育种建议合并为原文
+- source: pipeline.**
+  status: unmapped
+  note_zh: 上下游任务、图谱、融合与更新链属管线运行状态，不是论文内容
+  issues:
+  - LEG-001
+- source: governance.**
+  status: unmapped
+  note_zh: 知识库治理状态，不是论文内容
+- source: governance.curation_status
+  status: partial
+  target: common.review_status
+  note_zh: 仅能映射到 review_status 词表的值
+- source: governance.domain_tags
+  status: partial
+  target: agent.task_tags
+  note_zh: task_tags 为 I；仅作审核候选
+- source: governance.quality_grade
+  status: unmapped
+  note_zh: A–D 质量等级；契约不设质量分数（D/N/I/G/F 不是质量分数）
+- source: governance.duplicates_group
+  status: partial
+  target: transform.dedup_group_id
+  note_zh: 去重分组需在新数据集中重新生成
+- source: provenance.**
+  status: unmapped
+  note_zh: 旧管线溯源元数据写入迁移报告
+- source: provenance.extraction.method
+  status: partial
+  target: common.extraction_method
+  note_zh: 按 extraction_method 词表映射（LLM 抽取 → model）
+- source: provenance.quality_scores.**
+  status: unmapped
+  note_zh: 质量分数不是契约字段（D/N/I/G/F 不是质量分数）
+- source: provenance.verification.status
+  status: partial
+  target: common.review_status
+  note_zh: 仅能映射到 review_status 词表的值
+- source: provenance.verification.notes
+  status: partial
+  target: common.review_note
+  note_zh: 审核意见原文
+- source: provenance.conflicts
+  status: partial
+  target: common.conflict_record_ids
+  note_zh: 仅当能解析到新记录 ID 时迁移
+- source: provenance.data_license.license_name
+  status: partial
+  target: common.license_id
+  note_zh: 仅 SPDX 等标准许可证标识
+- source: provenance.integrity.source_file_hash
+  status: partial
+  target: common.source_file_sha256
+  note_zh: 仅 SHA-256 十六进制值
+- source: agent.**
+  status: unmapped
+  note_zh: legacy agent 块为智能体运行状态（状态、记忆、规划、工具调用），与 v3 agent 组同名不同义
+  issues:
+  - LEG-001
+- source: agent.agent_state.problem_statement
+  status: partial
+  target: agent.scientific_question
+  note_zh: 仅当为论文提出的科学问题时迁移
+  issues:
+  - LEG-001
+- source: agent.agent_state.state_unknowns
+  status: partial
+  target: agent.knowledge_gap
+  note_zh: 仅当为论文指出的未知问题时迁移
+  issues:
+  - LEG-001
+- source: agent.hypotheses[].hypothesis_text
+  status: partial
+  target: agent.hypothesis_stated
+  note_zh: 仅作者明确提出的假设；generation_model 非空（模型生成）则不迁移
+  issues:
+  - LEG-001
+  - LEG-005
+- source: skill.**
+  status: unmapped
+  note_zh: legacy skill 块为技能注册与执行状态，与 v3 skills 组（论文中的方法与参数）同名不同义
+  issues:
+  - LEG-001
+- source: skill.io_adapter.standard_input_formats
+  status: partial
+  target: skills.tool_input_formats
+  note_zh: 仅当描述论文工具时迁移
+  issues:
+  - LEG-001
+- source: skill.io_adapter.standard_output_formats
+  status: partial
+  target: skills.tool_output_formats
+  note_zh: 仅当描述论文工具时迁移
+  issues:
+  - LEG-001
+- source: breed_entities.omics_samples[].sample_id
+  status: mapped
+  target: common.sample_id
+- source: breed_entities.omics_samples[].sample_name
+  status: mapped
+  target: common.sample_name
+- source: breed_entities.omics_samples[].sample_type
+  status: mapped
+  target: common.sample_type
+- source: breed_entities.omics_samples[].biological_replicate
+  status: mapped
+  target: common.biological_replicate_id
+- source: breed_entities.omics_samples[].technical_replicate
+  status: mapped
+  target: common.technical_replicate_id
+- source: breed_entities.omics_samples[].batch_id
+  status: mapped
+  target: common.batch_id
+- source: breed_entities.omics_samples[].sex
+  status: mapped
+  target: common.sex
+- source: breed_entities.omics_samples[].ploidy
+  status: mapped
+  target: common.ploidy
+- source: breed_entities.omics_samples[].organ
+  status: mapped
+  target: common.organ
+- source: breed_entities.omics_samples[].tissue
+  status: mapped
+  target: common.tissue
+- source: breed_entities.omics_samples[].cell_type
+  status: mapped
+  target: omics.cell_type
+- source: breed_entities.omics_samples[].cell_state
+  status: mapped
+  target: omics.cell_state
+- source: breed_entities.omics_samples[].development_stage
+  status: mapped
+  target: common.growth_stage
+- source: breed_entities.omics_samples[].sampling_time
+  status: mapped
+  target: common.sampling_time
+- source: breed_entities.omics_samples[].sampling_time_relative
+  status: mapped
+  target: common.sampling_time_relative
+- source: breed_entities.omics_samples[].material_ref
+  status: mapped
+  target: common.material_id
+- source: breed_entities.omics_samples[].treatment_ref
+  status: mapped
+  target: common.treatment_id
+- source: breed_entities.omics_experiments[].omics_experiment_id
+  status: mapped
+  target: common.assay_id
+- source: breed_entities.omics_experiments[].omics_type
+  status: mapped
+  target: omics.omics_type
+- source: breed_entities.omics_experiments[].assay_type
+  status: mapped
+  target: omics.assay_type
+- source: breed_entities.omics_experiments[].design
+  status: mapped
+  target: agent.experiment_design
+- source: breed_entities.omics_experiments[].library_strategy
+  status: mapped
+  target: omics.library_strategy
+- source: breed_entities.omics_experiments[].library_selection
+  status: mapped
+  target: omics.library_selection
+- source: breed_entities.omics_experiments[].library_layout
+  status: mapped
+  target: omics.library_layout
+- source: breed_entities.omics_experiments[].platform
+  status: mapped
+  target: omics.platform
+- source: breed_entities.omics_experiments[].instrument_model
+  status: mapped
+  target: omics.instrument_model
+- source: breed_entities.omics_experiments[].sequencing_depth
+  status: mapped
+  target: omics.sequencing_depth
+- source: breed_entities.omics_experiments[].read_length
+  status: mapped
+  target: omics.read_length
+- source: breed_entities.omics_experiments[].reference_genome_version
+  status: mapped
+  target: common.genome_assembly
+- source: breed_entities.omics_experiments[].annotation_version
+  status: mapped
+  target: common.genome_annotation_version
+- source: breed_entities.omics_experiments[].gene_id_system
+  status: mapped
+  target: common.gene_id_system
+- source: breed_entities.omics_experiments[].coordinate_system
+  status: mapped
+  target: common.coordinate_system
+- source: breed_entities.omics_experiments[].experiment_ref
+  status: mapped
+  target: common.experiment_id
+- source: breed_entities.omics_experiments[].sample_ids
+  status: control
+  note_zh: 校验显式 assay_ref 与 sample_ref 的成员关系；不按数组次序关联。
+- source: breed_entities.omics_experiments[].reference_genome
+  status: unmapped
+  note_zh: 参考基因组名称可能不含版本；仅 reference_genome_version 映射到 genome_assembly。
+  issues:
+  - MRG-001
+- source: breed_entities.omics_samples[].evidence_spans.**
+  status: unmapped
+  note_zh: 样本或测定描述保留在残留中；不得代替观测本身的证据。
+  issues:
+  - MRG-001
+- source: breed_entities.omics_experiments[].evidence_spans.**
+  status: unmapped
+  note_zh: 样本或测定描述保留在残留中；不得代替观测本身的证据。
+  issues:
+  - MRG-001
+- source: breed_entities.omics_experiments[].confidence
+  status: unmapped
+  note_zh: 上下文对象置信度不能代替观测抽取置信度。
+  issues:
+  - MRG-001
+- source: breed_entities.cross_species.**
+  status: unmapped
+  note_zh: 缺少与具体观测的显式关联，保留跨物种对象，不广播到所有记录。
+  issues:
+  - MRG-001
+- source: observations[].observation_id
+  status: mapped
+  target: common.source_record_id
+- source: observations[].sample_ref
+  status: mapped
+  target: common.sample_id
+- source: observations[].material_ref
+  status: mapped
+  target: common.material_id
+- source: observations[].trait_ref
+  status: mapped
+  target: common.trait_id
+- source: observations[].environment_ref
+  status: mapped
+  target: common.environment_id
+- source: observations[].assay_ref
+  status: mapped
+  target: common.assay_id
+- source: observations[].experiment_ref
+  status: mapped
+  target: common.experiment_id
+- source: observations[].treatment_ref
+  status: mapped
+  target: common.treatment_id
+- source: observations[].observation_time
+  status: transformed
+  target: common.observation_time
+  note_zh: 仅转换明确带时区的 ISO 8601 时间到 UTC；不猜时区。
+  transform: compose
+- source: observations[].stage
+  status: mapped
+  target: common.growth_stage
+- source: observations[].replicate_id
+  status: mapped
+  target: common.replicate_id
+- source: observations[].plot_id
+  status: mapped
+  target: common.plot_id
+- source: observations[].sample_size
+  status: mapped
+  target: common.sample_size
+- source: observations[].original_value
+  status: mapped
+  target: common.original_value
+- source: observations[].original_unit
+  status: mapped
+  target: common.original_unit
+- source: observations[].normalized_value
+  status: mapped
+  target: common.normalized_value
+- source: observations[].normalized_min_value
+  status: mapped
+  target: common.normalized_min_value
+- source: observations[].normalized_max_value
+  status: mapped
+  target: common.normalized_max_value
+- source: observations[].normalized_unit
+  status: mapped
+  target: common.normalized_unit
+- source: observations[].feature_type
+  status: mapped
+  target: omics.feature_type
+- source: observations[].feature_id
+  status: mapped
+  target: omics.feature_id
+- source: observations[].feature_name
+  status: mapped
+  target: omics.feature_name
+- source: observations[].feature_value
+  status: mapped
+  target: common.measurement_value
+- source: observations[].feature_unit
+  status: mapped
+  target: common.measurement_unit
+- source: observations[].omics_type
+  status: mapped
+  target: omics.omics_type
+- source: observations[].confidence
+  status: mapped
+  target: common.extraction_confidence
+- source: observations[].quality_flag
+  status: mapped
+  target: common.measurement_quality_flag
+- source: observations[].measurement.name
+  status: mapped
+  target: common.measurement_name
+- source: observations[].measurement.value
+  status: mapped
+  target: common.measurement_value
+- source: observations[].measurement.text
+  status: mapped
+  target: common.measurement_text
+- source: observations[].measurement.unit
+  status: mapped
+  target: common.measurement_unit
+- source: observations[].measurement.quality_flag
+  status: mapped
+  target: common.measurement_quality_flag
+- source: observations[].statistic.contrast
+  status: mapped
+  target: agent.contrast
+- source: observations[].statistic.effect_direction
+  status: mapped
+  target: agent.effect_direction
+- source: observations[].statistic.effect_size
+  status: mapped
+  target: agent.effect_estimate
+- source: observations[].statistic.effect_unit
+  status: mapped
+  target: agent.effect_unit
+- source: observations[].statistic.standard_error
+  status: mapped
+  target: agent.standard_error
+- source: observations[].statistic.p_value
+  status: mapped
+  target: agent.p_value
+- source: observations[].statistic.q_value
+  status: mapped
+  target: agent.q_value
+- source: observations[].statistic.confidence_interval
+  status: transformed
+  target: agent.confidence_interval
+  note_zh: 二元素有序数值区间转为 JSON 文本，不猜置信水平；其他形状保留残留。
+  transform: structure
+- source: observations[].statistic.replication_status
+  status: mapped
+  target: agent.replication_status
+- source: observations[].variant.chromosome
+  status: mapped
+  target: common.chromosome
+- source: observations[].variant.position
+  status: mapped
+  target: common.variant_position_bp
+- source: observations[].variant.start_position
+  status: mapped
+  target: common.locus_interval_start_bp
+- source: observations[].variant.end_position
+  status: mapped
+  target: common.locus_interval_end_bp
+- source: observations[].variant.variant_id
+  status: mapped
+  target: common.variant_id
+- source: observations[].variant.variant_type
+  status: mapped
+  target: common.variant_type
+- source: observations[].variant.ref_allele
+  status: mapped
+  target: common.reference_allele
+- source: observations[].variant.alt_allele
+  status: mapped
+  target: common.alternate_allele
+- source: observations[].variant.effect_allele
+  status: mapped
+  target: common.effect_allele
+- source: observations[].variant.genotype_call
+  status: mapped
+  target: common.genotype_call
+- source: observations[].variant.allele_frequency
+  status: mapped
+  target: common.allele_frequency
+- source: observations[].variant.minor_allele_frequency
+  status: mapped
+  target: common.minor_allele_frequency
+- source: observations[].variant.genotype_quality
+  status: mapped
+  target: omics.genotype_quality
+- source: observations[].variant.read_depth
+  status: mapped
+  target: omics.read_depth
+- source: observations[].variant.haplotype_id
+  status: mapped
+  target: common.haplotype_id
+- source: observations[].variant.structural_variant_type
+  status: mapped
+  target: omics.structural_variant_type
+- source: observations[].variant.genome_assembly
+  status: mapped
+  target: common.genome_assembly
+- source: observations[].genotype.ploidy
+  status: mapped
+  target: common.ploidy
+- source: observations[].genotype.call
+  status: mapped
+  target: common.genotype_call
+- source: observations[].genotype.dosage
+  status: mapped
+  target: common.genotype_dosage
+- source: observations[].genotype.ref_allele
+  status: mapped
+  target: common.reference_allele
+- source: observations[].genotype.alt_allele
+  status: mapped
+  target: common.alternate_allele
+- source: observations[].genotype.dosage_allele
+  status: mapped
+  target: common.dosage_allele
+- source: observations[].genotype.quality_flag
+  status: mapped
+  target: common.measurement_quality_flag
+- source: observations[].observation_type
+  status: control
+  note_zh: 按 phenotype/environment/genotype/omics_feature 路由到对应原子记录类型。
+- source: observations[].statistic.cross_doc_support_count
+  status: unmapped
+  note_zh: 跨文献支持计数属于聚合治理，不能当成当前记录的原文事实。
+  issues:
+  - MRG-001
+- source: observations[].omics_feature
+  status: partial
+  targets:
+  - omics.raw_count
+  - omics.log2_fold_change
+  - omics.base_mean
+  - omics.deg_status
+  - omics.deg_threshold
+  - omics.go_term
+  - omics.pathway_id
+  - common.gene_ids
+  note_zh: 开放对象仅复制与 omics 字段同名的直接抽取键；gene_id 转为 common.gene_ids。单元素字符串数组可解包；未知键或多值目标冲突保留。
+  issues:
+  - MRG-004
+- source: observations[].evidence_spans[].page
+  status: partial
+  target: common.source_page
+  note_zh: 只使用当前观测的证据，页码需显式提供偏移；block_id 仅在表或图时映射；完整引文待 PDF 核验。
+- source: observations[].evidence_spans[].text_snippet
+  status: partial
+  target: common.source_quote
+  note_zh: 只使用当前观测的证据，页码需显式提供偏移；block_id 仅在表或图时映射；完整引文待 PDF 核验。
+- source: observations[].evidence_spans[].section_id
+  status: partial
+  target: common.source_section
+  note_zh: 只使用当前观测的证据，页码需显式提供偏移；block_id 仅在表或图时映射；完整引文待 PDF 核验。
+- source: observations[].evidence_spans[].block_id
+  status: partial
+  target: common.source_table_figure
+  note_zh: 只使用当前观测的证据，页码需显式提供偏移；block_id 仅在表或图时映射；完整引文待 PDF 核验。
+- source: observations[].evidence_spans[].table_row_key
+  status: partial
+  target: common.source_table_row_key
+  note_zh: 只使用当前观测的证据，页码需显式提供偏移；block_id 仅在表或图时映射；完整引文待 PDF 核验。
+- source: observations[].evidence_spans[].table_column_key
+  status: partial
+  target: common.source_table_column_key
+  note_zh: 只使用当前观测的证据，页码需显式提供偏移；block_id 仅在表或图时映射；完整引文待 PDF 核验。
+- source: observations[].evidence_spans[].char_span
+  status: partial
+  target: common.source_span
+  note_zh: 只使用当前观测的证据，页码需显式提供偏移；block_id 仅在表或图时映射；完整引文待 PDF 核验。
+- source: observations[].evidence_spans[].block_type
+  status: unmapped
+  note_zh: 原始定位元数据保留；没有等价的独立契约字段。
+  issues:
+  - MRG-001
+- source: observations[].evidence_spans[].line_range
+  status: unmapped
+  note_zh: 原始定位元数据保留；没有等价的独立契约字段。
+  issues:
+  - MRG-001
+- source: assets[].asset_uri
+  status: mapped
+  target: common.asset_uri
+- source: assets[].asset_kind
+  status: mapped
+  target: common.asset_kind
+- source: assets[].asset_format
+  status: mapped
+  target: common.asset_format
+- source: assets[].asset_compression
+  status: mapped
+  target: common.asset_compression
+- source: assets[].asset_size_bytes
+  status: mapped
+  target: common.asset_size_bytes
+- source: assets[].asset_sha256
+  status: mapped
+  target: common.asset_sha256
+- source: assets[].asset_row_count
+  status: mapped
+  target: common.asset_row_count
+- source: assets[].asset_column_count
+  status: mapped
+  target: common.asset_column_count
+- source: assets[].asset_schema_ref
+  status: mapped
+  target: common.asset_schema_ref
+- source: assets[].asset_id
+  status: mapped
+  target: common.source_record_id
+- source: assets[].asset_accession
+  status: mapped
+  target: common.data_accessions
+- source: assets[].related_dataset_id
+  status: unmapped
+  note_zh: 资产关联的数据集 ID 不等于当前记录所属数据集，保留原始引用，避免与文档 dataset_version 误配。
+  issues: [MRG-001]
+- source: assets[].data_availability
+  status: unmapped
+  note_zh: 保留原始资产信息；不将可获得性推断为访问许可，也不将外部记录 ID 冒充仓库 ID。
+  issues:
+  - MRG-001
+- source: assets[].related_record_ids
+  status: unmapped
+  note_zh: 保留原始资产信息；不将可获得性推断为访问许可，也不将外部记录 ID 冒充仓库 ID。
+  issues:
+  - MRG-001
+- source: assets[].description
+  status: unmapped
+  note_zh: 保留原始资产信息；不将可获得性推断为访问许可，也不将外部记录 ID 冒充仓库 ID。
+  issues:
+  - MRG-001
+- source: assets[].confidence
+  status: unmapped
+  note_zh: 保留原始资产信息；不将可获得性推断为访问许可，也不将外部记录 ID 冒充仓库 ID。
+  issues:
+  - MRG-001
+- source: assets[].evidence_spans.**
+  status: unmapped
+  note_zh: 保留原始资产信息；不将可获得性推断为访问许可，也不将外部记录 ID 冒充仓库 ID。
+  issues:
+  - MRG-001
+- source: doc_meta.source_id
+  status: mapped
+  target: common.source_id
+- source: doc_meta.source_type
+  status: mapped
+  target: common.source_type
+- source: doc_meta.source_uri
+  status: mapped
+  target: common.source_uri
+- source: doc_meta.dataset_id
+  status: mapped
+  target: common.dataset_id
+- source: doc_meta.dataset_version
+  status: mapped
+  target: common.dataset_version
+- source: doc_meta.study_id
+  status: mapped
+  target: common.study_id
+- source: doc_meta.trial_id
+  status: mapped
+  target: common.trial_id
+- source: doc_meta.data_modality
+  status: mapped
+  target: common.data_modality
+- source: doc_meta.linked_modalities
+  status: mapped
+  target: common.linked_modalities
+- source: doc_meta.crop_primary
+  status: mapped
+  target: common.crop_name
+- source: record_kind
+  status: control
+  note_zh: 选择文档主记录或单位行，不把 document/transform 写入仓库 record_kind。
+- source: record_parent_id
+  status: control
+  note_zh: 文件内解析父文档，只继承文档元数据和被显式引用的上下文；源父 ID 写入迁移报告。
+- source: doc_meta.record_version
+  status: unmapped
+  note_zh: 来源记录修订号保留，不冒充迁移后原子记录的修订序号。
+  issues:
+  - MRG-001
+- source: agent.scientific_reasoning.**
+  status: unmapped
+  note_zh: 文档级科学推理缺少逐条证据绑定，保留供人工审阅。
+  issues:
+  - MRG-001
+- source: skill.method_profile.**
+  status: unmapped
+  note_zh: 文档级方法画像缺少逐条证据绑定，保留供人工审阅。
+  issues:
+  - MRG-001
+- source: skill.validation.**
+  status: unmapped
+  note_zh: 文档级验证信息尚无明确原子结果关联，保留。
+  issues:
+  - MRG-001
+- source: skill.skill_registry.**
+  status: unmapped
+  note_zh: 技能注册状态是外部运行时信息，保留。
+  issues:
+  - MRG-001
+- source: transform.**
+  status: unmapped
+  note_zh: 图谱/语料/QA 是派生视图，源引用须重写后才能使用；保留完整内容。
+  issues:
+  - MRG-001
+- source: provenance.source_locations.**
+  status: unmapped
+  note_zh: 文档级位置不能无条件作为每条观测的证据，保留。
+  issues:
+  - MRG-001
+issues:
+- id: LEG-001
+  title_zh: agent/skill 同名不同义
+  finding_zh: legacy agent/skill 块记录智能体与技能的运行状态；v3 agent/skills 组为论文派生字段。
+  resolution_zh: 运行状态不迁移；仅极少数可证实来自论文的内容以 partial 迁移。
+- id: LEG-002
+  title_zh: 出版物页码与物理页码
+  finding_zh: legacy 页码为期刊页码（示例 2221–2235），v3 source_page 为 PDF 物理页码。
+  resolution_zh: 迁移证据需 --page-offset（物理页 = 期刊页 − 偏移）；未提供时不填 source_page，该证据记录因 R001 被拒绝并进入错误文件（AMB-029）。
+- id: LEG-003
+  title_zh: 本机路径
+  finding_zh: doc_meta.pdf_path 保存本机相对路径。
+  resolution_zh: 禁止迁移（R020）；PDF 身份用 source_file_sha256，文件名只写入迁移清单。
+- id: LEG-004
+  title_zh: lod 字段混入 -log10(P)
+  finding_zh: 示例中 GWAS 表格片段为“-log10(P)=8.7”，却写入 qtls[].lod=8.7。
+  resolution_zh: 仅当产出分析为连锁/QTL 定位时迁移为 lod_score；GWAS 结果进入残留，需人工确认统计量。
+- id: LEG-005
+  title_zh: 推断内容
+  finding_zh: relations[].is_inferred=true 的关系、模型生成的假设以及 causal_flag 均可能是推断结果。
+  resolution_zh: 推断关系与模型生成假设不迁移；因果标记仅作 I 字段审核候选，关联不升级为因果。
+- id: LEG-006
+  title_zh: 规范与 schema 不一致
+  finding_zh: 规范列出 document_sections.heading 等字段而 schema 缺失；示例又包含 schema 未定义的字段（如 heading、output_name）；disease_pests
+    结构未定义。
+  resolution_zh: 以 schema 叶子为覆盖基准；schema 外字段由迁移工具写入残留报告，不静默丢弃。
+- id: LEG-007
+  title_zh: null 与空值
+  finding_zh: legacy 以 null、空串、空数组表示缺失。
+  resolution_zh: 迁移时一律省略；不产生 null。
+- id: LEG-008
+  title_zh: 实体清单不是原子记录
+  finding_zh: breed_entities 为文档级实体清单，与 v3 原子证据记录粒度不同。
+  resolution_zh: 实体名称写入引用它的记录（关系、QTL 观测等）的名称字段；未被引用的实体属性进入残留。
+- id: LEG-009
+  title_zh: 结论缺少直接证据
+  finding_zh: conclusions[] 没有 evidence_spans，只能经 evidence_list/supporting_* 间接引用；text_snippet 含省略号时不是逐字原文。
+  resolution_zh: 能解析到逐字片段的结论迁移为 claim；否则拒绝并写入错误文件。
+- id: LEG-010
+  title_zh: 译文字段
+  finding_zh: title_zh/title_en/claim_zh 为译文。
+  resolution_zh: 译文不是原文证据，不迁移。
+- id: LEG-011
+  title_zh: 区间单位超出规范
+  finding_zh: 规范规定 interval.unit 为 cM/bp，示例使用 Mb。
+  resolution_zh: cM 写入 *_cm；bp/kb/Mb 按 vocabularies/units.yaml 精确换算为整数 bp；其他单位进入残留。
+- id: LEG-012
+  title_zh: 版本号格式
+  finding_zh: legacy 版本写作 v1.0.0，当前契约使用不带前缀的语义化版本。
+  resolution_zh: 迁移记录一律写入解析后的当前契约版本；legacy 版本写入迁移报告。
+- id: MRG-001
+  title_zh: 文档状态与原子事实分离
+  finding_zh: merged 含有智能体运行状态、治理评分、技能注册以及派生视图。
+  resolution_zh: 保持原子格式；无明确语义或证据绑定的数据进入带原因的残留文件。
+- id: MRG-002
+  title_zh: Schema 通过不等于证据有效
+  finding_zh: 原示例页码为 2221 等出版页，部分引文含省略号；资产 SHA-256 为截断字符串。
+  resolution_zh: 显式偏移换算物理页；不完整引文不进入 source_quote；无效资产摘要拒绝而不修补。
+- id: MRG-003
+  title_zh: 样本和测定引用
+  finding_zh: 观测通过 sample_ref/assay_ref 关联上下文，输入没有强制引用完整性。
+  resolution_zh: 只按明确 ID 关联；重复 ID、已知测定的样本不匹配和冲突字段拒绝；未在输入定义的外部引用保留 ID 并标记。
+- id: MRG-004
+  title_zh: 开放组学对象与类型差异
+  finding_zh: omics_feature 可放任意字段，示例 go_term 为数组；部分统计字段无概率范围约束。
+  resolution_zh: 使用现有同名组学字段，单元素数组可解包，多值不拼接；输出一律经当前契约和数据集规则校验。
