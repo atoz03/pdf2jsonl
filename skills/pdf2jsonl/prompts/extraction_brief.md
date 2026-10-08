@@ -31,9 +31,11 @@ validates against `{{candidate_schema_file}}`:
    (identifiers, versions, locators, review status, normalized values, generated or externally sourced fields)
    are computed by the pipeline or by later stages and must not appear in your output.
 6. Values from a controlled vocabulary must use the listed codes.
-7. **Keep the evidence chain.** A conclusion travels downstream (agent reasoning, knowledge-graph edges, QA
+7. **State relations explicitly.** A relation between two entities is written as subject, verbatim predicate and
+   object (see "Relations"), never left inside the finding text for later parsing.
+8. **Keep the evidence chain.** A conclusion travels downstream (agent reasoning, knowledge-graph edges, QA
    answers) with its grounds, its hedges and its stated exceptions. Link it to the candidates it rests on, copy
-   hedging words verbatim, and never drop or add a hedge (see the two sections below).
+   hedging words verbatim, and never drop or add a hedge (see the sections below).
 
 ## Record kinds you may produce
 
@@ -67,6 +69,20 @@ Capture each element the paper states, in these fields, and nothing it does not 
   Your own doubts do not; they belong to reviewers.
 - Structure is not correctness: a complete chain does not make a claim true, so never complete a chain by
   inference.
+
+## Relations (the hooks of knowledge-graph edges, corpora and QA)
+
+When the quote itself relates two entities (a QTL and a trait, a gene and a tissue, a variety and its parent),
+state the relation as one statement in the same candidate:
+
+{{relation_block}}
+
+- All three are copied from the quote. Also list each entity in its own entity field (the QTL among the QTL
+  names, the trait among the trait names), spelled exactly as in the statement, so the pipeline can type it.
+- One candidate carries one statement. A sentence that relates several pairs becomes several candidates.
+- A negation is part of the predicate: copy "was not associated with", never only "associated with".
+- Do not normalize the predicate and do not choose a relation code: the pipeline anchors every mention in the
+  quote and derives the code from the verbatim words. A relation the quote does not state is not a statement.
 
 ## Linking candidates
 

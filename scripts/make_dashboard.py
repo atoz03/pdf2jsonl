@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""Build the repository-root paper dashboard from PDFs and actual pipeline artifacts.
+"""Build the paper dashboard from PDFs and actual pipeline artifacts.
 
-The HTML embeds its data so it works when opened directly, without a web server.
-Rerun `make dashboard` after adding PDFs or running extraction. Identical PDF bytes
-are grouped by SHA-256; runs are never joined just because filenames match.
+Two uses share this module:
+
+- `scripts/make_site.py` builds it as the "Papers" page of the Pages site, from the checked-in examples, and
+  copies the PDFs and run outputs it links to next to the page.
+- `make dashboard` writes an untracked `dashboard.html` in the repository root that also covers local run
+  directories. Rerun it after adding PDFs or running extraction.
+
+The HTML embeds its data so it works when opened directly, without a web server. Identical PDF bytes are
+grouped by SHA-256; runs are never joined just because filenames match.
 """
 from __future__ import annotations
 
@@ -14,17 +20,24 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import sys
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 
 from breeding_contract.api import resolve_schema  # noqa: E402
-from breeding_contract.derive import Deriver  # noqa: E402
+from breeding_contract.derive import Deriver, counts as derive_counts  # noqa: E402
 from breeding_contract.util import load_yaml, sha256_file  # noqa: E402
 
 SKIP_DIRS = {'.git', '.venv', '__pycache__', 'node_modules', '.pytest_cache', '_site', 'releases', 'dist', 'build'}
+# Sidebar links (label, icon, href). The local file points into the repository, the site page into the site.
+LOCAL_NAV = (('字段定义', 'table', 'docs/generated/field_definitions.md'), ('下游派生', 'layers', 'docs/downstream.md'),
+             ('数据管线', 'flow', 'docs/diagrams/pipeline.html'), ('项目说明', 'book', 'README.md'))
+SITE_NAV = (('规范总览', 'home', 'index.html#overview'), ('字段目录', 'table', 'index.html#fields'),
+            ('抽取演示', 'file', 'index.html#demo'), ('下游派生', 'layers', 'index.html#downstream'),
+            ('存量导入', 'download', 'index.html#importers'), ('数据管线', 'flow', 'pipeline.html'))
 
 
 def _relative(root, path):
@@ -80,9 +93,11 @@ def _paper(key, filename):
             'synthetic': False, 'runs': [], 'tasks': [], 'notes': [], 'doi': '', 'year': None, 'crop': ''}
 
 
-def _scan(root):
+def _scan(root, scan=None):
+    """PDFs, run manifests and prepared tasks under ``root``, or only under its ``scan`` subdirectories."""
     pdfs, manifests, requests = [], [], []
-    for folder, dirs, files in os.walk(root, followlinks=False):
+    walks = (w for start in ([root] if not scan else [root / d for d in scan]) for w in os.walk(start, followlinks=False))
+    for folder, dirs, files in walks:
         dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS and not d.endswith('.egg-info'))
         for name in sorted(files):
             path = Path(folder) / name
@@ -135,10 +150,11 @@ def _run(root, path, manifest, contract_cache):
     try:
         if version not in contract_cache:
             contract_cache[version] = resolve_schema(version, root).contract
-        deriver = Deriver(contract_cache[version])
-        tables, triples, corpus = deriver.tables(records), deriver.triples(records), deriver.corpus(records)
-        derived = {'tables': tables, 'triples': triples, 'corpus': corpus,
-                   'counts': {'tables': len(tables), 'triples': len(triples), 'corpus': len(corpus)}}
+        views = Deriver(contract_cache[version]).views(records)
+        totals = derive_counts(views)
+        derived = {**views, 'counts': {'tables': len(views['tables']), 'triples': totals['triples'],
+                                       'corpus': totals['corpus_chunks'], 'statements': totals['statements'],
+                                       'graph_nodes': totals['graph_nodes'], 'qa': totals['qa_seeds']}}
     except Exception as exc:
         notes.append(f'派生预览不可用: {exc.__class__.__name__}')
     model = (manifest.get('backend') or {}).get('model') or (manifest.get('backend') or {}).get('name', 'unknown')
@@ -160,9 +176,9 @@ def _run(root, path, manifest, contract_cache):
             'urls': urls, 'notes': notes, 'integrity_ok': not notes}
 
 
-def build_data(root: Path = ROOT):
+def build_data(root: Path = ROOT, scan=None):
     root = root.resolve()
-    pdfs, manifests, requests = _scan(root)
+    pdfs, manifests, requests = _scan(root, scan)
     papers, diagnostics, contract_cache = {}, [], {}
     for path in pdfs:
         try:
@@ -260,16 +276,46 @@ def build_data(root: Path = ROOT):
                         'pending': sum(r['counts']['pending'] for r in latest_runs)}}
 
 
-def build(root: Path = ROOT, out: Path | None = None):
-    data = build_data(root)
+def _linked_files(data):
+    """Repository-relative paths of every file the page links to (PDFs, run manifests and outputs)."""
+    urls = [p.get('pdf_url') for p in data.get('papers', [])]
+    for paper in data.get('papers', []):
+        for run in paper['runs']:
+            urls += [run.get('manifest_url'), *(run.get('urls') or {}).values()]
+    return sorted({unquote(u[2:]) for u in urls if isinstance(u, str) and u.startswith('./')})
+
+
+def _nav(items):
+    return ''.join(f'<a href="{href}" class="side-link"><span data-icon="{icon}"></span>{label}</a>'
+                   for label, icon, href in items)
+
+
+def build(root: Path = ROOT, out: Path | None = None, scan=None, site: bool = False):
+    """Write the dashboard. With ``site`` the page is self-contained under its own directory: the files it
+    links to are copied next to it and the sidebar points at the other pages of the site."""
+    data = build_data(root) if scan is None else build_data(root, scan)
     template = (ROOT / 'site/dashboard.template.html').read_text(encoding='utf-8')
     payload = json.dumps(data, ensure_ascii=False, separators=(',', ':'), allow_nan=False)
     # Keep source text inside the JSON script element, including malicious </script> snippets.
     payload = payload.replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
     destination = out or root / 'dashboard.html'
-    base = quote(os.path.relpath(root.resolve(), destination.parent.resolve()), safe='/') + '/'
-    result = template.replace('/*__DASHBOARD_DATA__*/null', payload).replace('__ROOT_HREF__', base)
     destination.parent.mkdir(parents=True, exist_ok=True)
+    if site:
+        base = './'
+        for rel in _linked_files(data):
+            target = destination.parent / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(root / rel, target)
+    else:
+        base = quote(os.path.relpath(root.resolve(), destination.parent.resolve()), safe='/') + '/'
+    self_href = quote(destination.name) if site else quote(os.path.relpath(destination.resolve(), root.resolve()), safe='/')
+    values = {'/*__DASHBOARD_DATA__*/null': payload, '__ROOT_HREF__': base, '__SELF_HREF__': self_href,
+              '<!--__NAV__-->': _nav(SITE_NAV if site else LOCAL_NAV),
+              '__PIPELINE_SVG_HREF__': 'assets/pipeline.svg' if site else 'docs/diagrams/pipeline.svg',
+              '__SNAPSHOT_LABEL__': '示例数据快照' if site else '本地数据快照'}
+    result = template
+    for key, value in values.items():
+        result = result.replace(key, value)
     destination.write_text(result, encoding='utf-8')
     return destination, data
 
@@ -277,7 +323,8 @@ def build(root: Path = ROOT, out: Path | None = None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=ROOT, help='repository to scan (includes ignored local run directories)')
-    parser.add_argument('--out', type=Path, help='HTML output; defaults to repository-root dashboard.html')
+    parser.add_argument('--out', type=Path, help='HTML output; defaults to an untracked dashboard.html in the repository root')
+    parser.add_argument('--scan', action='append', metavar='DIR', help='only scan this subdirectory (repeatable)')
     args = parser.parse_args()
-    destination, data = build(args.root, args.out)
+    destination, data = build(args.root, args.out, args.scan)
     print(f'{destination}: {data["summary"]["papers"]} papers, {data["summary"]["runs"]} runs, {data["summary"]["records"]} latest-run records')

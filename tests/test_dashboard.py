@@ -57,7 +57,7 @@ def test_run_counts_and_exports_come_from_real_artifacts(root,tmp_path):
     path,manifest,contracts=sample_run(root,tmp_path)
     run=dashboard._run(tmp_path,path,manifest,contracts)
     assert run['counts']['records']==1 and run['counts']['pending']==0
-    assert run['integrity_ok'] and run['derived']['counts']['tables']==5
+    assert run['integrity_ok'] and run['derived']['counts']['tables']==6
     assert len(run['derived']['tables']['records'])==1
     for kind in ['records','errors','validation']:
         assert hashlib.sha256(run['raw_outputs'][kind].encode()).hexdigest()==manifest['outputs'][kind]['sha256']

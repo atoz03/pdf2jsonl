@@ -93,13 +93,12 @@ def test_unimplemented_fill_rule_is_caught(repo_copy):
 
 
 def test_stale_docs_and_broken_examples_are_caught(repo_copy):
-    doc = next((repo_copy / "docs/generated").glob("*.md"))
-    doc.write_text(doc.read_text(encoding="utf-8") + "\nhand edit\n", encoding="utf-8")
-    root_doc = repo_copy / "FIELD_DEFINITIONS.md"
-    root_doc.write_text(root_doc.read_text(encoding="utf-8") + "\nhand edit\n", encoding="utf-8")
+    for name in ("rules.md", "field_definitions.md"):
+        doc = repo_copy / "docs/generated" / name
+        doc.write_text(doc.read_text(encoding="utf-8") + "\nhand edit\n", encoding="utf-8")
     rec = repo_copy / "examples/records/tool_spec.jsonl"
     rec.write_text(rec.read_text(encoding="utf-8").replace('"crop_name": "rice", ', ""), encoding="utf-8")
     errs = errors(repo_copy)
-    assert any("[docs]" in e and "stale" in e for e in errs)
-    assert any("[docs]" in e and "FIELD_DEFINITIONS.md is stale" in e for e in errs)
+    assert any("[docs]" in e and "rules.md is stale" in e for e in errs)
+    assert any("[docs]" in e and "field_definitions.md is stale" in e for e in errs)
     assert any("[examples]" in e and "SCHEMA_REQUIRED" in e for e in errs)

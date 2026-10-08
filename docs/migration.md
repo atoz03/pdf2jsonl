@@ -1,8 +1,14 @@
-# Migration and derived views
+# Importers and derived views
 
-Two earlier designs have data in circulation: **legacy v1** (one paper per JSONL line) and the **omics v2
-template**. Neither is a second schema in this repository. Each is a *mapping* onto the current contract
-(`mappings/*.yaml`), plus a converter that produces ordinary atomic records validated like any other.
+Three other designs have data in circulation: **legacy v1** (one paper per JSONL line), the **omics v2
+template**, and the **merged v2** document with observation, sample, assay and asset arrays. None is a second
+schema in this repository. Each is a *mapping* onto the current contract (`mappings/*.yaml`), plus an importer
+(`bdc migrate legacy | omics | merged`) that produces ordinary atomic records validated like any other.
+
+All three write the same four outputs: `*.migrated.jsonl` (records), `*.migrated.errors.jsonl` (rejected
+candidates with the reason), `*.residue.json` (every nonempty source value that was not migrated) and
+`*.migration.json` (contract version, source and mapping hashes, counts). The site shows them side by side
+under "Importers".
 
 ## Mapping files
 
@@ -25,7 +31,7 @@ Matching precedence: an exact entry wins; otherwise the longest covering entry. 
 pattern or an exact entry for a free-form ancestor object (for example, `analyses[].key_results` covers its
 data-defined keys). `bdc check` fails if a source leaf is uncovered, an entry is stale, a target field does not
 exist, or a `merged` target does not list the source in its `origin`. Issue registers (`LEG-001` … `LEG-012`,
-`OMX-001` … `OMX-010`) document each judgement call.
+`OMX-001` … `OMX-010`, `MRG-001` … `MRG-004`) document each judgement call.
 
 ## Legacy v1 → records
 
@@ -82,44 +88,7 @@ field. Anything else goes to the residue. If two source leaves compete for one f
 the result is `OMICS_FIELD_CONFLICT`. The template itself, being all `null`, migrates to nothing. That is correct
 behaviour, not a failure to fix. `examples/migration/omics_v2/` shows a filled synthetic instance.
 
-## Derived views: `document_bundle`, the legacy projection and `bdc derive`
-
-```bash
-bdc bundle paper.jsonl                 # -> paper.bundle.json   (schemas/runtime/document_bundle.schema.json)
-bdc bundle paper.jsonl --legacy-v1     # -> paper.legacy_v1.json (validated against the legacy JSON Schema)
-pdf2jsonl paper.pdf ... --bundle       # writes the bundle next to the pipeline outputs
-```
-
-A **document_bundle** groups records by `source_id` and holds the following. It is a view and is never
-written back:
-
-- document-level values shared by all of the source's records;
-- record IDs by kind;
-- an entity name index;
-- an evidence index (page / section / table / quote → record IDs);
-- the records themselves, unchanged.
-
-The **legacy v1 projection** rebuilds the old one-line-per-paper layout from records, for consumers that still
-read it. It is lossy by design. Entity and relation IDs are regenerated in the legacy formats (`gene:1`,
-`rel:<record_id>`, `clu:<record_id>`, …). Pages are physical pages. Items whose legacy-required values do not
-exist in the records are skipped and listed in `skipped` rather than invented; for example, a relation without
-a predicate code, or a document type the paper does not state. Every projection states
-`valid_against_legacy_schema` and the legacy schema errors, if any.
-
-The bundle's document-level fields and entity index are chosen by `key_role` (`source_identity`,
-`bibliographic` and document-level `entity_mention` fields), so a new catalog field lands in the right place
-without a code change.
-
-**`bdc derive`** turns records into the Function 3 targets: relational tables (CSV), knowledge-graph triples
-(JSONL) and an evidence corpus (JSONL). Like the bundle it is a view. It places every field by its `key_role`,
-never pairs name and ID arrays by position, and writes a statement without a reviewed predicate as
-`bdc:unlabelled_relation` rather than guessing. See `docs/field_functions.md` for the layout.
-
-```bash
-bdc derive paper.jsonl --out derived/  # -> derived/paper.tables/*.csv, paper.triples.jsonl, paper.corpus.jsonl
-```
-
-## Merged v2 → records (3.3.0+)
+## Merged v2 → records
 
 ```bash
 bdc migrate merged sources/merged_v2/breeding_jsonl_example_v2.json --out out/merged --page-offset 2220
@@ -127,8 +96,8 @@ bdc migrate merged sources/merged_v2/breeding_jsonl_example_v2.json --out out/me
 ```
 
 `mappings/merged_to_current.yaml` accounts for all 1,022 leaves of the archived schema. This mapping includes
-retained/unmapped data: coverage does not mean every source field can be emitted. See the
-[integration review](merged_v2_review.md) for findings and scope.
+retained/unmapped data: coverage does not mean every source field can be emitted. The findings about the
+source and the scope of the import are in `docs/source_analysis.md` (section 2.4 and merge decision 7).
 
 The existing paper-content routes are reused. `observations[]` produces phenotype, environment, genotype or
 omics observations. Explicit `sample_ref` / `assay_ref` values resolve sample and assay metadata, including
@@ -158,3 +127,42 @@ The archived synthetic example produces **18 accepted records and 14 rejected ca
 assets with truncated SHA-256 strings; the other 12 arise from the inherited paper-content routes (missing
 usable evidence or invalid values). These are structural validation results, not verification against a PDF.
 The generated artifacts are checked in under `examples/migration/merged_v2/` and regenerated by `make examples`.
+
+## Derived views: `document_bundle`, the legacy projection and `bdc derive`
+
+```bash
+bdc bundle paper.jsonl                 # -> paper.bundle.json   (schemas/runtime/document_bundle.schema.json)
+bdc bundle paper.jsonl --legacy-v1     # -> paper.legacy_v1.json (validated against the legacy JSON Schema)
+pdf2jsonl paper.pdf ... --bundle       # writes the bundle next to the pipeline outputs
+```
+
+A **document_bundle** groups records by `source_id` and holds the following. It is a view and is never
+written back:
+
+- document-level values shared by all of the source's records;
+- record IDs by kind;
+- an entity name index;
+- an evidence index (page / section / table / quote → record IDs);
+- the records themselves, unchanged.
+
+The **legacy v1 projection** rebuilds the old one-line-per-paper layout from records, for consumers that still
+read it. It is lossy by design. Entity and relation IDs are regenerated in the legacy formats (`gene:1`,
+`rel:<record_id>`, `clu:<record_id>`, …). Pages are physical pages. Items whose legacy-required values do not
+exist in the records are skipped and listed in `skipped` rather than invented; for example, a relation without
+a predicate code, or a document type the paper does not state. Every projection states
+`valid_against_legacy_schema` and the legacy schema errors, if any.
+
+The bundle's document-level fields and entity index are chosen by `key_role` (`source_identity`,
+`bibliographic` and document-level `entity_mention` fields), so a new catalog field lands in the right place
+without a code change.
+
+**`bdc derive`** turns records into the Function 3 targets: relational tables (CSV), explicit statements,
+knowledge-graph triples and a property graph, an entity-annotated corpus and cloze QA seeds. Like the bundle it
+is a view. It places every field by its `key_role`, never pairs name and ID arrays by position, and reads
+statements and anchors from the hooks the records carry instead of parsing text. Imported records derive the
+same way; they simply carry fewer hooks until a reviewer or a re-extraction adds them. See `docs/downstream.md`.
+
+```bash
+bdc derive paper.jsonl --out derived/
+# -> derived/paper.tables/*.csv, paper.triples.jsonl, paper.graph.json, paper.corpus.jsonl, paper.qa.jsonl
+```

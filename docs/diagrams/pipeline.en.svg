@@ -2,7 +2,7 @@
 <!-- Generated from pipeline.html by scripts/export_pipeline_diagram.py. -->
 <svg xmlns="http://www.w3.org/2000/svg" id="pipeline-diagram" viewBox="0 0 1440 1840" width="1440" height="1840" role="img" aria-labelledby="diagram-title diagram-desc" lang="en">
   <title id="diagram-title">Breeding literature data pipeline</title>
-  <desc id="diagram-desc">A shared versioned contract governs PDF extraction and legacy, omics and merged imports. Extraction parses pages, prepares an agent brief, produces candidates, repairs structure, verifies evidence, builds linked atomic records and validates records and datasets. Accepted JSONL feeds tables, graph triples, evidence corpora and document bundles. Rejections and audit reports support manual review and iteration. OCR text is supplied externally; QA generation is downstream.</desc>
+  <desc id="diagram-desc">A shared versioned contract governs PDF extraction and legacy, omics and merged imports. Extraction parses pages, prepares an agent brief, produces candidates, repairs structure, verifies evidence, builds linked atomic records and validates records and datasets. Accepted JSONL carries explicit statements and entity anchors and feeds tables, a knowledge graph, an annotated corpus, QA seeds and document bundles. Rejections and audit reports support manual review and iteration. OCR text is supplied externally; natural-language QA generation is downstream.</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M1 1 L9 5 L1 9 Z" fill="#8495ac" />
@@ -108,7 +108,7 @@
     <text x="771" y="789" class="stepno" style="fill:#345fd1" text-anchor="middle">04</text>
     <text x="800" y="790" class="cardtitle">Extract candidates</text>
     <text x="756" y="827" class="body">Agent reads source and brief</text>
-    <text x="756" y="852" class="body">Return fields, quotes and links</text>
+    <text x="756" y="852" class="body">Fields, quotes, statements, links</text>
     <text x="756" y="877" class="body">Or use files / custom backends</text>
     <text x="756" y="895" class="mono" style="fill:#345fd1">candidates.json · ref / links</text>
   </g>
@@ -142,8 +142,8 @@
     <text x="128" y="1008" class="cardtitle">Build &amp; link records</text>
     <text x="84" y="1045" class="body">Set IDs and provenance</text>
     <text x="84" y="1070" class="body">Keep raw; normalize by rules</text>
-    <text x="84" y="1095" class="body">Link evidence and methods</text>
-    <text x="84" y="1113" class="mono" style="fill:#127b72">fill_rules · stable_record_id()</text>
+    <text x="84" y="1095" class="body">Anchor entities; resolve links</text>
+    <text x="84" y="1113" class="mono" style="fill:#127b72">fill_rules · relation_anchors</text>
   </g>
   <g class="step">
     <title>Validate &amp; review</title>
@@ -170,7 +170,7 @@
   <rect x="1072" y="530" width="304" height="712" rx="20" fill="#f1eef8" stroke="#e0d9ed" />
   <rect x="1090" y="554" width="268" height="112" rx="14" fill="#ffffff" stroke="#ded6ed" />
   <text x="1107" y="586" class="cardtitle" style="fill:#7955b5">Existing structured data</text>
-  <text x="1107" y="616" class="small">Legacy / omics / merged</text>
+  <text x="1107" y="616" class="small">Document, omics and merged inputs</text>
   <text x="1107" y="650" class="mono" style="fill:#7955b5">legacy · omics · merged</text>
   <rect x="1090" y="712" width="268" height="130" rx="14" fill="#ffffff" stroke="#ded6ed" />
   <text x="1107" y="744" class="cardtitle" style="fill:#7955b5">Map &amp; split records</text>
@@ -223,15 +223,15 @@
   <text x="83" y="1626" class="small">CSV for relational databases</text>
   <text x="83" y="1658" class="mono" style="fill:#127b72">bdc derive → *.tables/*.csv</text>
   <rect x="400" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
-  <text x="419" y="1567" class="cardtitle">Knowledge graph triples</text>
-  <text x="419" y="1601" class="small">Entities and relations with evidence</text>
-  <text x="419" y="1626" class="small">Support knowledge organization</text>
-  <text x="419" y="1658" class="mono" style="fill:#127b72">bdc derive → *.triples.jsonl</text>
+  <text x="419" y="1567" class="cardtitle">Knowledge graph</text>
+  <text x="419" y="1601" class="small">Explicit subject–predicate–object</text>
+  <text x="419" y="1626" class="small">Typed entities; evidence on edges</text>
+  <text x="419" y="1658" class="mono" style="fill:#127b72">bdc derive → triples · graph</text>
   <rect x="736" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
-  <text x="755" y="1567" class="cardtitle">Evidence corpus</text>
-  <text x="755" y="1601" class="small">Citable text and record references</text>
-  <text x="755" y="1626" class="small">For retrieval and downstream QA</text>
-  <text x="755" y="1658" class="mono" style="fill:#127b72">bdc derive → *.corpus.jsonl</text>
+  <text x="755" y="1567" class="cardtitle">Corpus &amp; QA seeds</text>
+  <text x="755" y="1601" class="small">Quotes with entity offsets</text>
+  <text x="755" y="1626" class="small">Cloze QA citing its records</text>
+  <text x="755" y="1658" class="mono" style="fill:#127b72">bdc derive → corpus · qa</text>
   <rect x="1072" y="1530" width="304" height="148" rx="18" fill="#ffffff" stroke="#dce4ee" />
   <text x="1091" y="1567" class="cardtitle">Document bundles</text>
   <text x="1091" y="1601" class="small">Group atomic records by source</text>
@@ -246,5 +246,5 @@
   <text x="704.0" y="1763" class="tag" style="fill:#7955b5" text-anchor="middle">Future iteration</text>
   <rect x="820" y="1743" width="200" height="29" rx="14" fill="#e9eef4" stroke="none" />
   <text x="920.0" y="1763" class="tag" style="fill:#52657e" text-anchor="middle">General-purpose fields</text>
-  <text x="64" y="1810" class="footnote">Solid: data processing and outputs   Dashed: rejections and manual feedback   QA generation and OCR are external.</text>
+  <text x="64" y="1810" class="footnote">Solid: data processing and outputs   Dashed: rejections and manual feedback   Natural-language QA and OCR are external.</text>
 </svg>

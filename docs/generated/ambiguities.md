@@ -45,6 +45,7 @@
 | AMB-035 | provisional | 结论限定措辞的识别 | 结论中的限定措辞（may、suggesting a possible、可能）若在抽取中丢失，图谱与问答会把假设当作事实；v3 未定义限定措辞字段与词表。 | agent.claim_qualifier_text 逐字保存限定措辞；R032 用仓库拟定的中英文限定词正则提示缺失（warning，inferred），词表待确认。 |
 | AMB-036 | provisional | 知识融合的冲突消解与动态更新 | 课题一的知识融合包括冲突消解与动态更新（research_contents.md），但 v3 只有 conflict_record_ids（哪些记录冲突）与 record_version（修订序号），没有消解结果，也无法在重新抽取使 record_id 变化时追溯新旧记录。 | 新增 common.conflict_resolution_status（I，词表 conflict_resolution_status，代码为仓库拟定）、common.replaces_record_ids（N，新记录指向被取代的旧记录）与 common.record_updated_at（N，版本时间）。旧记录不删除；取代与消解都保留证据链。 |
 | AMB-037 | provisional | merged 样本的重复编号与采样时间 | merged 规范区分生物学重复、技术重复和采样时间，但未规定编号命名空间；采样时间为原文字符串。 | 新增三个可选 D 字段保留原文，不改变已有 replicate_id 或 observation_time 的含义，不推断重复类别或缺失时区。 |
+| AMB-038 | provisional | 面向下游派生的关系与实体锚点 | 记录要派生为知识图谱、语料与问答，但抽取时谓词不可得（predicate_label 为人工判断，不暴露给模型），实体提及只是字符串数组，在引文中没有位置，也不知道哪个提及是关系的主语或宾语；下游只能对原文二次解析（延续 AMB-034）。 | 新增 transform.predicate_mention（D，逐字谓词）；管线确定性生成 transform.entity_links 的 start/end/relation_role、transform.predicate_start_offset/predicate_end_offset 与 transform.predicate_code。predicate_code 只在 predicate_label 词表的线索词（cues）与主宾语实体类型恰好命中一个代码时填写，不替代人工审核的 predicate_label；线索词与各代码的主宾语类型为仓库拟定，待确认。R033、R034 为提示级规则。 |
 
 ## 映射层（mappings/legacy_to_current.yaml）
 

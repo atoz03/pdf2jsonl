@@ -158,6 +158,8 @@ def rule_paths(rule: dict) -> list[str]:
         if rule.get(key):
             paths.append(rule[key])
     paths += list(rule.get("candidates") or [])
+    for span in rule.get("spans") or []:
+        paths += [span["mention"], span["start"], span["end"]]
 
     def walk(c: dict) -> None:
         for sub in c.get("all", []) + c.get("any", []):

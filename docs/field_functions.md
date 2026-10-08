@@ -74,22 +74,27 @@ node property.
 
 ```bash
 bdc derive out/paper.jsonl --out derived/
-# derived/paper.tables/{records,sources,record_entities,record_links,record_values}.csv
-# derived/paper.triples.jsonl   derived/paper.corpus.jsonl   derived/paper.derive.json
+# derived/paper.tables/{records,sources,record_entities,record_links,record_values,statements}.csv
+# derived/paper.triples.jsonl   derived/paper.graph.json   derived/paper.corpus.jsonl   derived/paper.qa.jsonl
+# derived/paper.derive.json
 ```
 
 The exporter (`src/breeding_contract/derive.py`) reads no field list from code. Each field lands where its
-`key_role` says:
+`key_role` says, and statements, entity anchors and links are read from the hooks the record already carries,
+never recovered by parsing text. `docs/downstream.md` describes the hooks and every output; in short:
 
 | Output | Built from | Notes |
 | --- | --- | --- |
 | `records.csv` | every scalar field except source metadata | one row per record |
 | `sources.csv` | `source_identity` and `bibliographic` roles | one row per `common.source_id` |
-| `record_entities.csv` | `entity_mention` and `entity_id` roles, plus `transform.entity_links` | the entity type comes from the field name, e.g. `gene_names` → `gene`. The exporter never pairs `*_names` with `*_ids` by position (AMB-034); explicit pairs come only from `entity_links`. |
+| `record_entities.csv` | `entity_mention` and `entity_id` roles, plus `transform.entity_links` | the entity type comes from the field name, e.g. `gene_names` → `gene`. A marker adds offsets in the quote, the role in the statement and the aligned ID. The exporter never pairs `*_names` with `*_ids` by position (AMB-034). |
 | `record_links.csv` | `record_link` array fields | each link keeps its `argument_role`: `data` for evidence links, `warrant` for method links |
 | `record_values.csv` | remaining arrays | one row per item |
+| `statements.csv` | `relation` role fields and the markers playing subject and object | one row per statement: typed ends, predicate with `predicate_status`, polarity, qualifiers (`condition` and `context_key` roles), hedge, evidence and anchors (AMB-038) |
 | `triples.jsonl` | all of the above | see the list below |
-| `corpus.jsonl` | `common.source_quote` | one chunk per distinct (source, page, quote), with the IDs of every record it supports, plus licence and access level |
+| `graph.json` | the same, as `{nodes, edges}` | entities, records and sources; statement, mention, link and provenance edges |
+| `corpus.jsonl` | `common.source_quote` | one chunk per distinct (source, page, quote), with the IDs of every record it supports, entity offsets, statement IDs, licence, access level and a leakage group |
+| `qa.jsonl` | anchored entities and literal statistics of records that assert something | cloze seeds keyed by the `transform.qa_*` field names; candidates for review, not finished QA |
 
 How `triples.jsonl` is built:
 
@@ -97,14 +102,17 @@ How `triples.jsonl` is built:
 - Entity mentions become typed nodes `ent:<type>/<normalised mention>`.
 - Identifiers are typed `iri` only when they already are one (a scheme or CURIE, e.g. `doi:…`). Bare accessions,
   DOIs and hashes are typed `id`, so the consumer applies its own namespace policy.
-- `transform` subject/predicate/object becomes a statement that carries polarity, qualifiers and evidence type.
-  A statement end without a reviewed type takes its type from the record's own entity fields when exactly one
-  of them lists the same mention. For example, `qPH7.1` in `common.qtl_names` gives `ent:qtl/qph7.1`, which
-  joins the statement to the entity graph.
-- A statement without a reviewed predicate is written as `bdc:unlabelled_relation` rather than guessed.
+- `transform` subject/predicate/object becomes a statement that carries its ID, `predicate_status`, the verbatim
+  predicate, polarity, qualifiers, hedge and evidence type. A statement end takes its type from the marker that
+  plays the role, e.g. `qPH7.1` listed in `common.qtl_names` gives `ent:qtl/qph7.1`, which joins the statement
+  to the entity graph. An end that no entity field lists stays a generic `ent:entity/…` node until a reviewer
+  types it.
+- The predicate is the ontology ID, else the reviewed label, else the lexicon code (`transform.predicate_code`).
+  A statement with only the paper's words is written as `bdc:stated_relation` with `predicate_mention`; one
+  with no predicate at all as `bdc:unlabelled_relation`. Nothing is guessed.
 
-QA pairs are not generated. The `transform.qa_*` fields are availability G, produced downstream. The corpus
-gives them citable units, and `support_ids` gives them the records a question may cite.
+Natural-language QA pairs are not generated: the `transform.qa_*` fields are availability G. The cloze seeds
+give that step an answer span, the supporting record IDs and the statement the item rests on.
 
 ## Function 2 and the evidence chain (after TRACE)
 

@@ -11,10 +11,11 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Iterable
 
+from .relations import span_matches
 from .util import MISSING, get_path, iter_fields, iter_strings, split_path
 
 RECORD_RULE_KINDS = {"required_when", "require_any_when", "paired", "mutually_exclusive", "lte",
-                     "equals_any_field", "forbid_pattern", "grain_matches_kind"}
+                     "equals_any_field", "forbid_pattern", "grain_matches_kind", "offsets_match_text"}
 DATASET_RULE_KINDS = {"unique_within_dataset", "single_value_per_group", "references_resolve"}
 
 
@@ -125,6 +126,23 @@ def check_record_rule(rule: dict, record: dict, record_kinds: dict) -> list[Issu
             expected = record_kinds[rkind].get("grain")
             if expected and grain != expected:
                 issue(grain_path, f"{rkind} 的粒度应为 {expected}，实际为 {grain}")
+    elif kind == "offsets_match_text":
+        text = get_path(record, rule["field"], None)
+
+        def check(path: str, label: str, mention: Any, start: Any, end: Any) -> None:
+            if start is MISSING and end is MISSING:
+                return
+            if start is MISSING or end is MISSING:
+                issue(path, f"{label} 的起止偏移须成对出现")
+            elif not span_matches(text, mention, start, end):
+                issue(path, f"{label} 的偏移 {start}-{end} 处不是 {mention!r}", start=start, end=end)
+        for p in rule.get("fields") or []:
+            for n, item in enumerate(get_path(record, p, None) or []):
+                if isinstance(item, dict):
+                    check(p, f"{p}[{n}]", item.get("mention"), item.get("start", MISSING), item.get("end", MISSING))
+        for span in rule.get("spans") or []:
+            check(span["start"], span["mention"], get_path(record, span["mention"], None),
+                  get_path(record, span["start"]), get_path(record, span["end"]))
     return out
 
 

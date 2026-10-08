@@ -1,0 +1,22 @@
+{
+  "release_format": 1,
+  "contract": "breeding-literature-record",
+  "version": "3.4.0",
+  "released_on": "2026-10-06",
+  "generator_version": "1.0.0",
+  "source_digest": "9183f3660d63bd53c8a5854eaad44c0075283a2d8916eefc6b0b525f8e2e00d3",
+  "files": {
+    "contract.json": "4d10b35e4ac6539447d55686f2dab4ff30430278f161b8c5ed1f2cc50cd7d216",
+    "profiles/compact.json": "60bc10e4867e7732f6326b2c45f1c24df3623d301b4142c3792adde46ed75749",
+    "profiles/compact.schema.json": "437f9240ebe62243b09a587f2bc0392bb40779b391e39fcdb6fe6b8672d45402",
+    "profiles/full.json": "5cf560251cb43d57529a86b7c0151a368986801cc1775f764d6c2954429161ed",
+    "profiles/full.schema.json": "b2ab3a17454af0080282b51579c3be54139c674797cf4fd2e351ebff7552a252",
+    "profiles/pdf_extraction.candidate.schema.json": "b919ce2295be0202380cf5745fb627fa050ca4fea88959bd37d42141e2cb7239",
+    "profiles/pdf_extraction.json": "0cf9e727b7d9801ac0ef8974b117728d14d5fa4ee10446fd6bf557d29c38ddf8",
+    "profiles/pdf_extraction.schema.json": "613bd234442e58bac6d0a33a888ec1bbdbdfdf4ac407480f1fd97a3803042dcd",
+    "profiles/pdf_extraction_omics.candidate.schema.json": "e60c07b2c80d8f8fea430ef303437586f0f472d578cf7ce1c72af1d06725bd2a",
+    "profiles/pdf_extraction_omics.json": "09b149774f3ff2d4698cf53e74f459079820dcfb52841c3ea3966ed7374c121c",
+    "profiles/pdf_extraction_omics.schema.json": "566d97a851ef66397866ea08ece24706f776f57afb25f01b1c46f05fddbb63bb",
+    "record.schema.json": "01217568420d184c37c07c7f462f7014cb669cd2af7b5aa6807122ae56b5327d"
+  }
+}

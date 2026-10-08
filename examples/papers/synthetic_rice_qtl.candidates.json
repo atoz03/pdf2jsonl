@@ -3,7 +3,7 @@
   "method": "model",
   "model": "example-agent",
   "backend": "agent",
-  "notes": "Hand-written fixture for the synthetic paper. candidates[8] and candidates[9] are deliberately defective (fabricated quote; repairable formatting). candidates[17] links to the fabricated candidate on purpose: the unresolved link is flagged, never invented."
+  "notes": "Hand-written fixture for the synthetic paper. candidates[8] and candidates[9] are deliberately defective (fabricated quote; repairable formatting). candidates[17] links to the fabricated candidate on purpose: the unresolved link is flagged, never invented. candidates[0], [7] and [9] state a relation as subject, verbatim predicate and object."
  },
  "document": {
   "common.source_title": "Fine mapping of qPH7.1, a QTL for plant height in a synthetic rice population",
@@ -29,6 +29,7 @@
     ],
     "agent.pve_percent": "23.5%",
     "transform.subject_mention": "qPH7.1",
+    "transform.predicate_mention": "was significantly associated with",
     "transform.object_mention": "plant height"
    },
    "evidence": {
@@ -179,7 +180,10 @@
     ],
     "common.trait_names": [
      "plant height"
-    ]
+    ],
+    "transform.subject_mention": "The allele from Parent1",
+    "transform.predicate_mention": "increased",
+    "transform.object_mention": "plant height"
    },
    "evidence": {
     "page": 2,
@@ -208,6 +212,11 @@
      "qtl_names": "qPH7.1",
      "gene_names": null,
      "record_id": "rec_model_should_not_set_this"
+    },
+    "transform": {
+     "subject_mention": "qPH7.1",
+     "predicate_mention": "co-localized with",
+     "object_mention": "a previously reported heading date region"
     }
    },
    "evidence": {

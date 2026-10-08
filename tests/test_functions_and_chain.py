@@ -255,7 +255,8 @@ def test_tables_are_lossless_for_links_and_entities(rc, example):
 def test_triples_join_statements_to_typed_entities(rc, example):
     triples = Deriver(rc.contract).triples(example["records"])
     stmt = [t for t in triples if "statement" in t]
-    assert [(t["s"], t["p"], t["o"]) for t in stmt] == [("ent:qtl/qph7.1", "bdc:unlabelled_relation", "ent:trait/plant_height")]
+    assert ("ent:qtl/qph7.1", "bdc:qtl_associated_with_trait", "ent:trait/plant_height") in \
+        {(t["s"], t["p"], t["o"]) for t in stmt}
     kinds = {t["p"]: t["o_kind"] for t in triples}
     assert kinds["bdc:common.source_doi"] == "id" and kinds["bdc:common.source_id"] == "iri"
     assert kinds["bdc:common.source_type"] == "literal"
@@ -265,11 +266,11 @@ def test_triples_join_statements_to_typed_entities(rc, example):
 def test_corpus_chunks_cite_every_quoted_record(rc, example):
     recs = example["records"]
     chunks = Deriver(rc.contract).corpus(recs)
-    cited = [i for c in chunks for i in c["support_ids"]]
+    cited = [i for c in chunks for i in c["chunk_support_ids"]]
     quoted = [r["common"]["record_id"] for r in recs if r["common"].get("source_quote")]
     assert sorted(cited) == sorted(quoted)
-    table2 = next(c for c in chunks if c["text"].startswith("Parent1 118.4"))
-    assert len(table2["support_ids"]) == 2  # one table row, two cells
+    table2 = next(c for c in chunks if c["chunk_text"].startswith("Parent1 118.4"))
+    assert len(table2["chunk_support_ids"]) == 2  # one table row, two cells
 
 
 def test_cli_derive_and_audit(root, tmp_path, example):
@@ -278,8 +279,11 @@ def test_cli_derive_and_audit(root, tmp_path, example):
     d = run_bdc(root, "derive", str(src), "--out", str(tmp_path / "d"))
     counts = json.loads(d.stdout)["counts"]
     assert counts["records"] == len(example["records"]) and counts["table:record_links"] == 5
-    for name in ("records", "sources", "record_entities", "record_links", "record_values"):
+    for name in ("records", "sources", "record_entities", "record_links", "record_values", "statements"):
         assert (tmp_path / f"d/in.tables/{name}.csv").is_file()
+    for name in ("triples.jsonl", "graph.json", "corpus.jsonl", "qa.jsonl", "derive.json"):
+        assert (tmp_path / f"d/in.{name}").is_file()
+    assert counts["statements"] == 3 and counts["qa_seeds"] == len(read_jsonl(tmp_path / "d/in.qa.jsonl"))
     a = json.loads(run_bdc(root, "audit", str(src), "--json").stdout)
     assert a["statements"] == example["report"]["argument_structure"]["statements"]
 
