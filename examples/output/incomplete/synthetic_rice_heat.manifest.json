@@ -1,0 +1,105 @@
+{
+  "manifest_format": 1,
+  "run_id": "run_example_heat_main_only",
+  "created_at": "2026-09-21T13:13:20Z",
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.5.0",
+    "release_status": "released",
+    "requested": "3.5.0",
+    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
+    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
+  },
+  "profile": {
+    "name": "pdf_extraction",
+    "extends_chain": [
+      "pdf_extraction"
+    ],
+    "fill_rules": [
+      "backend_confidence",
+      "backend_extraction_method",
+      "candidate_record_kind",
+      "cli_option",
+      "constant",
+      "document_source_id",
+      "doi_uri",
+      "evidence_locator",
+      "evidence_source_part",
+      "evidence_span",
+      "grain_from_record_kind",
+      "input_asset_manifest",
+      "input_file_sha256",
+      "input_file_size",
+      "missing_audit",
+      "profile_name",
+      "qc_rule_set_version",
+      "relation_anchors",
+      "resolved_schema_name",
+      "resolved_schema_version",
+      "run_id",
+      "stable_record_id",
+      "unit_normalization",
+      "validation_outcome",
+      "warning_codes"
+    ],
+    "field_count": 231
+  },
+  "input": {
+    "file_name": "synthetic_rice_heat.pdf",
+    "sha256": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a",
+    "size_bytes": 2904,
+    "media_type": "application/pdf",
+    "page_count": 2,
+    "parser": {
+      "name": "pypdf",
+      "version": "6.19.0"
+    },
+    "candidates_sha256": "30a91ba9c0105ba68e0b3e4fc71e6c54f35d41d1e950860975e60f8630a4723f"
+  },
+  "pipeline": {
+    "name": "pdf2jsonl",
+    "version": "0.4.0",
+    "contract_tooling": "1.0.0"
+  },
+  "backend": {
+    "name": "candidates",
+    "extraction_method": "model",
+    "model": "example-agent"
+  },
+  "options": {},
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-94-generic-x86_64-with-glibc2.35",
+    "packages": {
+      "jsonschema": "4.26.0",
+      "PyYAML": "6.0.3",
+      "pypdf": "6.19.0"
+    }
+  },
+  "counts": {
+    "pages": 2,
+    "candidates": 14,
+    "records": 15,
+    "rejected": 0
+  },
+  "outputs": {
+    "records": {
+      "file": "synthetic_rice_heat.jsonl",
+      "sha256": "7b682932dbdebf3760c8689c74d52fc1af73a9bcb0b38f179b6f46a91efd115a"
+    },
+    "errors": {
+      "file": "synthetic_rice_heat.errors.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "validation": {
+      "file": "synthetic_rice_heat.validation.json",
+      "sha256": "ab695b0b63836362ee19f6ad09421402311e3d1b55dae0ca895c8892650c9a12"
+    }
+  },
+  "source_parts": {
+    "missing": [
+      "supplement"
+    ],
+    "complete": false
+  }
+}

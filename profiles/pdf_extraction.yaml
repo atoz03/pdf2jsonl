@@ -41,6 +41,7 @@ roles:
     column_key: common.source_table_column_key
     span: common.source_span
     locator: common.source_locator
+    part: common.source_part
     file_sha256: common.source_file_sha256
   semantic:
     record_kind: common.record_kind
@@ -60,6 +61,8 @@ roles:
     relation_subject: transform.subject_mention
     relation_predicate: transform.predicate_mention
     relation_object: transform.object_mention
+    statement_role: agent.statement_role
+    step_condition: agent.step_condition
 system_fields:
   common.record_id:
     rule: stable_record_id
@@ -83,6 +86,11 @@ system_fields:
     rule: evidence_span
   common.source_file_sha256:
     rule: input_file_sha256
+  common.source_part:
+    rule: evidence_source_part
+    params:
+      main: main_text
+      supplement: supplement
   common.extraction_method:
     rule: backend_extraction_method
   common.extraction_run_id:
@@ -168,6 +176,18 @@ record_links:
     field: skills.method_record_ids
     target_kinds: [method]
     description_zh: 产生本结果或观测所用方法候选（record_kind 为 method）的 ref
+  tests:
+    field: agent.tests_record_ids
+    target_kinds: [claim]
+    description_zh: 本实验步骤、观测或结果所检验的假设、科学问题或研究目标候选的 ref；只在原文表明该实验为检验它而做时引用（如 to test whether）
+  addresses:
+    field: agent.addresses_record_ids
+    target_kinds: [claim]
+    description_zh: 本假设、研究目标或结论所回应的研究背景、科学问题、研究目标或假设候选的 ref
+  prerequisite:
+    field: agent.prerequisite_record_ids
+    target_kinds: [method, observation, analysis_result, phenotype_observation, environment_observation, genotype_observation]
+    description_zh: 本步骤以其产出（材料、数据或结果）为输入的前置候选的 ref；原文表明前一步的产出用于本步骤时引用
 evidence_policy:
   required_for_model_records: true
   verify_quote: true
@@ -177,5 +197,5 @@ evidence_policy:
   value_presence_exempt: [common.source_language]
 required_fields:
   always: [common.schema_name]
-ambiguities: [AMB-013, AMB-038]
+ambiguities: [AMB-013, AMB-038, AMB-039, AMB-041]
 notes_zh: common.source_abstract 不进入逐行记录（高频行避免重复长文本，见 v3 source_title 定义），由 document_bundle 视图或迁移数据承载；omics 组字段见 pdf_extraction_omics 画像。

@@ -161,8 +161,10 @@ def cmd_audit(args) -> int:
     from .argument import argument_audit
     records, rc = _records_contract(Path(args.file), args.schema_version, args.root)
     audit = argument_audit(records, rc.contract)
+    from .workflow import workflow_audit
+    workflow = workflow_audit(records, rc.contract)
     if args.json:
-        print(dumps_json(audit), end="")
+        print(dumps_json({**audit, **({"workflow": workflow} if workflow is not None else {})}), end="")
         return 0
     print(f"{audit['statements']} statement(s); links {audit['links']['total']} "
           f"({audit['links']['unresolved']} unresolved) — {audit['basis']}")
@@ -171,6 +173,26 @@ def cmd_audit(args) -> int:
         print(f"{e:12} {c['own']:4} {c['chain']:6}")
     for code, n in audit["flags"].items():
         print(f"flag {code}: {n} — {audit['flag_help'][code]}")
+    if workflow is not None:
+        print("workflow     " + "  ".join(f"{k}={v}" for k, v in workflow["stages"].items()))
+        print("edges        " + ("  ".join(f"{k}={v}" for k, v in workflow["edges_by_type"].items()) or "(none)"))
+        for code, n in workflow["flags"].items():
+            print(f"flag {code}: {n} — {workflow['flag_help'][code]}")
+    return 0
+
+
+def cmd_verify(args) -> int:
+    from .verify import apply_file, tasks_file
+    _, rc = _records_contract(Path(args.file), args.schema_version, args.root)
+    if args.action == "tasks":
+        report = tasks_file(Path(args.file), Path(args.out), rc)
+    else:
+        if not args.verdicts:
+            raise ContractError("bdc verify apply needs the verdicts file: bdc verify apply RECORDS VERDICTS --out DIR")
+        report = apply_file(Path(args.file), Path(args.verdicts), Path(args.out), rc, run_id=args.run_id,
+                            manifest=args.manifest)
+        report = {k: report[k] for k in ("run_id", "verifier", "independent_of_extractor", "counts", "output")}
+    print(dumps_json(report), end="")
     return 0
 
 
@@ -231,11 +253,24 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--schema-version", help="contract version (default: the version the records declare)")
     p.set_defaults(func=cmd_derive)
 
-    p = sub.add_parser("audit", help="evidence-chain audit (Toulmin/Flavell elements, after TRACE)")
+    p = sub.add_parser("audit", help="evidence-chain audit (Toulmin/Flavell elements, after TRACE) and "
+                                     "research-workflow structure")
     p.add_argument("file")
     p.add_argument("--schema-version", help="contract version (default: the version the records declare)")
     p.add_argument("--json", action="store_true", help="print the full audit as JSON")
     p.set_defaults(func=cmd_audit)
+
+    p = sub.add_parser("verify", help="semantic verification by an independent verifier: write the tasks, then "
+                                      "apply its verdicts to the review fields")
+    p.add_argument("action", choices=["tasks", "apply"])
+    p.add_argument("file", help="records (JSONL)")
+    p.add_argument("verdicts", nargs="?", help="apply: the verifier's verdicts file")
+    p.add_argument("--out", required=True, help="output directory")
+    p.add_argument("--schema-version", help="contract version (default: the version the records declare)")
+    p.add_argument("--run-id", help="apply: verification run ID (default: generated)")
+    p.add_argument("--manifest", help="apply: the extraction run's manifest; a verifier that is the extraction "
+                                      "model promotes nothing")
+    p.set_defaults(func=cmd_verify)
 
     args = ap.parse_args(argv)
     try:

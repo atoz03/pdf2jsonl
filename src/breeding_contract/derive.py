@@ -5,6 +5,7 @@
     graph       {nodes, edges}: entities, records and sources as a property graph
     corpus      one chunk per distinct verbatim quote, with entity offsets and the IDs of what it supports
     qa          cloze seeds: a quote with one anchored answer masked, citing the records that support it
+    workflow    the research workflow of a paper: records as staged nodes, record links as typed edges (AMB-039)
 
 Everything is driven by the catalog, never by field lists in code: each field's ``key_role`` decides where it
 lands (see ``codes.key_role.*.projection``). The views are lossless for the values they carry and never add a
@@ -26,8 +27,9 @@ from pathlib import Path
 from .ids import normalize_text
 from .relations import RELATION_ENDS, entity_type, find_span
 from .util import canonical_json, dumps_json, dumps_jsonl, get_path, iter_fields
+from .workflow import workflow_view
 
-DERIVE_FORMAT = 2
+DERIVE_FORMAT = 3
 SOURCE_ROLES = ("source_identity", "bibliographic")
 ENTITY_ROLES = ("entity_mention", "entity_id")
 QUALIFIER_ROLES = ("condition", "context_key")   # the conditions under which a statement holds
@@ -422,7 +424,8 @@ class Deriver:
     # ------------------------------------------------------------------ all views
     def views(self, records: list[dict]) -> dict:
         return {"tables": self.tables(records), "triples": self.triples(records), "graph": self.graph(records),
-                "corpus": self.corpus(records), "qa": self.qa(records)}
+                "corpus": self.corpus(records), "qa": self.qa(records),
+                "workflow": workflow_view(records, self.contract)}
 
 
 def _number_span(text: str, value) -> tuple[int, int] | None:
@@ -438,18 +441,29 @@ def _number_span(text: str, value) -> tuple[int, int] | None:
     return None
 
 
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 def counts(views: dict) -> dict:
     """Row counts of a ``Deriver.views`` result, keyed as in ``<stem>.derive.json``."""
     out = {f"table:{name}": len(rows) for name, rows in views["tables"].items()}
     out.update({"triples": len(views["triples"]), "graph_nodes": len(views["graph"]["nodes"]),
                 "graph_edges": len(views["graph"]["edges"]), "statements": len(views["tables"]["statements"]),
                 "corpus_chunks": len(views["corpus"]), "qa_seeds": len(views["qa"])})
+    if views.get("workflow"):
+        out.update({"workflow_nodes": len(views["workflow"]["nodes"]),
+                    "workflow_edges": len(views["workflow"]["edges"])})
     return out
 
 
 def derive_file(path: Path | str, out_dir: Path | str, rc) -> dict:
-    """Write <stem>.tables/*.csv, <stem>.triples.jsonl, <stem>.graph.json, <stem>.corpus.jsonl, <stem>.qa.jsonl
-    and <stem>.derive.json."""
+    """Write <stem>.tables/*.csv, <stem>.triples.jsonl, <stem>.graph.json, <stem>.corpus.jsonl, <stem>.qa.jsonl,
+    <stem>.workflow.json (contracts that declare workflow edges) and <stem>.derive.json.
+
+    The report is the lineage of the views (AMB-041): which records file they were derived from (name and
+    hash), under which contract, from which sources, and the hash of every file written. A view is never
+    edited: change the records and derive again."""
     path, out_dir = Path(path), Path(out_dir)
     records = [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
     views = Deriver(rc.contract).views(records)
@@ -468,7 +482,16 @@ def derive_file(path: Path | str, out_dir: Path | str, rc) -> dict:
     (out_dir / f"{stem}.graph.json").write_text(dumps_json(views["graph"]), encoding="utf-8")
     (out_dir / f"{stem}.corpus.jsonl").write_text(dumps_jsonl(views["corpus"]), encoding="utf-8")
     (out_dir / f"{stem}.qa.jsonl").write_text(dumps_jsonl(views["qa"]), encoding="utf-8")
+    written = [tdir / f"{name}.csv" for name in views["tables"]] + \
+        [out_dir / f"{stem}.{ext}" for ext in ("triples.jsonl", "graph.json", "corpus.jsonl", "qa.jsonl")]
+    if views["workflow"] is not None:
+        (out_dir / f"{stem}.workflow.json").write_text(dumps_json(views["workflow"]), encoding="utf-8")
+        written.append(out_dir / f"{stem}.workflow.json")
+    sources = sorted({s for s in (get_path(r, "common.source_id", None) for r in records) if s})
     report = {"derive_format": DERIVE_FORMAT, "input": path.name, "contract": rc.identity(),
-              "counts": {**counts(views), "records": len(records)}}
+              "counts": {**counts(views), "records": len(records)},
+              "lineage": {"derived_from": {"file": path.name, "sha256": _sha256(path), "records": len(records),
+                                           "source_ids": sources},
+                          "outputs": {str(p.relative_to(out_dir)): _sha256(p) for p in written}}}
     (out_dir / f"{stem}.derive.json").write_text(dumps_json(report), encoding="utf-8")
     return report

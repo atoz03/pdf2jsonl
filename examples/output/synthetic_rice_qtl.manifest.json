@@ -4,11 +4,11 @@
   "created_at": "2026-09-21T14:13:20Z",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.4.0",
+    "schema_version": "3.5.0",
     "release_status": "released",
-    "requested": "3.4.0",
-    "release_sha256": "75c97e35f5d86c3ad2ad51fd1e1b383374a351e8295c1939d0b4d16e74ba2eda",
-    "source_digest": "9183f3660d63bd53c8a5854eaad44c0075283a2d8916eefc6b0b525f8e2e00d3"
+    "requested": "3.5.0",
+    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
+    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
   },
   "profile": {
     "name": "pdf_extraction",
@@ -24,6 +24,7 @@
       "document_source_id",
       "doi_uri",
       "evidence_locator",
+      "evidence_source_part",
       "evidence_span",
       "grain_from_record_kind",
       "input_asset_manifest",
@@ -41,7 +42,7 @@
       "validation_outcome",
       "warning_codes"
     ],
-    "field_count": 225
+    "field_count": 231
   },
   "input": {
     "file_name": "synthetic_rice_qtl.pdf",
@@ -57,7 +58,7 @@
   },
   "pipeline": {
     "name": "pdf2jsonl",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "contract_tooling": "1.0.0"
   },
   "backend": {
@@ -84,7 +85,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_rice_qtl.jsonl",
-      "sha256": "6decf1d51640c80c3fdae4f76d16b148ed7bdcdb4a90d3adef4f516d69618371"
+      "sha256": "84ff4e83565de0b521dc5888dff16991e1f98c6727353c199762c6fde67b0b11"
     },
     "errors": {
       "file": "synthetic_rice_qtl.errors.jsonl",
@@ -92,11 +93,15 @@
     },
     "validation": {
       "file": "synthetic_rice_qtl.validation.json",
-      "sha256": "7196bbb4c27a6b1f82e0e8e45c9ba1c6037ba14dbd609590801f2974582d66fd"
+      "sha256": "180fc37c4e85c1a2ce33790a81fea828a1aecb15fb0d52ae5976601aa458ca47"
     },
     "bundle": {
       "file": "synthetic_rice_qtl.bundle.json",
-      "sha256": "70f2de6665b0a34dd976637eb03d32fb292e289171c301585788c4356c25631b"
+      "sha256": "1458b5c86044796889af06834f3a44f160ccae32930e187d4199d6f8db15bc08"
     }
+  },
+  "source_parts": {
+    "missing": [],
+    "complete": true
   }
 }

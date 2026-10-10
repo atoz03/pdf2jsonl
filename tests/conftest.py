@@ -16,6 +16,10 @@ for p in (ROOT / "src", SKILL_SCRIPTS):
 
 EXAMPLE_PDF = ROOT / "examples/papers/synthetic_rice_qtl.pdf"
 EXAMPLE_CANDIDATES = ROOT / "examples/papers/synthetic_rice_qtl.candidates.json"
+# The paper in two files: main text, and a supplement with the methods and Fig. S1-S3
+HEAT_PDF = ROOT / "examples/papers/synthetic_rice_heat.pdf"
+HEAT_SUPPLEMENT = ROOT / "examples/papers/synthetic_rice_heat.supplement.pdf"
+HEAT_CANDIDATES = ROOT / "examples/papers/synthetic_rice_heat.candidates.json"
 LEGACY_EXAMPLE = ROOT / "sources/legacy_v1/breeding_jsonl_example.jsonl"
 LEGACY_PAGE_OFFSET = 2220  # journal pages 2221-2235 -> physical PDF pages 1-15
 IGNORE = shutil.ignore_patterns(".venv", "__pycache__", ".pytest_cache", "*.work", "dist", "build", "*.egg-info",
@@ -60,3 +64,13 @@ def run_bdc(repo: Path, *args: str, check: bool = True) -> subprocess.CompletedP
 def read_jsonl(path: Path) -> list[dict]:
     import json
     return [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
+
+
+def records_by_ref(result, candidates: Path) -> dict[str, dict]:
+    """Records of a pipeline run keyed by the `ref` of the candidate they were built from."""
+    import json
+    refs = [c.get("ref") for c in json.loads(candidates.read_text(encoding="utf-8"))["candidates"]]
+    report = json.loads(result.outputs["validation"].read_text(encoding="utf-8"))
+    by_id = {r["common"]["record_id"]: r for r in read_jsonl(result.outputs["records"])}
+    return {refs[row["candidate_index"]]: by_id[row["record_id"]] for row in report["records"]
+            if row.get("candidate_index") is not None and refs[row["candidate_index"]]}

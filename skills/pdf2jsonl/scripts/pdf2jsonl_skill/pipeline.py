@@ -27,6 +27,7 @@ from .contract_link import ensure_contract_importable, sha256_file
 ensure_contract_importable()
 from breeding_contract import GENERATOR_VERSION, resolve_schema  # noqa: E402
 from breeding_contract.argument import argument_audit  # noqa: E402
+from breeding_contract.workflow import workflow_audit  # noqa: E402
 from breeding_contract.ids import normalize_text  # noqa: E402
 from breeding_contract.rules import Issue  # noqa: E402
 from breeding_contract.util import (MISSING, ContractError, del_path, dumps_json, dumps_jsonl, get_path,  # noqa: E402
@@ -34,14 +35,17 @@ from breeding_contract.util import (MISSING, ContractError, del_path, dumps_json
 
 from .backends import load_backend  # noqa: E402
 from .brief import candidates_skeleton, render_brief  # noqa: E402
+from .completeness import source_completeness, unavailable_items  # noqa: E402
 from .evidence import EvidenceIndex  # noqa: E402
-from .fill_rules import IMPLEMENTED_RULES, REGISTRY, RecordContext, RunContext  # noqa: E402
-from .pdf_parse import ParsedDocument, parse_document  # noqa: E402
+from .fill_rules import (IMPLEMENTED_RULES, REGISTRY, SOURCE_PART_UNAVAILABLE, RecordContext,  # noqa: E402
+                         RunContext)
+from .pdf_parse import MAIN_PART, ParsedDocument, parse_document  # noqa: E402
 from .repair import repair_output  # noqa: E402
 
 EMPTY = (None, "", [], {})
 EVIDENCE_ROLES = ("page", "section", "quote", "table_figure", "row_key", "column_key")
-ID_ANCHOR_ROLES = ("page", "table_figure", "row_key", "column_key")  # the section is not part of record identity
+ID_ANCHOR_ROLES = ("part", "page", "table_figure", "row_key", "column_key")  # the section is not part of identity
+PART_ROLE = "part"  # provenance role of profiles that know multi-file sources (AMB-041)
 
 
 class PipelineError(Exception):
@@ -56,6 +60,7 @@ class RunOptions:
     candidates_file: str | None = None
     out_dir: str | None = None
     text_layer: str | None = None
+    supplements: list[str] = field(default_factory=list)
     dataset_id: str | None = None
     dataset_version: str | None = None
     source_asset_id: str | None = None
@@ -129,9 +134,10 @@ def _environment() -> dict:
 
 # ---------------------------------------------------------------------------------------------- assembly
 class Assembler:
-    def __init__(self, run: RunContext, index: EvidenceIndex):
+    def __init__(self, run: RunContext, indexes: dict[str, EvidenceIndex]):
         self.run = run
-        self.index = index
+        self.indexes = indexes
+        self.index = indexes[MAIN_PART]
         p = run.profile
         self.profile = p
         self.fields = {f["path"]: f for f in p["fields"]}
@@ -170,16 +176,19 @@ class Assembler:
         return {g: out[g] for g in self.group_order if g in out} | {g: v for g, v in out.items()
                                                                      if g not in self.group_order}
 
-    def _present(self, value: Any, pages: list[int]) -> str | None:
+    def _present(self, value: Any, pages: list[int], index: EvidenceIndex) -> str | None:
         """None if literally present on one of ``pages``; else the warning code."""
         items = value if isinstance(value, list) else [value]
         for v in items:
             if isinstance(v, bool) or not isinstance(v, (str, int, float)):
                 continue
-            if any(self.index.value_present(v, p) for p in pages):
+            if any(index.value_present(v, p) for p in pages):
                 continue
-            return "VALUE_NOT_ON_EVIDENCE_PAGE" if self.index.value_present(v) else "VALUE_NOT_IN_SOURCE"
+            return "VALUE_NOT_ON_EVIDENCE_PAGE" if self._anywhere(v) else "VALUE_NOT_IN_SOURCE"
         return None
+
+    def _anywhere(self, value: Any) -> bool:
+        return any(ix.value_present(value) for ix in self.indexes.values())
 
     # -- document level
     def check_document(self, document: dict, explicit: set[str]) -> None:
@@ -192,7 +201,7 @@ class Assembler:
                 continue
             items = value if isinstance(value, list) else [value]
             missing = [v for v in items if isinstance(v, (str, int, float)) and not isinstance(v, bool)
-                       and not self.index.value_present(v)]
+                       and not self._anywhere(v)]
             if missing:
                 self.document_issues.append(Issue("DOCUMENT_VALUE_NOT_IN_SOURCE", level, path,
                                                   f"文档级字段 {path} 的取值在原文中找不到", detail={"value": value}))
@@ -209,15 +218,23 @@ class Assembler:
             return ev, None, warnings, {"code": code, "message": msg, **({"detail": detail} if detail else {})}
         if self.policy.get("required_for_model_records", True) and (page in EMPTY or quote in EMPTY):
             return reject("EVIDENCE_MISSING", "候选记录缺少 evidence.page 或 evidence.quote")
-        if not isinstance(page, int) or isinstance(page, bool) or not 1 <= page <= self.run.doc.page_count:
-            return reject("EVIDENCE_PAGE_INVALID", f"页码 {page!r} 不是 1..{self.run.doc.page_count} 的物理页码")
+        part = ev.pop(PART_ROLE, None) or MAIN_PART
+        index = self.indexes.get(part)
+        if index is None:
+            return reject("EVIDENCE_PART_UNKNOWN", f"来源部分 {part!r} 未提供；本次运行的部分为 "
+                          f"{', '.join(self.indexes)}", stated_part=part, parts=list(self.indexes))
+        if part != MAIN_PART:
+            ev[PART_ROLE] = part
+        doc = index.doc
+        if not isinstance(page, int) or isinstance(page, bool) or not 1 <= page <= doc.page_count:
+            return reject("EVIDENCE_PAGE_INVALID", f"页码 {page!r} 不是 1..{doc.page_count} 的物理页码")
         max_chars = self.policy.get("max_quote_chars")
         if max_chars and len(quote) > max_chars:
             return reject("EVIDENCE_QUOTE_TOO_LONG", f"引文超过 {max_chars} 字符（须为最小原文证据）")
         span = None
         if self.policy.get("verify_quote", True):
             radius = int(self.policy.get("page_search_radius", 0))
-            m = self.index.locate(quote, page, radius)
+            m = index.locate(quote, page, radius)
             if m is None:
                 return reject("EVIDENCE_QUOTE_NOT_FOUND", f"引文在第 {page} 页（±{radius}）中找不到",
                               stated_page=page, radius=radius)
@@ -228,29 +245,30 @@ class Assembler:
                 ev["page"] = m.page
             span = (m.start, m.end)
             if "section" not in ev:
-                sec = self.index.section_at(m.page, m.start)
+                sec = index.section_at(m.page, m.start)
                 if sec:
                     ev["section"] = sec
             for role, code in (("table_figure", "EVIDENCE_TABLE_NOT_ON_PAGE"), ("row_key", "EVIDENCE_CELL_KEY_NOT_ON_PAGE"),
                                ("column_key", "EVIDENCE_CELL_KEY_NOT_ON_PAGE")):
-                if ev.get(role) and not any(self.index.page_mentions(p, str(ev[role]))
+                if ev.get(role) and not any(index.page_mentions(p, str(ev[role]))
                                             for p in (m.page - 1, m.page, m.page + 1)
-                                            if 1 <= p <= self.run.doc.page_count):
+                                            if 1 <= p <= doc.page_count):
                     warnings.append(Issue(code, "warning", self.prov.get(role, role),
                                           f"{role}={ev[role]!r} 未出现在证据页附近"))
         return ev, span, warnings, None
 
-    def value_warnings(self, cand: dict, page: int) -> list[Issue]:
+    def value_warnings(self, cand: dict, page: int, part: str = MAIN_PART) -> list[Issue]:
         level = self.policy.get("value_presence_check", "off")
         if level == "off":
             return []
+        index = self.indexes[part]
         radius = int(self.policy.get("page_search_radius", 0))
-        pages = [p for p in range(page - radius, page + radius + 1) if 1 <= p <= self.run.doc.page_count]
+        pages = [p for p in range(page - radius, page + radius + 1) if 1 <= p <= index.doc.page_count]
         out = []
         for path, value in cand["fields"].items():
             if path in self.exempt or self.fields.get(path, {}).get("vocabulary"):
                 continue
-            code = self._present(value, pages)
+            code = self._present(value, pages, index)
             if code:
                 out.append(Issue(code, level, path, f"{path} 的取值未在证据页（±{radius}）逐字出现",
                                  detail={"value": value}))
@@ -259,8 +277,9 @@ class Assembler:
     # -- records
     def build(self, kind: str, *, candidate: dict | None, evidence: dict, span, ordinal: int,
               pre_issues: list[Issue], extra_fields: list[tuple[str, dict]] = (),
-              links: dict[str, list[str]] | None = None) -> tuple[dict, RecordContext]:
-        ctx = RecordContext(self.run, kind, {}, candidate=candidate, evidence=evidence, span=span, ordinal=ordinal)
+              links: dict[str, list[str]] | None = None, part: str | None = None) -> tuple[dict, RecordContext]:
+        ctx = RecordContext(self.run, kind, {}, candidate=candidate, evidence=evidence, span=span, ordinal=ordinal,
+                            part=part or evidence.get(PART_ROLE) or MAIN_PART)
         doc_values = {**self.run.document, **((candidate or {}).get("document_overrides") or {})}
         for path, v in doc_values.items():
             set_path(ctx.record, path, v)
@@ -319,11 +338,8 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
     started = utc_now()
     rc, profile = resolve_contract(opts.schema_version, opts.profile, opts.allow_unreleased)
     backend = load_backend(opts.backend)
-    try:
-        doc = parse_document(input_path, opts.text_layer)
-    except (ValueError, RuntimeError, OSError) as e:
-        raise PipelineError(str(e)) from e
-    run_key = f"{doc.sha256}|{profile['name']}|{rc.version}|{opts.backend}"
+    doc = _parse(input_path, opts, profile)
+    run_key = "|".join([d.sha256 for d in doc.parts()] + [profile["name"], rc.version, opts.backend])
     run_id = opts.run_id or "run_{}_{}".format(started.strftime("%Y%m%dT%H%M%SZ"),
                                                hashlib.sha256(run_key.encode()).hexdigest()[:8])
     options = {"candidates_file": opts.candidates_file, **opts.cli_values()}
@@ -332,9 +348,12 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
     defaults = dict(profile.get("document_defaults") or {})
     run_ctx = RunContext(rc=rc, profile=profile, doc=doc, backend=backend.info(), run_id=run_id,
                          options=opts.cli_values(), document={**defaults, **document})
-    index = EvidenceIndex(doc)
-    asm = Assembler(run_ctx, index)
+    asm = Assembler(run_ctx, {d.part: EvidenceIndex(d) for d in doc.parts()})
     asm.check_document(run_ctx.document, explicit=set(document))
+    # Source completeness is reported for profiles that know source parts; older contract versions keep their
+    # output unchanged.
+    part_codes = ((profile.get("system_fields") or {}).get(asm.prov.get(PART_ROLE) or "") or {}).get("params")
+    completeness = source_completeness(doc, part_codes) if PART_ROLE in asm.prov else None
 
     kinds = set(profile.get("model_record_kinds") or [])
     accepted: list[tuple[dict, RecordContext, int | None]] = []
@@ -359,18 +378,22 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
     # system records first (they describe the input itself)
     skipped_system = []
     for sr in profile.get("system_records") or []:
-        ctx0 = RecordContext(run_ctx, sr["record_kind"], {})
-        if not REGISTRY[sr["rule"]].fn(ctx0, sr.get("params") or {}):
-            skipped_system.append({"record_kind": sr["record_kind"], "reason": ctx0.notes.get("skipped", "rule declined")})
-            continue
-        rec, ctx = asm.build(sr["record_kind"], candidate=None, evidence={}, span=None, ordinal=0, pre_issues=[],
-                             extra_fields=list(sr["fields"].items()))
-        errs = [i for i in ctx.issues if i.severity == "error"]
-        if errs:
-            reject("validation", None, {"code": "RECORD_INVALID", "message": f"系统记录 {sr['record_kind']} 未通过校验"},
-                   record=rec, issues=errs)
-        else:
-            accepted.append((rec, ctx, None))
+        for part_doc in doc.parts():  # one system record per file of the source
+            ctx0 = RecordContext(run_ctx, sr["record_kind"], {}, part=part_doc.part)
+            if not REGISTRY[sr["rule"]].fn(ctx0, sr.get("params") or {}):
+                skipped_system.append({"record_kind": sr["record_kind"],
+                                       "reason": ctx0.notes.get("skipped", "rule declined"),
+                                       **({"part": part_doc.part} if part_doc.part != MAIN_PART else {})})
+                continue
+            rec, ctx = asm.build(sr["record_kind"], candidate=None, evidence={}, span=None, ordinal=0, pre_issues=[],
+                                 extra_fields=list(sr["fields"].items()), part=part_doc.part)
+            errs = [i for i in ctx.issues if i.severity == "error"]
+            if errs:
+                reject("validation", None,
+                       {"code": "RECORD_INVALID", "message": f"系统记录 {sr['record_kind']} 未通过校验"},
+                       record=rec, issues=errs)
+            else:
+                accepted.append((rec, ctx, None))
 
     # pass 1: shape, evidence and duplicates
     verified: list[tuple[int, dict, dict, Any, list[Issue]]] = []
@@ -393,7 +416,11 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
             reject("candidate", i, {"code": "CANDIDATE_DUPLICATE", "message": "与前面的候选完全相同，已去重"}, cand=cand)
             continue
         seen[dedupe_key] = cand
-        pre += asm.value_warnings(cand, ev["page"])
+        pre += asm.value_warnings(cand, ev["page"], ev.get(PART_ROLE) or MAIN_PART)
+        cited = unavailable_items(ev.get("quote") or "", completeness) if completeness else []
+        if cited:
+            pre.append(Issue(SOURCE_PART_UNAVAILABLE, "warning", asm.prov.get("quote", "evidence.quote"),
+                             f"引文引用了未提供的来源部分：{', '.join(cited)}", detail={"items": cited}))
         verified.append((i, cand, ev, span, pre))
 
     # Ordinals separate records that share kind + anchor + quote. They follow the canonical field content,
@@ -482,7 +509,7 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
     review_path = next((p for p, s in (profile.get("system_fields") or {}).items()
                         if s["rule"] == "validation_outcome"), None)
     counts = {
-        "pages": doc.page_count,
+        "pages": sum(d.page_count for d in doc.parts()),
         "candidates": len(candidates),
         "records": len(records),
         "rejected": len(rejected),
@@ -533,6 +560,11 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
         "system_records_skipped": skipped_system,
         "argument_structure": argument_audit(records, rc.contract),
     }
+    if completeness is not None:
+        report["source_parts"] = completeness
+    workflow = workflow_audit(records, rc.contract)
+    if workflow is not None:
+        report["workflow_structure"] = workflow
     paths["validation"].write_text(dumps_json(report), encoding="utf-8")
 
     bundle_path = None
@@ -560,6 +592,12 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
     }
     if opts.candidates_file:
         manifest["input"]["candidates_sha256"] = sha256_file(Path(opts.candidates_file))
+    if doc.supplements:
+        manifest["input"]["supplements"] = [
+            {"part": d.part, "file_name": d.path.name, "sha256": d.sha256, "size_bytes": d.size_bytes,
+             "media_type": d.media_type, "page_count": d.page_count, "parser": d.parser} for d in doc.supplements]
+    if completeness is not None:
+        manifest["source_parts"] = {k: completeness[k] for k in ("missing", "complete")}
     paths["manifest"].write_text(dumps_json(manifest), encoding="utf-8")
     return RunResult(outputs=paths, counts=counts, manifest=manifest, records=records)
 
@@ -571,17 +609,26 @@ def _record_id(record: dict, profile: dict):
 
 # ---------------------------------------------------------------------------------------------- agent mode
 def pages_text(doc: ParsedDocument) -> str:
-    return "".join(f"=== page {p.number} ===\n{p.text.rstrip()}\n\n" for p in doc.pages)
+    """Page markers carry the part for every file but the main text: ``=== supplement page 3 ===``."""
+    return "".join(f"=== {'' if d.part == MAIN_PART else d.part + ' '}page {p.number} ===\n{p.text.rstrip()}\n\n"
+                   for d in doc.parts() for p in d.pages)
+
+
+def _parse(input_path: Path, opts: RunOptions, profile: dict) -> ParsedDocument:
+    if opts.supplements and PART_ROLE not in ((profile.get("roles") or {}).get("provenance") or {}):
+        raise PipelineError(f"profile {profile['name']} of this contract version does not support supplement "
+                            "files; use a contract version whose profile declares the provenance role `part`")
+    try:
+        return parse_document(input_path, opts.text_layer, opts.supplements)
+    except (ValueError, RuntimeError, OSError) as e:
+        raise PipelineError(str(e)) from e
 
 
 def prepare(input_path: Path | str, opts: RunOptions, work_dir: Path | str | None = None) -> Path:
     """Write the agent work directory: brief.md, pages.txt, candidate.schema.json, request.json."""
     input_path = Path(input_path)
     rc, profile = resolve_contract(opts.schema_version, opts.profile, opts.allow_unreleased)
-    try:
-        doc = parse_document(input_path, opts.text_layer)
-    except (ValueError, RuntimeError, OSError) as e:
-        raise PipelineError(str(e)) from e
+    doc = _parse(input_path, opts, profile)
     work = Path(work_dir) if work_dir else default_work_dir(input_path, opts)
     work.mkdir(parents=True, exist_ok=True)
     (work / "pages.txt").write_text(pages_text(doc), encoding="utf-8")
@@ -593,7 +640,9 @@ def prepare(input_path: Path | str, opts: RunOptions, work_dir: Path | str | Non
         "request_format": 1,
         "created_at": _iso(utc_now()),
         "input": {"path": str(input_path.resolve()), "sha256": doc.sha256,
-                  **({"text_layer": str(Path(opts.text_layer).resolve())} if opts.text_layer else {})},
+                  **({"text_layer": str(Path(opts.text_layer).resolve())} if opts.text_layer else {}),
+                  **({"supplements": [{"part": d.part, "path": str(d.path.resolve()), "sha256": d.sha256}
+                                      for d in doc.supplements]} if doc.supplements else {})},
         "contract": rc.identity(),
         "profile": profile["name"],
         "options": {**opts.cli_values(), **({"out_dir": str(Path(opts.out_dir).resolve())} if opts.out_dir else {})},
@@ -621,6 +670,10 @@ def finalize(work_dir: Path | str, overrides: RunOptions | None = None, requeste
     input_path = Path(req["input"]["path"])
     if not input_path.is_file() or sha256_file(input_path) != req["input"]["sha256"]:
         raise PipelineError(f"input {input_path} is missing or changed since prepare")
+    supplements = req["input"].get("supplements") or []
+    for s in supplements:
+        if not Path(s["path"]).is_file() or sha256_file(Path(s["path"])) != s["sha256"]:
+            raise PipelineError(f"supplement {s['path']} is missing or changed since prepare")
     released = pinned["release_status"] == "released"
     version = pinned["schema_version"] if released else "dev"
     # The version is pinned at prepare time: a release (or a working-tree edit) in between must not silently
@@ -635,7 +688,7 @@ def finalize(work_dir: Path | str, overrides: RunOptions | None = None, requeste
     o = overrides or RunOptions()
     opts = RunOptions(profile=req["profile"], schema_version=version, backend="candidates",
                       candidates_file=str(cand_file), out_dir=o.out_dir or req["options"].get("out_dir"),
-                      text_layer=req["input"].get("text_layer"),
+                      text_layer=req["input"].get("text_layer"), supplements=[s["path"] for s in supplements],
                       dataset_id=o.dataset_id or req["options"].get("dataset_id"),
                       dataset_version=o.dataset_version or req["options"].get("dataset_version"),
                       source_asset_id=o.source_asset_id or req["options"].get("source_asset_id"),

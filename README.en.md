@@ -33,7 +33,7 @@ latest release and the checked-in examples, and deployed from `main`.
 | Page | What it shows |
 | --- | --- |
 | [Overview](https://atoz03.github.io/pdf2jsonl/) | How papers and existing data become records and how records are consumed; releases, groups, rules |
-| [Field catalog](https://atoz03.github.io/pdf2jsonl/#fields) | All **404 fields**: meaning, type, JSON example, key role, functions, multi-select tags, origin |
+| [Field catalog](https://atoz03.github.io/pdf2jsonl/#fields) | All **412 fields**: meaning, type, JSON example, key role, functions, multi-select tags, origin |
 | [PDF → JSONL demo](https://atoz03.github.io/pdf2jsonl/#demo) | The synthetic paper end to end: candidates, evidence verification, records, evidence-chain audit |
 | [Downstream outputs](https://atoz03.github.io/pdf2jsonl/#downstream) | Statements, knowledge graph, annotated corpus, QA seeds and tables derived from the same records |
 | [Papers](https://atoz03.github.io/pdf2jsonl/papers.html) | Paper dashboard: PDF, records of each run, evidence, review issues, downloads (UI in Chinese) |
@@ -47,8 +47,9 @@ Preview locally with `make site` and open `_site/index.html`. `make dashboard` a
 
 ```
 paper (PDF) ── pdf2jsonl ───┐                            ┌─► statements · triples · graph   (knowledge graph)
-                            ├─► records (JSONL, hooks) ──┼─► corpus with entity offsets
-existing data ─ bdc migrate ┘        bdc derive          ├─► cloze QA seeds
+(main text + supplements)   ├─► records (JSONL, hooks) ──┼─► research workflow (question → hypothesis → step → result)
+existing data ─ bdc migrate ┘        bdc derive          ├─► corpus with entity offsets
+                                                         ├─► cloze QA seeds
                                                          └─► relational tables (CSV)
 ```
 
@@ -67,6 +68,19 @@ and its role in the relation. No consumer parses the text a second time:
 
 Where a record has no hook, the derived output has no row: nothing is guessed. Design notes:
 [`docs/downstream.md`](docs/downstream.md).
+
+Three things were added in 3.5.0 for the agent that plans research (Topic 2); all are provisional:
+
+- **The research workflow of a paper** as links between records: the role of a statement (background,
+  question, objective, hypothesis, design, result, conclusion) and the links *tests*, *addresses* and
+  *prerequisite* next to *evidence* and *method*. `bdc derive` writes `workflow.json` with step order, branch
+  points, one trace per hypothesis and structural flags. See [`docs/workflow.md`](docs/workflow.md).
+- **Semantic verification by a second model**: `bdc verify` asks, record by record and link by link, whether
+  the quote really states the value. It can send a record back to review and promote one to `model_verified`,
+  never to expert approval. See [`docs/review.md`](docs/review.md).
+- **Papers in several files, and incomplete papers**: `--supplement` adds the supplementary file as a part of
+  the same source; a main text that cites "fig. S2" without the supplement is reported as incomplete and the
+  affected records are flagged instead of being filled in.
 
 ## 🧬 Data pipeline overview
 
@@ -87,22 +101,22 @@ languages and downloads the SVG. Run `make diagram` to regenerate both README im
 | `profiles/` | Field selections for one use case (`full`, `compact`, `pdf_extraction`, `pdf_extraction_omics`) |
 | `releases/` | Frozen, hash-verified contract versions and `index.json` (`latest` pointer) |
 | `schemas/meta/` | JSON Schemas for the source files themselves (catalog, vocabulary, profile, mapping) |
-| `schemas/runtime/` | JSON Schemas for run outputs (manifest, validation report, error records, bundle, migration report) |
+| `schemas/runtime/` | JSON Schemas for run outputs (manifest, validation report, error records, bundle, migration report, verification report) |
 | `mappings/` | Leaf-by-leaf mappings from existing data formats to the contract, with issue registers; used by `bdc migrate` |
 | `sources/` | Immutable original inputs (see `sources/SOURCES.md`) |
-| `src/breeding_contract/` | Contract tooling: compile, release, resolve, validate, import, bundle, derive, audit (`bdc` CLI) |
+| `src/breeding_contract/` | Contract tooling: compile, release, resolve, validate, import, bundle, derive, audit, verify (`bdc` CLI) |
 | `skills/pdf2jsonl/` | The Skill: `SKILL.md`, extraction brief template, runtime (`scripts/pdf2jsonl`) |
 | `docs/` | Architecture, versioning, source analysis, importers, downstream outputs, key roles and functions; `docs/generated/` is built from the catalog (including the [field reference](docs/generated/field_definitions.md)) |
 | `docs/field_examples.yaml` | Curated illustrative values used to generate and validate the field reference |
 | `docs/field_classification.yaml` | Per-field multi-select tags: Research Content 1, Research Content 2, future iteration, and general-purpose fields |
 | `scripts/make_site.py` / `site/` | Site builder and page templates: contract browser, paper dashboard (`scripts/make_dashboard.py`), downstream outputs, importers |
-| `examples/` | Synthetic paper, curated records, pipeline output, importer output, invalid cases |
-| `tests/` | pytest suite (catalog fidelity, releases, validation, pipeline, Skill sync, importers, bundles, functions, evidence chain, downstream hooks, site) |
+| `examples/` | Two synthetic papers (one in two files), curated records, pipeline output (also for the paper without its supplement), a verification pass, derived views, importer output, invalid cases |
+| `tests/` | pytest suite (catalog fidelity, releases, validation, pipeline, Skill sync, importers, bundles, functions, evidence chain, downstream hooks, workflow, verification, source parts, site) |
 
-## 🔬 Contract at a glance (3.4.0)
+## 🔬 Contract at a glance (3.5.0)
 
-- 404 fields in five groups: `common` 177, `agent` 57, `skills` 53, `transform` 49, `omics` 68.
-  The 259 v3.0.0 fields are `verified` and verbatim; the 145 fields added since are `provisional`.
+- 412 fields in five groups: `common` 179, `agent` 62, `skills` 53, `transform` 50, `omics` 68.
+  The 259 v3.0.0 fields are `verified` and verbatim; the 153 fields added since are `provisional`.
 - **Multi-select functional tags**: Research Content 1, Research Content 2, future iteration, and general-purpose fields.
 - Every key states **what it does** (`key_role`, 25 roles with their projection into graph, tables, triples and
   QA/corpora) and **which function it serves** (`serves`): Topic 2 agent, Topic 3 skills, derivation into
@@ -116,8 +130,10 @@ languages and downloads the SVG. Run `make diagram` to regenerate both README im
 - Every record carries `common.schema_name` and `common.schema_version`, a stable `common.record_id`
   (`rec_` + 32 hex), provenance (`source_id`, `source_locator`, page and verbatim quote for paper evidence),
   and a `review_status`.
-- 34 cross-field rules (20 errors, 14 warnings): explicit source statements are errors, inferred ones are warnings only.
-- 38 ambiguities are registered in the catalog (`AMB-001` … `AMB-038`) instead of being silently decided.
+- 35 cross-field rules (20 errors, 15 warnings): explicit source statements are errors, inferred ones are warnings only.
+- 41 ambiguities are registered in the catalog (`AMB-001` … `AMB-041`) instead of being silently decided.
+- `review_status` is a ladder: `pending_review` → `auto_validated` (deterministic checks) → `model_verified`
+  (an independent verifier) → `expert_approved` / `rejected` (a person).
 
 See the [online field catalog](https://atoz03.github.io/pdf2jsonl/#fields), [field definitions and examples](docs/generated/field_definitions.md), the
 [detailed dictionary](docs/generated/field_dictionary.md) (also [CSV](docs/generated/field_dictionary.csv);
@@ -146,8 +162,13 @@ skills/pdf2jsonl/scripts/pdf2jsonl paper.pdf --profile pdf_extraction --schema-v
 Outputs: `paper.jsonl` (records), `paper.validation.json`, `paper.errors.jsonl` (rejected candidates, never
 written as records), `paper.manifest.json` (contract identity, input hash, backend, environment, output hashes);
 `--bundle` adds `paper.bundle.json`. The validation report includes `argument_structure`, the evidence-chain audit
-(which statements are linked to data and methods, and which hedges or links are missing). Other backends: `--candidates file.json`, `--backend mock`,
+(which statements are linked to data and methods, and which hedges or links are missing), `workflow_structure`
+(untested hypotheses, results without a method, dependency cycles) and `source_parts` (parts of the paper the text
+cites but that were not supplied). Other backends: `--candidates file.json`, `--backend mock`,
 `--backend module:callable`.
+
+A paper in several files is one run: add `--supplement paper_supplement.pdf` (repeatable). Evidence then names
+its part, and each file gets its own asset record.
 
 To make the Skill available to Claude Code in this repository, `.claude/skills/pdf2jsonl` links to
 `skills/pdf2jsonl`; for a user-level install, symlink `~/.claude/skills/pdf2jsonl` to the same directory.
@@ -159,7 +180,7 @@ from breeding_contract import resolve_schema, load_profile, load_field_catalog, 
 
 rc = resolve_schema("latest")                  # or "3.0.0", or "dev" (unreleased working tree)
 profile = load_profile("pdf_extraction", "latest")
-catalog = load_field_catalog("3.4.0")
+catalog = load_field_catalog("3.5.0")
 result = validate_record(record)               # validates against the version the record declares
 result.valid, [i.to_dict() for i in result.errors]
 ```
@@ -176,8 +197,9 @@ result.valid, [i.to_dict() for i in result.errors]
 | `bdc diff A B` | Field-level diff between two versions |
 | `bdc migrate legacy\|omics\|merged F --out DIR [--page-offset N]` | Import existing data as atomic records, see [Import existing data](#import) |
 | `bdc bundle F.jsonl [--legacy-v1]` | Derive the per-document view (or the legacy v1 layout) from records |
-| `bdc derive F.jsonl --out DIR` | Function 3: relational tables (CSV), statements, triples and a property graph, an annotated corpus and QA seeds |
-| `bdc audit F.jsonl [--json]` | Evidence-chain audit (Toulmin/Flavell elements, link closure, review flags; no score) |
+| `bdc derive F.jsonl --out DIR` | Function 3: relational tables (CSV), statements, triples and a property graph, the research workflow, an annotated corpus and QA seeds, with their lineage |
+| `bdc audit F.jsonl [--json]` | Evidence-chain audit (Toulmin/Flavell elements, link closure, review flags; no score) and workflow structure |
+| `bdc verify tasks\|apply F.jsonl [VERDICTS] --out DIR` | Semantic verification by an independent verifier: build the tasks, then apply its verdicts to the review fields |
 
 ## 🌿 Evolving the contract
 
@@ -216,7 +238,10 @@ and nothing is invented to fill a required field. Imported records start as `pen
 
 ## 🗂 Documentation
 
-- `docs/downstream.md` — the record as a hub: the hooks consumers need and every output of `bdc derive`
+- `docs/downstream.md` — the record as a hub: the hooks consumers need, every output of `bdc derive`, source
+  parts and incomplete papers, how the representations trace back to each other
+- `docs/workflow.md` — the research workflow of a paper as roles and links between records
+- `docs/review.md` — the three layers of checking, `bdc verify`, what experts decide
 - [Field definitions and JSON examples](docs/generated/field_definitions.md) — generated reference for all fields
 - `docs/architecture.md` — components, data flow, pipeline stages, invariants
 - `docs/versioning.md` — semantic versioning of the contract, releases, `latest`/`dev`, compatibility

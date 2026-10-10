@@ -1,0 +1,196 @@
+{
+  "verifier": {
+    "method": "model",
+    "model": "example-verifier",
+    "notes": "Hand-written verdicts that stand in for a second model (not the extractor)."
+  },
+  "input_sha256": "630872b176bb356b372a17e7276fd1cee04d61adce11f356fd07815cb9f35c11",
+  "verdicts": [
+    {
+      "task_id": "vt_63ab23dbeb28f8ffc351",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_abd0998c9681611c071e",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_0b3940e5948db01532d3",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_fa6318b57c700fb99574",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_2a0acadd1c6b2c4eb394",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_0899aaccd055ecb13609",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_76f644a67fef26e83209",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_b1f18e27113bd00fe0cb",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_644a933e4e62a6d79e50",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_4e724913538b0634b719",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_1c1a94837b33497fde3b",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_bf50c112166d3cc3bf2b",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_09181d08c249d4e6f365",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_61d5d58bb897131b4920",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_2a98fe474acd089391bd",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_91630a7f9276192a4db7",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_96a5333b4eb9b6f792e0",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_5c35ef16ba8b27bf0341",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_4fe2cc28ee5d15d61ce2",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_7c4624c643e6e4ae5cb6",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_c584974b9426897093bd",
+      "verdict": "uncertain",
+      "reason": "The knockout follows the fine mapping in the text, but the paper does not say that it used the mapped interval; order of presentation is not a dependency."
+    },
+    {
+      "task_id": "vt_132c4294fdadbb35e908",
+      "verdict": "not_supported",
+      "unsupported_fields": [
+        "common.germplasm_names"
+      ],
+      "reason": "The sentence compares the HTR1 knockout lines with WY. SL14 is named on the same page, not in this quote."
+    },
+    {
+      "task_id": "vt_9bea90e26a54d12fcf8b",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_13afc1bfc2a347dc5667",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_85288ce68327bc6e3ce7",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_1fe934c2085d102df0e6",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_fbf44e1b188c40461407",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_aa2604dc4ca0513bf43a",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_86ec5cc58ed6c448ded8",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_6ef892bb603428661381",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_5b87b931546daf5a119a",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_d0a5dc84106c01c16c63",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_e4bcb7819a66f31288b9",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_db7fde32640839a506f7",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_4d6e467a2f55e9d46c9e",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_96f057e269d846866461",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_9f982272e479c4d6b0db",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_f8d45baf6670ebb701d2",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_a832670d629b526e679f",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_e84f459825b7d0a916a6",
+      "verdict": "supported"
+    },
+    {
+      "task_id": "vt_b16b5d6d6f620aacbf02",
+      "verdict": "supported"
+    }
+  ],
+  "conflicts": [
+    {
+      "record_ids": [
+        "rec_eb88edbd3cdd1ce77d844d368affb702",
+        "rec_4347364e90ac28cf4607e75c85f2c399"
+      ],
+      "reason": "Duration of the heat treatment: 12 h in the Results, 14 h in the Materials and Methods of the supplement."
+    }
+  ],
+  "omissions": [
+    {
+      "page": 2,
+      "source_part": "supplement",
+      "quote": "WY 21.3 %",
+      "note": "The survival of the recurrent parent, the control of the comparison in Fig. S1, has no record."
+    }
+  ]
+}

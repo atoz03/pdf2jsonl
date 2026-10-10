@@ -1,0 +1,890 @@
+{
+  "nodes": [
+    {
+      "id": "doi:10.0000/synthetic.2026.002",
+      "kind": "source",
+      "label": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population"
+    },
+    {
+      "id": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61",
+      "kind": "record",
+      "type": "asset_manifest"
+    },
+    {
+      "id": "rec:rec_c679c3c2c1343cfab188306fefdbb11a",
+      "kind": "record",
+      "type": "asset_manifest"
+    },
+    {
+      "id": "rec:rec_dc41a78de16f39e31079ea5147e533a6",
+      "kind": "record",
+      "type": "claim",
+      "label": "Heat stress damages chloroplasts and reduces grain yield in rice."
+    },
+    {
+      "id": "rec:rec_78858b935a834f96996e2a9d46e4961d",
+      "kind": "record",
+      "type": "claim",
+      "label": "How heat signals are transduced from the plasma membrane to chloroplasts remains unknown."
+    },
+    {
+      "id": "rec:rec_79044e3e05f535856832154a51c8a87f",
+      "kind": "record",
+      "type": "claim",
+      "label": "The objective of this study was to identify genes underlying natural variation in thermotolerance."
+    },
+    {
+      "id": "rec:rec_eb88edbd3cdd1ce77d844d368affb702",
+      "kind": "record",
+      "type": "observation",
+      "label": "A chromosome segment substitution line, SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment (fig. S1)."
+    },
+    {
+      "id": "rec:rec_2f056a171ec8867c073c350da2562919",
+      "kind": "record",
+      "type": "method",
+      "label": "We backcrossed SL14 to WY to construct a mapping population."
+    },
+    {
+      "id": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "kind": "record",
+      "type": "analysis_result",
+      "label": "Using 1,614 BC4F3 plants from this population, qHT3 was narrowed to a 36.6 kb interval on chromosome 3 (Table 1)."
+    },
+    {
+      "id": "rec:rec_69945ca262a0be13812fc69f7f90fd65",
+      "kind": "record",
+      "type": "method",
+      "label": "Only recombinant plants that survived the heat treatment were advanced to the next generation."
+    },
+    {
+      "id": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "kind": "record",
+      "type": "claim",
+      "label": "HTR1 underlies qHT3"
+    },
+    {
+      "id": "rec:rec_6427ec708013a88c3bd6d089815d21ec",
+      "kind": "record",
+      "type": "method",
+      "label": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9."
+    },
+    {
+      "id": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "kind": "record",
+      "type": "observation",
+      "label": "The knockout lines of HTR1 showed lower survival than WY after heat treatment (fig. S2)."
+    },
+    {
+      "id": "rec:rec_996ddd2fb171c0a2199a4019d1970653",
+      "kind": "record",
+      "type": "claim",
+      "label": "HTR1 might recruit HTR2 precursors to endosomes for degradation"
+    },
+    {
+      "id": "rec:rec_2d21f963dafe36ae2335bd207c74a610",
+      "kind": "record",
+      "type": "observation",
+      "label": "HTR1 interacted with HTR2 in a split-luciferase assay (fig. S3)."
+    },
+    {
+      "id": "rec:rec_e4822d11955faccebf5bed73e5a40750",
+      "kind": "record",
+      "type": "claim",
+      "label": "HTR1 acts upstream of HTR2 to protect chloroplasts under heat stress."
+    },
+    {
+      "id": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40",
+      "kind": "record",
+      "type": "claim",
+      "label": "How HTR2 accumulation damages chloroplasts remains to be determined."
+    },
+    {
+      "id": "rec:rec_4347364e90ac28cf4607e75c85f2c399",
+      "kind": "record",
+      "type": "method",
+      "label": "Twelve-day-old seedlings were treated at 42 C for 14 h and survival was scored after 7 days of recovery."
+    },
+    {
+      "id": "rec:rec_e9fa66c06dd335641622897f8abae636",
+      "kind": "record",
+      "type": "method",
+      "label": "Each line was tested in 3 biological replicates of 24 plants."
+    },
+    {
+      "id": "rec:rec_25e38f650b4ac0b365090b3d3f707721",
+      "kind": "record",
+      "type": "method",
+      "label": "Survival rates were compared with a two-tailed t test."
+    },
+    {
+      "id": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43",
+      "kind": "record",
+      "type": "method",
+      "label": "Split-luciferase assays were performed in Nicotiana benthamiana leaves."
+    },
+    {
+      "id": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "kind": "record",
+      "type": "phenotype_observation",
+      "label": "SL14 78.5 %"
+    },
+    {
+      "id": "ent:crop/rice",
+      "kind": "entity",
+      "type": "crop",
+      "label": "rice",
+      "mentions": 21
+    },
+    {
+      "id": "ent:trait/grain_yield",
+      "kind": "entity",
+      "type": "trait",
+      "label": "grain yield",
+      "mentions": 1
+    },
+    {
+      "id": "ent:trait/thermotolerance",
+      "kind": "entity",
+      "type": "trait",
+      "label": "thermotolerance",
+      "mentions": 1
+    },
+    {
+      "id": "ent:germplasm/sl14",
+      "kind": "entity",
+      "type": "germplasm",
+      "label": "SL14",
+      "mentions": 3
+    },
+    {
+      "id": "ent:germplasm/wy",
+      "kind": "entity",
+      "type": "germplasm",
+      "label": "WY",
+      "mentions": 1
+    },
+    {
+      "id": "ent:recurrent_parent/wy",
+      "kind": "entity",
+      "type": "recurrent_parent",
+      "label": "WY",
+      "mentions": 1
+    },
+    {
+      "id": "ent:qtl/qht3",
+      "kind": "entity",
+      "type": "qtl",
+      "label": "qHT3",
+      "mentions": 2
+    },
+    {
+      "id": "ent:gene/htr1",
+      "kind": "entity",
+      "type": "gene",
+      "label": "HTR1",
+      "mentions": 6
+    },
+    {
+      "id": "ent:gene/htr2",
+      "kind": "entity",
+      "type": "gene",
+      "label": "HTR2",
+      "mentions": 4
+    },
+    {
+      "id": "ent:entity/htr2_precursors",
+      "kind": "entity",
+      "type": "entity",
+      "label": "HTR2 precursors",
+      "mentions": 1
+    }
+  ],
+  "edges": [
+    {
+      "s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"
+    },
+    {
+      "s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"
+    },
+    {
+      "s": "rec:rec_dc41a78de16f39e31079ea5147e533a6",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"
+    },
+    {
+      "s": "rec:rec_78858b935a834f96996e2a9d46e4961d",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_78858b935a834f96996e2a9d46e4961d"
+    },
+    {
+      "s": "rec:rec_79044e3e05f535856832154a51c8a87f",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_79044e3e05f535856832154a51c8a87f"
+    },
+    {
+      "s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"
+    },
+    {
+      "s": "rec:rec_2f056a171ec8867c073c350da2562919",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_2f056a171ec8867c073c350da2562919"
+    },
+    {
+      "s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"
+    },
+    {
+      "s": "rec:rec_69945ca262a0be13812fc69f7f90fd65",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"
+    },
+    {
+      "s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"
+    },
+    {
+      "s": "rec:rec_6427ec708013a88c3bd6d089815d21ec",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"
+    },
+    {
+      "s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"
+    },
+    {
+      "s": "rec:rec_996ddd2fb171c0a2199a4019d1970653",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"
+    },
+    {
+      "s": "rec:rec_2d21f963dafe36ae2335bd207c74a610",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"
+    },
+    {
+      "s": "rec:rec_e4822d11955faccebf5bed73e5a40750",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750"
+    },
+    {
+      "s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"
+    },
+    {
+      "s": "rec:rec_4347364e90ac28cf4607e75c85f2c399",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"
+    },
+    {
+      "s": "rec:rec_e9fa66c06dd335641622897f8abae636",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_e9fa66c06dd335641622897f8abae636"
+    },
+    {
+      "s": "rec:rec_25e38f650b4ac0b365090b3d3f707721",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"
+    },
+    {
+      "s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"
+    },
+    {
+      "s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "p": "bdc:from_source",
+      "o": "doi:10.0000/synthetic.2026.002",
+      "kind": "provenance",
+      "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"
+    },
+    {
+      "s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"
+    },
+    {
+      "s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"
+    },
+    {
+      "s": "rec:rec_dc41a78de16f39e31079ea5147e533a6",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"
+    },
+    {
+      "s": "rec:rec_dc41a78de16f39e31079ea5147e533a6",
+      "p": "bdc:common.trait_names",
+      "o": "ent:trait/grain_yield",
+      "kind": "mention",
+      "record_id": "rec_dc41a78de16f39e31079ea5147e533a6",
+      "start": 45,
+      "end": 56
+    },
+    {
+      "s": "rec:rec_78858b935a834f96996e2a9d46e4961d",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_78858b935a834f96996e2a9d46e4961d"
+    },
+    {
+      "s": "rec:rec_79044e3e05f535856832154a51c8a87f",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_79044e3e05f535856832154a51c8a87f"
+    },
+    {
+      "s": "rec:rec_79044e3e05f535856832154a51c8a87f",
+      "p": "bdc:common.trait_names",
+      "o": "ent:trait/thermotolerance",
+      "kind": "mention",
+      "record_id": "rec_79044e3e05f535856832154a51c8a87f",
+      "start": 82,
+      "end": 97
+    },
+    {
+      "s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"
+    },
+    {
+      "s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702",
+      "p": "bdc:common.germplasm_names",
+      "o": "ent:germplasm/sl14",
+      "kind": "mention",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "start": 40,
+      "end": 44
+    },
+    {
+      "s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702",
+      "p": "bdc:common.germplasm_names",
+      "o": "ent:germplasm/wy",
+      "kind": "mention",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "start": 95,
+      "end": 97
+    },
+    {
+      "s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702",
+      "p": "bdc:common.recurrent_parent",
+      "o": "ent:recurrent_parent/wy",
+      "kind": "mention",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "start": 95,
+      "end": 97
+    },
+    {
+      "s": "rec:rec_2f056a171ec8867c073c350da2562919",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_2f056a171ec8867c073c350da2562919"
+    },
+    {
+      "s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"
+    },
+    {
+      "s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "p": "bdc:common.qtl_names",
+      "o": "ent:qtl/qht3",
+      "kind": "mention",
+      "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "start": 47,
+      "end": 51
+    },
+    {
+      "s": "rec:rec_69945ca262a0be13812fc69f7f90fd65",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"
+    },
+    {
+      "s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"
+    },
+    {
+      "s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "p": "bdc:common.gene_names",
+      "o": "ent:gene/htr1",
+      "kind": "mention",
+      "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "start": 16,
+      "end": 20,
+      "relation_role": "subject"
+    },
+    {
+      "s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "p": "bdc:common.qtl_names",
+      "o": "ent:qtl/qht3",
+      "kind": "mention",
+      "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "start": 31,
+      "end": 35,
+      "relation_role": "object"
+    },
+    {
+      "s": "rec:rec_6427ec708013a88c3bd6d089815d21ec",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"
+    },
+    {
+      "s": "rec:rec_6427ec708013a88c3bd6d089815d21ec",
+      "p": "bdc:common.gene_names",
+      "o": "ent:gene/htr1",
+      "kind": "mention",
+      "record_id": "rec_6427ec708013a88c3bd6d089815d21ec",
+      "start": 16,
+      "end": 20
+    },
+    {
+      "s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"
+    },
+    {
+      "s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "p": "bdc:common.germplasm_names",
+      "o": "ent:germplasm/sl14",
+      "kind": "mention",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"
+    },
+    {
+      "s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "p": "bdc:common.gene_names",
+      "o": "ent:gene/htr1",
+      "kind": "mention",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "start": 22,
+      "end": 26
+    },
+    {
+      "s": "rec:rec_996ddd2fb171c0a2199a4019d1970653",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"
+    },
+    {
+      "s": "rec:rec_996ddd2fb171c0a2199a4019d1970653",
+      "p": "bdc:common.gene_names",
+      "o": "ent:gene/htr1",
+      "kind": "mention",
+      "record_id": "rec_996ddd2fb171c0a2199a4019d1970653",
+      "start": 21,
+      "end": 25,
+      "relation_role": "subject"
+    },
+    {
+      "s": "rec:rec_996ddd2fb171c0a2199a4019d1970653",
+      "p": "bdc:common.gene_names",
+      "o": "ent:gene/htr2",
+      "kind": "mention",
+      "record_id": "rec_996ddd2fb171c0a2199a4019d1970653",
+      "start": 40,
+      "end": 44
+    },
+    {
+      "s": "rec:rec_996ddd2fb171c0a2199a4019d1970653",
+      "p": "bdc:transform.object_mention",
+      "o": "ent:entity/htr2_precursors",
+      "kind": "mention",
+      "record_id": "rec_996ddd2fb171c0a2199a4019d1970653",
+      "start": 40,
+      "end": 55,
+      "relation_role": "object"
+    },
+    {
+      "s": "rec:rec_2d21f963dafe36ae2335bd207c74a610",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"
+    },
+    {
+      "s": "rec:rec_2d21f963dafe36ae2335bd207c74a610",
+      "p": "bdc:common.gene_names",
+      "o": "ent:gene/htr1",
+      "kind": "mention",
+      "record_id": "rec_2d21f963dafe36ae2335bd207c74a610",
+      "start": 0,
+      "end": 4,
+      "relation_role": "subject"
+    },
+    {
+      "s": "rec:rec_2d21f963dafe36ae2335bd207c74a610",
+      "p": "bdc:common.gene_names",
+      "o": "ent:gene/htr2",
+      "kind": "mention",
+      "record_id": "rec_2d21f963dafe36ae2335bd207c74a610",
+      "start": 21,
+      "end": 25,
+      "relation_role": "object"
+    },
+    {
+      "s": "rec:rec_e4822d11955faccebf5bed73e5a40750",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750"
+    },
+    {
+      "s": "rec:rec_e4822d11955faccebf5bed73e5a40750",
+      "p": "bdc:common.gene_names",
+      "o": "ent:gene/htr1",
+      "kind": "mention",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "start": 28,
+      "end": 32,
+      "relation_role": "subject"
+    },
+    {
+      "s": "rec:rec_e4822d11955faccebf5bed73e5a40750",
+      "p": "bdc:common.gene_names",
+      "o": "ent:gene/htr2",
+      "kind": "mention",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "start": 50,
+      "end": 54,
+      "relation_role": "object"
+    },
+    {
+      "s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"
+    },
+    {
+      "s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40",
+      "p": "bdc:common.gene_names",
+      "o": "ent:gene/htr2",
+      "kind": "mention",
+      "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "s": "rec:rec_4347364e90ac28cf4607e75c85f2c399",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"
+    },
+    {
+      "s": "rec:rec_e9fa66c06dd335641622897f8abae636",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_e9fa66c06dd335641622897f8abae636"
+    },
+    {
+      "s": "rec:rec_25e38f650b4ac0b365090b3d3f707721",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"
+    },
+    {
+      "s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"
+    },
+    {
+      "s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "p": "bdc:common.crop_name",
+      "o": "ent:crop/rice",
+      "kind": "mention",
+      "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"
+    },
+    {
+      "s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "p": "bdc:common.germplasm_names",
+      "o": "ent:germplasm/sl14",
+      "kind": "mention",
+      "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "start": 0,
+      "end": 4
+    },
+    {
+      "s": "rec:rec_78858b935a834f96996e2a9d46e4961d",
+      "p": "bdc:agent.addresses_record_ids",
+      "o": "rec:rec_dc41a78de16f39e31079ea5147e533a6",
+      "kind": "link",
+      "record_id": "rec_78858b935a834f96996e2a9d46e4961d"
+    },
+    {
+      "s": "rec:rec_79044e3e05f535856832154a51c8a87f",
+      "p": "bdc:agent.addresses_record_ids",
+      "o": "rec:rec_78858b935a834f96996e2a9d46e4961d",
+      "kind": "link",
+      "record_id": "rec_79044e3e05f535856832154a51c8a87f"
+    },
+    {
+      "s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702",
+      "p": "bdc:agent.evidence_record_ids",
+      "o": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "kind": "link",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "argument_role": "data"
+    },
+    {
+      "s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702",
+      "p": "bdc:skills.method_record_ids",
+      "o": "rec:rec_4347364e90ac28cf4607e75c85f2c399",
+      "kind": "link",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "argument_role": "warrant"
+    },
+    {
+      "s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702",
+      "p": "bdc:skills.method_record_ids",
+      "o": "rec:rec_25e38f650b4ac0b365090b3d3f707721",
+      "kind": "link",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "argument_role": "warrant"
+    },
+    {
+      "s": "rec:rec_2f056a171ec8867c073c350da2562919",
+      "p": "bdc:agent.prerequisite_record_ids",
+      "o": "rec:rec_eb88edbd3cdd1ce77d844d368affb702",
+      "kind": "link",
+      "record_id": "rec_2f056a171ec8867c073c350da2562919"
+    },
+    {
+      "s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "p": "bdc:agent.prerequisite_record_ids",
+      "o": "rec:rec_2f056a171ec8867c073c350da2562919",
+      "kind": "link",
+      "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"
+    },
+    {
+      "s": "rec:rec_69945ca262a0be13812fc69f7f90fd65",
+      "p": "bdc:agent.prerequisite_record_ids",
+      "o": "rec:rec_2f056a171ec8867c073c350da2562919",
+      "kind": "link",
+      "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"
+    },
+    {
+      "s": "rec:rec_69945ca262a0be13812fc69f7f90fd65",
+      "p": "bdc:agent.prerequisite_record_ids",
+      "o": "rec:rec_4347364e90ac28cf4607e75c85f2c399",
+      "kind": "link",
+      "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"
+    },
+    {
+      "s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "p": "bdc:agent.addresses_record_ids",
+      "o": "rec:rec_79044e3e05f535856832154a51c8a87f",
+      "kind": "link",
+      "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"
+    },
+    {
+      "s": "rec:rec_6427ec708013a88c3bd6d089815d21ec",
+      "p": "bdc:agent.tests_record_ids",
+      "o": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "kind": "link",
+      "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"
+    },
+    {
+      "s": "rec:rec_6427ec708013a88c3bd6d089815d21ec",
+      "p": "bdc:agent.prerequisite_record_ids",
+      "o": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "kind": "link",
+      "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"
+    },
+    {
+      "s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "p": "bdc:agent.tests_record_ids",
+      "o": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "kind": "link",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"
+    },
+    {
+      "s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "p": "bdc:skills.method_record_ids",
+      "o": "rec:rec_6427ec708013a88c3bd6d089815d21ec",
+      "kind": "link",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "argument_role": "warrant"
+    },
+    {
+      "s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "p": "bdc:skills.method_record_ids",
+      "o": "rec:rec_4347364e90ac28cf4607e75c85f2c399",
+      "kind": "link",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "argument_role": "warrant"
+    },
+    {
+      "s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "p": "bdc:skills.method_record_ids",
+      "o": "rec:rec_25e38f650b4ac0b365090b3d3f707721",
+      "kind": "link",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "argument_role": "warrant"
+    },
+    {
+      "s": "rec:rec_996ddd2fb171c0a2199a4019d1970653",
+      "p": "bdc:agent.addresses_record_ids",
+      "o": "rec:rec_78858b935a834f96996e2a9d46e4961d",
+      "kind": "link",
+      "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"
+    },
+    {
+      "s": "rec:rec_2d21f963dafe36ae2335bd207c74a610",
+      "p": "bdc:skills.method_record_ids",
+      "o": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43",
+      "kind": "link",
+      "record_id": "rec_2d21f963dafe36ae2335bd207c74a610",
+      "argument_role": "warrant"
+    },
+    {
+      "s": "rec:rec_e4822d11955faccebf5bed73e5a40750",
+      "p": "bdc:agent.evidence_record_ids",
+      "o": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "kind": "link",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "argument_role": "data"
+    },
+    {
+      "s": "rec:rec_e4822d11955faccebf5bed73e5a40750",
+      "p": "bdc:agent.evidence_record_ids",
+      "o": "rec:rec_2d21f963dafe36ae2335bd207c74a610",
+      "kind": "link",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "argument_role": "data"
+    },
+    {
+      "s": "rec:rec_e4822d11955faccebf5bed73e5a40750",
+      "p": "bdc:agent.addresses_record_ids",
+      "o": "rec:rec_78858b935a834f96996e2a9d46e4961d",
+      "kind": "link",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750"
+    },
+    {
+      "s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "p": "bdc:skills.method_record_ids",
+      "o": "rec:rec_4347364e90ac28cf4607e75c85f2c399",
+      "kind": "link",
+      "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "argument_role": "warrant"
+    },
+    {
+      "s": "ent:gene/htr1",
+      "p": "bdc:stated_relation",
+      "o": "ent:qtl/qht3",
+      "kind": "statement",
+      "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "statement_id": "stm_12b2a0b0ef4c18668d477888",
+      "predicate_status": "verbatim",
+      "predicate_mention": "underlies"
+    },
+    {
+      "s": "ent:gene/htr1",
+      "p": "bdc:stated_relation",
+      "o": "ent:entity/htr2_precursors",
+      "kind": "statement",
+      "record_id": "rec_996ddd2fb171c0a2199a4019d1970653",
+      "statement_id": "stm_48da284f8f3c4a461e7a3a00",
+      "predicate_status": "verbatim",
+      "predicate_mention": "might recruit",
+      "hedge": "might"
+    },
+    {
+      "s": "ent:gene/htr1",
+      "p": "bdc:gene_interacts_with_gene",
+      "o": "ent:gene/htr2",
+      "kind": "statement",
+      "record_id": "rec_2d21f963dafe36ae2335bd207c74a610",
+      "statement_id": "stm_eff24b9aeeae505e5ad37b62",
+      "predicate_status": "lexicon",
+      "predicate_mention": "interacted with"
+    },
+    {
+      "s": "ent:gene/htr1",
+      "p": "bdc:stated_relation",
+      "o": "ent:gene/htr2",
+      "kind": "statement",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "statement_id": "stm_69a98b02d0657e5df29b03af",
+      "predicate_status": "verbatim",
+      "predicate_mention": "acts upstream of"
+    }
+  ]
+}

@@ -114,3 +114,20 @@ def test_embedded_json_cannot_close_script_and_custom_location_has_correct_base(
     assert json.loads(payload)==data
     assert '<base href="../">' in text
     assert dashboard._url(tmp_path,tmp_path/'javascript:evil.pdf')=='./javascript%3Aevil.pdf'
+
+
+def test_supplement_listed_by_a_run_is_a_part_not_a_paper(root, tmp_path):
+    for name in ('synthetic_rice_heat.pdf','synthetic_rice_heat.supplement.pdf'):
+        shutil.copyfile(root/'examples/papers'/name,tmp_path/name)
+    assert len(dashboard.build_data(tmp_path)['papers'])==2  # no run says that the two files belong together
+    out=tmp_path/'out';out.mkdir()
+    for path in (root/'examples/output').glob('synthetic_rice_heat.*'):
+        shutil.copyfile(path,out/path.name)
+    data=dashboard.build_data(tmp_path)
+    [paper]=data['papers']
+    assert paper['filename']=='synthetic_rice_heat.pdf' and paper['runs'][0]['integrity_ok']
+    [part]=paper['supplements']
+    assert part['part']=='supplement' and part['pdf_url']=='./synthetic_rice_heat.supplement.pdf' and part['page_count']==2
+    assert paper['runs'][0]['source_parts']['complete'] is True
+    assert './synthetic_rice_heat.supplement.pdf' in ['./'+x for x in dashboard._linked_files(data)]
+

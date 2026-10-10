@@ -11,6 +11,7 @@ from typing import Any, Callable
 
 from . import PIPELINE_VERSION
 from .contract_link import ensure_contract_importable
+from .pdf_parse import MAIN_PART
 
 ensure_contract_importable()
 from breeding_contract.ids import build_locator, build_span, stable_record_id  # noqa: E402
@@ -68,6 +69,16 @@ class RecordContext:
     issues: list = field(default_factory=list)     # Issue objects (validator + pipeline warnings)
     notes: dict = field(default_factory=dict)
     pre: list = field(default_factory=list)        # pipeline issues that are not re-derived by validation
+    part: str = MAIN_PART                          # which file of the source the record comes from (AMB-041)
+
+    @property
+    def part_doc(self):
+        return self.run.doc.part_doc(self.part) or self.run.doc
+
+    @property
+    def part_label(self) -> str | None:
+        """The part as written into locators, spans and ID anchors: nothing for the main text."""
+        return None if self.part == MAIN_PART else self.part
 
     def value(self, path: str | None) -> Any:
         if not path:
@@ -111,8 +122,13 @@ def _constant(ctx: RecordContext, params: dict):
     return params["value"]
 
 
+MAIN_FILE_OPTIONS = frozenset({"asset_uri", "source_asset_id"})  # operator values that describe the main file
+
+
 @rule("cli_option")
 def _cli_option(ctx: RecordContext, params: dict):
+    if ctx.part != MAIN_PART and params["option"] in MAIN_FILE_OPTIONS:
+        return MISSING  # never attach the main file's URI or asset ID to a supplement
     v = ctx.run.options.get(params["option"])
     return MISSING if v in (None, "") else v
 
@@ -154,25 +170,32 @@ def _doi_uri(ctx: RecordContext, params: dict):
 
 @rule("input_file_sha256")
 def _file_sha(ctx: RecordContext, params: dict):
-    return ctx.run.doc.sha256
+    return ctx.part_doc.sha256
 
 
 @rule("input_file_size")
 def _file_size(ctx: RecordContext, params: dict):
-    return ctx.run.doc.size_bytes
+    return ctx.part_doc.size_bytes
+
+
+@rule("evidence_source_part")
+def _source_part(ctx: RecordContext, params: dict):
+    """The part of the source a record comes from, as a vocabulary code. ``params`` maps the pipeline's part
+    kinds (main, supplement) to the codes of the contract, so the codes stay in the profile."""
+    return params.get(ctx.part_doc.part_kind) or MISSING
 
 
 # ------------------------------------------------------------------ evidence anchors
 def _anchor(ctx: RecordContext) -> str:
     e = ctx.evidence
     return build_locator(page=e.get("page"), section=e.get("section"), table=e.get("table_figure"),
-                         row=e.get("row_key"), col=e.get("column_key"))
+                         row=e.get("row_key"), col=e.get("column_key"), part=ctx.part_label)
 
 
 @rule("evidence_locator", order=20)
 def _locator(ctx: RecordContext, params: dict):
-    if not ctx.evidence:
-        return "document"  # system records (e.g. the PDF asset itself) are located at document level
+    if not ctx.evidence:  # system records (e.g. the PDF asset itself) are located at document level
+        return build_locator(part=ctx.part_label) or "document"
     return _anchor(ctx)
 
 
@@ -180,7 +203,7 @@ def _locator(ctx: RecordContext, params: dict):
 def _span(ctx: RecordContext, params: dict):
     if not ctx.span or not ctx.evidence.get("page"):
         return MISSING
-    return build_span(ctx.evidence["page"], *ctx.span)
+    return build_span(ctx.evidence["page"], *ctx.span, part=ctx.part_label)
 
 
 @rule("stable_record_id", order=90)
@@ -190,7 +213,8 @@ def _record_id(ctx: RecordContext, params: dict):
     source_id = ctx.value(ctx.run.role("provenance", "document_id"))
     e = ctx.evidence
     anchor = build_locator(page=e.get("page"), table=e.get("table_figure"), row=e.get("row_key"),
-                           col=e.get("column_key")) if e else "document"
+                           col=e.get("column_key"), part=ctx.part_label) if e else \
+        (build_locator(part=ctx.part_label) or "document")
     return stable_record_id(str(source_id), ctx.record_kind, anchor, ctx.evidence.get("quote"), ctx.ordinal)
 
 
@@ -263,13 +287,16 @@ def _relation_anchors(ctx: RecordContext, params: dict) -> dict:
 def _asset_manifest(ctx: RecordContext, params: dict):
     """Emit one record describing the input file itself — only when the input really is a PDF (a bare text
     layer is not the raw_pdf asset, so describing it as one would be a fabricated fact)."""
-    if ctx.run.doc.media_type != "application/pdf":
+    if ctx.part_doc.media_type != "application/pdf":
         ctx.notes["skipped"] = "input is not a PDF file"
         return False
     return True
 
 
 # ------------------------------------------------------------------ phase 2 (after validation)
+SOURCE_PART_UNAVAILABLE = "SOURCE_PART_UNAVAILABLE"  # the record cites a part of the source that was not supplied
+
+
 def _warnings(ctx: RecordContext) -> list:
     return [i for i in ctx.issues if i.severity == "warning"]
 
@@ -294,12 +321,16 @@ def _missing_audit(ctx: RecordContext, params: dict):
                 if spec["rule"] == "cli_option"}
     for sr in ctx.run.profile.get("system_records") or []:
         external |= {path for path, spec in sr["fields"].items() if spec["rule"] == "cli_option"}
+    part_missing = any(i.code == SOURCE_PART_UNAVAILABLE for i in _warnings(ctx))
     for i in _warnings(ctx):
         if not (i.code.startswith("RULE_") and i.path) or get_path(ctx.record, i.path) is not MISSING:
             continue
-        # Operator-supplied values come from outside the paper. For everything else the pipeline cannot tell
-        # "not reported by the paper" from "not found by the extractor", so it says not_located.
-        reason = "requires_external_source" if i.path in external else "not_located"
+        # Operator-supplied values come from outside the paper. A record that cites a part of the source that
+        # was not supplied (a supplementary figure, say) may have its missing values there. For everything
+        # else the pipeline cannot tell "not reported by the paper" from "not found by the extractor", so it
+        # says not_located.
+        reason = "requires_external_source" if i.path in external else \
+            "source_part_unavailable" if part_missing and "source_part_unavailable" in allowed else "not_located"
         if reason in allowed:
             out.setdefault(i.path, reason)
     grain_reason = (ctx.notes.get("missing") or {}).get("grain")

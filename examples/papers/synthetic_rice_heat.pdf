@@ -1,0 +1,84 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 852 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+56 800 Td
+(A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice) Tj T*
+(population) Tj T*
+(Synthetic Author C, Synthetic Author D) Tj T*
+(SYNTHETIC EXAMPLE DOCUMENT - not a real publication. doi: 10.0000/synthetic.2026.002) Tj T*
+(Published online: 20 May 2025) Tj T*
+() Tj T*
+(Abstract) Tj T*
+(Heat stress damages chloroplasts and reduces rice yield. We mapped qHT3, a QTL for seedling) Tj T*
+(survival after heat stress, and identified two genes, HTR1 and HTR2, at this locus.) Tj T*
+() Tj T*
+(Introduction) Tj T*
+(Heat stress damages chloroplasts and reduces grain yield in rice. How heat signals are) Tj T*
+(transduced from the plasma membrane to chloroplasts remains unknown. The objective of this) Tj T*
+(study was to identify genes underlying natural variation in thermotolerance.) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1249 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+56 800 Td
+(Results) Tj T*
+(A chromosome segment substitution line, SL14, showed higher survival than the recurrent parent) Tj T*
+(WY after 12 h of heat treatment \(fig. S1\). We backcrossed SL14 to WY to construct a mapping) Tj T*
+(population. Using 1,614 BC4F3 plants from this population, qHT3 was narrowed to a 36.6 kb) Tj T*
+(interval on chromosome 3 \(Table 1\). Only recombinant plants that survived the heat treatment) Tj T*
+(were advanced to the next generation.) Tj T*
+(Table 1 Fine mapping of qHT3) Tj T*
+(Interval Markers Size) Tj T*
+(qHT3 M11-M19 36.6 kb) Tj T*
+(To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.) Tj T*
+(The knockout lines of HTR1 showed lower survival than WY after heat treatment \(fig. S2\). We) Tj T*
+(hypothesized that HTR1 might recruit HTR2 precursors to endosomes for degradation. HTR1) Tj T*
+(interacted with HTR2 in a split-luciferase assay \(fig. S3\).) Tj T*
+() Tj T*
+(Discussion) Tj T*
+(These results indicate that HTR1 acts upstream of HTR2 to protect chloroplasts under heat) Tj T*
+(stress. How HTR2 accumulation damages chloroplasts remains to be determined. Materials and) Tj T*
+(methods are available as supplementary materials.) Tj T*
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000001253 00000 n 
+0000001379 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+2680
+%%EOF

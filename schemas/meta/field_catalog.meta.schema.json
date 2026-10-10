@@ -112,6 +112,7 @@
         "serves": {"$ref": "#/$defs/functions"},
         "argument_role": {"enum": ["claim", "data", "warrant", "backing", "qualifier", "rebuttal", "monitoring", "evaluation"]},
         "card": {"enum": ["hypothesis", "experiment_design", "result_analysis"]},
+        "workflow_edge": {"type": "string", "pattern": "^[a-z][a-z_]*$", "description": "edge type of a record_link field in the research-workflow view; a code of codes.workflow_edge (AMB-039)"},
         "source_ref": {"type": "string"}
       }
     },

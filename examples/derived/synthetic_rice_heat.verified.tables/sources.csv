@@ -1,0 +1,2 @@
+source_id,common.source_id,common.source_type,common.source_title,common.source_doi,common.source_year,common.source_authors,common.source_file_sha256,common.source_language,common.source_uri
+doi:10.0000/synthetic.2026.002,doi:10.0000/synthetic.2026.002,paper,A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population,10.0000/synthetic.2026.002,2025,"[""Synthetic Author C"", ""Synthetic Author D""]",3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a,en,https://doi.org/10.0000/synthetic.2026.002

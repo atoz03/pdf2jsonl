@@ -8,12 +8,16 @@ code_status: proposed
 source:
   ref: sources/fields_v3/breeding_fields_259_final.md#L29
   quote_zh: 待复核、自动校验通过、专家通过或驳回
-ambiguities: [AMB-010]
+ambiguities: [AMB-010, AMB-040]
 values:
 - code: pending_review
   label_zh: 待复核
 - code: auto_validated
   label_zh: 自动校验通过
+- code: model_verified
+  label_zh: 模型复核通过
+  description_zh: 独立复核运行判定字段取值与链接均为原文所支持；不等同于专家通过（3.5.0 新增，AMB-040）
+  ambiguities: [AMB-040]
 - code: expert_approved
   label_zh: 专家通过
 - code: rejected

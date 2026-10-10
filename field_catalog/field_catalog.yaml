@@ -566,6 +566,28 @@ codes:
       framework: flavell
       description_zh: 对结果质量或正确性的判断（复核状态与复核说明）
   argument_role_source: 'TRACE: Toulmin-based Reasoning Assessment through Constructive Elements (Kim & Yang, ICML 2026, arXiv:2605.29656) — Toulmin 六要素 + Flavell 元认知两要素（AMB-033）'
+  workflow_edge:
+    evidence:
+      label_zh: 依据
+      label_en: rests on
+      description_zh: 结论或假设所依据的观测、结果或更具体的结论
+    method:
+      label_zh: 产生方法
+      label_en: produced by
+      description_zh: 产生该结果或观测的方法步骤
+    tests:
+      label_zh: 检验
+      label_en: tests
+      description_zh: 实验步骤、观测或结果所检验的假设、问题或目标
+    addresses:
+      label_zh: 回应
+      label_en: addresses
+      description_zh: 假设、目标或结论所回应的背景、问题、目标或假设
+    prerequisite:
+      label_zh: 前置
+      label_en: depends on
+      description_zh: 步骤以其产出为输入的前置步骤、观测或结果
+  workflow_edge_note_zh: workflow_edge 标注链接字段在论文研究流程视图中的边类型（AMB-039）；bdc derive 的 workflow.json 据此取边，不在代码中列字段。
 groups:
   common:
     title_zh: 通用
@@ -3439,6 +3461,36 @@ fields:
   - derivation
   - iteration
   source_ref: sources/merged_v2/breeding_jsonl_schema_v2.json#/$defs/omics_sample/properties/sampling_time
+- path: common.source_part
+  type: string
+  availability: N
+  required: N
+  definition_zh: 证据或资产所在的来源组成部分：正文、补充材料、附录或其他；同一 source_id 的各部分以本字段区分，source_page 为该部分文件内的物理页码；资产清单记录以本字段说明该文件是来源的哪一部分
+  data_source_zh: 抽取管线（按输入文件确定）
+  since: 3.5.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: source_part
+  ambiguities: [AMB-041]
+  key_role: evidence_locator
+  serves: [derivation, iteration]
+  source_ref: docs/downstream.md
+- path: common.verification_run_id
+  type: string
+  availability: N
+  required: N
+  definition_zh: 对本记录做语义复核（字段取值是否为引文所支持、记录间链接是否成立）的独立复核运行 ID；复核结论体现在 review_status 与 qc_failure_codes，明细见复核报告；未经复核则省略
+  data_source_zh: 复核运行（bdc verify）
+  since: 3.5.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-040]
+  key_role: lifecycle
+  serves: [iteration]
+  argument_role: evaluation
+  source_ref: docs/review.md
 - path: agent.scientific_question
   type: string
   availability: I
@@ -4158,6 +4210,7 @@ fields:
   serves: [topic2, derivation]
   card: result_analysis
   argument_role: data
+  workflow_edge: evidence
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L178
 - path: agent.external_validity_scope
   type: string
@@ -4374,6 +4427,84 @@ fields:
   card: result_analysis
   argument_role: rebuttal
   source_ref: docs/field_functions.md
+- path: agent.statement_role
+  type: string
+  availability: D
+  required: N
+  definition_zh: 本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入
+  data_source_zh: 摘要、引言、结果与讨论中的陈述
+  since: 3.5.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: statement_role
+  ambiguities: [AMB-039]
+  key_role: study_design
+  serves: [topic2, topic3, derivation]
+  source_ref: docs/workflow.md
+- path: agent.step_condition
+  type: string
+  availability: D
+  required: N
+  definition_zh: 原文陈述的本步骤的前提或分支条件原文，如“仅对存活株系继续回交”；逐字摘自证据引文，没有则省略
+  data_source_zh: 方法与结果原文
+  since: 3.5.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-039]
+  key_role: study_design
+  serves: [topic2, topic3]
+  card: experiment_design
+  source_ref: docs/workflow.md
+- path: agent.tests_record_ids
+  type: array_string
+  availability: N
+  required: N
+  definition_zh: 本实验步骤、观测或结果所检验的假设、科学问题或研究目标记录的 record_id，由抽取管线按候选引用解析；只在原文表明该实验为检验它而做时填写，不表示检验结果是支持还是否定
+  data_source_zh: 同一来源的假设、问题或目标记录
+  since: 3.5.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-039]
+  key_role: record_link
+  serves: [topic2, derivation]
+  card: experiment_design
+  workflow_edge: tests
+  source_ref: docs/workflow.md
+- path: agent.addresses_record_ids
+  type: array_string
+  availability: N
+  required: N
+  definition_zh: 本假设、研究目标或结论所回应的研究背景、科学问题、研究目标或假设记录的 record_id，由抽取管线按候选引用解析；连接背景、问题、假设与结论
+  data_source_zh: 同一来源的背景、问题、目标或假设记录
+  since: 3.5.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-039]
+  key_role: record_link
+  serves: [topic2, derivation]
+  card: hypothesis
+  workflow_edge: addresses
+  source_ref: docs/workflow.md
+- path: agent.prerequisite_record_ids
+  type: array_string
+  availability: N
+  required: N
+  definition_zh: 本步骤以其产出（材料、数据或结果）为输入的前置记录的 record_id，由抽取管线按候选引用解析；构成实验与分析步骤之间的依赖边，同一前置被多个步骤引用即为分支
+  data_source_zh: 同一来源的方法、观测或结果记录
+  since: 3.5.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-039]
+  key_role: record_link
+  serves: [topic2, topic3, derivation]
+  card: experiment_design
+  workflow_edge: prerequisite
+  source_ref: docs/workflow.md
 - path: skills.analysis_task
   type: string
   availability: I
@@ -5149,6 +5280,7 @@ fields:
   serves: [topic2, topic3, derivation]
   card: result_analysis
   argument_role: warrant
+  workflow_edge: method
   source_ref: docs/field_functions.md
 - path: transform.subject_mention
   type: string
@@ -5883,6 +6015,20 @@ fields:
   key_role: corpus_qa
   serves: [derivation]
   source_ref: docs/field_functions.md
+- path: transform.ontology_id
+  type: string
+  availability: N
+  required: N
+  definition_zh: 主谓宾规范ID所依赖的本体的稳定标识；与 transform.ontology_version 成对使用，用于区分覆盖整个领域的本体与只覆盖某一类论文的本体
+  data_source_zh: 本体与词表发布
+  since: 3.5.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  ambiguities: [AMB-041]
+  key_role: reference_frame
+  serves: [derivation, iteration]
+  source_ref: docs/downstream.md
 - path: omics.omics_type
   type: string
   availability: D
@@ -7268,6 +7414,16 @@ rules:
   source_zh: transform.entity_links 与 predicate_*_offset 定义：偏移为 common.source_quote 内的字符位置
   since: 3.4.0
   ambiguities: [AMB-038]
+- id: R035
+  kind: references_resolve
+  severity: warning
+  basis: definitional
+  title_zh: 研究流程链接引用的记录应能在数据集中找到
+  fields: [agent.tests_record_ids, agent.addresses_record_ids, agent.prerequisite_record_ids]
+  target: common.record_id
+  source_zh: agent.tests_record_ids、agent.addresses_record_ids、agent.prerequisite_record_ids 定义：同一来源中记录的 record_id
+  since: 3.5.0
+  ambiguities: [AMB-039]
 ambiguities:
 - id: AMB-001
   status: decided
@@ -7498,3 +7654,21 @@ ambiguities:
   finding_zh: 记录要派生为知识图谱、语料与问答，但抽取时谓词不可得（predicate_label 为人工判断，不暴露给模型），实体提及只是字符串数组，在引文中没有位置，也不知道哪个提及是关系的主语或宾语；下游只能对原文二次解析（延续 AMB-034）。
   resolution_zh: 新增 transform.predicate_mention（D，逐字谓词）；管线确定性生成 transform.entity_links 的 start/end/relation_role、transform.predicate_start_offset/predicate_end_offset 与 transform.predicate_code。predicate_code 只在 predicate_label 词表的线索词（cues）与主宾语实体类型恰好命中一个代码时填写，不替代人工审核的 predicate_label；线索词与各代码的主宾语类型为仓库拟定，待确认。R033、R034 为提示级规则。
   since: 3.4.0
+- id: AMB-039
+  status: provisional
+  title_zh: 论文内研究流程的表示
+  finding_zh: 课题二需要把一篇论文的研究背景、科学问题、研究目标、假设、实验设计、方法步骤、观测与结论组织成可追溯的研究流程，包括哪项实验检验哪条假设、步骤之间的依赖与分支。目录中已有相关字段（agent.scientific_question、hypothesis_stated、workflow_steps、workflow_dependencies 等），但抽取时只接通了“结论→证据”“结果→方法”两类链接；workflow_steps 是内嵌数组，输入输出为自由文本，步骤之间、步骤与假设之间无法用记录 ID 相连；scientific_question 与 workflow_dependencies 为人工判断（I），不暴露给模型。
+  resolution_zh: 研究流程作为原子记录之上的派生视图，不另设抽取格式，也不新增记录类型（沿用 AMB-012）。新增 agent.statement_role（D，词表 statement_role）标注陈述在研究流程中的角色；新增三类链接 agent.tests_record_ids、agent.addresses_record_ids、agent.prerequisite_record_ids（N，由候选引用解析），步骤以 method 记录承载，分支即多个步骤共用同一前置；agent.step_condition（D）保留原文陈述的前提或分支条件。字段的 workflow_edge 标注决定其在流程视图中的边类型；bdc derive 输出 workflow.json 并给出结构提示（未被检验的假设、依赖成环等），R035 检查链接闭合。角色词表、边类型与提示代码均为仓库拟定。抽取者归纳的假设不进入 D 字段，须另行生成并标注 hypothesis_origin=extractor_induced，其生成方式待定。
+  since: 3.5.0
+- id: AMB-040
+  status: open
+  title_zh: 语义复核、证据强度与复核分工
+  finding_zh: 现有检查覆盖格式、规则、逐字引文与链接闭合，不检查字段取值是否为引文所支持、链接是否成立、流程是否合乎逻辑，也不检查漏抽；agent.evidence_strength 定义为“按预定义规则评估”，但规则未给出；relation_evidence_type 只有统计定位、表达支持、功能验证三项，不足以描述定位成像、体外生化、药理处理和遗传互作等机制证据。review_status 在自动校验通过与专家通过之间没有中间状态。
+  resolution_zh: 分三层：确定性检查（规则、链接闭合、流程结构提示）；独立复核运行（bdc verify，由不同于抽取模型的模型或人员逐条判定字段、关系与链接是否为原文所支持），结论写入 review_status 新增代码 model_verified 或退回 pending_review 并记录 VERIFY_* 质控码与 common.verification_run_id，复核只能退回、不能代替专家通过，也不改写记录内容；育种专家负责证据强度规则、人工判断（I）字段以及按风险抽样复核，并以专家标注的小样本校准复核模型。relation_evidence_type 增加四个拟定代码。待数据负责人与育种专家确认：证据强度的分级规则、新增代码、抽样比例与校准样本规模。
+  since: 3.5.0
+- id: AMB-041
+  status: provisional
+  title_zh: 来源的组成部分、不完整来源与表示形式之间的追溯
+  finding_zh: 一篇论文可能由正文、补充材料、附录等多个文件组成，文献库中可能只有其中一部分（如缺少补充材料，而材料与方法恰在其中）。管线一次只读一个文件，不能发现正文引用了未提供的补充图表；缺失字段只能标为 not_located；补充材料另行抽取时与正文共用 source_id，页码重叠，候选引用不能跨运行。此外只有本体版本而没有本体标识，无法区分领域本体与专题本体。
+  resolution_zh: 新增 common.source_part（N，词表 source_part）；管线接受正文之外的补充文件，证据以“部分+该文件内物理页码”定位，每个文件各有资产清单记录，定位符与跨度在非正文部分带 part 键，正文记录的 record_id 不变。管线扫描正文对补充图表、补充材料的引用，在校验报告与清单中给出来源完整性（已提供、被引用、缺失的部分）；引文引用了缺失部分的记录标记 SOURCE_PART_UNAVAILABLE 并待复核，其缺失原因记为 missing_reason 新增代码 source_part_unavailable。补充材料到位后重新抽取，沿用 record_version 与 common.replaces_record_ids。新增 transform.ontology_id（N）。原始数据、来源文件、记录、图谱、流程、语料与本体之间的关系以三种关系刻画：派生自（记录→文件与位置，派生产物→记录）、生成于（运行、契约版本与画像）、对齐到（本体标识与版本）；记录是唯一可编辑层，派生产物只重新生成。记录到原始数据集资产的链接（skills.input_asset_refs 为 F）仍待确定。
+  since: 3.5.0

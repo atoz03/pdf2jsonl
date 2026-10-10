@@ -1,0 +1,555 @@
+{
+  "report_format": 1,
+  "run_id": "run_example_heat",
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.5.0",
+    "release_status": "released",
+    "requested": "3.5.0",
+    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
+    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
+  },
+  "profile": "pdf_extraction",
+  "input": {
+    "file_name": "synthetic_rice_heat.pdf",
+    "sha256": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a"
+  },
+  "valid": true,
+  "counts": {
+    "pages": 4,
+    "candidates": 19,
+    "records": 21,
+    "rejected": 0,
+    "by_record_kind": {
+      "analysis_result": 1,
+      "asset_manifest": 2,
+      "claim": 7,
+      "method": 7,
+      "observation": 3,
+      "phenotype_observation": 1
+    },
+    "by_review_status": {
+      "auto_validated": 19,
+      "pending_review": 2
+    },
+    "rejected_by_code": {}
+  },
+  "document": {
+    "values": {
+      "common.source_type": "paper",
+      "common.source_title": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population",
+      "common.source_doi": "10.0000/synthetic.2026.002",
+      "common.source_year": 2025,
+      "common.source_authors": [
+        "Synthetic Author C",
+        "Synthetic Author D"
+      ],
+      "common.source_language": "en",
+      "common.crop_name": "rice"
+    },
+    "issues": []
+  },
+  "records": [
+    {
+      "line": 1,
+      "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61",
+      "record_kind": "asset_manifest",
+      "candidate_index": null,
+      "warnings": [
+        {
+          "code": "RULE_R018",
+          "severity": "warning",
+          "path": "common.asset_uri",
+          "message": "资产清单应含URI、格式、大小与SHA-256：缺少 common.asset_uri",
+          "rule_id": "R018"
+        }
+      ]
+    },
+    {
+      "line": 2,
+      "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a",
+      "record_kind": "asset_manifest",
+      "candidate_index": null,
+      "warnings": [
+        {
+          "code": "RULE_R018",
+          "severity": "warning",
+          "path": "common.asset_uri",
+          "message": "资产清单应含URI、格式、大小与SHA-256：缺少 common.asset_uri",
+          "rule_id": "R018"
+        }
+      ]
+    },
+    {
+      "line": 3,
+      "record_id": "rec_dc41a78de16f39e31079ea5147e533a6",
+      "record_kind": "claim",
+      "candidate_index": 0,
+      "warnings": []
+    },
+    {
+      "line": 4,
+      "record_id": "rec_78858b935a834f96996e2a9d46e4961d",
+      "record_kind": "claim",
+      "candidate_index": 1,
+      "warnings": []
+    },
+    {
+      "line": 5,
+      "record_id": "rec_79044e3e05f535856832154a51c8a87f",
+      "record_kind": "claim",
+      "candidate_index": 2,
+      "warnings": []
+    },
+    {
+      "line": 6,
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "record_kind": "observation",
+      "candidate_index": 3,
+      "warnings": []
+    },
+    {
+      "line": 7,
+      "record_id": "rec_2f056a171ec8867c073c350da2562919",
+      "record_kind": "method",
+      "candidate_index": 4,
+      "warnings": []
+    },
+    {
+      "line": 8,
+      "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "record_kind": "analysis_result",
+      "candidate_index": 5,
+      "warnings": [],
+      "notes": {
+        "missing": {
+          "grain": "ambiguous_in_contract"
+        }
+      }
+    },
+    {
+      "line": 9,
+      "record_id": "rec_69945ca262a0be13812fc69f7f90fd65",
+      "record_kind": "method",
+      "candidate_index": 6,
+      "warnings": []
+    },
+    {
+      "line": 10,
+      "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "record_kind": "claim",
+      "candidate_index": 7,
+      "warnings": [],
+      "notes": {
+        "relation": {
+          "predicate_code": "no_unique_cue_match"
+        }
+      }
+    },
+    {
+      "line": 11,
+      "record_id": "rec_6427ec708013a88c3bd6d089815d21ec",
+      "record_kind": "method",
+      "candidate_index": 8,
+      "warnings": []
+    },
+    {
+      "line": 12,
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "record_kind": "observation",
+      "candidate_index": 9,
+      "warnings": []
+    },
+    {
+      "line": 13,
+      "record_id": "rec_996ddd2fb171c0a2199a4019d1970653",
+      "record_kind": "claim",
+      "candidate_index": 10,
+      "warnings": [],
+      "notes": {
+        "relation": {
+          "predicate_code": "no_unique_cue_match"
+        }
+      }
+    },
+    {
+      "line": 14,
+      "record_id": "rec_2d21f963dafe36ae2335bd207c74a610",
+      "record_kind": "observation",
+      "candidate_index": 11,
+      "warnings": []
+    },
+    {
+      "line": 15,
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "record_kind": "claim",
+      "candidate_index": 12,
+      "warnings": [],
+      "notes": {
+        "relation": {
+          "predicate_code": "no_unique_cue_match"
+        }
+      }
+    },
+    {
+      "line": 16,
+      "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40",
+      "record_kind": "claim",
+      "candidate_index": 13,
+      "warnings": []
+    },
+    {
+      "line": 17,
+      "record_id": "rec_4347364e90ac28cf4607e75c85f2c399",
+      "record_kind": "method",
+      "candidate_index": 14,
+      "warnings": []
+    },
+    {
+      "line": 18,
+      "record_id": "rec_e9fa66c06dd335641622897f8abae636",
+      "record_kind": "method",
+      "candidate_index": 15,
+      "warnings": []
+    },
+    {
+      "line": 19,
+      "record_id": "rec_25e38f650b4ac0b365090b3d3f707721",
+      "record_kind": "method",
+      "candidate_index": 16,
+      "warnings": []
+    },
+    {
+      "line": 20,
+      "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43",
+      "record_kind": "method",
+      "candidate_index": 17,
+      "warnings": []
+    },
+    {
+      "line": 21,
+      "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "record_kind": "phenotype_observation",
+      "candidate_index": 18,
+      "warnings": [],
+      "notes": {
+        "normalization": [
+          {
+            "raw_value": "78.5",
+            "raw_unit": "%",
+            "result": {
+              "value": 78.5,
+              "unit": "%"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "rejected": [],
+  "repairs": [],
+  "system_records_skipped": [],
+  "argument_structure": {
+    "audit_format": 1,
+    "basis": "TRACE (arXiv:2605.29656): Toulmin + Flavell elements via catalog argument_role (AMB-033); reports structure and connectivity, not correctness",
+    "statements": 8,
+    "coverage": {
+      "claim": {
+        "own": 4,
+        "chain": 4
+      },
+      "data": {
+        "own": 8,
+        "chain": 8
+      },
+      "warrant": {
+        "own": 4,
+        "chain": 5
+      },
+      "backing": {
+        "own": 0,
+        "chain": 0
+      },
+      "qualifier": {
+        "own": 1,
+        "chain": 1
+      },
+      "rebuttal": {
+        "own": 0,
+        "chain": 0
+      },
+      "monitoring": {
+        "own": 0,
+        "chain": 0
+      },
+      "evaluation": {
+        "own": 8,
+        "chain": 8
+      }
+    },
+    "links": {
+      "total": 10,
+      "unresolved": 0
+    },
+    "flags": {
+      "NO_WARRANT": 3
+    },
+    "flag_help": {
+      "NO_WARRANT": "no warrant in the chain: no statistical test, evidence type or linked method"
+    },
+    "records": [
+      {
+        "record_id": "rec_dc41a78de16f39e31079ea5147e533a6",
+        "record_kind": "claim",
+        "elements": [
+          "claim",
+          "data",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "claim",
+          "data",
+          "evaluation"
+        ],
+        "flags": [
+          "NO_WARRANT"
+        ]
+      },
+      {
+        "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+        "record_kind": "observation",
+        "elements": [
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "links": {
+          "agent.evidence_record_ids": [
+            "rec_5053cc01ca8c0044b8d3f59925e2a888"
+          ],
+          "skills.method_record_ids": [
+            "rec_4347364e90ac28cf4607e75c85f2c399",
+            "rec_25e38f650b4ac0b365090b3d3f707721"
+          ]
+        }
+      },
+      {
+        "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+        "record_kind": "claim",
+        "elements": [
+          "claim",
+          "data",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "claim",
+          "data",
+          "evaluation"
+        ],
+        "flags": [
+          "NO_WARRANT"
+        ]
+      },
+      {
+        "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+        "record_kind": "observation",
+        "elements": [
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "links": {
+          "skills.method_record_ids": [
+            "rec_6427ec708013a88c3bd6d089815d21ec",
+            "rec_4347364e90ac28cf4607e75c85f2c399",
+            "rec_25e38f650b4ac0b365090b3d3f707721"
+          ]
+        },
+        "supports": [
+          "rec_e4822d11955faccebf5bed73e5a40750"
+        ]
+      },
+      {
+        "record_id": "rec_996ddd2fb171c0a2199a4019d1970653",
+        "record_kind": "claim",
+        "elements": [
+          "claim",
+          "data",
+          "qualifier",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "claim",
+          "data",
+          "qualifier",
+          "evaluation"
+        ],
+        "flags": [
+          "NO_WARRANT"
+        ]
+      },
+      {
+        "record_id": "rec_2d21f963dafe36ae2335bd207c74a610",
+        "record_kind": "observation",
+        "elements": [
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "links": {
+          "skills.method_record_ids": [
+            "rec_070cf8ff10ae8d8f729e6999e89b0a43"
+          ]
+        },
+        "supports": [
+          "rec_e4822d11955faccebf5bed73e5a40750"
+        ]
+      },
+      {
+        "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+        "record_kind": "claim",
+        "elements": [
+          "claim",
+          "data",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "claim",
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "links": {
+          "agent.evidence_record_ids": [
+            "rec_0944532bb7d56a7c673ef0c19413b5a3",
+            "rec_2d21f963dafe36ae2335bd207c74a610"
+          ]
+        }
+      },
+      {
+        "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888",
+        "record_kind": "phenotype_observation",
+        "elements": [
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "chain_elements": [
+          "data",
+          "warrant",
+          "evaluation"
+        ],
+        "links": {
+          "skills.method_record_ids": [
+            "rec_4347364e90ac28cf4607e75c85f2c399"
+          ]
+        },
+        "supports": [
+          "rec_eb88edbd3cdd1ce77d844d368affb702"
+        ]
+      }
+    ]
+  },
+  "source_parts": {
+    "provided": [
+      {
+        "part": "main",
+        "source_part": "main_text",
+        "file_name": "synthetic_rice_heat.pdf",
+        "sha256": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a",
+        "page_count": 2
+      },
+      {
+        "part": "supplement",
+        "source_part": "supplement",
+        "file_name": "synthetic_rice_heat.supplement.pdf",
+        "sha256": "835b7a290289d34dec43e5737ebc195b7001b19f271517b78841de9c894c0829",
+        "page_count": 2
+      }
+    ],
+    "referenced": {
+      "supplement": {
+        "mentions": 4,
+        "pages": [
+          2
+        ],
+        "items": [
+          "Fig. S1",
+          "Fig. S2",
+          "Fig. S3"
+        ]
+      }
+    },
+    "missing": [],
+    "items_not_found": [],
+    "complete": true
+  },
+  "workflow_structure": {
+    "audit_format": 1,
+    "basis": "nodes are records, edges are record links with a catalog workflow_edge (AMB-039); structure and connectivity only, not experimental soundness",
+    "stages": {
+      "background": 1,
+      "research_question": 1,
+      "objective": 1,
+      "hypothesis": 2,
+      "design": 2,
+      "step": 5,
+      "observation": 1,
+      "result": 4,
+      "conclusion": 1,
+      "statement": 1
+    },
+    "edges_by_type": {
+      "addresses": 5,
+      "evidence": 3,
+      "method": 7,
+      "prerequisite": 5,
+      "tests": 2
+    },
+    "links": {
+      "total": 22,
+      "unresolved": 0
+    },
+    "flags": {
+      "HYPOTHESIS_UNTESTED": 1,
+      "STEP_WITHOUT_OUTPUT": 1
+    },
+    "flag_help": {
+      "HYPOTHESIS_UNTESTED": "a hypothesis that no step, observation or result is linked to as its test",
+      "STEP_WITHOUT_OUTPUT": "a step that no result cites as its method and no later step depends on"
+    },
+    "hypotheses": 2,
+    "steps_ordered": 6,
+    "records": [
+      {
+        "record_id": "rec_69945ca262a0be13812fc69f7f90fd65",
+        "stage": "step",
+        "flags": [
+          "STEP_WITHOUT_OUTPUT"
+        ]
+      },
+      {
+        "record_id": "rec_996ddd2fb171c0a2199a4019d1970653",
+        "stage": "hypothesis",
+        "flags": [
+          "HYPOTHESIS_UNTESTED"
+        ]
+      }
+    ]
+  }
+}

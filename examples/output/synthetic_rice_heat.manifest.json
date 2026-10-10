@@ -1,0 +1,117 @@
+{
+  "manifest_format": 1,
+  "run_id": "run_example_heat",
+  "created_at": "2026-09-21T14:13:20Z",
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.5.0",
+    "release_status": "released",
+    "requested": "3.5.0",
+    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
+    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
+  },
+  "profile": {
+    "name": "pdf_extraction",
+    "extends_chain": [
+      "pdf_extraction"
+    ],
+    "fill_rules": [
+      "backend_confidence",
+      "backend_extraction_method",
+      "candidate_record_kind",
+      "cli_option",
+      "constant",
+      "document_source_id",
+      "doi_uri",
+      "evidence_locator",
+      "evidence_source_part",
+      "evidence_span",
+      "grain_from_record_kind",
+      "input_asset_manifest",
+      "input_file_sha256",
+      "input_file_size",
+      "missing_audit",
+      "profile_name",
+      "qc_rule_set_version",
+      "relation_anchors",
+      "resolved_schema_name",
+      "resolved_schema_version",
+      "run_id",
+      "stable_record_id",
+      "unit_normalization",
+      "validation_outcome",
+      "warning_codes"
+    ],
+    "field_count": 231
+  },
+  "input": {
+    "file_name": "synthetic_rice_heat.pdf",
+    "sha256": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a",
+    "size_bytes": 2904,
+    "media_type": "application/pdf",
+    "page_count": 2,
+    "parser": {
+      "name": "pypdf",
+      "version": "6.19.0"
+    },
+    "candidates_sha256": "67f0e7fab744caf504a7645e46ddfaff1e515d7ff2592a7ee1590739fc548b39",
+    "supplements": [
+      {
+        "part": "supplement",
+        "file_name": "synthetic_rice_heat.supplement.pdf",
+        "sha256": "835b7a290289d34dec43e5737ebc195b7001b19f271517b78841de9c894c0829",
+        "size_bytes": 1691,
+        "media_type": "application/pdf",
+        "page_count": 2,
+        "parser": {
+          "name": "pypdf",
+          "version": "6.19.0"
+        }
+      }
+    ]
+  },
+  "pipeline": {
+    "name": "pdf2jsonl",
+    "version": "0.4.0",
+    "contract_tooling": "1.0.0"
+  },
+  "backend": {
+    "name": "candidates",
+    "extraction_method": "model",
+    "model": "example-agent"
+  },
+  "options": {},
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-94-generic-x86_64-with-glibc2.35",
+    "packages": {
+      "jsonschema": "4.26.0",
+      "PyYAML": "6.0.3",
+      "pypdf": "6.19.0"
+    }
+  },
+  "counts": {
+    "pages": 4,
+    "candidates": 19,
+    "records": 21,
+    "rejected": 0
+  },
+  "outputs": {
+    "records": {
+      "file": "synthetic_rice_heat.jsonl",
+      "sha256": "630872b176bb356b372a17e7276fd1cee04d61adce11f356fd07815cb9f35c11"
+    },
+    "errors": {
+      "file": "synthetic_rice_heat.errors.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "validation": {
+      "file": "synthetic_rice_heat.validation.json",
+      "sha256": "f9e8314da3a30e489ea515f3eadb738f7902e7eebec6c460bdce23e57d47e361"
+    }
+  },
+  "source_parts": {
+    "missing": [],
+    "complete": true
+  }
+}

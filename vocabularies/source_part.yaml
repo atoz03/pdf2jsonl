@@ -1,0 +1,23 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: source_part
+title_zh: 来源的组成部分
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 3.5.0
+origin: [repository]
+source:
+  ref: docs/downstream.md
+  quote_zh: 来源文件（论文、补充材料）；部分论文在文献库中不完整，如缺少附录
+notes_zh: 代码由仓库拟定（AMB-041）。同一 source_id 的各部分各有一条资产清单记录；页码为该部分文件内的物理页码。
+ambiguities: [AMB-041]
+values:
+- code: main_text
+  label_zh: 正文
+- code: supplement
+  label_zh: 补充材料
+- code: appendix
+  label_zh: 附录
+- code: other
+  label_zh: 其他

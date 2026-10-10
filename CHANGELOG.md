@@ -12,6 +12,80 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and versions
 
 Each heading `## [X.Y.Z] - YYYY-MM-DD` provides the release date that `bdc release` records.
 
+## [3.5.0] - 2026-10-10
+
+This release answers three questions raised by Topic 2 after a trial extraction of a mechanism paper: how a
+paper's **research workflow** is represented, how extraction is **verified** beyond format and quote checks,
+and how the forms of the same knowledge **trace back** to each other, including papers whose supplement is
+missing. All additions are provisional (AMB-039, AMB-041) or open (AMB-040). No existing field changes type,
+availability or meaning; records of earlier versions stay valid, and record IDs of main-text records do not
+change.
+
+### Added
+- **Research workflow** (`docs/workflow.md`, AMB-039). The workflow is a view over the atomic records, not a
+  second extraction format:
+  - `agent.statement_role` (D, vocabulary `statement_role`): background, research question, objective,
+    hypothesis, design, result or conclusion, as the wording of the paper shows it.
+  - `agent.tests_record_ids`, `agent.addresses_record_ids`, `agent.prerequisite_record_ids` (N): which
+    experiment was run to test which hypothesis, which statement answers which question, which step uses the
+    output of which. They are resolved from candidate `links` like the existing evidence and method links.
+  - `agent.step_condition` (D): a precondition or branching rule of a step, verbatim.
+  - Field attribute `workflow_edge` (codes `evidence`, `method`, `tests`, `addresses`, `prerequisite`) marks
+    the link fields that are edges of the workflow; `agent.evidence_record_ids` and `skills.method_record_ids`
+    carry it too.
+  - Rule `R035` (warning, definitional): a workflow link must point at a record of the file.
+- **Semantic verification** (`docs/review.md`, AMB-040):
+  - `review_status` code `model_verified`, between `auto_validated` and `expert_approved`: an independent
+    verifier judged every field and link of the record supported by the paper.
+  - `common.verification_run_id` (N).
+  - Four codes in vocabulary `relation_evidence_type` for mechanism evidence: `genetic_interaction`,
+    `localization_imaging`, `biochemical_assay`, `pharmacological_perturbation` (repository proposals).
+- **Source parts and incomplete papers** (`docs/downstream.md`, AMB-041):
+  - `common.source_part` (N, vocabulary `source_part`: main text, supplement, appendix, other). All parts of a
+    paper share one `source_id`; the page is the physical page within the part's file.
+  - `missing_reason` code `source_part_unavailable`.
+  - `transform.ontology_id` (N), paired with `transform.ontology_version`, so that an alignment names the
+    ontology it used (a domain ontology or one built for a class of papers).
+- **Profile `pdf_extraction`**: provenance role `part`, semantic roles `statement_role` and `step_condition`,
+  record links `tests`, `addresses` and `prerequisite`, fill rule `evidence_source_part`. The extraction brief
+  gains a "Research workflow" section and the invariant that a paper may come in several files.
+
+### Tooling (pdf2jsonl 0.4.0, no effect on validation)
+- `pdf2jsonl … --supplement FILE` (repeatable): further files of the same paper are parsed as parts. Evidence
+  names its part (`evidence.part`), locators and spans of supplement records start with `part=…;`, and each
+  file gets its own `asset_manifest` record.
+- **Source completeness.** The pipeline scans the main text for references to supplementary items and parts
+  and reports those that were not supplied (`source_parts` in the validation report and the manifest). A
+  record whose quote cites an item of a missing part gets the warning `SOURCE_PART_UNAVAILABLE` and stays
+  `pending_review`. Nothing is filled in for a missing part.
+- `bdc derive` writes `<stem>.workflow.json` (nodes, edges, step order, branch points, one trace per
+  hypothesis, structural flags) and records the **lineage** of every view in `<stem>.derive.json`: name and
+  hash of the records file, its source IDs, the hash of each file written.
+- `bdc audit` and the validation report add `workflow_structure`: stages, link types and flags
+  (`HYPOTHESIS_UNTESTED`, `QUESTION_UNADDRESSED`, `CONCLUSION_WITHOUT_EVIDENCE`, `RESULT_WITHOUT_METHOD`,
+  `STEP_WITHOUT_OUTPUT`, `DEPENDENCY_CYCLE`, `UNRESOLVED_LINK`). Flags are review hints.
+- `bdc verify tasks` builds one task per record and per link for a verifier that is not the extractor;
+  `bdc verify apply` moves the review fields according to its verdicts (`model_verified`, or `pending_review`
+  with `VERIFY_FIELD_NOT_SUPPORTED`, `VERIFY_LINK_NOT_SUPPORTED`, `VERIFY_UNCERTAIN`) and reports conflict and
+  omission candidates. Content is never edited, expert decisions are never overwritten, and a verifier that
+  is the extraction model promotes nothing.
+- Runtime schemas: `verification_report`; `source_parts` and `workflow_structure` in the validation report;
+  `input.supplements` and `source_parts` in the manifest.
+- Examples: a second synthetic paper in two files (`examples/papers/synthetic_rice_heat.*`) with its run, the
+  same paper without its supplement (`examples/output/incomplete/`), a verification pass
+  (`examples/output/review/`) and the derived views of the verified records (`examples/derived/`).
+
+### Changed
+- `bdc derive` report: `derive_format` is 3 (adds `lineage` and the workflow counts).
+- `common.source_locator` and `common.source_span` may start with `part=<label>;`. Records of the main text
+  are written exactly as before.
+
+### Open (for the data owners and breeding experts)
+- The rubric behind `agent.evidence_strength`, sampling rates for expert review and the calibration of
+  verifier models (AMB-040).
+- Whether and how hypotheses induced from an experimental design are generated (AMB-039).
+- The link from a record to the raw dataset it reports on (AMB-041).
+
 ## [3.4.0] - 2026-10-06
 
 This release makes the record a **hub** rather than a container: a record now carries the hooks that a

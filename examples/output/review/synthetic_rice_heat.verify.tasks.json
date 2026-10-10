@@ -1,0 +1,1036 @@
+{
+  "verify_format": 1,
+  "input": {
+    "file": "synthetic_rice_heat.jsonl",
+    "sha256": "630872b176bb356b372a17e7276fd1cee04d61adce11f356fd07815cb9f35c11"
+  },
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.5.0",
+    "release_status": "released",
+    "requested": "3.5.0",
+    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
+    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
+  },
+  "verdicts": [
+    "supported",
+    "not_supported",
+    "uncertain"
+  ],
+  "instructions": "You are verifying extracted records against the paper. You are not the extractor: judge, do not repair.\n\nTask kind `record`: the record's quote is verbatim text of the paper. For every entry of `fields`, decide\nwhether the quote states that value for that field (the definition says what the field means). A value is\nsupported when the quote states it literally or by an unambiguous restatement, with the same direction,\nnegation, unit and scope. It is not supported when it comes from background knowledge, from another passage,\nor when the quote hedges what the field asserts. Verdict `supported` only if every field is supported;\notherwise `not_supported` and list the offending paths in `unsupported_fields`.\n\nTask kind `link`: two records of the same paper and the relation the link claims (`meaning`). Decide whether\nthe paper itself connects them in that way: the conclusion rests on that result, the result was produced by\nthat method, the experiment was run to test that hypothesis, the step uses the output of that earlier step.\nUse the two quotes and, when you need context, the cited pages. Order of presentation is not a dependency.\n\nUse `uncertain` when the quote or pages do not let you decide. Give a one-sentence `reason` for every verdict\nthat is not `supported`.\n\nAlso report, without changing any verdict:\n- `conflicts`: records of the same source that contradict each other (the same quantity under the same\n  conditions with different values, a figure label against its legend). Give the `record_ids` and a `reason`.\n- `omissions`: statements of the paper that matter (a hypothesis, a control, a condition, a result) and that no\n  record captures. Give `page`, a verbatim `quote` and a short `note`.\n",
+  "tasks": [
+    {
+      "task_id": "vt_63ab23dbeb28f8ffc351",
+      "kind": "record",
+      "record_id": "rec_dc41a78de16f39e31079ea5147e533a6",
+      "record_kind": "claim",
+      "quote": "Heat stress damages chloroplasts and reduces grain yield in rice.",
+      "page": 1,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.trait_names",
+          "value": [
+            "grain yield"
+          ],
+          "definition": "结果涉及的性状名称"
+        },
+        {
+          "path": "agent.finding_text",
+          "value": "Heat stress damages chloroplasts and reduces grain yield in rice.",
+          "definition": "单一结果的独立陈述"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "background",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_abd0998c9681611c071e",
+      "kind": "record",
+      "record_id": "rec_78858b935a834f96996e2a9d46e4961d",
+      "record_kind": "claim",
+      "quote": "How heat signals are transduced from the plasma membrane to chloroplasts remains unknown.",
+      "page": 1,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "agent.knowledge_gap",
+          "value": "How heat signals are transduced from the plasma membrane to chloroplasts remains unknown.",
+          "definition": "论文指出但尚未解决的问题"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "research_question",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_0b3940e5948db01532d3",
+      "kind": "link",
+      "record_id": "rec_78858b935a834f96996e2a9d46e4961d",
+      "field": "agent.addresses_record_ids",
+      "edge": "addresses",
+      "meaning": "假设、目标或结论所回应的背景、问题、目标或假设",
+      "source": {
+        "quote": "How heat signals are transduced from the plasma membrane to chloroplasts remains unknown.",
+        "page": 1,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_dc41a78de16f39e31079ea5147e533a6",
+        "quote": "Heat stress damages chloroplasts and reduces grain yield in rice.",
+        "page": 1,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_fa6318b57c700fb99574",
+      "kind": "record",
+      "record_id": "rec_79044e3e05f535856832154a51c8a87f",
+      "record_kind": "claim",
+      "quote": "The objective of this study was to identify genes underlying natural variation in thermotolerance.",
+      "page": 1,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.trait_names",
+          "value": [
+            "thermotolerance"
+          ],
+          "definition": "结果涉及的性状名称"
+        },
+        {
+          "path": "agent.experiment_objective",
+          "value": "identify genes underlying natural variation in thermotolerance",
+          "definition": "此实验要验证的目标"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "objective",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_2a0acadd1c6b2c4eb394",
+      "kind": "link",
+      "record_id": "rec_79044e3e05f535856832154a51c8a87f",
+      "field": "agent.addresses_record_ids",
+      "edge": "addresses",
+      "meaning": "假设、目标或结论所回应的背景、问题、目标或假设",
+      "source": {
+        "quote": "The objective of this study was to identify genes underlying natural variation in thermotolerance.",
+        "page": 1,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_78858b935a834f96996e2a9d46e4961d",
+        "quote": "How heat signals are transduced from the plasma membrane to chloroplasts remains unknown.",
+        "page": 1,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_0899aaccd055ecb13609",
+      "kind": "record",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "record_kind": "observation",
+      "quote": "A chromosome segment substitution line, SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment (fig. S1).",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.germplasm_names",
+          "value": [
+            "SL14",
+            "WY"
+          ],
+          "definition": "研究种质材料名称"
+        },
+        {
+          "path": "common.recurrent_parent",
+          "value": "WY",
+          "definition": "回交或代换系的轮回亲本"
+        },
+        {
+          "path": "agent.actual_observation",
+          "value": "SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment",
+          "definition": "论文实际观测结果"
+        },
+        {
+          "path": "agent.treatment_groups",
+          "value": [
+            "12 h of heat treatment"
+          ],
+          "definition": "处理组及条件"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "result",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_76f644a67fef26e83209",
+      "kind": "link",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "field": "agent.evidence_record_ids",
+      "edge": "evidence",
+      "meaning": "结论或假设所依据的观测、结果或更具体的结论",
+      "source": {
+        "quote": "A chromosome segment substitution line, SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment (fig. S1).",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888",
+        "quote": "SL14 78.5 %",
+        "page": 2,
+        "source_part": "supplement"
+      }
+    },
+    {
+      "task_id": "vt_b1f18e27113bd00fe0cb",
+      "kind": "link",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "field": "skills.method_record_ids",
+      "edge": "method",
+      "meaning": "产生该结果或观测的方法步骤",
+      "source": {
+        "quote": "A chromosome segment substitution line, SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment (fig. S1).",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_4347364e90ac28cf4607e75c85f2c399",
+        "quote": "Twelve-day-old seedlings were treated at 42 C for 14 h and survival was scored after 7 days of recovery.",
+        "page": 1,
+        "source_part": "supplement"
+      }
+    },
+    {
+      "task_id": "vt_644a933e4e62a6d79e50",
+      "kind": "link",
+      "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "field": "skills.method_record_ids",
+      "edge": "method",
+      "meaning": "产生该结果或观测的方法步骤",
+      "source": {
+        "quote": "A chromosome segment substitution line, SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment (fig. S1).",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_25e38f650b4ac0b365090b3d3f707721",
+        "quote": "Survival rates were compared with a two-tailed t test.",
+        "page": 1,
+        "source_part": "supplement"
+      }
+    },
+    {
+      "task_id": "vt_4e724913538b0634b719",
+      "kind": "record",
+      "record_id": "rec_2f056a171ec8867c073c350da2562919",
+      "record_kind": "method",
+      "quote": "We backcrossed SL14 to WY to construct a mapping population.",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "agent.experiment_objective",
+          "value": "construct a mapping population",
+          "definition": "此实验要验证的目标"
+        },
+        {
+          "path": "agent.experimental_materials",
+          "value": [
+            "SL14",
+            "WY"
+          ],
+          "definition": "实验使用的材料列表"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_1c1a94837b33497fde3b",
+      "kind": "link",
+      "record_id": "rec_2f056a171ec8867c073c350da2562919",
+      "field": "agent.prerequisite_record_ids",
+      "edge": "prerequisite",
+      "meaning": "步骤以其产出为输入的前置步骤、观测或结果",
+      "source": {
+        "quote": "We backcrossed SL14 to WY to construct a mapping population.",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+        "quote": "A chromosome segment substitution line, SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment (fig. S1).",
+        "page": 2,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_bf50c112166d3cc3bf2b",
+      "kind": "record",
+      "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "record_kind": "analysis_result",
+      "quote": "Using 1,614 BC4F3 plants from this population, qHT3 was narrowed to a 36.6 kb interval on chromosome 3 (Table 1).",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.qtl_names",
+          "value": [
+            "qHT3"
+          ],
+          "definition": "QTL名称原文"
+        },
+        {
+          "path": "common.chromosome",
+          "value": "3",
+          "definition": "本证据所指QTL或位点的染色体原文编号"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "result",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_09181d08c249d4e6f365",
+      "kind": "link",
+      "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "field": "agent.prerequisite_record_ids",
+      "edge": "prerequisite",
+      "meaning": "步骤以其产出为输入的前置步骤、观测或结果",
+      "source": {
+        "quote": "Using 1,614 BC4F3 plants from this population, qHT3 was narrowed to a 36.6 kb interval on chromosome 3 (Table 1).",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_2f056a171ec8867c073c350da2562919",
+        "quote": "We backcrossed SL14 to WY to construct a mapping population.",
+        "page": 2,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_61d5d58bb897131b4920",
+      "kind": "record",
+      "record_id": "rec_69945ca262a0be13812fc69f7f90fd65",
+      "record_kind": "method",
+      "quote": "Only recombinant plants that survived the heat treatment were advanced to the next generation.",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "agent.experimental_materials",
+          "value": [
+            "recombinant plants"
+          ],
+          "definition": "实验使用的材料列表"
+        },
+        {
+          "path": "agent.step_condition",
+          "value": "Only recombinant plants that survived the heat treatment",
+          "definition": "原文陈述的本步骤的前提或分支条件原文，如“仅对存活株系继续回交”；逐字摘自证据引文，没有则省略"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_2a98fe474acd089391bd",
+      "kind": "link",
+      "record_id": "rec_69945ca262a0be13812fc69f7f90fd65",
+      "field": "agent.prerequisite_record_ids",
+      "edge": "prerequisite",
+      "meaning": "步骤以其产出为输入的前置步骤、观测或结果",
+      "source": {
+        "quote": "Only recombinant plants that survived the heat treatment were advanced to the next generation.",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_2f056a171ec8867c073c350da2562919",
+        "quote": "We backcrossed SL14 to WY to construct a mapping population.",
+        "page": 2,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_91630a7f9276192a4db7",
+      "kind": "link",
+      "record_id": "rec_69945ca262a0be13812fc69f7f90fd65",
+      "field": "agent.prerequisite_record_ids",
+      "edge": "prerequisite",
+      "meaning": "步骤以其产出为输入的前置步骤、观测或结果",
+      "source": {
+        "quote": "Only recombinant plants that survived the heat treatment were advanced to the next generation.",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_4347364e90ac28cf4607e75c85f2c399",
+        "quote": "Twelve-day-old seedlings were treated at 42 C for 14 h and survival was scored after 7 days of recovery.",
+        "page": 1,
+        "source_part": "supplement"
+      }
+    },
+    {
+      "task_id": "vt_96a5333b4eb9b6f792e0",
+      "kind": "record",
+      "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "record_kind": "claim",
+      "quote": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.gene_names",
+          "value": [
+            "HTR1"
+          ],
+          "definition": "基因名称原文"
+        },
+        {
+          "path": "common.qtl_names",
+          "value": [
+            "qHT3"
+          ],
+          "definition": "QTL名称原文"
+        },
+        {
+          "path": "agent.hypothesis_stated",
+          "value": "HTR1 underlies qHT3",
+          "definition": "作者明确提出的假设；未提出则不填写"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "hypothesis",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        },
+        {
+          "path": "transform.subject_mention",
+          "value": "HTR1",
+          "definition": "关系主语原文提及"
+        },
+        {
+          "path": "transform.predicate_mention",
+          "value": "underlies",
+          "definition": "关系谓词的原文表述：source_quote 中连接主语与宾语的逐字词语（如 was associated with、调控），不改写、不归一"
+        },
+        {
+          "path": "transform.object_mention",
+          "value": "qHT3",
+          "definition": "关系宾语原文提及"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_5c35ef16ba8b27bf0341",
+      "kind": "link",
+      "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "field": "agent.addresses_record_ids",
+      "edge": "addresses",
+      "meaning": "假设、目标或结论所回应的背景、问题、目标或假设",
+      "source": {
+        "quote": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_79044e3e05f535856832154a51c8a87f",
+        "quote": "The objective of this study was to identify genes underlying natural variation in thermotolerance.",
+        "page": 1,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_4fe2cc28ee5d15d61ce2",
+      "kind": "record",
+      "record_id": "rec_6427ec708013a88c3bd6d089815d21ec",
+      "record_kind": "method",
+      "quote": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.gene_names",
+          "value": [
+            "HTR1"
+          ],
+          "definition": "基因名称原文"
+        },
+        {
+          "path": "agent.experimental_materials",
+          "value": [
+            "knockout lines of HTR1",
+            "WY"
+          ],
+          "definition": "实验使用的材料列表"
+        },
+        {
+          "path": "skills.method_name",
+          "value": "CRISPR/Cas9",
+          "definition": "论文方法名称原文"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_7c4624c643e6e4ae5cb6",
+      "kind": "link",
+      "record_id": "rec_6427ec708013a88c3bd6d089815d21ec",
+      "field": "agent.tests_record_ids",
+      "edge": "tests",
+      "meaning": "实验步骤、观测或结果所检验的假设、问题或目标",
+      "source": {
+        "quote": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+        "quote": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.",
+        "page": 2,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_c584974b9426897093bd",
+      "kind": "link",
+      "record_id": "rec_6427ec708013a88c3bd6d089815d21ec",
+      "field": "agent.prerequisite_record_ids",
+      "edge": "prerequisite",
+      "meaning": "步骤以其产出为输入的前置步骤、观测或结果",
+      "source": {
+        "quote": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9",
+        "quote": "Using 1,614 BC4F3 plants from this population, qHT3 was narrowed to a 36.6 kb interval on chromosome 3 (Table 1).",
+        "page": 2,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_132c4294fdadbb35e908",
+      "kind": "record",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "record_kind": "observation",
+      "quote": "The knockout lines of HTR1 showed lower survival than WY after heat treatment (fig. S2).",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.germplasm_names",
+          "value": [
+            "SL14"
+          ],
+          "definition": "研究种质材料名称"
+        },
+        {
+          "path": "common.gene_names",
+          "value": [
+            "HTR1"
+          ],
+          "definition": "基因名称原文"
+        },
+        {
+          "path": "agent.actual_observation",
+          "value": "The knockout lines of HTR1 showed lower survival than WY after heat treatment",
+          "definition": "论文实际观测结果"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "result",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_9bea90e26a54d12fcf8b",
+      "kind": "link",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "field": "agent.tests_record_ids",
+      "edge": "tests",
+      "meaning": "实验步骤、观测或结果所检验的假设、问题或目标",
+      "source": {
+        "quote": "The knockout lines of HTR1 showed lower survival than WY after heat treatment (fig. S2).",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+        "quote": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.",
+        "page": 2,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_13afc1bfc2a347dc5667",
+      "kind": "link",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "field": "skills.method_record_ids",
+      "edge": "method",
+      "meaning": "产生该结果或观测的方法步骤",
+      "source": {
+        "quote": "The knockout lines of HTR1 showed lower survival than WY after heat treatment (fig. S2).",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_6427ec708013a88c3bd6d089815d21ec",
+        "quote": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.",
+        "page": 2,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_85288ce68327bc6e3ce7",
+      "kind": "link",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "field": "skills.method_record_ids",
+      "edge": "method",
+      "meaning": "产生该结果或观测的方法步骤",
+      "source": {
+        "quote": "The knockout lines of HTR1 showed lower survival than WY after heat treatment (fig. S2).",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_4347364e90ac28cf4607e75c85f2c399",
+        "quote": "Twelve-day-old seedlings were treated at 42 C for 14 h and survival was scored after 7 days of recovery.",
+        "page": 1,
+        "source_part": "supplement"
+      }
+    },
+    {
+      "task_id": "vt_1fe934c2085d102df0e6",
+      "kind": "link",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "field": "skills.method_record_ids",
+      "edge": "method",
+      "meaning": "产生该结果或观测的方法步骤",
+      "source": {
+        "quote": "The knockout lines of HTR1 showed lower survival than WY after heat treatment (fig. S2).",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_25e38f650b4ac0b365090b3d3f707721",
+        "quote": "Survival rates were compared with a two-tailed t test.",
+        "page": 1,
+        "source_part": "supplement"
+      }
+    },
+    {
+      "task_id": "vt_fbf44e1b188c40461407",
+      "kind": "record",
+      "record_id": "rec_996ddd2fb171c0a2199a4019d1970653",
+      "record_kind": "claim",
+      "quote": "We hypothesized that HTR1 might recruit HTR2 precursors to endosomes for degradation.",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.gene_names",
+          "value": [
+            "HTR1",
+            "HTR2"
+          ],
+          "definition": "基因名称原文"
+        },
+        {
+          "path": "agent.hypothesis_stated",
+          "value": "HTR1 might recruit HTR2 precursors to endosomes for degradation",
+          "definition": "作者明确提出的假设；未提出则不填写"
+        },
+        {
+          "path": "agent.claim_qualifier_text",
+          "value": "might",
+          "definition": "作者为该结论附加的限定或不确定性措辞原文，如 may、suggesting a possible、requires validation、可能、推测；逐字摘自证据引文，没有限定措辞则省略"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "hypothesis",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        },
+        {
+          "path": "transform.subject_mention",
+          "value": "HTR1",
+          "definition": "关系主语原文提及"
+        },
+        {
+          "path": "transform.predicate_mention",
+          "value": "might recruit",
+          "definition": "关系谓词的原文表述：source_quote 中连接主语与宾语的逐字词语（如 was associated with、调控），不改写、不归一"
+        },
+        {
+          "path": "transform.object_mention",
+          "value": "HTR2 precursors",
+          "definition": "关系宾语原文提及"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_aa2604dc4ca0513bf43a",
+      "kind": "link",
+      "record_id": "rec_996ddd2fb171c0a2199a4019d1970653",
+      "field": "agent.addresses_record_ids",
+      "edge": "addresses",
+      "meaning": "假设、目标或结论所回应的背景、问题、目标或假设",
+      "source": {
+        "quote": "We hypothesized that HTR1 might recruit HTR2 precursors to endosomes for degradation.",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_78858b935a834f96996e2a9d46e4961d",
+        "quote": "How heat signals are transduced from the plasma membrane to chloroplasts remains unknown.",
+        "page": 1,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_86ec5cc58ed6c448ded8",
+      "kind": "record",
+      "record_id": "rec_2d21f963dafe36ae2335bd207c74a610",
+      "record_kind": "observation",
+      "quote": "HTR1 interacted with HTR2 in a split-luciferase assay (fig. S3).",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.gene_names",
+          "value": [
+            "HTR1",
+            "HTR2"
+          ],
+          "definition": "基因名称原文"
+        },
+        {
+          "path": "agent.actual_observation",
+          "value": "HTR1 interacted with HTR2 in a split-luciferase assay",
+          "definition": "论文实际观测结果"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "result",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        },
+        {
+          "path": "transform.subject_mention",
+          "value": "HTR1",
+          "definition": "关系主语原文提及"
+        },
+        {
+          "path": "transform.predicate_mention",
+          "value": "interacted with",
+          "definition": "关系谓词的原文表述：source_quote 中连接主语与宾语的逐字词语（如 was associated with、调控），不改写、不归一"
+        },
+        {
+          "path": "transform.object_mention",
+          "value": "HTR2",
+          "definition": "关系宾语原文提及"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_6ef892bb603428661381",
+      "kind": "link",
+      "record_id": "rec_2d21f963dafe36ae2335bd207c74a610",
+      "field": "skills.method_record_ids",
+      "edge": "method",
+      "meaning": "产生该结果或观测的方法步骤",
+      "source": {
+        "quote": "HTR1 interacted with HTR2 in a split-luciferase assay (fig. S3).",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43",
+        "quote": "Split-luciferase assays were performed in Nicotiana benthamiana leaves.",
+        "page": 1,
+        "source_part": "supplement"
+      }
+    },
+    {
+      "task_id": "vt_5b87b931546daf5a119a",
+      "kind": "record",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "record_kind": "claim",
+      "quote": "These results indicate that HTR1 acts upstream of HTR2 to protect chloroplasts under heat stress.",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.gene_names",
+          "value": [
+            "HTR1",
+            "HTR2"
+          ],
+          "definition": "基因名称原文"
+        },
+        {
+          "path": "agent.finding_text",
+          "value": "HTR1 acts upstream of HTR2 to protect chloroplasts under heat stress.",
+          "definition": "单一结果的独立陈述"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "conclusion",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        },
+        {
+          "path": "transform.subject_mention",
+          "value": "HTR1",
+          "definition": "关系主语原文提及"
+        },
+        {
+          "path": "transform.predicate_mention",
+          "value": "acts upstream of",
+          "definition": "关系谓词的原文表述：source_quote 中连接主语与宾语的逐字词语（如 was associated with、调控），不改写、不归一"
+        },
+        {
+          "path": "transform.object_mention",
+          "value": "HTR2",
+          "definition": "关系宾语原文提及"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_d0a5dc84106c01c16c63",
+      "kind": "link",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "field": "agent.evidence_record_ids",
+      "edge": "evidence",
+      "meaning": "结论或假设所依据的观测、结果或更具体的结论",
+      "source": {
+        "quote": "These results indicate that HTR1 acts upstream of HTR2 to protect chloroplasts under heat stress.",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+        "quote": "The knockout lines of HTR1 showed lower survival than WY after heat treatment (fig. S2).",
+        "page": 2,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_e4bcb7819a66f31288b9",
+      "kind": "link",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "field": "agent.evidence_record_ids",
+      "edge": "evidence",
+      "meaning": "结论或假设所依据的观测、结果或更具体的结论",
+      "source": {
+        "quote": "These results indicate that HTR1 acts upstream of HTR2 to protect chloroplasts under heat stress.",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_2d21f963dafe36ae2335bd207c74a610",
+        "quote": "HTR1 interacted with HTR2 in a split-luciferase assay (fig. S3).",
+        "page": 2,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_db7fde32640839a506f7",
+      "kind": "link",
+      "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "field": "agent.addresses_record_ids",
+      "edge": "addresses",
+      "meaning": "假设、目标或结论所回应的背景、问题、目标或假设",
+      "source": {
+        "quote": "These results indicate that HTR1 acts upstream of HTR2 to protect chloroplasts under heat stress.",
+        "page": 2,
+        "source_part": "main_text"
+      },
+      "target": {
+        "record_id": "rec_78858b935a834f96996e2a9d46e4961d",
+        "quote": "How heat signals are transduced from the plasma membrane to chloroplasts remains unknown.",
+        "page": 1,
+        "source_part": "main_text"
+      }
+    },
+    {
+      "task_id": "vt_4d6e467a2f55e9d46c9e",
+      "kind": "record",
+      "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40",
+      "record_kind": "claim",
+      "quote": "How HTR2 accumulation damages chloroplasts remains to be determined.",
+      "page": 2,
+      "source_part": "main_text",
+      "fields": [
+        {
+          "path": "common.gene_names",
+          "value": [
+            "HTR2"
+          ],
+          "definition": "基因名称原文"
+        },
+        {
+          "path": "agent.knowledge_gap",
+          "value": "How HTR2 accumulation damages chloroplasts remains to be determined.",
+          "definition": "论文指出但尚未解决的问题"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_96f057e269d846866461",
+      "kind": "record",
+      "record_id": "rec_4347364e90ac28cf4607e75c85f2c399",
+      "record_kind": "method",
+      "quote": "Twelve-day-old seedlings were treated at 42 C for 14 h and survival was scored after 7 days of recovery.",
+      "page": 1,
+      "source_part": "supplement",
+      "fields": [
+        {
+          "path": "agent.treatment_groups",
+          "value": [
+            "42 C for 14 h"
+          ],
+          "definition": "处理组及条件"
+        },
+        {
+          "path": "agent.observation_indicators",
+          "value": [
+            "survival"
+          ],
+          "definition": "用于判断假设的测量指标"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_9f982272e479c4d6b0db",
+      "kind": "record",
+      "record_id": "rec_e9fa66c06dd335641622897f8abae636",
+      "record_kind": "method",
+      "quote": "Each line was tested in 3 biological replicates of 24 plants.",
+      "page": 1,
+      "source_part": "supplement",
+      "fields": [
+        {
+          "path": "agent.replicate_count",
+          "value": 3,
+          "definition": "生物或技术重复数"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "design",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_f8d45baf6670ebb701d2",
+      "kind": "record",
+      "record_id": "rec_25e38f650b4ac0b365090b3d3f707721",
+      "record_kind": "method",
+      "quote": "Survival rates were compared with a two-tailed t test.",
+      "page": 1,
+      "source_part": "supplement",
+      "fields": [
+        {
+          "path": "agent.statistical_test",
+          "value": "two-tailed t test",
+          "definition": "支持该结果的统计检验或模型名称"
+        },
+        {
+          "path": "agent.statement_role",
+          "value": "design",
+          "definition": "本陈述在论文研究流程中的角色：研究背景、科学问题、研究目标、假设、实验设计、结果或结论；按原文的表述方式和所在位置判定（如 we hypothesized、to test whether、these results indicate），原文未表明则省略；抽取者自行归纳的假设不得填入"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_a832670d629b526e679f",
+      "kind": "record",
+      "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43",
+      "record_kind": "method",
+      "quote": "Split-luciferase assays were performed in Nicotiana benthamiana leaves.",
+      "page": 1,
+      "source_part": "supplement",
+      "fields": [
+        {
+          "path": "skills.method_name",
+          "value": "Split-luciferase assays",
+          "definition": "论文方法名称原文"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_e84f459825b7d0a916a6",
+      "kind": "record",
+      "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "record_kind": "phenotype_observation",
+      "quote": "SL14 78.5 %",
+      "page": 2,
+      "source_part": "supplement",
+      "fields": [
+        {
+          "path": "common.germplasm_names",
+          "value": [
+            "SL14"
+          ],
+          "definition": "研究种质材料名称"
+        },
+        {
+          "path": "common.original_value",
+          "value": "78.5",
+          "definition": "原文数值或范围原样字符串"
+        },
+        {
+          "path": "common.original_unit",
+          "value": "%",
+          "definition": "原文计量单位"
+        },
+        {
+          "path": "common.measurement_name",
+          "value": "Survival",
+          "definition": "本行单一测量项名称，如株高或日最高温"
+        },
+        {
+          "path": "common.measurement_value",
+          "value": 78.5,
+          "definition": "数值测量值；缺失值不可填0代替"
+        },
+        {
+          "path": "common.measurement_unit",
+          "value": "%",
+          "definition": "数值测量单位及尺度，须与measurements的标准词表匹配"
+        }
+      ]
+    },
+    {
+      "task_id": "vt_b16b5d6d6f620aacbf02",
+      "kind": "link",
+      "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "field": "skills.method_record_ids",
+      "edge": "method",
+      "meaning": "产生该结果或观测的方法步骤",
+      "source": {
+        "quote": "SL14 78.5 %",
+        "page": 2,
+        "source_part": "supplement"
+      },
+      "target": {
+        "record_id": "rec_4347364e90ac28cf4607e75c85f2c399",
+        "quote": "Twelve-day-old seedlings were treated at 42 C for 14 h and survival was scored after 7 days of recovery.",
+        "page": 1,
+        "source_part": "supplement"
+      }
+    }
+  ]
+}

@@ -72,12 +72,30 @@ def test_importers_are_shown_uniformly(site, root):
 def test_papers_page_carries_its_files_and_the_new_exports(site):
     data = embedded((site / "papers.html").read_text(encoding="utf-8"), "dashboard-data")
     assert data["summary"]["papers"] >= 1 and data["summary"]["runs"] >= 1
-    paper = next(p for p in data["papers"] if p["runs"])
+    paper = next(p for p in data["papers"] if p["filename"] == "synthetic_rice_qtl.pdf")
     assert (site / paper["pdf_url"]).is_file()
     run = paper["runs"][0]
     assert run["integrity_ok"] and all((site / url).is_file() for url in run["urls"].values())
     assert run["derived"]["counts"]["statements"] == 3 and run["derived"]["qa"] and run["derived"]["graph"]["nodes"]
     assert all(not p["pdf_paths"] or p["pdf_paths"][0].startswith("examples/") for p in data["papers"])  # checked-in only
+
+
+def test_papers_page_shows_a_two_file_paper_as_one_paper(site):
+    data = embedded((site / "papers.html").read_text(encoding="utf-8"), "dashboard-data")
+    assert data["summary"]["papers"] == 2  # the supplement is a part of its paper, not a third paper
+    paper = next(p for p in data["papers"] if p["filename"] == "synthetic_rice_heat.pdf")
+    [part] = paper["supplements"]
+    assert part["part"] == "supplement" and part["filename"] == "synthetic_rice_heat.supplement.pdf"
+    assert (site / part["pdf_url"]).is_file() and len(part["pages"]) == 2
+    with_supplement, main_only = paper["runs"]  # newest first: the run that had the supplement
+    assert with_supplement["source_parts"]["complete"] and not main_only["source_parts"]["complete"]
+    assert main_only["source_parts"]["missing"] == ["supplement"]
+    assert with_supplement["workflow"]["flags"] == {"HYPOTHESIS_UNTESTED": 1, "STEP_WITHOUT_OUTPUT": 1}
+    assert with_supplement["counts"]["workflow_flags"] == 2
+    assert with_supplement["derived"]["workflow"]["hypotheses"]
+    template = (site / "papers.html").read_text(encoding="utf-8")
+    for needle in ("来源不完整", "研究流程结构", "补充材料"):
+        assert needle in template
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node is not installed")

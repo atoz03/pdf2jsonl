@@ -39,12 +39,14 @@ def _unesc(value: str) -> str:
     return value.replace("%3D", "=").replace("%3B", ";").replace("%25", "%")
 
 
-LOCATOR_KEYS = ("page", "section", "table", "row", "col")
+LOCATOR_KEYS = ("part", "page", "section", "table", "row", "col")
 
 
-def build_locator(page=None, section=None, table=None, row=None, col=None) -> str:
+def build_locator(page=None, section=None, table=None, row=None, col=None, part=None) -> str:
+    """``part`` names a file of the source other than the main text (e.g. ``supplement``, AMB-041). It is left
+    out for the main text, so locators and record IDs of single-file sources do not change."""
     parts = []
-    for key, value in zip(LOCATOR_KEYS, (page, section, table, row, col)):
+    for key, value in zip(LOCATOR_KEYS, (part, page, section, table, row, col)):
         if value is not None and value != "":
             parts.append(f"{key}={_esc(value)}")
     return ";".join(parts)
@@ -59,5 +61,5 @@ def parse_locator(locator: str) -> dict:
     return out
 
 
-def build_span(page: int, start: int, end: int) -> str:
-    return f"page={page};char={start}-{end}"
+def build_span(page: int, start: int, end: int, part: str | None = None) -> str:
+    return (f"part={_esc(part)};" if part else "") + f"page={page};char={start}-{end}"

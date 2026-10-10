@@ -4,7 +4,7 @@ The Skill defines *how* extraction runs; *what* the data means is resolved at ru
 repository (releases/<version>/). Nothing here hard-codes field definitions: profiles declare roles and
 named fill rules, and this package implements those rules (see fill_rules.IMPLEMENTED_RULES).
 """
-PIPELINE_VERSION = "0.3.0"
+PIPELINE_VERSION = "0.4.0"
 
 # Contract family and major versions this pipeline implements. Minor/patch releases of the contract are
 # consumed automatically; a new major may introduce rules the pipeline does not know (CI checks this).

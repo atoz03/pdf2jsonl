@@ -1,0 +1,4219 @@
+{
+  "profile_format": 1,
+  "name": "compact",
+  "extends_chain": [
+    "compact"
+  ],
+  "title_zh": "精简生产字段",
+  "description_zh": "v3 精简版：从完整目录筛选的 157 个首批生产字段，用于小批量试跑与最小闭环；字段路径与语义沿用完整目录。",
+  "contract": {
+    "name": "breeding-literature-record",
+    "version": "3.5.0"
+  },
+  "is_extraction": false,
+  "selection": {
+    "base": "explicit",
+    "fields": [
+      "common.record_id",
+      "common.schema_version",
+      "common.record_kind",
+      "common.source_id",
+      "common.source_type",
+      "common.source_title",
+      "common.source_doi",
+      "common.source_locator",
+      "common.source_page",
+      "common.source_section",
+      "common.source_table_figure",
+      "common.source_quote",
+      "common.source_year",
+      "common.source_uri",
+      "common.source_asset_id",
+      "common.source_file_sha256",
+      "common.extraction_method",
+      "common.extraction_confidence",
+      "common.review_status",
+      "common.crop_name",
+      "common.species_name",
+      "common.population_name",
+      "common.population_type",
+      "common.parent_names",
+      "common.sample_size",
+      "common.trial_year",
+      "common.location_name",
+      "common.environmental_conditions",
+      "common.growth_stage",
+      "common.treatment",
+      "common.trait_names",
+      "common.trait_ids",
+      "common.gene_names",
+      "common.gene_ids",
+      "common.marker_names",
+      "common.qtl_names",
+      "common.genome_assembly",
+      "common.variant_ids",
+      "common.original_value",
+      "common.original_unit",
+      "common.normalized_value",
+      "common.normalized_min_value",
+      "common.normalized_max_value",
+      "common.normalized_unit",
+      "common.missing_fields",
+      "common.dataset_id",
+      "common.dataset_version",
+      "common.record_version",
+      "common.record_grain",
+      "common.data_modality",
+      "common.linked_modalities",
+      "common.license_id",
+      "common.access_level",
+      "common.study_id",
+      "common.experiment_id",
+      "common.trial_id",
+      "common.environment_id",
+      "common.material_id",
+      "common.sample_id",
+      "common.replicate_id",
+      "common.analysis_run_id",
+      "common.trait_id",
+      "common.observation_time",
+      "common.measurement_name",
+      "common.measurement_value",
+      "common.measurement_text",
+      "common.measurement_unit",
+      "common.genotype_call",
+      "common.genotype_dosage",
+      "common.asset_uri",
+      "common.asset_kind",
+      "common.asset_format",
+      "common.asset_size_bytes",
+      "common.asset_sha256",
+      "common.asset_schema_ref",
+      "common.qc_rule_set_version",
+      "common.qc_failure_codes",
+      "common.trial_season",
+      "common.ploidy",
+      "common.reference_allele",
+      "common.alternate_allele",
+      "common.dosage_allele",
+      "agent.scientific_question",
+      "agent.finding_text",
+      "agent.finding_kind",
+      "agent.evidence_type",
+      "agent.supporting_evidence",
+      "agent.association_vs_causation",
+      "agent.applicable_population",
+      "agent.applicable_environment",
+      "agent.actual_observation",
+      "agent.uncertainty_note",
+      "agent.experiment_objective",
+      "agent.experiment_design",
+      "agent.experimental_materials",
+      "agent.replicate_count",
+      "agent.observation_indicators",
+      "agent.workflow_steps",
+      "agent.result_interpretation",
+      "agent.breeding_relevance",
+      "agent.knowledge_gap",
+      "agent.candidate_gene_status",
+      "agent.statistical_test",
+      "agent.lod_score",
+      "agent.pve_percent",
+      "agent.validation_methods",
+      "skills.analysis_task",
+      "skills.method_category",
+      "skills.method_name",
+      "skills.algorithm_name",
+      "skills.software_name",
+      "skills.input_modalities",
+      "skills.preprocessing_steps",
+      "skills.qc_filters",
+      "skills.parameters",
+      "skills.feature_count",
+      "skills.training_population",
+      "skills.validation_strategy",
+      "skills.folds",
+      "skills.split_basis",
+      "skills.output_fields",
+      "skills.metric_name",
+      "skills.metric_value",
+      "skills.significance_threshold",
+      "skills.applicability_limit",
+      "skills.input_schema_ref",
+      "skills.output_schema_ref",
+      "skills.workflow_steps",
+      "skills.genotyping_method",
+      "skills.phenotyping_method",
+      "skills.skill_spec_id",
+      "skills.skill_spec_version",
+      "transform.subject_mention",
+      "transform.subject_type",
+      "transform.subject_id",
+      "transform.predicate_label",
+      "transform.predicate_id",
+      "transform.object_mention",
+      "transform.object_type",
+      "transform.object_id",
+      "transform.relation_polarity",
+      "transform.relation_qualifiers",
+      "transform.graph_status",
+      "transform.entity_alignment_status",
+      "transform.provenance_record_ids",
+      "transform.chunk_id",
+      "transform.chunk_text",
+      "transform.chunk_page",
+      "transform.chunk_section",
+      "transform.chunk_keywords",
+      "transform.qa_seed_question",
+      "transform.qa_seed_answer",
+      "transform.qa_answerable",
+      "transform.qa_support_ids",
+      "transform.qa_difficulty",
+      "transform.leakage_group_id",
+      "transform.corpus_split"
+    ],
+    "include_fields": [
+      "common.schema_name"
+    ]
+  },
+  "fields": [
+    {
+      "path": "common.record_id",
+      "group": "common",
+      "name": "record_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "Y",
+      "definition_zh": "同一逻辑记录跨版本和消费视图不变的稳定ID",
+      "data_source_zh": "来源主键与稳定ID规则",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "record_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.schema_version",
+      "group": "common",
+      "name": "schema_version",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "Y",
+      "definition_zh": "记录所遵循的模式版本",
+      "data_source_zh": "规范版本",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "record_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.record_kind",
+      "group": "common",
+      "name": "record_kind",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "Y",
+      "definition_zh": "论文证据、单值观测、资产、分析结果或工具规范的受控类型",
+      "data_source_zh": "来源映射规则",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "record_kind",
+      "status": "active",
+      "key_role": "record_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_id",
+      "group": "common",
+      "name": "source_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "Y",
+      "definition_zh": "跨机构稳定且带命名空间的来源ID，如doi:、sra:或urn:",
+      "data_source_zh": "DOI、试验注册或数据库ID",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "pattern": "^[A-Za-z][A-Za-z0-9+.\\-]*:\\S+$",
+        "basis": "explicit",
+        "note_zh": "定义：跨机构稳定且带命名空间的来源ID，如doi:、sra:或urn:"
+      },
+      "status": "active",
+      "key_role": "source_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_type",
+      "group": "common",
+      "name": "source_type",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "Y",
+      "definition_zh": "来源类型如paper、experiment_record或tool_description",
+      "data_source_zh": "PDF、数据库或工具说明",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "source_type",
+      "status": "active",
+      "key_role": "source_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_title",
+      "group": "common",
+      "name": "source_title",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "文献标题；高频观测记录可由source_id连接来源元数据，避免逐行重复",
+      "data_source_zh": "PDF首页或来源元数据",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "bibliographic",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_doi",
+      "group": "common",
+      "name": "source_doi",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "论文DOI规范值",
+      "data_source_zh": "PDF首页",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "source_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_locator",
+      "group": "common",
+      "name": "source_locator",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "Y",
+      "definition_zh": "可回查到来源页段、表格单元、记录行或文件的定位符",
+      "data_source_zh": "PDF页码、数据库行键或资产偏移",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "evidence_locator",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_page",
+      "group": "common",
+      "name": "source_page",
+      "role": "field",
+      "type": "integer",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "PDF物理页码从1开始",
+      "data_source_zh": "PDF物理页码",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 1,
+        "basis": "explicit",
+        "note_zh": "定义：PDF物理页码从1开始"
+      },
+      "status": "active",
+      "key_role": "evidence_locator",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_section",
+      "group": "common",
+      "name": "source_section",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "证据所在章节",
+      "data_source_zh": "PDF章节标题",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "evidence_locator",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_table_figure",
+      "group": "common",
+      "name": "source_table_figure",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "支撑结论的表格或图件编号",
+      "data_source_zh": "PDF表图编号",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "evidence_locator",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_quote",
+      "group": "common",
+      "name": "source_quote",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "最小且可回查的原文证据片段",
+      "data_source_zh": "PDF原文",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "evidence_locator",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ],
+      "argument_role": "data"
+    },
+    {
+      "path": "common.source_year",
+      "group": "common",
+      "name": "source_year",
+      "role": "field",
+      "type": "integer",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "发表年份",
+      "data_source_zh": "PDF首页",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "bibliographic",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_uri",
+      "group": "common",
+      "name": "source_uri",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "不含凭证的持久URI，如doi:或https:；不得为本地路径或file:URI",
+      "data_source_zh": "来源登记或永久标识",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "source_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_asset_id",
+      "group": "common",
+      "name": "source_asset_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "指向该来源具体数字版本的稳定资产ID；不能填本地路径",
+      "data_source_zh": "资产登记表",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "source_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.source_file_sha256",
+      "group": "common",
+      "name": "source_file_sha256",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "原始文件内容校验和",
+      "data_source_zh": "文件校验",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "pattern": "^[0-9A-Fa-f]{64}$",
+        "basis": "definitional",
+        "note_zh": "字段名指明SHA-256；定义仅写“校验和”（AMB-023）"
+      },
+      "status": "active",
+      "key_role": "source_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.extraction_method",
+      "group": "common",
+      "name": "extraction_method",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "Y",
+      "definition_zh": "人工、规则、OCR、模型、API、仪器或ETL接入方式",
+      "data_source_zh": "抽取或ETL日志",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "extraction_method",
+      "status": "active",
+      "key_role": "lifecycle",
+      "serves": [
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.extraction_confidence",
+      "group": "common",
+      "name": "extraction_confidence",
+      "role": "field",
+      "type": "number",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "抽取过程置信度0到1",
+      "data_source_zh": "抽取模型结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 0,
+        "maximum": 1,
+        "basis": "explicit",
+        "note_zh": "定义：抽取过程置信度0到1"
+      },
+      "status": "active",
+      "key_role": "lifecycle",
+      "serves": [
+        "iteration"
+      ],
+      "argument_role": "monitoring"
+    },
+    {
+      "path": "common.review_status",
+      "group": "common",
+      "name": "review_status",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "Y",
+      "definition_zh": "待复核、自动校验通过、专家通过或驳回",
+      "data_source_zh": "自动质控与人工复核",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "review_status",
+      "status": "active",
+      "key_role": "lifecycle",
+      "serves": [
+        "iteration"
+      ],
+      "argument_role": "evaluation"
+    },
+    {
+      "path": "common.crop_name",
+      "group": "common",
+      "name": "crop_name",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "Y",
+      "definition_zh": "记录所属作物名称，需另行映射crop_taxon_id",
+      "data_source_zh": "论文对象或数据集登记",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "crop_name",
+      "status": "active",
+      "key_role": "entity_mention",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.species_name",
+      "group": "common",
+      "name": "species_name",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "物种学名原文",
+      "data_source_zh": "论文对象",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_mention",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.population_name",
+      "group": "common",
+      "name": "population_name",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "试验群体名称",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_mention",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.population_type",
+      "group": "common",
+      "name": "population_type",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "RIL、NIL或自然群体等类型",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "population_type",
+      "status": "active",
+      "key_role": "condition",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.parent_names",
+      "group": "common",
+      "name": "parent_names",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "亲本名称",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_mention",
+      "serves": [
+        "topic2",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.sample_size",
+      "group": "common",
+      "name": "sample_size",
+      "role": "field",
+      "type": "integer",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "支持该结果的材料或个体数",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 0,
+        "basis": "definitional",
+        "note_zh": "计数不可为负"
+      },
+      "status": "active",
+      "key_role": "condition",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.trial_year",
+      "group": "common",
+      "name": "trial_year",
+      "role": "field",
+      "type": "integer",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "试验年份",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "condition",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.location_name",
+      "group": "common",
+      "name": "location_name",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "试验地点",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "condition",
+      "serves": [
+        "topic2",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.environmental_conditions",
+      "group": "common",
+      "name": "environmental_conditions",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "温度、水分、土壤等条件原文",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "condition",
+      "serves": [
+        "topic2",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.growth_stage",
+      "group": "common",
+      "name": "growth_stage",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "观测生育阶段",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "condition",
+      "serves": [
+        "topic2",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.treatment",
+      "group": "common",
+      "name": "treatment",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "处理因素与强度原文",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "condition",
+      "serves": [
+        "topic2",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.trait_names",
+      "group": "common",
+      "name": "trait_names",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "结果涉及的性状名称",
+      "data_source_zh": "摘要或方法结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_mention",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.trait_ids",
+      "group": "common",
+      "name": "trait_ids",
+      "role": "field",
+      "type": "array_string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "性状规范ID",
+      "data_source_zh": "性状本体映射",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_id",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.gene_names",
+      "group": "common",
+      "name": "gene_names",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "基因名称原文",
+      "data_source_zh": "摘要或结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_mention",
+      "serves": [
+        "topic2",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.gene_ids",
+      "group": "common",
+      "name": "gene_ids",
+      "role": "field",
+      "type": "array_string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "基因规范ID",
+      "data_source_zh": "基因数据库映射",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_id",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.marker_names",
+      "group": "common",
+      "name": "marker_names",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "具体分子标记名称",
+      "data_source_zh": "方法与结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_mention",
+      "serves": [
+        "topic3",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.qtl_names",
+      "group": "common",
+      "name": "qtl_names",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "QTL名称原文",
+      "data_source_zh": "结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_mention",
+      "serves": [
+        "topic2",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.genome_assembly",
+      "group": "common",
+      "name": "genome_assembly",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "变异坐标所依赖的明确参考组装版本，未报告时省略",
+      "data_source_zh": "论文方法或基因组数据库",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "reference_frame",
+      "serves": [
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.variant_ids",
+      "group": "common",
+      "name": "variant_ids",
+      "role": "field",
+      "type": "array_string",
+      "availability": "F",
+      "required": "N",
+      "definition_zh": "数据库规范变异ID",
+      "data_source_zh": "未来基因组数据库",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_id",
+      "serves": [
+        "topic2",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.original_value",
+      "group": "common",
+      "name": "original_value",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "原文数值或范围原样字符串",
+      "data_source_zh": "结果表图或文字",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.original_unit",
+      "group": "common",
+      "name": "original_unit",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "原文计量单位",
+      "data_source_zh": "结果表图或文字",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.normalized_value",
+      "group": "common",
+      "name": "normalized_value",
+      "role": "field",
+      "type": "number",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "规范化后的单一数值，不承载范围或公式",
+      "data_source_zh": "单位转换规则",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.normalized_min_value",
+      "group": "common",
+      "name": "normalized_min_value",
+      "role": "field",
+      "type": "number",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "规范化范围的数值下界，与上界成对填写",
+      "data_source_zh": "单位转换规则",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.normalized_max_value",
+      "group": "common",
+      "name": "normalized_max_value",
+      "role": "field",
+      "type": "number",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "规范化范围的数值上界，与下界成对填写",
+      "data_source_zh": "单位转换规则",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.normalized_unit",
+      "group": "common",
+      "name": "normalized_unit",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "规范化单位",
+      "data_source_zh": "单位转换规则",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.missing_fields",
+      "group": "common",
+      "name": "missing_fields",
+      "role": "field",
+      "type": "object_string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "缺失字段到原因代码的映射",
+      "data_source_zh": "字段缺失审计",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "missing_reason",
+      "status": "active",
+      "key_role": "lifecycle",
+      "serves": [
+        "iteration"
+      ],
+      "argument_role": "monitoring"
+    },
+    {
+      "path": "common.dataset_id",
+      "group": "common",
+      "name": "dataset_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "C",
+      "definition_zh": "TB级数据集稳定ID，用于跨分片聚合",
+      "data_source_zh": "数据集注册表",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "lifecycle",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.dataset_version",
+      "group": "common",
+      "name": "dataset_version",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "C",
+      "definition_zh": "不可变数据集快照版本，与字段规范版本分开",
+      "data_source_zh": "数据集发布清单",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "lifecycle",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.record_version",
+      "group": "common",
+      "name": "record_version",
+      "role": "field",
+      "type": "integer",
+      "availability": "N",
+      "required": "C",
+      "definition_zh": "同一record_id的修订序号，从1递增；历史版本不可覆盖",
+      "data_source_zh": "数据更新日志",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 1,
+        "basis": "explicit",
+        "note_zh": "定义：修订序号，从1递增"
+      },
+      "status": "active",
+      "key_role": "record_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.record_grain",
+      "group": "common",
+      "name": "record_grain",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "C",
+      "definition_zh": "evidence_unit、observation_unit、asset_unit或tool_unit",
+      "data_source_zh": "记录类型规则",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "record_grain",
+      "status": "active",
+      "key_role": "record_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.data_modality",
+      "group": "common",
+      "name": "data_modality",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "paper、genotype、phenotype、environment、omics、image或tool等模态",
+      "data_source_zh": "来源元数据",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "data_modality",
+      "status": "active",
+      "key_role": "asset",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.linked_modalities",
+      "group": "common",
+      "name": "linked_modalities",
+      "role": "field",
+      "type": "array_string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "与本记录显式关联的模态代码；跨模态关系需提供可追溯资产或记录ID",
+      "data_source_zh": "资产与实体关联",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "data_modality",
+      "status": "active",
+      "key_role": "asset",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.license_id",
+      "group": "common",
+      "name": "license_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "来源数据的许可或使用协议标识，不推断版权许可",
+      "data_source_zh": "来源授权或数据协议",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "governance",
+      "serves": [
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.access_level",
+      "group": "common",
+      "name": "access_level",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "open、controlled或restricted访问级别",
+      "data_source_zh": "数据治理策略",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "access_level",
+      "status": "active",
+      "key_role": "governance",
+      "serves": [
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.study_id",
+      "group": "common",
+      "name": "study_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "研究项目稳定ID，同一论文可含多个试验",
+      "data_source_zh": "论文或试验注册",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "context_key",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.experiment_id",
+      "group": "common",
+      "name": "experiment_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "对照、处理与评价目标一致的试验ID",
+      "data_source_zh": "试验方案",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "context_key",
+      "serves": [
+        "topic2"
+      ]
+    },
+    {
+      "path": "common.trial_id",
+      "group": "common",
+      "name": "trial_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "一次地点季节组合的试验ID",
+      "data_source_zh": "田间或温室试验记录",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "context_key",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.environment_id",
+      "group": "common",
+      "name": "environment_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "C",
+      "definition_zh": "地点、年度、处理和时段组成的稳定环境ID",
+      "data_source_zh": "环境表或试验记录",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "context_key",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.material_id",
+      "group": "common",
+      "name": "material_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "材料稳定ID，区别于可能重名的品种名称",
+      "data_source_zh": "种质或材料登记",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_id",
+      "serves": [
+        "topic2",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.sample_id",
+      "group": "common",
+      "name": "sample_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "C",
+      "definition_zh": "生物样本稳定ID，与材料、组织和采样事件分开",
+      "data_source_zh": "采样或分型登记",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "context_key",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.replicate_id",
+      "group": "common",
+      "name": "replicate_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "生物或技术重复ID，具体类别需见试验方案",
+      "data_source_zh": "试验记录",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "context_key",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.analysis_run_id",
+      "group": "common",
+      "name": "analysis_run_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "生成本结果的分析任务运行ID",
+      "data_source_zh": "计算运行日志",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "context_key",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.trait_id",
+      "group": "common",
+      "name": "trait_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "C",
+      "definition_zh": "本行单一性状的规范ID，保留trait_names原文",
+      "data_source_zh": "性状本体",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_id",
+      "serves": [
+        "topic2",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.observation_time",
+      "group": "common",
+      "name": "observation_time",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "测量发生的ISO 8601 UTC时间，不等同于入库时间",
+      "data_source_zh": "仪器或田间采集日志",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|\\+00:00)$",
+        "basis": "explicit",
+        "note_zh": "定义：ISO 8601 UTC时间"
+      },
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.measurement_name",
+      "group": "common",
+      "name": "measurement_name",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "本行单一测量项名称，如株高或日最高温",
+      "data_source_zh": "表型或环境变量定义",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.measurement_value",
+      "group": "common",
+      "name": "measurement_value",
+      "role": "field",
+      "type": "number",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "数值测量值；缺失值不可填0代替",
+      "data_source_zh": "表型或传感器记录",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.measurement_text",
+      "group": "common",
+      "name": "measurement_text",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "非数值测量值，如抗病等级；与measurement_value二选一",
+      "data_source_zh": "分类表型记录",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.measurement_unit",
+      "group": "common",
+      "name": "measurement_unit",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "数值测量单位及尺度，须与measurements的标准词表匹配",
+      "data_source_zh": "测量方案或数据字典",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.genotype_call",
+      "group": "common",
+      "name": "genotype_call",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "单样本单变异的基因型调用，密集矩阵优先存外部资产",
+      "data_source_zh": "稀疏分型结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.genotype_dosage",
+      "group": "common",
+      "name": "genotype_dosage",
+      "role": "field",
+      "type": "number",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "指定等位基因的剂量；需按倍性及等位基因方向解释",
+      "data_source_zh": "分型结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 0,
+        "basis": "definitional",
+        "note_zh": "剂量不可为负"
+      },
+      "status": "active",
+      "key_role": "measurement",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.asset_uri",
+      "group": "common",
+      "name": "asset_uri",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "C",
+      "definition_zh": "不含临时签名的持久大文件URI，如VCF、Parquet、图像、PDF",
+      "data_source_zh": "对象存储或资产目录",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "asset",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.asset_kind",
+      "group": "common",
+      "name": "asset_kind",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "genotype_matrix、phenotype_table、image、raw_pdf等资产类别",
+      "data_source_zh": "数据资产注册",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "asset_kind",
+      "status": "active",
+      "key_role": "asset",
+      "serves": [
+        "topic2",
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.asset_format",
+      "group": "common",
+      "name": "asset_format",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "VCF、BCF、Parquet、Zarr、TIFF、PDF等真实格式",
+      "data_source_zh": "文件头或资产元数据",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "asset_format",
+      "status": "active",
+      "key_role": "asset",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.asset_size_bytes",
+      "group": "common",
+      "name": "asset_size_bytes",
+      "role": "field",
+      "type": "integer",
+      "availability": "N",
+      "required": "C",
+      "definition_zh": "原始文件字节数，用于完整性与容量规划",
+      "data_source_zh": "存储系统元数据",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 0,
+        "basis": "definitional",
+        "note_zh": "字节数不可为负"
+      },
+      "status": "active",
+      "key_role": "asset",
+      "serves": [
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.asset_sha256",
+      "group": "common",
+      "name": "asset_sha256",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "C",
+      "definition_zh": "资产内容的SHA-256十六进制摘要",
+      "data_source_zh": "文件校验",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "pattern": "^[0-9A-Fa-f]{64}$",
+        "basis": "explicit",
+        "note_zh": "定义：SHA-256十六进制摘要"
+      },
+      "status": "active",
+      "key_role": "asset",
+      "serves": [
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.asset_schema_ref",
+      "group": "common",
+      "name": "asset_schema_ref",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "高维文件的字段、单位、坐标和缺失值定义的版本化引用",
+      "data_source_zh": "资产数据字典",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "asset",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "common.qc_rule_set_version",
+      "group": "common",
+      "name": "qc_rule_set_version",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "自动质控规则集版本，用于重算和差异审计",
+      "data_source_zh": "质量规则注册",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "lifecycle",
+      "serves": [
+        "iteration"
+      ]
+    },
+    {
+      "path": "common.qc_failure_codes",
+      "group": "common",
+      "name": "qc_failure_codes",
+      "role": "field",
+      "type": "array_string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "未通过的质量规则代码，不将异常数据静默删除",
+      "data_source_zh": "质量检查日志",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "lifecycle",
+      "serves": [
+        "iteration"
+      ],
+      "argument_role": "monitoring"
+    },
+    {
+      "path": "common.trial_season",
+      "group": "common",
+      "name": "trial_season",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "播种和收获季节标识，区别于自然年度",
+      "data_source_zh": "田间试验记录",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "condition",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.ploidy",
+      "group": "common",
+      "name": "ploidy",
+      "role": "field",
+      "type": "integer",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "稀疏基因型调用的倍性，剂量取值不得超过该值",
+      "data_source_zh": "物种及分型元数据",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 1,
+        "basis": "definitional",
+        "note_zh": "倍性至少为1"
+      },
+      "status": "active",
+      "key_role": "entity_attribute",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.reference_allele",
+      "group": "common",
+      "name": "reference_allele",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "指定参考组装下该位点的参考等位基因",
+      "data_source_zh": "变异标准化或VCF",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_attribute",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.alternate_allele",
+      "group": "common",
+      "name": "alternate_allele",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "本行分析的替代等位基因，多等位需明确具体序号",
+      "data_source_zh": "变异标准化或VCF",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_attribute",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.dosage_allele",
+      "group": "common",
+      "name": "dosage_allele",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "C",
+      "definition_zh": "genotype_dosage所计数的等位基因，必须与本行参考或替代等位一致",
+      "data_source_zh": "分型数据字典",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "entity_attribute",
+      "serves": [
+        "topic3",
+        "derivation"
+      ]
+    },
+    {
+      "path": "agent.scientific_question",
+      "group": "agent",
+      "name": "scientific_question",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "论文要回答的可检验科学问题",
+      "data_source_zh": "引言与研究目的",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "assertion",
+      "serves": [
+        "topic2"
+      ]
+    },
+    {
+      "path": "agent.finding_text",
+      "group": "agent",
+      "name": "finding_text",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "单一结果的独立陈述",
+      "data_source_zh": "摘要或结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "assertion",
+      "serves": [
+        "topic2",
+        "derivation"
+      ],
+      "argument_role": "claim"
+    },
+    {
+      "path": "agent.finding_kind",
+      "group": "agent",
+      "name": "finding_kind",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "关联、预测、功能验证或机制发现",
+      "data_source_zh": "结果证据类型",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "finding_kind",
+      "status": "active",
+      "key_role": "appraisal",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "qualifier"
+    },
+    {
+      "path": "agent.evidence_type",
+      "group": "agent",
+      "name": "evidence_type",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "QTL、GWAS、基因编辑等证据类型",
+      "data_source_zh": "实验与统计方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "evidence_type",
+      "status": "active",
+      "key_role": "appraisal",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "warrant"
+    },
+    {
+      "path": "agent.supporting_evidence",
+      "group": "agent",
+      "name": "supporting_evidence",
+      "role": "field",
+      "type": "array_evidence",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "支持当前结论的原文证据及定位",
+      "data_source_zh": "结果及表图",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "record_link",
+      "serves": [
+        "topic2",
+        "derivation"
+      ],
+      "argument_role": "data"
+    },
+    {
+      "path": "agent.association_vs_causation",
+      "group": "agent",
+      "name": "association_vs_causation",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "明确区分统计关联与因果验证",
+      "data_source_zh": "研究设计",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "appraisal",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "qualifier"
+    },
+    {
+      "path": "agent.applicable_population",
+      "group": "agent",
+      "name": "applicable_population",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "结论适用的材料或群体",
+      "data_source_zh": "材料与讨论",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "condition",
+      "serves": [
+        "topic2",
+        "derivation"
+      ],
+      "argument_role": "qualifier"
+    },
+    {
+      "path": "agent.applicable_environment",
+      "group": "agent",
+      "name": "applicable_environment",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "结论适用的环境边界",
+      "data_source_zh": "材料与讨论",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "condition",
+      "serves": [
+        "topic2",
+        "derivation"
+      ],
+      "argument_role": "qualifier"
+    },
+    {
+      "path": "agent.actual_observation",
+      "group": "agent",
+      "name": "actual_observation",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "论文实际观测结果",
+      "data_source_zh": "结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "assertion",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "data"
+    },
+    {
+      "path": "agent.uncertainty_note",
+      "group": "agent",
+      "name": "uncertainty_note",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "证据不确定性及适用限制",
+      "data_source_zh": "讨论或统计结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "appraisal",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "qualifier"
+    },
+    {
+      "path": "agent.experiment_objective",
+      "group": "agent",
+      "name": "experiment_objective",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "此实验要验证的目标",
+      "data_source_zh": "实验目的",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "study_design",
+      "serves": [
+        "topic2"
+      ]
+    },
+    {
+      "path": "agent.experiment_design",
+      "group": "agent",
+      "name": "experiment_design",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "随机化、区组、多点等设计",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "study_design",
+      "serves": [
+        "topic2"
+      ]
+    },
+    {
+      "path": "agent.experimental_materials",
+      "group": "agent",
+      "name": "experimental_materials",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "实验使用的材料列表",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "study_design",
+      "serves": [
+        "topic2"
+      ]
+    },
+    {
+      "path": "agent.replicate_count",
+      "group": "agent",
+      "name": "replicate_count",
+      "role": "field",
+      "type": "integer",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "生物或技术重复数",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 0,
+        "basis": "definitional",
+        "note_zh": "计数不可为负"
+      },
+      "status": "active",
+      "key_role": "study_design",
+      "serves": [
+        "topic2"
+      ]
+    },
+    {
+      "path": "agent.observation_indicators",
+      "group": "agent",
+      "name": "observation_indicators",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "用于判断假设的测量指标",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "study_design",
+      "serves": [
+        "topic2"
+      ]
+    },
+    {
+      "path": "agent.workflow_steps",
+      "group": "agent",
+      "name": "workflow_steps",
+      "role": "field",
+      "type": "array_step",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "论文可复原的实验与分析步骤",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "study_design",
+      "serves": [
+        "topic2"
+      ]
+    },
+    {
+      "path": "agent.result_interpretation",
+      "group": "agent",
+      "name": "result_interpretation",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "作者对观测的解释",
+      "data_source_zh": "结果与讨论",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "assertion",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "claim"
+    },
+    {
+      "path": "agent.breeding_relevance",
+      "group": "agent",
+      "name": "breeding_relevance",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "结果对选材、组配或育种的意义",
+      "data_source_zh": "讨论或结论",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "assertion",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "claim"
+    },
+    {
+      "path": "agent.knowledge_gap",
+      "group": "agent",
+      "name": "knowledge_gap",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "论文指出但尚未解决的问题",
+      "data_source_zh": "引言或讨论",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "assertion",
+      "serves": [
+        "topic2"
+      ]
+    },
+    {
+      "path": "agent.candidate_gene_status",
+      "group": "agent",
+      "name": "candidate_gene_status",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "候选基因的证据层级，区分定位、表达支持与功能验证",
+      "data_source_zh": "定位、表达及功能实验",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "candidate_gene_status",
+      "status": "active",
+      "key_role": "appraisal",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "qualifier"
+    },
+    {
+      "path": "agent.statistical_test",
+      "group": "agent",
+      "name": "statistical_test",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "支持该结果的统计检验或模型名称",
+      "data_source_zh": "方法或结果表",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "warrant"
+    },
+    {
+      "path": "agent.lod_score",
+      "group": "agent",
+      "name": "lod_score",
+      "role": "field",
+      "type": "number",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "与本行性状、环境及QTL匹配的LOD值",
+      "data_source_zh": "QTL结果表",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "statistic",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "data"
+    },
+    {
+      "path": "agent.pve_percent",
+      "group": "agent",
+      "name": "pve_percent",
+      "role": "field",
+      "type": "number",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "与本行性状、环境及QTL匹配的表型变异解释率百分数",
+      "data_source_zh": "QTL结果表",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 0,
+        "maximum": 100,
+        "basis": "definitional",
+        "note_zh": "百分数"
+      },
+      "status": "active",
+      "key_role": "statistic",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "data"
+    },
+    {
+      "path": "agent.validation_methods",
+      "group": "agent",
+      "name": "validation_methods",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "对定位或候选基因的独立验证方式如qRT-PCR或转基因",
+      "data_source_zh": "结果与材料方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic2"
+      ],
+      "argument_role": "backing"
+    },
+    {
+      "path": "skills.analysis_task",
+      "group": "skills",
+      "name": "analysis_task",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "技能所解决的分析任务",
+      "data_source_zh": "方法标题",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.method_category",
+      "group": "skills",
+      "name": "method_category",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "GWAS、基因组预测、QTL定位等类别",
+      "data_source_zh": "方法分类表",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "method_category",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.method_name",
+      "group": "skills",
+      "name": "method_name",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "论文方法名称原文",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.algorithm_name",
+      "group": "skills",
+      "name": "algorithm_name",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "实际使用的算法名称",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.software_name",
+      "group": "skills",
+      "name": "software_name",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "软件或R包名称",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.input_modalities",
+      "group": "skills",
+      "name": "input_modalities",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "基因型、表型、环境等输入模态",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "interface_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.preprocessing_steps",
+      "group": "skills",
+      "name": "preprocessing_steps",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "数据清洗、缺失填补等步骤",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.qc_filters",
+      "group": "skills",
+      "name": "qc_filters",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "缺失率、MAF等过滤规则原文",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.parameters",
+      "group": "skills",
+      "name": "parameters",
+      "role": "field",
+      "type": "array_parameter",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "参数名、原生类型值、value_kind、单位、约束和来源；公式仍为字符串",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.feature_count",
+      "group": "skills",
+      "name": "feature_count",
+      "role": "field",
+      "type": "integer",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "实际进入模型的标记或特征数",
+      "data_source_zh": "方法与结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 0,
+        "basis": "definitional",
+        "note_zh": "计数不可为负"
+      },
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.training_population",
+      "group": "skills",
+      "name": "training_population",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "模型训练群体定义",
+      "data_source_zh": "验证方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.validation_strategy",
+      "group": "skills",
+      "name": "validation_strategy",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "交叉验证或外部验证方案",
+      "data_source_zh": "验证方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.folds",
+      "group": "skills",
+      "name": "folds",
+      "role": "field",
+      "type": "integer",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "交叉验证折数",
+      "data_source_zh": "验证方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 1,
+        "basis": "definitional",
+        "note_zh": "折数为正整数"
+      },
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.split_basis",
+      "group": "skills",
+      "name": "split_basis",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "按年份、群体或环境分割原则",
+      "data_source_zh": "验证方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.output_fields",
+      "group": "skills",
+      "name": "output_fields",
+      "role": "field",
+      "type": "array_string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "分析结果的关键字段名",
+      "data_source_zh": "结果或未来工具文档",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "interface_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.metric_name",
+      "group": "skills",
+      "name": "metric_name",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "预测相关性、遗传力等指标名称",
+      "data_source_zh": "结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "statistic",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.metric_value",
+      "group": "skills",
+      "name": "metric_value",
+      "role": "field",
+      "type": "number",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "与本证据单元匹配的指标值",
+      "data_source_zh": "结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "statistic",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.significance_threshold",
+      "group": "skills",
+      "name": "significance_threshold",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "显著性阈值原样表达式",
+      "data_source_zh": "材料与方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ],
+      "argument_role": "backing"
+    },
+    {
+      "path": "skills.applicability_limit",
+      "group": "skills",
+      "name": "applicability_limit",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "算法适用样本、作物及场景限制",
+      "data_source_zh": "讨论或工具说明",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ],
+      "argument_role": "rebuttal"
+    },
+    {
+      "path": "skills.input_schema_ref",
+      "group": "skills",
+      "name": "input_schema_ref",
+      "role": "field",
+      "type": "string",
+      "availability": "F",
+      "required": "N",
+      "definition_zh": "正式输入结构定义引用",
+      "data_source_zh": "未来Markdown工具说明",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "interface_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.output_schema_ref",
+      "group": "skills",
+      "name": "output_schema_ref",
+      "role": "field",
+      "type": "string",
+      "availability": "F",
+      "required": "N",
+      "definition_zh": "正式输出结构定义引用",
+      "data_source_zh": "未来Markdown工具说明",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "interface_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.workflow_steps",
+      "group": "skills",
+      "name": "workflow_steps",
+      "role": "field",
+      "type": "array_step",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "输入、运行、产出的有序分析步骤",
+      "data_source_zh": "材料与方法或工具文档",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "interface_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.genotyping_method",
+      "group": "skills",
+      "name": "genotyping_method",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "GBS、重测序或RFLP等实际基因分型方式",
+      "data_source_zh": "分型方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.phenotyping_method",
+      "group": "skills",
+      "name": "phenotyping_method",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "田间测定、图像测定或人工评分等表型来源",
+      "data_source_zh": "表型方法",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "method_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.skill_spec_id",
+      "group": "skills",
+      "name": "skill_spec_id",
+      "role": "field",
+      "type": "string",
+      "availability": "F",
+      "required": "N",
+      "definition_zh": "可调用技能规范ID，论文方法名称不能自动充当此ID",
+      "data_source_zh": "课题三技能注册表",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "interface_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "skills.skill_spec_version",
+      "group": "skills",
+      "name": "skill_spec_version",
+      "role": "field",
+      "type": "string",
+      "availability": "F",
+      "required": "N",
+      "definition_zh": "可调用接口版本，与论文引用的软件版本分开",
+      "data_source_zh": "课题三工具说明",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "interface_spec",
+      "serves": [
+        "topic3"
+      ]
+    },
+    {
+      "path": "transform.subject_mention",
+      "group": "transform",
+      "name": "subject_mention",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "关系主语原文提及",
+      "data_source_zh": "结论原文",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "relation",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.subject_type",
+      "group": "transform",
+      "name": "subject_type",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "主语的本体类型",
+      "data_source_zh": "领域本体",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "relation",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.subject_id",
+      "group": "transform",
+      "name": "subject_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "主语规范ID；未链接则省略",
+      "data_source_zh": "实体对齐结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "relation",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.predicate_label",
+      "group": "transform",
+      "name": "predicate_label",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "原文关系的规范化名称",
+      "data_source_zh": "关系抽取",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "predicate_label",
+      "status": "active",
+      "key_role": "relation",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.predicate_id",
+      "group": "transform",
+      "name": "predicate_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "经本体审核的关系ID",
+      "data_source_zh": "领域本体",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "relation",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.object_mention",
+      "group": "transform",
+      "name": "object_mention",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "关系宾语原文提及",
+      "data_source_zh": "结论原文",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "relation",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.object_type",
+      "group": "transform",
+      "name": "object_type",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "宾语的本体类型",
+      "data_source_zh": "领域本体",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "relation",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.object_id",
+      "group": "transform",
+      "name": "object_id",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "宾语规范ID；未链接则省略",
+      "data_source_zh": "实体对齐结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "relation",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.relation_polarity",
+      "group": "transform",
+      "name": "relation_polarity",
+      "role": "field",
+      "type": "string",
+      "availability": "I",
+      "required": "N",
+      "definition_zh": "增加、降低、无显著效应或未知",
+      "data_source_zh": "语义与实验结果",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "relation_polarity",
+      "status": "active",
+      "key_role": "relation",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.relation_qualifiers",
+      "group": "transform",
+      "name": "relation_qualifiers",
+      "role": "field",
+      "type": "object_string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "群体、环境、时间、处理和方法限定",
+      "data_source_zh": "试验上下文字段",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "relation",
+      "serves": [
+        "derivation"
+      ],
+      "argument_role": "qualifier"
+    },
+    {
+      "path": "transform.graph_status",
+      "group": "transform",
+      "name": "graph_status",
+      "role": "field",
+      "type": "string",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "候选、已审核或已发布状态",
+      "data_source_zh": "图谱审核",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "graph_status",
+      "status": "active",
+      "key_role": "derivation_control",
+      "serves": [
+        "derivation"
+      ],
+      "argument_role": "evaluation"
+    },
+    {
+      "path": "transform.entity_alignment_status",
+      "group": "transform",
+      "name": "entity_alignment_status",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "未链接、候选或已链接",
+      "data_source_zh": "实体对齐过程",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "entity_alignment_status",
+      "status": "active",
+      "key_role": "entity_alignment",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.provenance_record_ids",
+      "group": "transform",
+      "name": "provenance_record_ids",
+      "role": "field",
+      "type": "array_string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "支持图谱语句的源证据ID",
+      "data_source_zh": "common.record_id",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "record_link",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.chunk_id",
+      "group": "transform",
+      "name": "chunk_id",
+      "role": "field",
+      "type": "string",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "检索块稳定ID",
+      "data_source_zh": "语料切块",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "corpus_qa",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.chunk_text",
+      "group": "transform",
+      "name": "chunk_text",
+      "role": "field",
+      "type": "string",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "保留条件和出处的检索文本",
+      "data_source_zh": "来源片段与上下文",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "corpus_qa",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.chunk_page",
+      "group": "transform",
+      "name": "chunk_page",
+      "role": "field",
+      "type": "integer",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "语料块所在页",
+      "data_source_zh": "PDF物理页码",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "constraints": {
+        "minimum": 1,
+        "basis": "explicit",
+        "note_zh": "PDF物理页码（与source_page同口径）"
+      },
+      "status": "active",
+      "key_role": "corpus_qa",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.chunk_section",
+      "group": "transform",
+      "name": "chunk_section",
+      "role": "field",
+      "type": "string",
+      "availability": "D",
+      "required": "N",
+      "definition_zh": "语料块所属章节",
+      "data_source_zh": "PDF章节",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "corpus_qa",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.chunk_keywords",
+      "group": "transform",
+      "name": "chunk_keywords",
+      "role": "field",
+      "type": "array_string",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "用于检索召回的作物基因性状词",
+      "data_source_zh": "语料切块与实体识别",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "corpus_qa",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.qa_seed_question",
+      "group": "transform",
+      "name": "qa_seed_question",
+      "role": "field",
+      "type": "string",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "可由本证据支持的候选问题",
+      "data_source_zh": "已核验证据",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "corpus_qa",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.qa_seed_answer",
+      "group": "transform",
+      "name": "qa_seed_answer",
+      "role": "field",
+      "type": "string",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "有明确证据的候选答案",
+      "data_source_zh": "已核验证据",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "corpus_qa",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.qa_answerable",
+      "group": "transform",
+      "name": "qa_answerable",
+      "role": "field",
+      "type": "boolean",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "当前证据是否足以作答",
+      "data_source_zh": "证据覆盖检查",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "corpus_qa",
+      "serves": [
+        "derivation"
+      ],
+      "argument_role": "evaluation"
+    },
+    {
+      "path": "transform.qa_support_ids",
+      "group": "transform",
+      "name": "qa_support_ids",
+      "role": "field",
+      "type": "array_string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "答案引用的证据单元ID",
+      "data_source_zh": "common.record_id",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "record_link",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.qa_difficulty",
+      "group": "transform",
+      "name": "qa_difficulty",
+      "role": "field",
+      "type": "string",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "单跳、多跳或跨模态难度",
+      "data_source_zh": "问答生成过程",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "qa_difficulty",
+      "status": "active",
+      "key_role": "corpus_qa",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.leakage_group_id",
+      "group": "transform",
+      "name": "leakage_group_id",
+      "role": "field",
+      "type": "string",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "划分数据集时防泄漏的分组ID",
+      "data_source_zh": "同论文同群体聚类",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "status": "active",
+      "key_role": "derivation_control",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "transform.corpus_split",
+      "group": "transform",
+      "name": "corpus_split",
+      "role": "field",
+      "type": "string",
+      "availability": "G",
+      "required": "N",
+      "definition_zh": "train、validation或test；同一泄漏组只能落入一个集合",
+      "data_source_zh": "数据划分清单",
+      "maturity": "verified",
+      "since": "3.0.0",
+      "vocabulary": "corpus_split",
+      "status": "active",
+      "key_role": "derivation_control",
+      "serves": [
+        "derivation"
+      ]
+    },
+    {
+      "path": "common.schema_name",
+      "group": "common",
+      "name": "schema_name",
+      "role": "field",
+      "type": "string",
+      "availability": "N",
+      "required": "N",
+      "definition_zh": "记录遵循的数据契约名称；与 schema_version 共同标识契约",
+      "data_source_zh": "契约发布（系统填写）",
+      "maturity": "provisional",
+      "since": "3.1.0",
+      "status": "active",
+      "key_role": "record_identity",
+      "serves": [
+        "topic2",
+        "topic3",
+        "derivation",
+        "iteration"
+      ]
+    }
+  ],
+  "vocabularies": {
+    "access_level": {
+      "enforcement": "error",
+      "closure": "closed",
+      "code_status": "source",
+      "title_zh": "访问级别",
+      "values": [
+        {
+          "code": "open",
+          "label_zh": "开放"
+        },
+        {
+          "code": "controlled",
+          "label_zh": "受控"
+        },
+        {
+          "code": "restricted",
+          "label_zh": "限制"
+        }
+      ]
+    },
+    "asset_format": {
+      "enforcement": "open",
+      "closure": "open",
+      "code_status": "source",
+      "title_zh": "资产格式",
+      "values": [
+        {
+          "code": "VCF"
+        },
+        {
+          "code": "BCF"
+        },
+        {
+          "code": "Parquet"
+        },
+        {
+          "code": "Zarr"
+        },
+        {
+          "code": "TIFF"
+        },
+        {
+          "code": "PDF"
+        }
+      ]
+    },
+    "asset_kind": {
+      "enforcement": "open",
+      "closure": "open",
+      "code_status": "source",
+      "title_zh": "资产类别",
+      "values": [
+        {
+          "code": "genotype_matrix"
+        },
+        {
+          "code": "phenotype_table"
+        },
+        {
+          "code": "image"
+        },
+        {
+          "code": "raw_pdf"
+        }
+      ]
+    },
+    "candidate_gene_status": {
+      "enforcement": "warning",
+      "closure": "closed",
+      "code_status": "source",
+      "title_zh": "候选基因证据层级",
+      "values": [
+        {
+          "code": "proximity_only",
+          "label_zh": "仅位置邻近"
+        },
+        {
+          "code": "author_proposed",
+          "label_zh": "作者提出"
+        },
+        {
+          "code": "expression_supported",
+          "label_zh": "表达证据支持"
+        },
+        {
+          "code": "fine_mapped",
+          "label_zh": "精细定位"
+        },
+        {
+          "code": "functional_validated",
+          "label_zh": "功能验证"
+        },
+        {
+          "code": "field_validated",
+          "label_zh": "田间验证"
+        }
+      ]
+    },
+    "corpus_split": {
+      "enforcement": "error",
+      "closure": "closed",
+      "code_status": "source",
+      "title_zh": "语料划分",
+      "values": [
+        {
+          "code": "train",
+          "label_zh": "训练"
+        },
+        {
+          "code": "validation",
+          "label_zh": "验证"
+        },
+        {
+          "code": "test",
+          "label_zh": "测试"
+        }
+      ]
+    },
+    "crop_name": {
+      "enforcement": "open",
+      "closure": "open",
+      "code_status": "proposed",
+      "title_zh": "作物名称",
+      "values": [
+        {
+          "code": "rice",
+          "label_zh": "水稻",
+          "aliases": [
+            "水稻",
+            "rice",
+            "Oryza sativa",
+            "paddy"
+          ]
+        },
+        {
+          "code": "maize",
+          "label_zh": "玉米",
+          "aliases": [
+            "玉米",
+            "maize",
+            "corn",
+            "Zea mays"
+          ]
+        },
+        {
+          "code": "wheat",
+          "label_zh": "小麦",
+          "aliases": [
+            "小麦",
+            "wheat",
+            "Triticum aestivum"
+          ]
+        },
+        {
+          "code": "barley",
+          "label_zh": "大麦",
+          "aliases": [
+            "大麦",
+            "barley",
+            "Hordeum vulgare"
+          ]
+        },
+        {
+          "code": "sorghum",
+          "label_zh": "高粱",
+          "aliases": [
+            "高粱",
+            "sorghum",
+            "Sorghum bicolor"
+          ]
+        },
+        {
+          "code": "soybean",
+          "label_zh": "大豆",
+          "aliases": [
+            "大豆",
+            "soybean",
+            "soya bean",
+            "Glycine max"
+          ]
+        },
+        {
+          "code": "rapeseed",
+          "label_zh": "油菜",
+          "aliases": [
+            "油菜",
+            "rapeseed",
+            "oilseed rape",
+            "canola",
+            "Brassica napus"
+          ]
+        },
+        {
+          "code": "peanut",
+          "label_zh": "花生",
+          "aliases": [
+            "花生",
+            "peanut",
+            "groundnut",
+            "Arachis hypogaea"
+          ]
+        },
+        {
+          "code": "cotton",
+          "label_zh": "棉花",
+          "aliases": [
+            "棉花",
+            "cotton",
+            "Gossypium"
+          ]
+        },
+        {
+          "code": "potato",
+          "label_zh": "马铃薯",
+          "aliases": [
+            "马铃薯",
+            "potato",
+            "Solanum tuberosum"
+          ]
+        },
+        {
+          "code": "tomato",
+          "label_zh": "番茄",
+          "aliases": [
+            "番茄",
+            "tomato",
+            "Solanum lycopersicum"
+          ]
+        },
+        {
+          "code": "vegetable_crops",
+          "label_zh": "蔬菜作物"
+        },
+        {
+          "code": "fruit_trees",
+          "label_zh": "果树"
+        },
+        {
+          "code": "forage",
+          "label_zh": "牧草"
+        },
+        {
+          "code": "pig",
+          "label_zh": "猪",
+          "aliases": [
+            "猪",
+            "pig",
+            "swine",
+            "Sus scrofa"
+          ]
+        },
+        {
+          "code": "cattle",
+          "label_zh": "牛",
+          "aliases": [
+            "牛",
+            "cattle",
+            "Bos taurus"
+          ]
+        },
+        {
+          "code": "sheep",
+          "label_zh": "羊",
+          "aliases": [
+            "羊",
+            "sheep",
+            "goat"
+          ]
+        },
+        {
+          "code": "chicken",
+          "label_zh": "鸡",
+          "aliases": [
+            "鸡",
+            "chicken",
+            "Gallus gallus"
+          ]
+        },
+        {
+          "code": "duck",
+          "label_zh": "鸭",
+          "aliases": [
+            "鸭",
+            "duck"
+          ]
+        },
+        {
+          "code": "fish",
+          "label_zh": "鱼"
+        },
+        {
+          "code": "shrimp",
+          "label_zh": "虾",
+          "aliases": [
+            "虾",
+            "shrimp"
+          ]
+        },
+        {
+          "code": "other",
+          "label_zh": "其他"
+        }
+      ]
+    },
+    "data_modality": {
+      "enforcement": "open",
+      "closure": "open",
+      "code_status": "source",
+      "title_zh": "数据模态",
+      "values": [
+        {
+          "code": "paper"
+        },
+        {
+          "code": "genotype"
+        },
+        {
+          "code": "phenotype"
+        },
+        {
+          "code": "environment"
+        },
+        {
+          "code": "omics"
+        },
+        {
+          "code": "image"
+        },
+        {
+          "code": "tool"
+        }
+      ]
+    },
+    "entity_alignment_status": {
+      "enforcement": "warning",
+      "closure": "closed",
+      "code_status": "proposed",
+      "title_zh": "实体对齐状态",
+      "values": [
+        {
+          "code": "unlinked",
+          "label_zh": "未链接"
+        },
+        {
+          "code": "candidate",
+          "label_zh": "候选"
+        },
+        {
+          "code": "linked",
+          "label_zh": "已链接"
+        }
+      ]
+    },
+    "evidence_type": {
+      "enforcement": "open",
+      "closure": "open",
+      "code_status": "source",
+      "title_zh": "证据类型",
+      "values": [
+        {
+          "code": "QTL"
+        },
+        {
+          "code": "GWAS"
+        },
+        {
+          "code": "gene_editing",
+          "label_zh": "基因编辑"
+        }
+      ]
+    },
+    "extraction_method": {
+      "enforcement": "warning",
+      "closure": "closed",
+      "code_status": "proposed",
+      "title_zh": "抽取或接入方式",
+      "values": [
+        {
+          "code": "manual",
+          "label_zh": "人工"
+        },
+        {
+          "code": "rule",
+          "label_zh": "规则"
+        },
+        {
+          "code": "ocr",
+          "label_zh": "OCR"
+        },
+        {
+          "code": "model",
+          "label_zh": "模型"
+        },
+        {
+          "code": "api",
+          "label_zh": "API"
+        },
+        {
+          "code": "instrument",
+          "label_zh": "仪器"
+        },
+        {
+          "code": "etl",
+          "label_zh": "ETL接入"
+        }
+      ]
+    },
+    "finding_kind": {
+      "enforcement": "warning",
+      "closure": "closed",
+      "code_status": "proposed",
+      "title_zh": "发现类型",
+      "values": [
+        {
+          "code": "association",
+          "label_zh": "关联"
+        },
+        {
+          "code": "prediction",
+          "label_zh": "预测"
+        },
+        {
+          "code": "functional_validation",
+          "label_zh": "功能验证"
+        },
+        {
+          "code": "mechanism_discovery",
+          "label_zh": "机制发现"
+        }
+      ]
+    },
+    "graph_status": {
+      "enforcement": "warning",
+      "closure": "closed",
+      "code_status": "proposed",
+      "title_zh": "图谱状态",
+      "values": [
+        {
+          "code": "candidate",
+          "label_zh": "候选"
+        },
+        {
+          "code": "reviewed",
+          "label_zh": "已审核"
+        },
+        {
+          "code": "published",
+          "label_zh": "已发布"
+        }
+      ]
+    },
+    "method_category": {
+      "enforcement": "open",
+      "closure": "open",
+      "code_status": "source",
+      "title_zh": "方法类别",
+      "values": [
+        {
+          "code": "GWAS"
+        },
+        {
+          "code": "genomic_prediction",
+          "label_zh": "基因组预测"
+        },
+        {
+          "code": "QTL_mapping",
+          "label_zh": "QTL定位"
+        },
+        {
+          "code": "linkage_analysis",
+          "label_zh": "连锁分析(区间作图)"
+        },
+        {
+          "code": "genomic_selection",
+          "label_zh": "基因组选择(GEBV预测)"
+        },
+        {
+          "code": "population_genetics",
+          "label_zh": "群体遗传分析"
+        },
+        {
+          "code": "heritability_estimation",
+          "label_zh": "遗传力估计"
+        },
+        {
+          "code": "genetic_correlation",
+          "label_zh": "遗传相关分析"
+        },
+        {
+          "code": "ANOVA",
+          "label_zh": "方差分析(ANOVA)"
+        },
+        {
+          "code": "AMMI"
+        },
+        {
+          "code": "GGE_biplot",
+          "label_zh": "GGE双标图"
+        },
+        {
+          "code": "linkage_disequilibrium",
+          "label_zh": "连锁不平衡(LD)"
+        },
+        {
+          "code": "haplotype_analysis",
+          "label_zh": "单倍型分析"
+        },
+        {
+          "code": "selection_signature",
+          "label_zh": "选择信号分析"
+        },
+        {
+          "code": "domestication_analysis",
+          "label_zh": "驯化分析"
+        },
+        {
+          "code": "differential_expression",
+          "label_zh": "差异表达"
+        },
+        {
+          "code": "enrichment_analysis",
+          "label_zh": "基因富集分析"
+        },
+        {
+          "code": "network_analysis",
+          "label_zh": "网络分析"
+        },
+        {
+          "code": "metabolic_pathway_analysis",
+          "label_zh": "代谢路径分析"
+        },
+        {
+          "code": "phenomics",
+          "label_zh": "表型组学分析"
+        },
+        {
+          "code": "parentage_testing",
+          "label_zh": "亲子鉴定"
+        },
+        {
+          "code": "kinship_analysis",
+          "label_zh": "亲缘分析"
+        },
+        {
+          "code": "meta_analysis",
+          "label_zh": "荟萃分析"
+        },
+        {
+          "code": "cluster_analysis",
+          "label_zh": "聚类分析"
+        }
+      ]
+    },
+    "missing_reason": {
+      "enforcement": "open",
+      "closure": "open",
+      "code_status": "repository",
+      "title_zh": "缺失原因代码",
+      "values": [
+        {
+          "code": "not_reported",
+          "label_zh": "论文未报告"
+        },
+        {
+          "code": "not_located",
+          "label_zh": "未能在来源中定位证据"
+        },
+        {
+          "code": "not_applicable",
+          "label_zh": "不适用"
+        },
+        {
+          "code": "requires_external_source",
+          "label_zh": "需外部数据库或未来来源（N/F）"
+        },
+        {
+          "code": "requires_review",
+          "label_zh": "需人工判断（I）"
+        },
+        {
+          "code": "ambiguous_in_contract",
+          "label_zh": "契约定义不明确"
+        },
+        {
+          "code": "conversion_not_possible",
+          "label_zh": "无法确定性换算"
+        },
+        {
+          "code": "source_part_unavailable",
+          "label_zh": "来源的某一部分未提供（如补充材料、附录）"
+        }
+      ]
+    },
+    "population_type": {
+      "enforcement": "open",
+      "closure": "open",
+      "code_status": "source",
+      "title_zh": "群体类型",
+      "values": [
+        {
+          "code": "RIL",
+          "label_zh": "重组自交系"
+        },
+        {
+          "code": "NIL",
+          "label_zh": "近等基因系"
+        },
+        {
+          "code": "natural_population",
+          "label_zh": "自然群体",
+          "aliases": [
+            "natural_pop",
+            "自然群体"
+          ]
+        },
+        {
+          "code": "F2"
+        },
+        {
+          "code": "BC",
+          "label_zh": "回交群体"
+        },
+        {
+          "code": "DH",
+          "label_zh": "双单倍体"
+        },
+        {
+          "code": "BIL",
+          "label_zh": "回交导入系"
+        },
+        {
+          "code": "CSSL",
+          "label_zh": "染色体片段代换系"
+        },
+        {
+          "code": "MAGIC"
+        },
+        {
+          "code": "NAM"
+        },
+        {
+          "code": "TIL"
+        }
+      ]
+    },
+    "predicate_label": {
+      "enforcement": "open",
+      "closure": "open",
+      "code_status": "legacy",
+      "title_zh": "关系谓词",
+      "values": [
+        {
+          "code": "genotype_controls_trait",
+          "label_zh": "基因-控制-性状"
+        },
+        {
+          "code": "gene_associated_with_trait",
+          "label_zh": "基因-关联-性状"
+        },
+        {
+          "code": "gene_interacts_with_gene",
+          "label_zh": "基因-互作-基因"
+        },
+        {
+          "code": "qtl_associated_with_trait",
+          "label_zh": "QTL-关联-性状"
+        },
+        {
+          "code": "marker_linked_to_qtl",
+          "label_zh": "标记-连锁-QTL"
+        },
+        {
+          "code": "marker_located_at_locus",
+          "label_zh": "标记-定位-位点"
+        },
+        {
+          "code": "germplasm_carries_allele",
+          "label_zh": "种质-携带-基因"
+        },
+        {
+          "code": "variety_derived_from",
+          "label_zh": "品种-源于-亲本"
+        },
+        {
+          "code": "germplasm_member_of_population",
+          "label_zh": "种质-组成-群体"
+        },
+        {
+          "code": "environment_affects_trait",
+          "label_zh": "环境-影响-性状"
+        },
+        {
+          "code": "environment_regulates_expression",
+          "label_zh": "环境-调节-基因表达"
+        },
+        {
+          "code": "gene_expressed_in_tissue",
+          "label_zh": "基因-表达于-组织"
+        },
+        {
+          "code": "gene_located_in_region",
+          "label_zh": "基因-定位于-区段"
+        },
+        {
+          "code": "trait_component_of_trait",
+          "label_zh": "性状-构成-上位性状"
+        },
+        {
+          "code": "variety_adapted_to_environment",
+          "label_zh": "品种-适应于-环境/区域"
+        },
+        {
+          "code": "material_resistant_to_disease",
+          "label_zh": "材料-抗-病害"
+        },
+        {
+          "code": "gene_mediates_resistance",
+          "label_zh": "基因-介导-抗病性"
+        },
+        {
+          "code": "method_based_on_population",
+          "label_zh": "方法-基于-群体"
+        },
+        {
+          "code": "analysis_produces_conclusion",
+          "label_zh": "分析-产出-结论"
+        },
+        {
+          "code": "conclusion_supports_hypothesis",
+          "label_zh": "结论-支持-假设"
+        },
+        {
+          "code": "material_registered_in_database",
+          "label_zh": "材料-登记于-数据库"
+        },
+        {
+          "code": "synonym_of",
+          "label_zh": "同义-实体"
+        }
+      ]
+    },
+    "qa_difficulty": {
+      "enforcement": "warning",
+      "closure": "closed",
+      "code_status": "proposed",
+      "title_zh": "问答难度",
+      "values": [
+        {
+          "code": "single_hop",
+          "label_zh": "单跳"
+        },
+        {
+          "code": "multi_hop",
+          "label_zh": "多跳"
+        },
+        {
+          "code": "cross_modal",
+          "label_zh": "跨模态"
+        }
+      ]
+    },
+    "record_grain": {
+      "enforcement": "error",
+      "closure": "closed",
+      "code_status": "source",
+      "title_zh": "记录粒度",
+      "values": [
+        {
+          "code": "evidence_unit",
+          "label_zh": "证据单元"
+        },
+        {
+          "code": "observation_unit",
+          "label_zh": "观测单元"
+        },
+        {
+          "code": "asset_unit",
+          "label_zh": "资产单元"
+        },
+        {
+          "code": "tool_unit",
+          "label_zh": "工具单元"
+        }
+      ]
+    },
+    "record_kind": {
+      "enforcement": "error",
+      "closure": "closed",
+      "code_status": "source",
+      "title_zh": "记录类型",
+      "values": [
+        {
+          "code": "claim",
+          "label_zh": "论文结论"
+        },
+        {
+          "code": "observation",
+          "label_zh": "论文观测"
+        },
+        {
+          "code": "method",
+          "label_zh": "方法证据"
+        },
+        {
+          "code": "phenotype_observation",
+          "label_zh": "表型单值观测"
+        },
+        {
+          "code": "environment_observation",
+          "label_zh": "环境单值观测"
+        },
+        {
+          "code": "genotype_observation",
+          "label_zh": "基因型单值观测"
+        },
+        {
+          "code": "asset_manifest",
+          "label_zh": "资产清单"
+        },
+        {
+          "code": "analysis_result",
+          "label_zh": "分析结果"
+        },
+        {
+          "code": "tool_spec",
+          "label_zh": "工具规范"
+        }
+      ]
+    },
+    "relation_polarity": {
+      "enforcement": "warning",
+      "closure": "closed",
+      "code_status": "proposed",
+      "title_zh": "关系极性",
+      "values": [
+        {
+          "code": "increase",
+          "label_zh": "增加"
+        },
+        {
+          "code": "decrease",
+          "label_zh": "降低"
+        },
+        {
+          "code": "no_significant_effect",
+          "label_zh": "无显著效应"
+        },
+        {
+          "code": "unknown",
+          "label_zh": "未知"
+        }
+      ]
+    },
+    "review_status": {
+      "enforcement": "warning",
+      "closure": "closed",
+      "code_status": "proposed",
+      "title_zh": "审核状态",
+      "values": [
+        {
+          "code": "pending_review",
+          "label_zh": "待复核"
+        },
+        {
+          "code": "auto_validated",
+          "label_zh": "自动校验通过"
+        },
+        {
+          "code": "model_verified",
+          "label_zh": "模型复核通过"
+        },
+        {
+          "code": "expert_approved",
+          "label_zh": "专家通过"
+        },
+        {
+          "code": "rejected",
+          "label_zh": "驳回"
+        }
+      ]
+    },
+    "source_type": {
+      "enforcement": "open",
+      "closure": "open",
+      "code_status": "source",
+      "title_zh": "来源类型",
+      "values": [
+        {
+          "code": "paper",
+          "label_zh": "论文"
+        },
+        {
+          "code": "experiment_record",
+          "label_zh": "试验记录"
+        },
+        {
+          "code": "tool_description",
+          "label_zh": "工具说明"
+        }
+      ]
+    }
+  },
+  "record_kinds": {},
+  "counts": {
+    "total": 158,
+    "by_role": {
+      "field": 158
+    },
+    "by_availability": {
+      "D": 82,
+      "F": 5,
+      "G": 11,
+      "I": 11,
+      "N": 49
+    },
+    "by_group": {
+      "common": 83,
+      "agent": 24,
+      "skills": 26,
+      "transform": 25
+    }
+  },
+  "ambiguities": [
+    "AMB-025"
+  ],
+  "source": {
+    "ref": "sources/fields_v3/breeding_fields_compact_final.md",
+    "quote_zh": "从完整 259 字段中筛选出 157 个首批生产字段"
+  },
+  "fill_rules": []
+}

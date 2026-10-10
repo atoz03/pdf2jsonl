@@ -15,7 +15,7 @@ from .util import ContractError, split_path
 PROFILE_MERGE_KEYS = ("roles", "system_fields", "generated_fields", "document_defaults", "evidence_policy",
                       "required_fields")
 ROLE_PRIORITY = ("system", "linked", "normalized", "generated", "document", "provenance")
-FIELD_ANNOTATIONS = ("key_role", "serves", "argument_role")
+FIELD_ANNOTATIONS = ("key_role", "serves", "argument_role", "workflow_edge")
 EVIDENCE_ROLES = ("page", "section", "quote", "table_figure", "row_key", "column_key")
 
 

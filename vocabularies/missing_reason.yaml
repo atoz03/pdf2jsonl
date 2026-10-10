@@ -24,3 +24,6 @@ values:
   label_zh: 契约定义不明确
 - code: conversion_not_possible
   label_zh: 无法确定性换算
+- code: source_part_unavailable
+  label_zh: 来源的某一部分未提供（如补充材料、附录）
+  ambiguities: [AMB-041]

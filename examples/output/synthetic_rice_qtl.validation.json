@@ -3,11 +3,11 @@
   "run_id": "run_example",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.4.0",
+    "schema_version": "3.5.0",
     "release_status": "released",
-    "requested": "3.4.0",
-    "release_sha256": "75c97e35f5d86c3ad2ad51fd1e1b383374a351e8295c1939d0b4d16e74ba2eda",
-    "source_digest": "9183f3660d63bd53c8a5854eaad44c0075283a2d8916eefc6b0b525f8e2e00d3"
+    "requested": "3.5.0",
+    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
+    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
   },
   "profile": "pdf_extraction",
   "input": {
@@ -524,6 +524,70 @@
             "rec_f14cf35540cd343ba197afdbb0d1be2b"
           ]
         }
+      }
+    ]
+  },
+  "source_parts": {
+    "provided": [
+      {
+        "part": "main",
+        "source_part": "main_text",
+        "file_name": "synthetic_rice_qtl.pdf",
+        "sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
+        "page_count": 3
+      }
+    ],
+    "referenced": {},
+    "missing": [],
+    "items_not_found": [],
+    "complete": true
+  },
+  "workflow_structure": {
+    "audit_format": 1,
+    "basis": "nodes are records, edges are record links with a catalog workflow_edge (AMB-039); structure and connectivity only, not experimental soundness",
+    "stages": {
+      "step": 4,
+      "observation": 6,
+      "result": 1,
+      "statement": 6
+    },
+    "edges_by_type": {
+      "evidence": 3,
+      "method": 2
+    },
+    "links": {
+      "total": 5,
+      "unresolved": 0
+    },
+    "flags": {
+      "STEP_WITHOUT_OUTPUT": 3
+    },
+    "flag_help": {
+      "STEP_WITHOUT_OUTPUT": "a step that no result cites as its method and no later step depends on"
+    },
+    "hypotheses": 0,
+    "steps_ordered": 0,
+    "records": [
+      {
+        "record_id": "rec_5c53b13c583f012777560afb901f0896",
+        "stage": "step",
+        "flags": [
+          "STEP_WITHOUT_OUTPUT"
+        ]
+      },
+      {
+        "record_id": "rec_37b7608caa93e974bb0d2751a826bfed",
+        "stage": "step",
+        "flags": [
+          "STEP_WITHOUT_OUTPUT"
+        ]
+      },
+      {
+        "record_id": "rec_ce342cc427ccb1192ae32b4ea3604dea",
+        "stage": "step",
+        "flags": [
+          "STEP_WITHOUT_OUTPUT"
+        ]
       }
     ]
   }

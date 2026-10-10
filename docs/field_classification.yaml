@@ -194,6 +194,8 @@ fields:
   common.biological_replicate_id: [research_2, general]
   common.technical_replicate_id: [research_2, general]
   common.sampling_time: [research_2, general]
+  common.source_part: [research_1, general]
+  common.verification_run_id: [research_1, iteration]
   # agent
   agent.scientific_question: [research_2]
   agent.finding_text: [research_2]
@@ -252,6 +254,11 @@ fields:
   agent.candidate_gene_window: [research_2, general]
   agent.claim_qualifier_text: [research_2]
   agent.stated_limitations: [research_2]
+  agent.statement_role: [research_2]
+  agent.step_condition: [research_2]
+  agent.tests_record_ids: [research_1, research_2]
+  agent.addresses_record_ids: [research_1, research_2]
+  agent.prerequisite_record_ids: [research_1, research_2]
   # skills
   skills.analysis_task: [research_2, general]
   skills.method_category: [research_2, general]
@@ -356,6 +363,7 @@ fields:
   transform.entity_synonyms: [research_1]
   transform.entity_links: [research_1]
   transform.qa_id: [research_1, research_2]
+  transform.ontology_id: [research_1, iteration]
   # omics
   omics.omics_type: [research_2, general]
   omics.assay_type: [research_2, general]

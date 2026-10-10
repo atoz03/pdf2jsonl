@@ -3,7 +3,7 @@
   "view": "document_bundle",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.4.0"
+    "schema_version": "3.5.0"
   },
   "documents": [
     {
@@ -227,7 +227,7 @@
             "crop_name": "rice",
             "asset_format": "PDF",
             "record_id": "rec_305cbc3d9bb13bf7385413f4515b2eb6",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "asset_manifest",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -244,12 +244,13 @@
             "asset_kind": "raw_pdf",
             "asset_size_bytes": 3131,
             "asset_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "qc_failure_codes": [
               "RULE_R018"
             ],
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           }
         },
         {
@@ -274,7 +275,7 @@
               "qPH7.1"
             ],
             "record_id": "rec_f14cf35540cd343ba197afdbb0d1be2b",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "claim",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -286,9 +287,10 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "agent": {
             "finding_text": "qPH7.1 explained 23.5% of the phenotypic variance and was significantly associated with plant height in both environments.",
@@ -349,7 +351,7 @@
             ],
             "chromosome": "7",
             "record_id": "rec_08e1eb43367c113a51a822ef0ada8cc6",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "claim",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -361,9 +363,10 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "agent": {
             "finding_text": "We identified a major QTL, qPH7.1, on chromosome 7 using 180 recombinant inbred lines.",
@@ -409,7 +412,7 @@
             "source_language": "en",
             "crop_name": "rice",
             "record_id": "rec_0d7dc45bbe58a92d202e012510f6dddc",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "method",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -421,9 +424,10 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "skills": {
             "method_name": "inclusive composite interval mapping",
@@ -459,7 +463,7 @@
             "measurement_value": 118.4,
             "measurement_unit": "cm",
             "record_id": "rec_58945dadf226ce0677fd88b024dd1890",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "phenotype_observation",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -473,9 +477,10 @@
             "record_grain": "observation_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "transform": {
             "entity_links": [
@@ -517,7 +522,7 @@
             "measurement_value": 121.0,
             "measurement_unit": "cm",
             "record_id": "rec_7ad570828311c1f25637f155d78554a1",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "phenotype_observation",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -531,9 +536,10 @@
             "record_grain": "observation_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "transform": {
             "entity_links": [
@@ -568,7 +574,7 @@
             "original_value": "85.2 to 132.6",
             "original_unit": "cm",
             "record_id": "rec_9910a284bbd3c46723b782ae6036dcf8",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "observation",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -583,9 +589,10 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "transform": {
             "entity_links": [
@@ -622,7 +629,7 @@
               "qPH7.1"
             ],
             "record_id": "rec_8cb15f3fc682966f331e99645d1feeee",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "analysis_result",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -636,9 +643,10 @@
             "record_version": 1,
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "agent": {
             "lod_score": 12.8
@@ -696,7 +704,7 @@
               "qPH7.1"
             ],
             "record_id": "rec_7f5dffa5d004f757faf37699f6e0de97",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "claim",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -708,12 +716,13 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "qc_failure_codes": [
               "EVIDENCE_PAGE_CORRECTED"
             ],
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "agent": {
             "finding_text": "The allele from Parent1 increased plant height by 8.6 cm.",
@@ -769,7 +778,7 @@
               "qPH7.1"
             ],
             "record_id": "rec_2948c949662fc366580763be4eb34923",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "claim",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -781,9 +790,10 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "agent": {
             "finding_text": "qPH7.1 co-localized with a previously reported heading date region, suggesting a possible pleiotropic effect that requires validation.",
@@ -842,7 +852,7 @@
             "measurement_value": 92.1,
             "measurement_unit": "cm",
             "record_id": "rec_72ee809732015a8cf903d7fa3a40fee2",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "phenotype_observation",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -856,9 +866,10 @@
             "record_grain": "observation_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "transform": {
             "entity_links": [
@@ -900,7 +911,7 @@
             "measurement_value": 95.3,
             "measurement_unit": "cm",
             "record_id": "rec_360ccac261cdf8ece2775e4d8e03ba1a",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "phenotype_observation",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -914,9 +925,10 @@
             "record_grain": "observation_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "transform": {
             "entity_links": [
@@ -946,7 +958,7 @@
             "source_language": "en",
             "crop_name": "rice",
             "record_id": "rec_5c53b13c583f012777560afb901f0896",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "method",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -958,9 +970,10 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "skills": {
             "software_name": "JoinMap",
@@ -988,7 +1001,7 @@
             ],
             "trait_measurement_protocol": "from the soil surface to the tip of the tallest panicle",
             "record_id": "rec_37b7608caa93e974bb0d2751a826bfed",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "method",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -1000,9 +1013,10 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "transform": {
             "entity_links": [
@@ -1033,7 +1047,7 @@
             "crop_name": "rice",
             "marker_type": "SNP",
             "record_id": "rec_ce342cc427ccb1192ae32b4ea3604dea",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "method",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -1045,9 +1059,10 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           }
         },
         {
@@ -1069,7 +1084,7 @@
             "sample_size": 180,
             "trial_year": 2022,
             "record_id": "rec_08d03e69158c60bdfa90aa5cf0cc1dc1",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "observation",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -1081,9 +1096,10 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           }
         },
         {
@@ -1102,7 +1118,7 @@
             "source_language": "en",
             "crop_name": "rice",
             "record_id": "rec_2c945a65b48e06c883660614fcf44b19",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "claim",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -1114,9 +1130,10 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "agent": {
             "knowledge_gap": "natural variation in temperate japonica remains poorly characterized"
@@ -1144,7 +1161,7 @@
               "qPH7.1"
             ],
             "record_id": "rec_09bf178c22a0ac588f5a8562bac5075f",
-            "schema_version": "3.4.0",
+            "schema_version": "3.5.0",
             "record_kind": "claim",
             "source_id": "doi:10.0000/synthetic.2026.001",
             "source_file_sha256": "73754bef99491d4c01763d1f5d54bf3143edbf61652eb8bfbb959da4335a4819",
@@ -1156,12 +1173,13 @@
             "record_grain": "evidence_unit",
             "extraction_run_id": "run_example",
             "source_uri": "https://doi.org/10.0000/synthetic.2026.001",
-            "qc_rule_set_version": "breeding-literature-record@3.4.0+pdf2jsonl@0.3.0",
+            "qc_rule_set_version": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0",
             "qc_failure_codes": [
               "CANDIDATE_LINK_UNRESOLVED"
             ],
             "schema_name": "breeding-literature-record",
-            "extraction_profile": "pdf_extraction"
+            "extraction_profile": "pdf_extraction",
+            "source_part": "main_text"
           },
           "agent": {
             "breeding_relevance": "qPH7.1 is a promising target for marker-assisted breeding of plant height in rice.",

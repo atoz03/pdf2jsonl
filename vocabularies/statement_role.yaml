@@ -1,0 +1,36 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: statement_role
+title_zh: 陈述在研究流程中的角色
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 3.5.0
+origin: [repository]
+source:
+  ref: docs/workflow.md
+  quote_zh: 研究背景与已有知识、科学问题与研究目标、科学假设、实验设计、方法与工具、观测、结论（课题二提出的论文内研究流程）
+notes_zh: 代码由仓库拟定（AMB-039）。方法步骤与观测由记录类型（method、observation 等）表示，不在本词表中；角色按原文的表述方式判定，不由抽取者推断。
+ambiguities: [AMB-039]
+values:
+- code: background
+  label_zh: 研究背景与已有知识
+  description_zh: 论文引述的已有知识或研究现状
+- code: research_question
+  label_zh: 科学问题
+  description_zh: 论文明确提出的待回答问题或尚不清楚之处
+- code: objective
+  label_zh: 研究目标
+  description_zh: 作者陈述的本研究或某项实验的目标
+- code: hypothesis
+  label_zh: 科学假设
+  description_zh: 作者明确提出的假设或推测（如 we hypothesized、might）
+- code: design
+  label_zh: 实验设计
+  description_zh: 为检验假设或达到目标所作的实验安排
+- code: result
+  label_zh: 结果
+  description_zh: 作者报告的实验或分析结果
+- code: conclusion
+  label_zh: 结论
+  description_zh: 作者由结果得出的结论或解释

@@ -9,7 +9,8 @@ Two uses share this module:
   directories. Rerun it after adding PDFs or running extraction.
 
 The HTML embeds its data so it works when opened directly, without a web server. Identical PDF bytes are
-grouped by SHA-256; runs are never joined just because filenames match.
+grouped by SHA-256; runs are never joined just because filenames match. A PDF that a run manifest lists as a
+supplement of its input is shown as a part of that paper, not as a paper of its own.
 """
 from __future__ import annotations
 
@@ -90,7 +91,8 @@ def _read_rows(path, notes):
 def _paper(key, filename):
     return {'id': key, 'filename': filename, 'title': filename, 'pdf_url': None,
             'pdf_paths': [], 'pages': [], 'page_count': 0, 'size_bytes': 0,
-            'synthetic': False, 'runs': [], 'tasks': [], 'notes': [], 'doi': '', 'year': None, 'crop': ''}
+            'synthetic': False, 'runs': [], 'tasks': [], 'notes': [], 'doi': '', 'year': None, 'crop': '',
+            'supplements': []}
 
 
 def _scan(root, scan=None):
@@ -145,6 +147,8 @@ def _run(root, path, manifest, contract_cache):
     warnings = [{**issue, 'record_id': row.get('record_id'), 'record_kind': row.get('record_kind')}
                 for row in validation.get('records', []) for issue in row.get('warnings', [])]
     audit = validation.get('argument_structure') or {}
+    workflow = validation.get('workflow_structure') or {}
+    source_parts = validation.get('source_parts') if isinstance(validation.get('source_parts'), dict) else None
     derived = None
     version = (manifest.get('contract') or {}).get('schema_version')
     try:
@@ -167,9 +171,11 @@ def _run(root, path, manifest, contract_cache):
             'run_id': manifest.get('run_id', path.stem), 'name': name, 'path': _relative(root, path.parent),
             'manifest_url': _url(root, path), 'created_at': manifest.get('created_at', ''),
             'version': version, 'profile': (manifest.get('profile') or {}).get('name', ''), 'model': model,
-            'records': records, 'errors': errors, 'warnings': warnings, 'audit': audit,
+            'records': records, 'errors': errors, 'warnings': warnings, 'audit': audit, 'workflow': workflow,
+            'source_parts': source_parts,
             'counts': {'records': len(records), 'rejected': len(errors), 'pending': review.get('pending_review', 0),
                        'auto_validated': review.get('auto_validated', 0), 'audit_flags': sum((audit.get('flags') or {}).values()),
+                       'workflow_flags': sum((workflow.get('flags') or {}).values()),
                        'by_kind': dict(by_kind), 'by_review': dict(review)},
             'manifest': manifest, 'validation': validation, 'bundle': bundle, 'derived': derived,
             'raw_outputs': raw_outputs,
@@ -205,6 +211,7 @@ def build_data(root: Path = ROOT, scan=None):
         except Exception as exc:
             paper['notes'].append(f'文本预览不可用（{exc.__class__.__name__}），仍可打开原 PDF。')
     completed = set()
+    supplements = {}  # key of a supplement file -> (key of the paper it belongs to, its part label)
     for path in manifests:
         notes = []
         manifest = _read_json(path, notes)
@@ -223,6 +230,9 @@ def build_data(root: Path = ROOT, scan=None):
         paper['runs'].append(run)
         if not paper['page_count']:
             paper['page_count'] = source.get('page_count') or 0
+        for part in source.get('supplements') or []:
+            if isinstance(part, dict) and isinstance(part.get('sha256'), str) and isinstance(part.get('part'), str):
+                supplements.setdefault('sha256:' + part['sha256'].lower(), (key, part['part']))
         completed.add((path.parent.resolve(), digest))
     for path in requests:
         notes = []
@@ -243,6 +253,13 @@ def build_data(root: Path = ROOT, scan=None):
         paper['tasks'].append({'path': _relative(root, path.parent), 'created_at': request.get('created_at', ''),
                                'version': (request.get('contract') or {}).get('schema_version'),
                                'has_candidates': (path.parent / 'candidates.json').is_file()})
+    for part_key, (owner, label) in supplements.items():
+        part = papers.get(part_key)
+        if part is None or part['runs'] or part['tasks'] or owner not in papers or owner == part_key:
+            continue  # the file is not here, or it was also run as a paper of its own: leave it as it is
+        papers[owner]['supplements'].append({k: part[k] for k in ('filename', 'pdf_url', 'pdf_paths', 'pages',
+                                                                   'page_count', 'size_bytes')} | {'part': label})
+        del papers[part_key]
     for paper in papers.values():
         paper['runs'].sort(key=lambda r: (r['created_at'], r['path']), reverse=True)
         if paper['runs']:
@@ -279,6 +296,7 @@ def build_data(root: Path = ROOT, scan=None):
 def _linked_files(data):
     """Repository-relative paths of every file the page links to (PDFs, run manifests and outputs)."""
     urls = [p.get('pdf_url') for p in data.get('papers', [])]
+    urls += [s.get('pdf_url') for p in data.get('papers', []) for s in p.get('supplements') or []]
     for paper in data.get('papers', []):
         for run in paper['runs']:
             urls += [run.get('manifest_url'), *(run.get('urls') or {}).values()]

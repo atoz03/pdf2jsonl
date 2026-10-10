@@ -1,0 +1,13 @@
+record_id,field,position,value
+rec_d0d87732dff67a2694847f7d0f0fbc61,common.qc_failure_codes,0,RULE_R018
+rec_c679c3c2c1343cfab188306fefdbb11a,common.qc_failure_codes,0,RULE_R018
+rec_eb88edbd3cdd1ce77d844d368affb702,agent.treatment_groups,0,12 h of heat treatment
+rec_2f056a171ec8867c073c350da2562919,agent.experimental_materials,0,SL14
+rec_2f056a171ec8867c073c350da2562919,agent.experimental_materials,1,WY
+rec_69945ca262a0be13812fc69f7f90fd65,agent.experimental_materials,0,recombinant plants
+rec_6427ec708013a88c3bd6d089815d21ec,common.qc_failure_codes,0,VERIFY_UNCERTAIN
+rec_6427ec708013a88c3bd6d089815d21ec,agent.experimental_materials,0,knockout lines of HTR1
+rec_6427ec708013a88c3bd6d089815d21ec,agent.experimental_materials,1,WY
+rec_0944532bb7d56a7c673ef0c19413b5a3,common.qc_failure_codes,0,VERIFY_FIELD_NOT_SUPPORTED
+rec_4347364e90ac28cf4607e75c85f2c399,agent.treatment_groups,0,42 C for 14 h
+rec_4347364e90ac28cf4607e75c85f2c399,agent.observation_indicators,0,survival

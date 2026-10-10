@@ -1,0 +1,704 @@
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "rdf:type", "o": "bdc:asset_manifest", "o_kind": "iri", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.asset_format", "o": "PDF", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_locator", "o": "document", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.review_status", "o": "pending_review", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.missing_fields", "o": "{\"common.asset_uri\": \"requires_external_source\"}", "o_kind": "json", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.asset_kind", "o": "raw_pdf", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.asset_size_bytes", "o": 2904, "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.asset_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.qc_failure_codes", "o": "RULE_R018", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "rdf:type", "o": "bdc:asset_manifest", "o_kind": "iri", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.asset_format", "o": "PDF", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_file_sha256", "o": "835b7a290289d34dec43e5737ebc195b7001b19f271517b78841de9c894c0829", "o_kind": "id", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_locator", "o": "part=supplement", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.review_status", "o": "pending_review", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.missing_fields", "o": "{\"common.asset_uri\": \"requires_external_source\"}", "o_kind": "json", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.asset_kind", "o": "raw_pdf", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.asset_size_bytes", "o": 1691, "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.asset_sha256", "o": "835b7a290289d34dec43e5737ebc195b7001b19f271517b78841de9c894c0829", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.qc_failure_codes", "o": "RULE_R018", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "rdf:type", "o": "bdc:claim", "o_kind": "iri", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_page", "o": 1, "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_section", "o": "Introduction", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_quote", "o": "Heat stress damages chloroplasts and reduces grain yield in rice.", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.trait_names", "o": "ent:trait/grain_yield", "o_kind": "iri", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "ent:trait/grain_yield", "p": "rdfs:label", "o": "grain yield", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "ent:trait/grain_yield", "p": "rdf:type", "o": "bdc:entity/trait", "o_kind": "iri", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_locator", "o": "page=1;section=Introduction", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_span", "o": "page=1;char=452-517", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:agent.finding_text", "o": "Heat stress damages chloroplasts and reduces grain yield in rice.", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:agent.statement_role", "o": "background", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "rdf:type", "o": "bdc:claim", "o_kind": "iri", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_page", "o": 1, "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_section", "o": "Introduction", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_quote", "o": "How heat signals are transduced from the plasma membrane to chloroplasts remains unknown.", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_locator", "o": "page=1;section=Introduction", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_span", "o": "page=1;char=518-607", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:agent.knowledge_gap", "o": "How heat signals are transduced from the plasma membrane to chloroplasts remains unknown.", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:agent.statement_role", "o": "research_question", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:agent.addresses_record_ids", "o": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "o_kind": "iri", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "rdf:type", "o": "bdc:claim", "o_kind": "iri", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_page", "o": 1, "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_section", "o": "Introduction", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_quote", "o": "The objective of this study was to identify genes underlying natural variation in thermotolerance.", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.trait_names", "o": "ent:trait/thermotolerance", "o_kind": "iri", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "ent:trait/thermotolerance", "p": "rdfs:label", "o": "thermotolerance", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "ent:trait/thermotolerance", "p": "rdf:type", "o": "bdc:entity/trait", "o_kind": "iri", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_locator", "o": "page=1;section=Introduction", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_span", "o": "page=1;char=608-706", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:agent.experiment_objective", "o": "identify genes underlying natural variation in thermotolerance", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:agent.statement_role", "o": "objective", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:agent.addresses_record_ids", "o": "rec:rec_78858b935a834f96996e2a9d46e4961d", "o_kind": "iri", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "rdf:type", "o": "bdc:observation", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_section", "o": "Results", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_quote", "o": "A chromosome segment substitution line, SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment (fig. S1).", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.germplasm_names", "o": "ent:germplasm/sl14", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "ent:germplasm/sl14", "p": "rdfs:label", "o": "SL14", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "ent:germplasm/sl14", "p": "rdf:type", "o": "bdc:entity/germplasm", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.germplasm_names", "o": "ent:germplasm/wy", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "ent:germplasm/wy", "p": "rdfs:label", "o": "WY", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "ent:germplasm/wy", "p": "rdf:type", "o": "bdc:entity/germplasm", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.recurrent_parent", "o": "ent:recurrent_parent/wy", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "ent:recurrent_parent/wy", "p": "rdfs:label", "o": "WY", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "ent:recurrent_parent/wy", "p": "rdf:type", "o": "bdc:entity/recurrent_parent", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_locator", "o": "page=2;section=Results", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_span", "o": "page=2;char=8-145", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:agent.actual_observation", "o": "SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:agent.treatment_groups", "o": "12 h of heat treatment", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:agent.statement_role", "o": "result", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:agent.evidence_record_ids", "o": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:skills.method_record_ids", "o": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:skills.method_record_ids", "o": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "rdf:type", "o": "bdc:method", "o_kind": "iri", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_section", "o": "Results", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_quote", "o": "We backcrossed SL14 to WY to construct a mapping population.", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_locator", "o": "page=2;section=Results", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_span", "o": "page=2;char=146-206", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:agent.experiment_objective", "o": "construct a mapping population", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:agent.experimental_materials", "o": "SL14", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:agent.experimental_materials", "o": "WY", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:agent.prerequisite_record_ids", "o": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "o_kind": "iri", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "rdf:type", "o": "bdc:analysis_result", "o_kind": "iri", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_section", "o": "Results", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_table_figure", "o": "Table 1", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_quote", "o": "Using 1,614 BC4F3 plants from this population, qHT3 was narrowed to a 36.6 kb interval on chromosome 3 (Table 1).", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.qtl_names", "o": "ent:qtl/qht3", "o_kind": "iri", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "ent:qtl/qht3", "p": "rdfs:label", "o": "qHT3", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "ent:qtl/qht3", "p": "rdf:type", "o": "bdc:entity/qtl", "o_kind": "iri", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.chromosome", "o": "3", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_locator", "o": "page=2;section=Results;table=Table 1", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_span", "o": "page=2;char=207-320", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.missing_fields", "o": "{\"common.record_grain\": \"ambiguous_in_contract\"}", "o_kind": "json", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:agent.statement_role", "o": "result", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:agent.prerequisite_record_ids", "o": "rec:rec_2f056a171ec8867c073c350da2562919", "o_kind": "iri", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "rdf:type", "o": "bdc:method", "o_kind": "iri", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_section", "o": "Results", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_quote", "o": "Only recombinant plants that survived the heat treatment were advanced to the next generation.", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_locator", "o": "page=2;section=Results", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_span", "o": "page=2;char=321-415", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:agent.experimental_materials", "o": "recombinant plants", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:agent.step_condition", "o": "Only recombinant plants that survived the heat treatment", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:agent.prerequisite_record_ids", "o": "rec:rec_2f056a171ec8867c073c350da2562919", "o_kind": "iri", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:agent.prerequisite_record_ids", "o": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "o_kind": "iri", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "rdf:type", "o": "bdc:claim", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_section", "o": "Results", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_quote", "o": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.gene_names", "o": "ent:gene/htr1", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "ent:gene/htr1", "p": "rdfs:label", "o": "HTR1", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "ent:gene/htr1", "p": "rdf:type", "o": "bdc:entity/gene", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.qtl_names", "o": "ent:qtl/qht3", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "ent:qtl/qht3", "p": "rdfs:label", "o": "qHT3", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "ent:qtl/qht3", "p": "rdf:type", "o": "bdc:entity/qtl", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_locator", "o": "page=2;section=Results", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_span", "o": "page=2;char=488-582", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:agent.hypothesis_stated", "o": "HTR1 underlies qHT3", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:agent.statement_role", "o": "hypothesis", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:agent.addresses_record_ids", "o": "rec:rec_79044e3e05f535856832154a51c8a87f", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "ent:gene/htr1", "p": "bdc:stated_relation", "o": "ent:qtl/qht3", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "statement": "stm_12b2a0b0ef4c18668d477888", "predicate_status": "verbatim", "predicate_mention": "underlies"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "rdf:type", "o": "bdc:method", "o_kind": "iri", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_section", "o": "Results", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_quote", "o": "To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9.", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.gene_names", "o": "ent:gene/htr1", "o_kind": "iri", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "ent:gene/htr1", "p": "rdfs:label", "o": "HTR1", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "ent:gene/htr1", "p": "rdf:type", "o": "bdc:entity/gene", "o_kind": "iri", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_locator", "o": "page=2;section=Results", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_span", "o": "page=2;char=488-582", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.review_status", "o": "pending_review", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.qc_failure_codes", "o": "VERIFY_UNCERTAIN", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:agent.experimental_materials", "o": "knockout lines of HTR1", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:agent.experimental_materials", "o": "WY", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:agent.tests_record_ids", "o": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "o_kind": "iri", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:agent.prerequisite_record_ids", "o": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "o_kind": "iri", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:skills.method_name", "o": "CRISPR/Cas9", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "rdf:type", "o": "bdc:observation", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_section", "o": "Results", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_quote", "o": "The knockout lines of HTR1 showed lower survival than WY after heat treatment (fig. S2).", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.germplasm_names", "o": "ent:germplasm/sl14", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "ent:germplasm/sl14", "p": "rdfs:label", "o": "SL14", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "ent:germplasm/sl14", "p": "rdf:type", "o": "bdc:entity/germplasm", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.gene_names", "o": "ent:gene/htr1", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "ent:gene/htr1", "p": "rdfs:label", "o": "HTR1", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "ent:gene/htr1", "p": "rdf:type", "o": "bdc:entity/gene", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_locator", "o": "page=2;section=Results", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_span", "o": "page=2;char=583-671", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.review_status", "o": "pending_review", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.qc_failure_codes", "o": "VERIFY_FIELD_NOT_SUPPORTED", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:agent.actual_observation", "o": "The knockout lines of HTR1 showed lower survival than WY after heat treatment", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:agent.statement_role", "o": "result", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:agent.tests_record_ids", "o": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:skills.method_record_ids", "o": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:skills.method_record_ids", "o": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:skills.method_record_ids", "o": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "rdf:type", "o": "bdc:claim", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_section", "o": "Results", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_quote", "o": "We hypothesized that HTR1 might recruit HTR2 precursors to endosomes for degradation.", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.gene_names", "o": "ent:gene/htr1", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "ent:gene/htr1", "p": "rdfs:label", "o": "HTR1", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "ent:gene/htr1", "p": "rdf:type", "o": "bdc:entity/gene", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.gene_names", "o": "ent:gene/htr2", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "ent:gene/htr2", "p": "rdfs:label", "o": "HTR2", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "ent:gene/htr2", "p": "rdf:type", "o": "bdc:entity/gene", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_locator", "o": "page=2;section=Results", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_span", "o": "page=2;char=672-757", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:agent.hypothesis_stated", "o": "HTR1 might recruit HTR2 precursors to endosomes for degradation", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:agent.claim_qualifier_text", "o": "might", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:agent.statement_role", "o": "hypothesis", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:agent.addresses_record_ids", "o": "rec:rec_78858b935a834f96996e2a9d46e4961d", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "ent:entity/htr2_precursors", "p": "rdfs:label", "o": "HTR2 precursors", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "ent:entity/htr2_precursors", "p": "rdf:type", "o": "bdc:entity/entity", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "ent:gene/htr1", "p": "bdc:stated_relation", "o": "ent:entity/htr2_precursors", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653", "statement": "stm_48da284f8f3c4a461e7a3a00", "predicate_status": "verbatim", "predicate_mention": "might recruit", "hedge": "might"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "rdf:type", "o": "bdc:observation", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_section", "o": "Results", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_quote", "o": "HTR1 interacted with HTR2 in a split-luciferase assay (fig. S3).", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.gene_names", "o": "ent:gene/htr1", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "ent:gene/htr1", "p": "rdfs:label", "o": "HTR1", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "ent:gene/htr1", "p": "rdf:type", "o": "bdc:entity/gene", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.gene_names", "o": "ent:gene/htr2", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "ent:gene/htr2", "p": "rdfs:label", "o": "HTR2", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "ent:gene/htr2", "p": "rdf:type", "o": "bdc:entity/gene", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_locator", "o": "page=2;section=Results", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_span", "o": "page=2;char=758-822", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:agent.actual_observation", "o": "HTR1 interacted with HTR2 in a split-luciferase assay", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:agent.statement_role", "o": "result", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:skills.method_record_ids", "o": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "ent:gene/htr1", "p": "bdc:gene_interacts_with_gene", "o": "ent:gene/htr2", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610", "statement": "stm_eff24b9aeeae505e5ad37b62", "predicate_status": "lexicon", "predicate_mention": "interacted with"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "rdf:type", "o": "bdc:claim", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_section", "o": "Discussion", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_quote", "o": "These results indicate that HTR1 acts upstream of HTR2 to protect chloroplasts under heat stress.", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.gene_names", "o": "ent:gene/htr1", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "ent:gene/htr1", "p": "rdfs:label", "o": "HTR1", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "ent:gene/htr1", "p": "rdf:type", "o": "bdc:entity/gene", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.gene_names", "o": "ent:gene/htr2", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "ent:gene/htr2", "p": "rdfs:label", "o": "HTR2", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "ent:gene/htr2", "p": "rdf:type", "o": "bdc:entity/gene", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_locator", "o": "page=2;section=Discussion", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_span", "o": "page=2;char=834-931", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:agent.finding_text", "o": "HTR1 acts upstream of HTR2 to protect chloroplasts under heat stress.", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:agent.statement_role", "o": "conclusion", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:agent.evidence_record_ids", "o": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:agent.evidence_record_ids", "o": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:agent.addresses_record_ids", "o": "rec:rec_78858b935a834f96996e2a9d46e4961d", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "ent:gene/htr1", "p": "bdc:stated_relation", "o": "ent:gene/htr2", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750", "statement": "stm_69a98b02d0657e5df29b03af", "predicate_status": "verbatim", "predicate_mention": "acts upstream of"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "rdf:type", "o": "bdc:claim", "o_kind": "iri", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_section", "o": "Discussion", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_quote", "o": "How HTR2 accumulation damages chloroplasts remains to be determined.", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.gene_names", "o": "ent:gene/htr2", "o_kind": "iri", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "ent:gene/htr2", "p": "rdfs:label", "o": "HTR2", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "ent:gene/htr2", "p": "rdf:type", "o": "bdc:entity/gene", "o_kind": "iri", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_file_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "id", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_locator", "o": "page=2;section=Discussion", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_span", "o": "page=2;char=932-1000", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:agent.knowledge_gap", "o": "How HTR2 accumulation damages chloroplasts remains to be determined.", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "rdf:type", "o": "bdc:method", "o_kind": "iri", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_page", "o": 1, "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_section", "o": "Materials and Methods", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_quote", "o": "Twelve-day-old seedlings were treated at 42 C for 14 h and survival was scored after 7 days of recovery.", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_file_sha256", "o": "835b7a290289d34dec43e5737ebc195b7001b19f271517b78841de9c894c0829", "o_kind": "id", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_locator", "o": "part=supplement;page=1;section=Materials and Methods", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_span", "o": "part=supplement;page=1;char=203-307", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:agent.treatment_groups", "o": "42 C for 14 h", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:agent.observation_indicators", "o": "survival", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "rdf:type", "o": "bdc:method", "o_kind": "iri", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_page", "o": 1, "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_section", "o": "Materials and Methods", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_quote", "o": "Each line was tested in 3 biological replicates of 24 plants.", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_file_sha256", "o": "835b7a290289d34dec43e5737ebc195b7001b19f271517b78841de9c894c0829", "o_kind": "id", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_locator", "o": "part=supplement;page=1;section=Materials and Methods", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_span", "o": "part=supplement;page=1;char=308-369", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:agent.replicate_count", "o": 3, "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:agent.statement_role", "o": "design", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "rdf:type", "o": "bdc:method", "o_kind": "iri", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_page", "o": 1, "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_section", "o": "Materials and Methods", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_quote", "o": "Survival rates were compared with a two-tailed t test.", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_file_sha256", "o": "835b7a290289d34dec43e5737ebc195b7001b19f271517b78841de9c894c0829", "o_kind": "id", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_locator", "o": "part=supplement;page=1;section=Materials and Methods", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_span", "o": "part=supplement;page=1;char=370-424", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:agent.statistical_test", "o": "two-tailed t test", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:agent.statement_role", "o": "design", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "rdf:type", "o": "bdc:method", "o_kind": "iri", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_page", "o": 1, "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_section", "o": "Materials and Methods", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_quote", "o": "Split-luciferase assays were performed in Nicotiana benthamiana leaves.", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_file_sha256", "o": "835b7a290289d34dec43e5737ebc195b7001b19f271517b78841de9c894c0829", "o_kind": "id", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_locator", "o": "part=supplement;page=1;section=Materials and Methods", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_span", "o": "part=supplement;page=1;char=425-496", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:skills.method_name", "o": "Split-luciferase assays", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "rdf:type", "o": "bdc:phenotype_observation", "o_kind": "iri", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_doi", "o": "10.0000/synthetic.2026.002", "o_kind": "id", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_year", "o": 2025, "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_authors", "o": "Synthetic Author C", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_authors", "o": "Synthetic Author D", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_page", "o": 2, "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_section", "o": "Materials and Methods", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_table_figure", "o": "Fig. S1", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_table_row_key", "o": "SL14", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_table_column_key", "o": "Survival", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_quote", "o": "SL14 78.5 %", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_language", "o": "en", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.crop_name", "o": "ent:crop/rice", "o_kind": "iri", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "ent:crop/rice", "p": "rdfs:label", "o": "rice", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "ent:crop/rice", "p": "rdf:type", "o": "bdc:entity/crop", "o_kind": "iri", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.germplasm_names", "o": "ent:germplasm/sl14", "o_kind": "iri", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "ent:germplasm/sl14", "p": "rdfs:label", "o": "SL14", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "ent:germplasm/sl14", "p": "rdf:type", "o": "bdc:entity/germplasm", "o_kind": "iri", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.original_value", "o": "78.5", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.original_unit", "o": "%", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.measurement_name", "o": "Survival", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.measurement_value", "o": 78.5, "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.measurement_unit", "o": "%", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_id", "o": "doi:10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_file_sha256", "o": "835b7a290289d34dec43e5737ebc195b7001b19f271517b78841de9c894c0829", "o_kind": "id", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_locator", "o": "part=supplement;page=2;section=Materials and Methods;table=Fig. S1;row=SL14;col=Survival", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_span", "o": "part=supplement;page=2;char=68-79", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.extraction_method", "o": "model", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.normalized_value", "o": 78.5, "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.normalized_unit", "o": "%", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.record_updated_at", "o": "2026-09-21T14:13:20Z", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:skills.method_record_ids", "o": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "o_kind": "iri", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}

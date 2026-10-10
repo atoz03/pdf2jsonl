@@ -176,6 +176,11 @@ def check_field_functions(cat: dict) -> list[Finding]:
             err(f"{p}: unknown argument_role {f['argument_role']!r}")
         if f.get("card") and f["card"] not in cards:
             err(f"{p}: unknown card {f['card']!r}")
+        if f.get("workflow_edge"):
+            if f["workflow_edge"] not in (codes.get("workflow_edge") or {}):
+                err(f"{p}: unknown workflow_edge {f['workflow_edge']!r}")
+            if f.get("key_role") != "record_link" or f["type"] != "array_string":
+                err(f"{p}: workflow_edge needs a record_link field of type array_string")
         stated = source_card(cat, f)
         if stated and f.get("card") != stated:
             err(f"{p}: card must be {stated} (downstream: {f['downstream_zh']})")
@@ -330,7 +335,8 @@ def load_invalid_case(root: Path, case: dict) -> dict:
 
 
 ENVELOPES = (("*.manifest.json", "manifest"), ("*.validation.json", "validation_report"),
-             ("*.bundle.json", "document_bundle"), ("*.migration.json", "migration_report"))
+             ("*.bundle.json", "document_bundle"), ("*.migration.json", "migration_report"),
+             ("*.verification.json", "verification_report"))
 
 
 def check_examples(root: Path) -> list[Finding]:
@@ -339,7 +345,7 @@ def check_examples(root: Path) -> list[Finding]:
     out: list[Finding] = []
     err = lambda m: out.append(Finding("error", "examples", m))  # noqa: E731
     ex = root / "examples"
-    record_files = sorted(ex.glob("records/*.jsonl")) + sorted(ex.glob("output/*.jsonl")) + \
+    record_files = sorted(ex.glob("records/*.jsonl")) + sorted(ex.glob("output/**/*.jsonl")) + \
         sorted(ex.glob("migration/*/*.migrated.jsonl"))
     for path in record_files:
         if path.name.endswith(".errors.jsonl"):

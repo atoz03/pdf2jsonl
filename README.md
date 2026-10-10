@@ -32,7 +32,7 @@
 | 页面 | 内容 |
 | --- | --- |
 | [规范总览](https://atoz03.github.io/pdf2jsonl/) | 论文与存量数据如何变成记录，记录如何供下游使用；版本、字段组、规则概况 |
-| [字段目录](https://atoz03.github.io/pdf2jsonl/#fields) | **404 个字段**：含义、类型、JSON 示意、键角色、服务功能、功能分类标签（可多选）和来源 |
+| [字段目录](https://atoz03.github.io/pdf2jsonl/#fields) | **412 个字段**：含义、类型、JSON 示意、键角色、服务功能、功能分类标签（可多选）和来源 |
 | [抽取演示](https://atoz03.github.io/pdf2jsonl/#demo) | 合成论文从 PDF 到 JSONL 的全过程：候选、证据核验、记录、证据链审计 |
 | [下游派生](https://atoz03.github.io/pdf2jsonl/#downstream) | 同一批记录派生出的关系语句、知识图谱、带标注的语料、问答种子和关系表 |
 | [论文看板](https://atoz03.github.io/pdf2jsonl/papers.html) | 按论文查看 PDF、每次运行的记录、原文证据、复核问题，并下载结果 |
@@ -46,8 +46,9 @@
 
 ```
 论文 PDF ── pdf2jsonl ──┐                          ┌─► 关系语句 · 三元组 · 属性图（知识图谱）
-                        ├─► 记录（JSONL，带钩子）──┼─► 带实体偏移标注的语料
-已有数据 ── bdc migrate ┘        bdc derive        ├─► 完形问答种子
+（正文 + 补充材料）     ├─► 记录（JSONL，带钩子）──┼─► 研究流程（问题 → 假设 → 步骤 → 结果）
+已有数据 ── bdc migrate ┘        bdc derive        ├─► 带实体偏移标注的语料
+                                                   ├─► 完形问答种子
                                                    └─► 关系表（CSV）
 ```
 
@@ -62,6 +63,16 @@
 - **人工与下游再补充**：审核后的谓词、实体对齐、自然语言问答，各有对应字段，不与抽取结果混写。
 
 记录没有的钩子，派生结果里就没有对应的行，不做猜测。设计说明见 [`docs/downstream.md`](docs/downstream.md)。
+
+3.5.0 面向课题二的科研智能体新增三项能力，均为拟定（provisional）：
+
+- **论文内的研究流程**，以记录之间的链接表示：陈述的角色（背景、科学问题、研究目标、假设、实验设计、
+  结果、结论），以及在“依据”“产生方法”之外新增的“检验”“回应”“前置”三类链接。`bdc derive` 输出
+  `workflow.json`，含步骤顺序、分支点、每条假设的链路和结构提示。见 [`docs/workflow.md`](docs/workflow.md)。
+- **由第二个模型做语义复核**：`bdc verify` 逐条记录、逐条链接判定引文是否确实陈述了该取值。复核可以把
+  记录退回待审，也可以把记录提升为 `model_verified`，但不能代替专家通过。见 [`docs/review.md`](docs/review.md)。
+- **多文件论文与不完整论文**：`--supplement` 把补充材料作为同一来源的另一部分一并处理；正文引用了
+  “fig. S2”而补充材料未提供时，报告标明来源不完整，受影响的记录被标记而不是被补全。
 
 ## 🧬 数据管线全景
 
@@ -81,22 +92,22 @@
 | `profiles/` | 面向不同用途的字段选择：`full`、`compact`、`pdf_extraction`、`pdf_extraction_omics` |
 | `releases/` | 冻结且经过哈希校验的规范版本；`index.json` 维护 `latest` 指针 |
 | `schemas/meta/` | 字段目录、词表、画像及映射等源文件的 JSON Schema |
-| `schemas/runtime/` | 运行输出的 JSON Schema：清单、校验报告、错误记录、文档包及迁移报告 |
+| `schemas/runtime/` | 运行输出的 JSON Schema：清单、校验报告、错误记录、文档包、迁移报告及复核报告 |
 | `mappings/` | 各种已有数据格式到当前规范的逐叶映射及问题登记，供 `bdc migrate` 使用 |
 | `sources/` | 不可变的原始输入，详见 [`sources/SOURCES.md`](sources/SOURCES.md) |
-| `src/breeding_contract/` | 编译、发布、版本解析、校验、导入、打包、派生及审计工具（`bdc` CLI） |
+| `src/breeding_contract/` | 编译、发布、版本解析、校验、导入、打包、派生、审计及复核工具（`bdc` CLI） |
 | `skills/pdf2jsonl/` | Skill 说明、抽取任务模板及运行入口 `scripts/pdf2jsonl` |
 | `docs/` | 架构、版本、来源分析、导入、下游派生及字段功能说明；`docs/generated/` 由源文件生成（含[字段定义与示例](docs/generated/field_definitions.md)） |
 | `docs/field_examples.yaml` | 逐字段维护的示意值，用于生成和校验字段定义文档 |
 | `docs/field_classification.yaml` | 逐字段功能标签：研究内容1、研究内容2、迭代优化、通用字段，支持多选 |
 | `scripts/make_site.py` / `site/` | 站点生成器与页面模板：规范浏览、论文看板（`scripts/make_dashboard.py`）、下游派生、导入器 |
-| `examples/` | 合成论文、整理后的记录、管线输出、导入输出及无效数据示例 |
-| `tests/` | pytest 测试：规范一致性、版本、校验、管线、Skill 同步、导入、文档包、功能、证据链、下游钩子及站点 |
+| `examples/` | 两篇合成论文（其一含补充材料）、整理后的记录、管线输出（含缺少补充材料时的输出）、一次语义复核、派生视图、导入输出及无效数据示例 |
+| `tests/` | pytest 测试：规范一致性、版本、校验、管线、Skill 同步、导入、文档包、功能、证据链、下游钩子、研究流程、语义复核、来源组成部分及站点 |
 
-## 🔬 规范概览（3.4.0）
+## 🔬 规范概览（3.5.0）
 
-- 共 404 个字段，分为五组：`common` 177、`agent` 57、`skills` 53、`transform` 49、`omics` 68。
-  v3.0.0 的 259 个字段标记为 `verified`，定义逐字保留；其后新增的 145 个字段标记为 `provisional`。
+- 共 412 个字段，分为五组：`common` 179、`agent` 62、`skills` 53、`transform` 50、`omics` 68。
+  v3.0.0 的 259 个字段标记为 `verified`，定义逐字保留；其后新增的 153 个字段标记为 `provisional`。
 - **功能分类支持多选**：研究内容1、研究内容2、迭代优化、通用字段。
 - 每个字段说明**键角色**（`key_role`，共 25 类）和**服务功能**（`serves`）：课题二科学智能体、课题三技能、
   知识图谱／关系库／问答／语料／三元组派生，以及课题一规范迭代。课题二、三的字段还标注所属卡片，
@@ -108,8 +119,10 @@
 - **缺失信息直接省略**，不写 `null`、空字符串、空数组或空对象。
 - 每条记录包含 `common.schema_name`、`common.schema_version`、稳定的 `common.record_id`（`rec_` 加 32 位十六进制字符）、
   来源信息（`source_id`、`source_locator`；论文证据还需页码和原文引文）以及 `review_status`。
-- 共 34 条跨字段规则：20 条错误级别、14 条警告级别。来源明确陈述的要求按错误处理，推断出的要求仅作警告。
-- 38 项歧义记录在字段目录中（`AMB-001` 至 `AMB-038`），避免隐式决定未明确的含义。
+- 共 35 条跨字段规则：20 条错误级别、15 条警告级别。来源明确陈述的要求按错误处理，推断出的要求仅作警告。
+- 41 项歧义记录在字段目录中（`AMB-001` 至 `AMB-041`），避免隐式决定未明确的含义。
+- `review_status` 分级递进：`pending_review` → `auto_validated`（确定性检查通过）→ `model_verified`
+  （独立复核通过）→ `expert_approved`／`rejected`（人工决定）。
 
 查阅[在线字段目录](https://atoz03.github.io/pdf2jsonl/#fields)、[字段定义与示例](docs/generated/field_definitions.md)、[完整字段字典](docs/generated/field_dictionary.md)
 （也提供 [CSV](docs/generated/field_dictionary.csv)，运行 `bdc generate --xlsx out.xlsx` 可导出 Excel）和
@@ -137,8 +150,12 @@ skills/pdf2jsonl/scripts/pdf2jsonl paper.pdf --profile pdf_extraction --schema-v
 输出包括 `paper.jsonl`（记录）、`paper.validation.json`（校验报告）、`paper.errors.jsonl`（被拒绝的候选，
 不会写入正式记录）和 `paper.manifest.json`（规范标识、输入哈希、后端、环境及输出哈希）。
 加上 `--bundle` 还会输出 `paper.bundle.json`。校验报告中的 `argument_structure` 提供证据链审计：
-哪些结论关联了数据和方法，哪些限定措辞或关联尚未补全。其他接入方式包括 `--candidates file.json`、
-`--backend mock` 和 `--backend module:callable`。
+哪些结论关联了数据和方法，哪些限定措辞或关联尚未补全；`workflow_structure` 给出研究流程的结构提示
+（未被检验的假设、没有方法的结果、依赖成环）；`source_parts` 给出来源完整性（正文引用但未提供的部分）。
+其他接入方式包括 `--candidates file.json`、`--backend mock` 和 `--backend module:callable`。
+
+论文有多个文件时一次处理：加上 `--supplement paper_supplement.pdf`（可重复）。证据随之标明所在部分，
+每个文件各有一条资产记录。
 
 在本仓库使用 Claude Code 时，`.claude/skills/pdf2jsonl` 已链接到 `skills/pdf2jsonl`。
 用户级安装可将 `~/.claude/skills/pdf2jsonl` 软链接到同一目录。
@@ -150,7 +167,7 @@ from breeding_contract import resolve_schema, load_profile, load_field_catalog, 
 
 rc = resolve_schema("latest")                  # 也可指定 "3.0.0" 或 "dev"（未发布的工作目录）
 profile = load_profile("pdf_extraction", "latest")
-catalog = load_field_catalog("3.4.0")
+catalog = load_field_catalog("3.5.0")
 result = validate_record(record)               # 按记录声明的版本校验
 result.valid, [i.to_dict() for i in result.errors]
 ```
@@ -167,8 +184,9 @@ result.valid, [i.to_dict() for i in result.errors]
 | `bdc diff A B` | 比较两个版本的字段差异 |
 | `bdc migrate legacy\|omics\|merged F --out DIR [--page-offset N]` | 把已有数据导入为原子记录，见[导入已有数据](#import) |
 | `bdc bundle F.jsonl [--legacy-v1]` | 从原子记录派生文档级视图，或 legacy v1 布局 |
-| `bdc derive F.jsonl --out DIR` | 派生关系表（CSV）、关系语句、三元组与属性图、带标注的语料和问答种子 |
-| `bdc audit F.jsonl [--json]` | 审计证据链的 Toulmin／Flavell 要素、引用闭合及复核标记，不生成分数 |
+| `bdc derive F.jsonl --out DIR` | 派生关系表（CSV）、关系语句、三元组与属性图、研究流程、带标注的语料和问答种子，并记录派生来源 |
+| `bdc audit F.jsonl [--json]` | 审计证据链的 Toulmin／Flavell 要素、引用闭合及复核标记，以及研究流程结构，不生成分数 |
+| `bdc verify tasks\|apply F.jsonl [VERDICTS] --out DIR` | 由独立复核者做语义复核：生成复核任务，再把判定结果写入复核字段 |
 
 ## 🌿 修改规范
 
@@ -203,7 +221,10 @@ bdc migrate merged sources/merged_v2/breeding_jsonl_example_v2.json --out out/me
 
 ## 🗂 文档导航
 
-- [下游派生设计](docs/downstream.md)：记录作为中间格式，下游需要的钩子，`bdc derive` 的各项输出。
+- [下游派生设计](docs/downstream.md)：记录作为中间格式，下游需要的钩子，`bdc derive` 的各项输出，
+  来源的组成部分与不完整论文，各种表示形式之间的追溯关系。
+- [研究流程](docs/workflow.md)：以陈述角色和记录间链接表示一篇论文的研究流程。
+- [质量与复核](docs/review.md)：三层检查、`bdc verify`、专家负责的判断。
 - [字段定义与 JSON 示例](docs/generated/field_definitions.md)：由源文件生成的全部字段参考。
 - [架构说明](docs/architecture.md)：组件、数据流、管线阶段及不变量。
 - [版本管理](docs/versioning.md)：语义化版本、发布、`latest`／`dev` 与兼容性。

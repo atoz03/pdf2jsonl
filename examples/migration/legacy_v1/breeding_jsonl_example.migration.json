@@ -10,11 +10,11 @@
   },
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.4.0",
+    "schema_version": "3.5.0",
     "release_status": "released",
-    "requested": "3.4.0",
-    "release_sha256": "75c97e35f5d86c3ad2ad51fd1e1b383374a351e8295c1939d0b4d16e74ba2eda",
-    "source_digest": "9183f3660d63bd53c8a5854eaad44c0075283a2d8916eefc6b0b525f8e2e00d3"
+    "requested": "3.5.0",
+    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
+    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
   },
   "mapping": {
     "id": "legacy_to_current",
@@ -215,11 +215,11 @@
   "outputs": {
     "records": {
       "file": "breeding_jsonl_example.migrated.jsonl",
-      "sha256": "f3543e86c20943b9b0127f5ddd564e133064884c8f906a83d2a1382761cbc591"
+      "sha256": "fb81b692ab94281f9367d687ae2f21e8ca1f6575ff02c80ef5af3dea53bcc16c"
     },
     "errors": {
       "file": "breeding_jsonl_example.migrated.errors.jsonl",
-      "sha256": "0d55658f8a6ad5fcb9b982956760a6f63966fcb4bc0e1dc37295cf5d65b82f89"
+      "sha256": "aa31c5b70b7716e57a43f40ab56dc1a76893aa4d63b7e3f738af1f566abd7f31"
     },
     "residue": {
       "file": "breeding_jsonl_example.residue.json",

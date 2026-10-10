@@ -1,0 +1,376 @@
+{
+  "workflow_format": 1,
+  "basis": "nodes are records, edges are record links with a catalog workflow_edge (AMB-039); structure and connectivity only, not experimental soundness",
+  "stages": {
+    "background": 1,
+    "research_question": 1,
+    "objective": 1,
+    "hypothesis": 2,
+    "design": 2,
+    "step": 5,
+    "observation": 1,
+    "result": 4,
+    "conclusion": 1,
+    "statement": 1
+  },
+  "edges_by_type": {
+    "addresses": 5,
+    "evidence": 3,
+    "method": 7,
+    "prerequisite": 5,
+    "tests": 2
+  },
+  "flags": {
+    "HYPOTHESIS_UNTESTED": 1,
+    "STEP_WITHOUT_OUTPUT": 1
+  },
+  "flag_help": {
+    "HYPOTHESIS_UNTESTED": "a hypothesis that no step, observation or result is linked to as its test",
+    "STEP_WITHOUT_OUTPUT": "a step that no result cites as its method and no later step depends on"
+  },
+  "step_order": [
+    "rec_eb88edbd3cdd1ce77d844d368affb702",
+    "rec_4347364e90ac28cf4607e75c85f2c399",
+    "rec_2f056a171ec8867c073c350da2562919",
+    "rec_3a0f62bc1262074f9c1a657e29403cd9",
+    "rec_69945ca262a0be13812fc69f7f90fd65",
+    "rec_6427ec708013a88c3bd6d089815d21ec"
+  ],
+  "branch_points": [
+    "rec_2f056a171ec8867c073c350da2562919"
+  ],
+  "hypotheses": [
+    {
+      "hypothesis": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "label": "HTR1 underlies qHT3",
+      "addresses": [
+        "rec_79044e3e05f535856832154a51c8a87f"
+      ],
+      "tested_by": [
+        "rec_6427ec708013a88c3bd6d089815d21ec",
+        "rec_0944532bb7d56a7c673ef0c19413b5a3"
+      ]
+    },
+    {
+      "hypothesis": "rec_996ddd2fb171c0a2199a4019d1970653",
+      "label": "HTR1 might recruit HTR2 precursors to endosomes for degradation",
+      "addresses": [
+        "rec_78858b935a834f96996e2a9d46e4961d"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "rec_dc41a78de16f39e31079ea5147e533a6",
+      "stage": "background",
+      "record_kind": "claim",
+      "label": "Heat stress damages chloroplasts and reduces grain yield in rice.",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 1
+    },
+    {
+      "id": "rec_78858b935a834f96996e2a9d46e4961d",
+      "stage": "research_question",
+      "record_kind": "claim",
+      "label": "How heat signals are transduced from the plasma membrane to chloroplasts remains unknown.",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 1
+    },
+    {
+      "id": "rec_79044e3e05f535856832154a51c8a87f",
+      "stage": "objective",
+      "record_kind": "claim",
+      "label": "The objective of this study was to identify genes underlying natural variation in thermotolerance.",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 1
+    },
+    {
+      "id": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "stage": "result",
+      "record_kind": "observation",
+      "label": "A chromosome segment substitution line, SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment (fig. S1).",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2
+    },
+    {
+      "id": "rec_2f056a171ec8867c073c350da2562919",
+      "stage": "step",
+      "record_kind": "method",
+      "label": "We backcrossed SL14 to WY to construct a mapping population.",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2
+    },
+    {
+      "id": "rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "stage": "result",
+      "record_kind": "analysis_result",
+      "label": "Using 1,614 BC4F3 plants from this population, qHT3 was narrowed to a 36.6 kb interval on chromosome 3 (Table 1).",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2
+    },
+    {
+      "id": "rec_69945ca262a0be13812fc69f7f90fd65",
+      "stage": "step",
+      "record_kind": "method",
+      "label": "Only recombinant plants that survived the heat treatment were advanced to the next generation.",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2,
+      "condition": "Only recombinant plants that survived the heat treatment",
+      "flags": [
+        "STEP_WITHOUT_OUTPUT"
+      ]
+    },
+    {
+      "id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "stage": "hypothesis",
+      "record_kind": "claim",
+      "label": "HTR1 underlies qHT3",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2
+    },
+    {
+      "id": "rec_6427ec708013a88c3bd6d089815d21ec",
+      "stage": "step",
+      "record_kind": "method",
+      "label": "CRISPR/Cas9",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2
+    },
+    {
+      "id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "stage": "result",
+      "record_kind": "observation",
+      "label": "The knockout lines of HTR1 showed lower survival than WY after heat treatment (fig. S2).",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2
+    },
+    {
+      "id": "rec_996ddd2fb171c0a2199a4019d1970653",
+      "stage": "hypothesis",
+      "record_kind": "claim",
+      "label": "HTR1 might recruit HTR2 precursors to endosomes for degradation",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2,
+      "flags": [
+        "HYPOTHESIS_UNTESTED"
+      ]
+    },
+    {
+      "id": "rec_2d21f963dafe36ae2335bd207c74a610",
+      "stage": "result",
+      "record_kind": "observation",
+      "label": "HTR1 interacted with HTR2 in a split-luciferase assay (fig. S3).",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2
+    },
+    {
+      "id": "rec_e4822d11955faccebf5bed73e5a40750",
+      "stage": "conclusion",
+      "record_kind": "claim",
+      "label": "HTR1 acts upstream of HTR2 to protect chloroplasts under heat stress.",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2
+    },
+    {
+      "id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40",
+      "stage": "statement",
+      "record_kind": "claim",
+      "label": "How HTR2 accumulation damages chloroplasts remains to be determined.",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "main_text",
+      "source_page": 2
+    },
+    {
+      "id": "rec_4347364e90ac28cf4607e75c85f2c399",
+      "stage": "step",
+      "record_kind": "method",
+      "label": "Twelve-day-old seedlings were treated at 42 C for 14 h and survival was scored after 7 days of recovery.",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "supplement",
+      "source_page": 1
+    },
+    {
+      "id": "rec_e9fa66c06dd335641622897f8abae636",
+      "stage": "design",
+      "record_kind": "method",
+      "label": "Each line was tested in 3 biological replicates of 24 plants.",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "supplement",
+      "source_page": 1
+    },
+    {
+      "id": "rec_25e38f650b4ac0b365090b3d3f707721",
+      "stage": "design",
+      "record_kind": "method",
+      "label": "two-tailed t test",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "supplement",
+      "source_page": 1
+    },
+    {
+      "id": "rec_070cf8ff10ae8d8f729e6999e89b0a43",
+      "stage": "step",
+      "record_kind": "method",
+      "label": "Split-luciferase assays",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "supplement",
+      "source_page": 1
+    },
+    {
+      "id": "rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "stage": "observation",
+      "record_kind": "phenotype_observation",
+      "label": "SL14 78.5 %",
+      "source_id": "doi:10.0000/synthetic.2026.002",
+      "source_part": "supplement",
+      "source_page": 2
+    }
+  ],
+  "edges": [
+    {
+      "s": "rec_78858b935a834f96996e2a9d46e4961d",
+      "type": "addresses",
+      "o": "rec_dc41a78de16f39e31079ea5147e533a6",
+      "field": "agent.addresses_record_ids"
+    },
+    {
+      "s": "rec_79044e3e05f535856832154a51c8a87f",
+      "type": "addresses",
+      "o": "rec_78858b935a834f96996e2a9d46e4961d",
+      "field": "agent.addresses_record_ids"
+    },
+    {
+      "s": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "type": "evidence",
+      "o": "rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "field": "agent.evidence_record_ids"
+    },
+    {
+      "s": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "type": "method",
+      "o": "rec_4347364e90ac28cf4607e75c85f2c399",
+      "field": "skills.method_record_ids"
+    },
+    {
+      "s": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "type": "method",
+      "o": "rec_25e38f650b4ac0b365090b3d3f707721",
+      "field": "skills.method_record_ids"
+    },
+    {
+      "s": "rec_2f056a171ec8867c073c350da2562919",
+      "type": "prerequisite",
+      "o": "rec_eb88edbd3cdd1ce77d844d368affb702",
+      "field": "agent.prerequisite_record_ids"
+    },
+    {
+      "s": "rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "type": "prerequisite",
+      "o": "rec_2f056a171ec8867c073c350da2562919",
+      "field": "agent.prerequisite_record_ids"
+    },
+    {
+      "s": "rec_69945ca262a0be13812fc69f7f90fd65",
+      "type": "prerequisite",
+      "o": "rec_2f056a171ec8867c073c350da2562919",
+      "field": "agent.prerequisite_record_ids"
+    },
+    {
+      "s": "rec_69945ca262a0be13812fc69f7f90fd65",
+      "type": "prerequisite",
+      "o": "rec_4347364e90ac28cf4607e75c85f2c399",
+      "field": "agent.prerequisite_record_ids"
+    },
+    {
+      "s": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "type": "addresses",
+      "o": "rec_79044e3e05f535856832154a51c8a87f",
+      "field": "agent.addresses_record_ids"
+    },
+    {
+      "s": "rec_6427ec708013a88c3bd6d089815d21ec",
+      "type": "tests",
+      "o": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "field": "agent.tests_record_ids"
+    },
+    {
+      "s": "rec_6427ec708013a88c3bd6d089815d21ec",
+      "type": "prerequisite",
+      "o": "rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "field": "agent.prerequisite_record_ids"
+    },
+    {
+      "s": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "type": "tests",
+      "o": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95",
+      "field": "agent.tests_record_ids"
+    },
+    {
+      "s": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "type": "method",
+      "o": "rec_6427ec708013a88c3bd6d089815d21ec",
+      "field": "skills.method_record_ids"
+    },
+    {
+      "s": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "type": "method",
+      "o": "rec_4347364e90ac28cf4607e75c85f2c399",
+      "field": "skills.method_record_ids"
+    },
+    {
+      "s": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "type": "method",
+      "o": "rec_25e38f650b4ac0b365090b3d3f707721",
+      "field": "skills.method_record_ids"
+    },
+    {
+      "s": "rec_996ddd2fb171c0a2199a4019d1970653",
+      "type": "addresses",
+      "o": "rec_78858b935a834f96996e2a9d46e4961d",
+      "field": "agent.addresses_record_ids"
+    },
+    {
+      "s": "rec_2d21f963dafe36ae2335bd207c74a610",
+      "type": "method",
+      "o": "rec_070cf8ff10ae8d8f729e6999e89b0a43",
+      "field": "skills.method_record_ids"
+    },
+    {
+      "s": "rec_e4822d11955faccebf5bed73e5a40750",
+      "type": "evidence",
+      "o": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "field": "agent.evidence_record_ids"
+    },
+    {
+      "s": "rec_e4822d11955faccebf5bed73e5a40750",
+      "type": "evidence",
+      "o": "rec_2d21f963dafe36ae2335bd207c74a610",
+      "field": "agent.evidence_record_ids"
+    },
+    {
+      "s": "rec_e4822d11955faccebf5bed73e5a40750",
+      "type": "addresses",
+      "o": "rec_78858b935a834f96996e2a9d46e4961d",
+      "field": "agent.addresses_record_ids"
+    },
+    {
+      "s": "rec_5053cc01ca8c0044b8d3f59925e2a888",
+      "type": "method",
+      "o": "rec_4347364e90ac28cf4607e75c85f2c399",
+      "field": "skills.method_record_ids"
+    }
+  ]
+}

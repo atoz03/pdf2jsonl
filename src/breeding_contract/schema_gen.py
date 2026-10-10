@@ -198,6 +198,10 @@ def candidate_schema(contract: dict, profile: dict) -> dict:
     for role in ("page", "section", "quote", "table_figure", "row_key", "column_key"):
         if role in prov:
             ev_props[role] = field_schema(contract, idx[prov[role]])
+    if "part" in prov:  # multi-file sources (AMB-041): a label of the run, not a vocabulary code
+        ev_props["part"] = {"type": "string", "pattern": "^[a-z][a-z0-9_]*$",
+                            "description": "which file of the source the page belongs to, as named in the page "
+                                           "markers (e.g. `supplement`); omit for the main text"}
     max_quote = (profile.get("evidence_policy") or {}).get("max_quote_chars")
     if max_quote and "quote" in ev_props:
         ev_props["quote"]["maxLength"] = max_quote

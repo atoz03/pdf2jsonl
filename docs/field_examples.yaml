@@ -235,6 +235,11 @@ agent.replication_status: "replicated in an independent RIL population"
 agent.candidate_gene_window: "100 kb upstream and downstream of the peak marker"
 agent.claim_qualifier_text: "may affect"
 agent.stated_limitations: ["The causal gene has not been functionally validated."]
+agent.statement_role: "hypothesis"
+agent.step_condition: "Only lines that survived the heat treatment were backcrossed."
+agent.tests_record_ids: ["rec_55555555555555555555555555555555"]
+agent.addresses_record_ids: ["rec_66666666666666666666666666666666"]
+agent.prerequisite_record_ids: ["rec_77777777777777777777777777777777"]
 
 # skills — analysis tasks, software, parameters, workflows and callable interfaces
 skills.analysis_task: "定位与水稻株高相关的 QTL"
@@ -341,6 +346,7 @@ transform.mapping_confidence: 0.96
 transform.entity_synonyms: ["plant height", "株高"]
 transform.entity_links: [{"mention": "qPH1", "source_field": "common.qtl_names", "entity_type": "qtl", "start": 0, "end": 4, "relation_role": "subject", "entity_id": "urn:example:qtl:qPH1", "alignment_status": "linked", "alignment_source": "示例育种本体 v1.0"}]
 transform.qa_id: "urn:example:qa:qPH1-height-E1-pve"
+transform.ontology_id: "urn:example:ontology:rice-stress-tolerance"
 
 # omics — genomics, transcriptomics, single-cell, epigenomics, proteomics and metabolomics
 omics.omics_type: "transcriptomics"
@@ -414,3 +420,5 @@ omics.metabolite_annotation_level: "MSI level 1"
 common.biological_replicate_id: "bio-rep-1"
 common.technical_replicate_id: "tech-1"
 common.sampling_time: "2022-08-15T14:30:00+08:00"
+common.source_part: "supplement"
+common.verification_run_id: "ver_20261010T080000Z_1a2b3c4d"

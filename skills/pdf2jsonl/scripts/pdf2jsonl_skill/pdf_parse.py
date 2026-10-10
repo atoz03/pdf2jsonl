@@ -6,6 +6,9 @@ Supported inputs
   *.pages.jsonl  pre-parsed pages, one JSON object per line: {"page": 1, "text": "..."}
                  (use this to plug in MinerU / GROBID / OCR output)
 Page numbers are physical, starting at 1 (contract rule for source_page).
+
+A source may consist of several files: the main text plus supplement files (AMB-041). Each file is a *part*
+with its own page numbering; ``ParsedDocument.supplements`` holds the parts other than the main text.
 """
 from __future__ import annotations
 
@@ -29,6 +32,10 @@ _HEADING_RE = re.compile(
 _CAPTION_RE = re.compile(r"^\s*((?:Table|Tab\.|Figure|Fig\.?|表|图)\s*S?\d+[A-Za-z]?)", re.IGNORECASE)
 
 
+MAIN_PART = "main"
+SUPPLEMENT_PART = "supplement"
+
+
 @dataclass
 class Page:
     number: int
@@ -45,10 +52,19 @@ class ParsedDocument:
     media_type: str
     pages: list[Page]
     parser: dict
+    part: str = MAIN_PART                 # label used in evidence, locators and page markers
+    part_kind: str = MAIN_PART            # main | supplement (the profile maps the kind to a vocabulary code)
+    supplements: list["ParsedDocument"] = field(default_factory=list)
 
     @property
     def page_count(self) -> int:
         return len(self.pages)
+
+    def parts(self) -> list["ParsedDocument"]:
+        return [self] + list(self.supplements)
+
+    def part_doc(self, label: str | None) -> "ParsedDocument | None":
+        return next((d for d in self.parts() if d.part == (label or MAIN_PART)), None)
 
     def page(self, number: int) -> Page | None:
         return self.pages[number - 1] if 1 <= number <= len(self.pages) else None
@@ -105,10 +121,24 @@ def _read_pages(path: Path) -> tuple[list[str], dict, str]:
     return texts, parser, media
 
 
-def parse_document(path: Path | str, text_layer: Path | str | None = None) -> ParsedDocument:
+def parse_document(path: Path | str, text_layer: Path | str | None = None,
+                   supplements: list | tuple = ()) -> ParsedDocument:
     """Parse ``path``. With ``text_layer`` (a .txt / .pages.jsonl produced by OCR, MinerU, GROBID ...) the pages
-    come from the text layer while the document identity (hash, size, media type) stays that of ``path``."""
-    path = Path(path)
+    come from the text layer while the document identity (hash, size, media type) stays that of ``path``.
+    ``supplements`` are further files of the same source; they become the parts ``supplement``,
+    ``supplement_2`` ... in the given order."""
+    doc = _parse_one(Path(path), text_layer)
+    for n, sup in enumerate(supplements, start=1):
+        part = _parse_one(Path(sup), None)
+        part.part = SUPPLEMENT_PART if n == 1 else f"{SUPPLEMENT_PART}_{n}"
+        part.part_kind = SUPPLEMENT_PART
+        if any(d.sha256 == part.sha256 for d in doc.parts()):
+            raise ValueError(f"{sup}: the same file is given twice")
+        doc.supplements.append(part)
+    return doc
+
+
+def _parse_one(path: Path, text_layer: Path | str | None) -> ParsedDocument:
     texts, parser, media = _read_pages(path if text_layer is None else Path(text_layer))
     if text_layer is not None:
         parser = {**parser, "text_layer": Path(text_layer).name,

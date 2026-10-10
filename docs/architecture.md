@@ -29,9 +29,12 @@ Records are the hub between the ways in and the ways out (`docs/downstream.md`):
 
 ```
  paper (PDF) ── pdf2jsonl Skill ──┐                            ┌─► statements, triples, graph   (knowledge graph)
-                                  ├─► records (JSONL, hooks) ──┼─► corpus with entity offsets
- existing data ── bdc migrate ────┘        bdc derive          ├─► cloze QA seeds
- (legacy · omics · merged)                                     └─► relational tables
+ (main text + supplements)        ├─► records (JSONL, hooks) ──┼─► research workflow
+ existing data ── bdc migrate ────┘        bdc derive          ├─► corpus with entity offsets
+ (legacy · omics · merged)             │                       ├─► cloze QA seeds
+                                       │ bdc verify            └─► relational tables
+                                       ▼
+                         review fields (model_verified / pending_review)
 ```
 
 The GitHub Pages site shows all of it in one place and is built by `scripts/make_site.py` from the latest
@@ -57,9 +60,12 @@ with status `unreleased`, so development output can never claim to be a release.
 | Importers | `legacy.py`, `omics.py`, `merged.py`, `mappings.py` | `bdc migrate`: mapping-driven conversion of existing data (document lines, omics template instances, documents with observation/sample/assay/asset arrays joined by explicit IDs) |
 | Views | `bundle.py` | `document_bundle` and the legacy v1 projection (derived, never a source of truth); document and entity fields come from `key_role` |
 | Functions | `functions.py` | Which of the four record functions a field serves according to the sources, its facets, repository additions (see `docs/field_functions.md`) |
-| Derived views | `derive.py`, `relations.py` | `bdc derive`: relational tables, statements, triples, a property graph, an entity-annotated corpus and QA seeds. Every field is placed by its `key_role`; `relations.py` holds the anchor logic shared with the pipeline and the validator (spans, entity markers, predicate lexicon) |
+| Derived views | `derive.py`, `relations.py` | `bdc derive`: relational tables, statements, triples, a property graph, the research workflow, an entity-annotated corpus and QA seeds, with the lineage of the files written. Every field is placed by its `key_role`; `relations.py` holds the anchor logic shared with the pipeline and the validator (spans, entity markers, predicate lexicon) |
 | Evidence-chain audit | `argument.py` | `bdc audit` and the report's `argument_structure`: Toulmin/Flavell elements per statement, link closure, flags (after TRACE) |
-| Runtime schemas | `schemas/runtime/`, `runtime_schemas.py` | Formats of manifests, validation reports, error records, bundles, migration reports |
+| Workflow view | `workflow.py` | The research workflow as a view over the records (`docs/workflow.md`): stages from the statement role or the record kind, edges from the link fields the catalog marks with `workflow_edge`, step order, branch points, hypothesis traces, structural flags. Used by `bdc derive`, `bdc audit` and the report's `workflow_structure` |
+| Verification | `verify.py` | `bdc verify tasks` / `apply` (`docs/review.md`): one task per record and per link for an independent verifier; verdicts move the review fields only, never content |
+| Source completeness | Skill `completeness.py` | References of the main text to supplementary items and parts, compared with the files supplied (`source_parts` in the report) |
+| Runtime schemas | `schemas/runtime/`, `runtime_schemas.py` | Formats of manifests, validation reports, error records, bundles, migration reports, verification reports |
 | Skill | `skills/pdf2jsonl/` | Workflow (`SKILL.md`), brief template (`prompts/`), runtime (`scripts/pdf2jsonl_skill/`) |
 | Site | `scripts/make_site.py`, `scripts/make_dashboard.py`, `site/` | The Pages site: contract browser, paper dashboard, pipeline diagram, downstream outputs, importers |
 
@@ -70,12 +76,17 @@ paper.pdf
   │ 1. resolve contract + profile       resolve_contract(): name, supported major, released (or --allow-unreleased),
   │                                     profile is an extraction profile, every fill rule is implemented
   │ 2. parse layout                     pypdf text layer per physical page (or --text-layer for OCR output);
-  │                                     sections, table/figure captions, char offsets
+  │                                     sections, table/figure captions, char offsets; each --supplement file is
+  │                                     a further part of the same source with its own page numbers
+  │ 2b. source completeness             references to supplementary items and parts in the main text against the
+  │                                     files supplied → source_parts (missing parts are reported, never guessed)
   │ 3. candidates                       backend: agent (brief → candidates.json), candidates file, mock, module:callable
   │ 4. structural repair                repair.py: flatten nested groups, resolve bare leaf names, coerce types,
   │                                     map vocabulary labels/aliases, drop empties and pipeline-owned fields — logged
-  │ 5. evidence verification            quote must occur on the stated page (±1 page → EVIDENCE_PAGE_CORRECTED);
-  │                                     otherwise EVIDENCE_QUOTE_NOT_FOUND → rejected; value-presence warnings;
+  │ 5. evidence verification            quote must occur on the stated page of the stated part (±1 page →
+  │                                     EVIDENCE_PAGE_CORRECTED); otherwise EVIDENCE_QUOTE_NOT_FOUND → rejected;
+  │                                     an unknown part → EVIDENCE_PART_UNKNOWN → rejected; value-presence warnings;
+  │                                     a quote citing an item of a missing part → SOURCE_PART_UNAVAILABLE;
   │                                     exact duplicate candidates are merged
   │ 6. assemble atomic records          document values, provenance roles, extracted fields, normalizers
   │                                     (raw kept, normalized added), generated and system fields via named fill rules;
@@ -83,10 +94,15 @@ paper.pdf
   │ 6b. resolve candidate links          `ref` / `links` → record IDs in the profile's `record_links` fields; links to
   │                                     rejected, self or wrong-kind targets are dropped with CANDIDATE_LINK_* warnings
   │ 7. validate → review fields         validation outcome drives review_status / qc_failure_codes; re-validate
-  │ 8. system records, dataset rules    asset_manifest for the input; uniqueness / leakage rules over the file
-  ▼ 9. write outputs                    paper.jsonl · paper.errors.jsonl · paper.validation.json (+ argument_structure)
-                                        · paper.manifest.json
+  │ 8. system records, dataset rules    one asset_manifest per input file; uniqueness / leakage / link rules over
+  │                                     the file
+  ▼ 9. write outputs                    paper.jsonl · paper.errors.jsonl · paper.validation.json (+ argument_structure,
+                                        workflow_structure, source_parts) · paper.manifest.json
 ```
+
+Semantic verification is a separate pass over the finished records (`bdc verify`, `docs/review.md`). It is not
+a pipeline stage because the verifier must not be the extractor, and because it can be repeated with another
+verifier without extracting again.
 
 **Agent mode** splits the run at step 3. `prepare` writes `brief.md` (rendered from the resolved profile:
 record kinds, fields with definitions, vocabularies, applicable rules), `pages.txt`, `candidate.schema.json`,
@@ -106,7 +122,9 @@ rule the Skill does not implement. Adding a field to the catalog therefore needs
 | --- | --- |
 | No field definitions outside the catalog | `check_skill`: no field paths or version literals in `SKILL.md`, prompts or Skill code; the brief is rendered from the release |
 | Records are atomic and provenance-bearing | profile roles + R001 (page + quote for paper evidence) + evidence verification |
-| Never infer | model sees only D fields; I/G/F never exposed (`check_profiles`); unverifiable quotes rejected; unresolvable candidate links are dropped and flagged, never guessed; migrators skip inferred relations and route I values to review candidates |
+| Never infer | model sees only D fields; I/G/F never exposed (`check_profiles`); unverifiable quotes rejected; unresolvable candidate links are dropped and flagged, never guessed; a missing part of a paper is reported and its content never filled in; hypotheses are recorded only when the authors state them; migrators skip inferred relations and route I values to review candidates |
+| Verification never edits content | `bdc verify apply` writes review status, quality codes, the verification run and the record version only; it re-validates every record it touches and refuses a verifier without a model name |
+| A model cannot approve in an expert's place | `apply` promotes `auto_validated` to `model_verified` at most, leaves `expert_approved` / `rejected` untouched and promotes nothing when the verifier is the extraction model |
 | JSON stays finite | NaN/Infinity are validation errors (`VALUE_NOT_FINITE`), repair drops them with a log entry, and output serialisation refuses them |
 | Source-stated functions are kept | `check_field_functions`: `serves` contains every function the v3 group or downstream column states, `card` matches the stated card, every served function receives a facet |
 | Omit missing values | JSON Schema (`minLength`, `minItems`, `minProperties`, no `null` types); repair drops empties with a log entry |
@@ -125,8 +143,8 @@ cards and argument roles), `profiles` (no G/F exposed to models, review codes ex
 `freshness` (working tree equals the release of VERSION; strict mode fails on an unreleased VERSION), `skill`
 (supported range, fill rules, no hard-coded paths or versions, known placeholders), `mappings` (every source
 leaf covered, targets exist, merged targets record the origin), `docs` (generated docs current), `examples`
-(records valid against their declared version, outputs valid against the runtime schemas, invalid cases fail as
-expected).
+(records valid against their declared version, outputs and verification reports valid against the runtime
+schemas, invalid cases fail as expected).
 
 ## Identifier and locator conventions (AMB-011)
 
@@ -137,8 +155,9 @@ curated examples):
 | --- | --- | --- |
 | `common.record_id` | `rec_` + first 32 hex of sha256 over `source_id ␟ record_kind ␟ anchor ␟ normalized quote ␟ ordinal`. The anchor is the locator without the section (`page, table, row, col`), so a respelled heading keeps the ID. The ordinal numbers records that share kind, anchor and quote in canonical field order, so candidate order does not matter. Omics instances without an ID are anchored by the hash of their content. | `rec_828955fbf1c3d2acf5c43230fa88afc7` |
 | `common.source_id` | `doi:<lower-case DOI>`, else `urn:sha256:<file hash>`; migrations keep `urn:legacy-v1:<id>` when no DOI exists | `doi:10.0000/synthetic.2026.001` |
-| `common.source_locator` | `key=value` pairs joined by `;`, keys in order `page, section, table, row, col`; `%`, `;`, `=` are percent-escaped | `page=3;section=Results;table=Table 2;row=RIL-017;col=PH` |
-| `common.source_span` | `page=<n>;char=<start>-<end>` offsets into the parsed page text | `page=1;char=377-499` |
+| `common.source_locator` | `key=value` pairs joined by `;`, keys in order `part, page, section, table, row, col`; `%`, `;`, `=` are percent-escaped. `part` is present only outside the main text (`supplement`, `supplement_2`, …), so locators and record IDs of main-text records are the same with and without supplements | `page=3;section=Results;table=Table 2;row=RIL-017;col=PH`<br>`part=supplement;page=1;section=Materials and Methods` |
+| `common.source_span` | `page=<n>;char=<start>-<end>` offsets into the parsed page text, prefixed with `part=<label>;` outside the main text | `page=1;char=377-499` |
+| verification run IDs, task IDs | `ver_<UTC timestamp>_<sha8 of records and verdicts>`; a task ID is `vt_` + 20 hex of a hash over the record ID and, for a link, field and target, so `apply` recomputes it from the records | `vt_132c4294fdadbb35e908` |
 | run IDs | `run_<UTC timestamp>_<sha8 of input>` (pipeline), `mig_<UTC timestamp>_<sha8>` (migration); `--run-id` overrides | `run_20260921T141320Z_73754bef` |
 
 The normalized quote is NFKC-folded, de-hyphenated across line breaks, typography-folded and whitespace-collapsed,

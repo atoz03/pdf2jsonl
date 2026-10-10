@@ -1,7 +1,7 @@
 """JSON Schemas for pdf2jsonl / bdc runtime outputs (schemas/runtime/*.schema.json).
 
 Records themselves are validated by the release record schema; these schemas cover the envelopes around them:
-manifest, validation report, error records, document_bundle view and migration report.
+manifest, validation report, error records, document_bundle view, migration report and verification report.
 """
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ RUNTIME_SCHEMAS = {
     "error_record": "error_record.schema.json",
     "document_bundle": "document_bundle.schema.json",
     "migration_report": "migration_report.schema.json",
+    "verification_report": "verification_report.schema.json",
 }
 _BASE = "https://breeding-contract.local/schemas/runtime/"
 

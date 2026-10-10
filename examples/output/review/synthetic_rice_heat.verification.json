@@ -1,0 +1,99 @@
+{
+  "verification_format": 1,
+  "run_id": "ver_example_heat",
+  "created_at": "2026-09-21T14:13:20Z",
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.5.0",
+    "release_status": "released",
+    "requested": "3.5.0",
+    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
+    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
+  },
+  "verifier": {
+    "method": "model",
+    "model": "example-verifier",
+    "notes": "Hand-written verdicts that stand in for a second model (not the extractor)."
+  },
+  "independent_of_extractor": true,
+  "counts": {
+    "records": 21,
+    "tasks": 41,
+    "by_kind": {
+      "link": 22,
+      "record": 19
+    },
+    "verdicts": 41,
+    "by_verdict": {
+      "not_supported": 1,
+      "supported": 39,
+      "uncertain": 1
+    },
+    "review_status_before": {
+      "auto_validated": 19,
+      "pending_review": 2
+    },
+    "review_status_after": {
+      "model_verified": 17,
+      "pending_review": 4
+    },
+    "promoted": 17,
+    "demoted": 2,
+    "confirmed_pending": 0,
+    "partially_verified": 0,
+    "unchanged": 0,
+    "withheld_same_model": 0,
+    "unverified": 0,
+    "skipped_expert_reviewed": 0,
+    "no_tasks": 2
+  },
+  "findings": [
+    {
+      "task_id": "vt_c584974b9426897093bd",
+      "record_id": "rec_6427ec708013a88c3bd6d089815d21ec",
+      "kind": "link",
+      "field": "agent.prerequisite_record_ids",
+      "target_record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9",
+      "verdict": "uncertain",
+      "reason": "The knockout follows the fine mapping in the text, but the paper does not say that it used the mapped interval; order of presentation is not a dependency."
+    },
+    {
+      "task_id": "vt_132c4294fdadbb35e908",
+      "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3",
+      "kind": "record",
+      "verdict": "not_supported",
+      "unsupported_fields": [
+        "common.germplasm_names"
+      ],
+      "reason": "The sentence compares the HTR1 knockout lines with WY. SL14 is named on the same page, not in this quote."
+    }
+  ],
+  "conflict_candidates": [
+    {
+      "record_ids": [
+        "rec_eb88edbd3cdd1ce77d844d368affb702",
+        "rec_4347364e90ac28cf4607e75c85f2c399"
+      ],
+      "reason": "Duration of the heat treatment: 12 h in the Results, 14 h in the Materials and Methods of the supplement."
+    }
+  ],
+  "omission_candidates": [
+    {
+      "page": 2,
+      "source_part": "supplement",
+      "quote": "WY 21.3 %",
+      "note": "The survival of the recurrent parent, the control of the comparison in Fig. S1, has no record."
+    }
+  ],
+  "unknown_task_ids": [],
+  "input": {
+    "file": "synthetic_rice_heat.jsonl",
+    "sha256": "630872b176bb356b372a17e7276fd1cee04d61adce11f356fd07815cb9f35c11",
+    "verdicts_file": "synthetic_rice_heat.verify.verdicts.json",
+    "verdicts_sha256": "4507a302de12d639a52caaba3d5c45a4d120ec80ae78094cc9c160365f4e3574"
+  },
+  "output": {
+    "file": "synthetic_rice_heat.verified.jsonl",
+    "sha256": "c69925dc2be2e7ffa53bc0c90c3109a9498cb312aadfc0ba283f6a8ce7005a4d"
+  }
+}

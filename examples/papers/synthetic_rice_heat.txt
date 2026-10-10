@@ -1,0 +1,19 @@
+A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population
+Synthetic Author C, Synthetic Author D
+SYNTHETIC EXAMPLE DOCUMENT - not a real publication. doi: 10.0000/synthetic.2026.002
+Published online: 20 May 2025
+
+Abstract
+Heat stress damages chloroplasts and reduces rice yield. We mapped qHT3, a QTL for seedling survival after heat stress, and identified two genes, HTR1 and HTR2, at this locus.
+
+Introduction
+Heat stress damages chloroplasts and reduces grain yield in rice. How heat signals are transduced from the plasma membrane to chloroplasts remains unknown. The objective of this study was to identify genes underlying natural variation in thermotolerance.
+Results
+A chromosome segment substitution line, SL14, showed higher survival than the recurrent parent WY after 12 h of heat treatment (fig. S1). We backcrossed SL14 to WY to construct a mapping population. Using 1,614 BC4F3 plants from this population, qHT3 was narrowed to a 36.6 kb interval on chromosome 3 (Table 1). Only recombinant plants that survived the heat treatment were advanced to the next generation.
+Table 1 Fine mapping of qHT3
+Interval Markers Size
+qHT3 M11-M19 36.6 kb
+To test whether HTR1 underlies qHT3, we generated knockout lines of HTR1 in WY by CRISPR/Cas9. The knockout lines of HTR1 showed lower survival than WY after heat treatment (fig. S2). We hypothesized that HTR1 might recruit HTR2 precursors to endosomes for degradation. HTR1 interacted with HTR2 in a split-luciferase assay (fig. S3).
+
+Discussion
+These results indicate that HTR1 acts upstream of HTR2 to protect chloroplasts under heat stress. How HTR2 accumulation damages chloroplasts remains to be determined. Materials and methods are available as supplementary materials.

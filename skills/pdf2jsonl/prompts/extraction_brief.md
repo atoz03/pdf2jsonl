@@ -36,6 +36,11 @@ validates against `{{candidate_schema_file}}`:
 8. **Keep the evidence chain.** A conclusion travels downstream (agent reasoning, knowledge-graph edges, QA
    answers) with its grounds, its hedges and its stated exceptions. Link it to the candidates it rests on, copy
    hedging words verbatim, and never drop or add a hedge (see the sections below).
+9. **One paper, possibly several files.** When the pages file has markers such as `=== supplement page 3 ===`,
+   the paper was supplied with further files. Their pages are numbered per file: cite them with the evidence
+   key that names the file (see "Evidence keys"). When the text cites supplementary figures, tables or methods
+   that are not in the pages file, extract only what the supplied pages state; the pipeline reports the
+   missing part. Never fill in what a missing supplement presumably says.
 
 ## Record kinds you may produce
 
@@ -83,6 +88,30 @@ state the relation as one statement in the same candidate:
 - A negation is part of the predicate: copy "was not associated with", never only "associated with".
 - Do not normalize the predicate and do not choose a relation code: the pipeline anchors every mention in the
   quote and derives the code from the verbatim words. A relation the quote does not state is not a statement.
+
+## Research workflow (background → question → hypothesis → experiment → result → conclusion)
+
+A paper is a line of research, and downstream agents rebuild it from the candidates: what was known, what was
+asked, what was hypothesised, which experiment tested which hypothesis, which step used the output of which,
+and what was concluded. Capture that line where the paper states it:
+
+{{workflow_block}}
+
+- Write one candidate for each stage the paper states: the background it builds on, the question or
+  objective, each hypothesis, each experimental or analysis step (a method candidate), each result and each
+  conclusion. Give every candidate that another one points to a `ref`.
+- A hypothesis is a candidate only when the authors state it ("we hypothesized", "might recruit", "to test
+  whether"). Keep its hedging words. Do not write hypotheses of your own from the experiments: induced
+  hypotheses are produced by a later, labelled step.
+- Connect the stages with links, and only where the paper makes the connection: a step or result to the
+  hypothesis or question it was run to test; a hypothesis or conclusion to the question or hypothesis it
+  answers; a step to the earlier step, observation or result whose output it uses (the lines built in one
+  experiment and phenotyped in the next); a result to the step that produced it; a conclusion to the results
+  it rests on.
+- A link says that two candidates are connected, not that the test succeeded. Whether a hypothesis was
+  supported is what the conclusion states.
+- The order in which a paper presents experiments is not a dependency. Link two steps only when the paper says
+  that the material, data or result of one is used in the other. Steps that share a prerequisite are branches.
 
 ## Linking candidates
 

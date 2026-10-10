@@ -76,7 +76,7 @@ node property.
 bdc derive out/paper.jsonl --out derived/
 # derived/paper.tables/{records,sources,record_entities,record_links,record_values,statements}.csv
 # derived/paper.triples.jsonl   derived/paper.graph.json   derived/paper.corpus.jsonl   derived/paper.qa.jsonl
-# derived/paper.derive.json
+# derived/paper.workflow.json   derived/paper.derive.json
 ```
 
 The exporter (`src/breeding_contract/derive.py`) reads no field list from code. Each field lands where its
@@ -171,6 +171,12 @@ Flags are review hints:
 
 The audit produces **no score**. TRACE itself notes that fluent structure can rest on wrong premises. The audit
 says what is present and connected, never whether a conclusion is true.
+
+From 3.5.0 the same command also reports the **research workflow**: stages, link types and structural flags
+such as a hypothesis nothing tests (`workflow_structure`; `docs/workflow.md`). The links it reads are those
+whose field carries a `workflow_edge` annotation in the catalog: `evidence` and `method` as above, plus
+`tests`, `addresses` and `prerequisite`. Whether a link or a value is actually supported by the paper is the
+question of the verification pass (`docs/review.md`).
 
 In the synthetic example, the effect claim ("increased plant height by 8.6 cm") is flagged `NO_WARRANT`. The
 paper does report the method, but the candidate does not link it, so a reviewer sees the gap. The abstract's

@@ -105,6 +105,57 @@
         },
         "candidates_sha256": {
           "$ref": "_defs.schema.json#/$defs/sha256"
+        },
+        "supplements": {
+          "description": "Further files of the same paper given with --supplement (AMB-041); evidence in them is cited by part",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "part",
+              "file_name",
+              "sha256",
+              "size_bytes",
+              "media_type",
+              "page_count",
+              "parser"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "part": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "file_name": {
+                "type": "string"
+              },
+              "sha256": {
+                "$ref": "_defs.schema.json#/$defs/sha256"
+              },
+              "size_bytes": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "media_type": {
+                "type": "string"
+              },
+              "page_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "parser": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -209,6 +260,26 @@
           "validation",
           "bundle"
         ]
+      }
+    },
+    "source_parts": {
+      "description": "Parts the text refers to but that were not supplied (details in the validation report)",
+      "type": "object",
+      "required": [
+        "missing",
+        "complete"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        }
       }
     }
   }

@@ -1,0 +1,52 @@
+{
+  "derive_format": 3,
+  "input": "synthetic_rice_heat.verified.jsonl",
+  "contract": {
+    "schema_name": "breeding-literature-record",
+    "schema_version": "3.5.0",
+    "release_status": "released",
+    "requested": "3.5.0",
+    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
+    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
+  },
+  "counts": {
+    "table:records": 21,
+    "table:sources": 1,
+    "table:record_entities": 41,
+    "table:record_links": 22,
+    "table:record_values": 12,
+    "table:statements": 4,
+    "triples": 704,
+    "graph_nodes": 32,
+    "graph_edges": 88,
+    "statements": 4,
+    "corpus_chunks": 18,
+    "qa_seeds": 11,
+    "workflow_nodes": 19,
+    "workflow_edges": 22,
+    "records": 21
+  },
+  "lineage": {
+    "derived_from": {
+      "file": "synthetic_rice_heat.verified.jsonl",
+      "sha256": "c69925dc2be2e7ffa53bc0c90c3109a9498cb312aadfc0ba283f6a8ce7005a4d",
+      "records": 21,
+      "source_ids": [
+        "doi:10.0000/synthetic.2026.002"
+      ]
+    },
+    "outputs": {
+      "synthetic_rice_heat.verified.tables/records.csv": "a1260ad6ee68d9d3ac43306e399f956015a47705429da98878073f75de07e975",
+      "synthetic_rice_heat.verified.tables/sources.csv": "bbe1abff25218c7ac9d6b2540aabb91ac8bf12ac9557e220ab2ea365b213e54e",
+      "synthetic_rice_heat.verified.tables/record_entities.csv": "b8f8ff0b12b1620f3b2bbb185a195ae2d06c65356f867a6641920c562befb17d",
+      "synthetic_rice_heat.verified.tables/record_links.csv": "4bf5636b80951d19db7a19a0275811d3c8c44051f3ea4701f206ca4c3aa3425c",
+      "synthetic_rice_heat.verified.tables/record_values.csv": "b9b5793cabb40c51c1a91e4d42e0de98154e5063cc22f07b2cb1eb8d78f73e67",
+      "synthetic_rice_heat.verified.tables/statements.csv": "aa298a67f651ad4d5c9f2dbbe7251e56c7788217aea4f7e2ea8fb68a72258425",
+      "synthetic_rice_heat.verified.triples.jsonl": "4ef2b3d6858fc7ccbc2954f4aea26a5cc28b7bd1cb0c219aa4b004df850bff8e",
+      "synthetic_rice_heat.verified.graph.json": "fcc0b1974300ba7480a2d5899e2fe7620608c5bd315b4c6f3b1c6f15f1859a19",
+      "synthetic_rice_heat.verified.corpus.jsonl": "9c3ef45567e5d3541b96c660dbb5110fb7df5553776ae57db0837be88bfcdc0e",
+      "synthetic_rice_heat.verified.qa.jsonl": "685e4a2a15c7da90ddd07d7ad029d3624b151f13e8e4e887fe8fb76cfedfe796",
+      "synthetic_rice_heat.verified.workflow.json": "d9fe1820b978265bbdb0d772f6cf2cc77572fe0ed1490245c3b10101e7752dd6"
+    }
+  }
+}

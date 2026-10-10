@@ -13,8 +13,12 @@ PLACEHOLDERS = frozenset({
     "contract_name", "schema_version", "release_status", "profile_name", "profile_title", "profile_description",
     "record_kinds_table", "document_fields_table", "evidence_roles_table", "extract_fields_table", "field_count",
     "vocabularies_block", "rules_block", "system_fields_list", "candidate_schema_file", "pages_file",
-    "candidates_file", "argument_block", "record_links_block", "relation_block",
+    "candidates_file", "argument_block", "record_links_block", "relation_block", "workflow_block",
 })
+WORKFLOW_ROLES = (("statement_role", "the role the paper gives this statement in its line of research; fill it only "
+                                     "when the wording or the place of the statement shows it"),
+                  ("step_condition", "the precondition or branching condition the paper states for a step, verbatim "
+                                     "(e.g. only the surviving lines were backcrossed)"))
 RELATION_ROLES = (("relation_subject", "the entity the statement is about, as printed"),
                   ("relation_predicate", "the words of the quote that connect subject and object, verbatim "
                                          "(e.g. `was associated with`, `调控`); never a paraphrase or a code"),
@@ -28,6 +32,8 @@ ROLE_HELP = {
     "table_figure": "table/figure label when the value comes from a table or figure, e.g. `Table 2`",
     "row_key": "row label of the table cell, verbatim",
     "column_key": "column label of the table cell, verbatim",
+    "part": "which file of the paper the page belongs to, exactly as in the page marker (`=== supplement page 3 ===` "
+            "→ `supplement`); omit it for the main text",
 }
 
 
@@ -67,7 +73,7 @@ def record_kinds_table(profile: dict) -> str:
 def evidence_table(profile: dict) -> str:
     prov = (profile.get("roles") or {}).get("provenance") or {}
     rows = ["| evidence key | stored as | meaning |", "|---|---|---|"]
-    for role in ("page", "quote", "section", "table_figure", "row_key", "column_key"):
+    for role in ("page", "quote", "part", "section", "table_figure", "row_key", "column_key"):
         if role in prov:
             rows.append(f"| `{role}` | `{prov[role]}` | {ROLE_HELP[role]} |")
     return "\n".join(rows)
@@ -142,6 +148,29 @@ def relation_block(profile: dict) -> str:
     return "\n".join(rows)
 
 
+def workflow_block(profile: dict) -> str:
+    """The fields and links that place a candidate in the paper's research workflow (AMB-039), resolved from
+    the profile: semantic roles, the vocabulary of the role field and the links with a workflow edge."""
+    sem = (profile.get("roles") or {}).get("semantic") or {}
+    fields = {f["path"]: f for f in profile["fields"]}
+    rows = []
+    for role, text in WORKFLOW_ROLES:
+        path = sem.get(role)
+        if not path:
+            continue
+        voc = profile["vocabularies"].get(fields.get(path, {}).get("vocabulary") or "", {})
+        codes = "; ".join(f"`{v['code']}`" + (f" ({v['label_zh']})" if v.get("label_zh") else "")
+                          for v in voc.get("values", []))
+        rows.append(f"- `{path}`: {text}" + (f". Codes: {codes}" if codes else ""))
+    links = [f"`links.{name}`" for name, spec in (profile.get("record_links") or {}).items()
+             if fields.get(spec["field"], {}).get("workflow_edge")]
+    if not rows and not links:
+        return "(this profile does not capture the research workflow)"
+    if links:
+        rows.append("- Links that connect the stages (see \"Linking candidates\"): " + ", ".join(links))
+    return "\n".join(rows)
+
+
 def system_list(profile: dict) -> str:
     return ", ".join(f"`{f['path']}`" for f in profile["fields"]
                      if f["role"] in ("system", "linked", "normalized", "generated"))
@@ -170,6 +199,7 @@ def render_brief(rc, profile: dict, pages_file: str, candidates_file: str, candi
         "argument_block": argument_block(rc.contract, profile),
         "record_links_block": record_links_block(profile),
         "relation_block": relation_block(profile),
+        "workflow_block": workflow_block(profile),
     }
     assert set(values) == PLACEHOLDERS
 

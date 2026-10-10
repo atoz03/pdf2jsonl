@@ -215,6 +215,10 @@
           },
           "reason": {
             "type": "string"
+          },
+          "part": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
           }
         }
       }
@@ -283,6 +287,159 @@
               "record_kind",
               "elements",
               "chain_elements"
+            ]
+          }
+        }
+      }
+    },
+    "source_parts": {
+      "description": "Source completeness (AMB-041): the files supplied, the parts the main text refers to, and the referenced parts that were neither supplied nor found in the supplied pages. Literal detection; it never guesses what a missing part contains",
+      "type": "object",
+      "required": [
+        "provided",
+        "referenced",
+        "missing",
+        "items_not_found",
+        "complete"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "provided": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "part",
+              "source_part",
+              "file_name",
+              "sha256",
+              "page_count"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "part": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "source_part": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              },
+              "sha256": {
+                "$ref": "_defs.schema.json#/$defs/sha256"
+              },
+              "page_count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "referenced": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "mentions",
+              "pages"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "mentions": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "pages": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "items_not_found": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      }
+    },
+    "workflow_structure": {
+      "description": "Research-workflow audit (AMB-039): records as stages, record links with a catalog workflow_edge as edges; structure and connectivity only, not experimental soundness",
+      "type": "object",
+      "required": [
+        "audit_format",
+        "stages",
+        "edges_by_type",
+        "links",
+        "flags",
+        "hypotheses",
+        "steps_ordered",
+        "records"
+      ],
+      "properties": {
+        "audit_format": {
+          "const": 1
+        },
+        "basis": {
+          "type": "string"
+        },
+        "stages": {
+          "$ref": "_defs.schema.json#/$defs/count_map"
+        },
+        "edges_by_type": {
+          "$ref": "_defs.schema.json#/$defs/count_map"
+        },
+        "links": {
+          "type": "object",
+          "required": [
+            "total",
+            "unresolved"
+          ]
+        },
+        "flags": {
+          "$ref": "_defs.schema.json#/$defs/count_map"
+        },
+        "flag_help": {
+          "type": "object"
+        },
+        "hypotheses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "steps_ordered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "record_id",
+              "stage",
+              "flags"
             ]
           }
         }

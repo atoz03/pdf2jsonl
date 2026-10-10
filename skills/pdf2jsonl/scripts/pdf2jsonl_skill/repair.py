@@ -54,7 +54,8 @@ class Repairer:
                 self.by_name.setdefault(f["name"], []).append(f["path"])
         prov = (profile.get("roles") or {}).get("provenance") or {}
         self.evidence_role_of = {path: role for role, path in prov.items()
-                                 if role in ("page", "section", "quote", "table_figure", "row_key", "column_key")}
+                                 if role in ("page", "section", "quote", "table_figure", "row_key", "column_key",
+                                             "part")}
         self.evidence_roles = set(self.evidence_role_of.values())
         self.kinds = list(profile.get("model_record_kinds") or [])
         self.links = set(profile.get("record_links") or {})
