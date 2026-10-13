@@ -9,11 +9,11 @@
   },
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.5.0",
+    "schema_version": "3.5.1",
     "release_status": "released",
-    "requested": "3.5.0",
-    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
-    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
+    "requested": "3.5.1",
+    "release_sha256": "a3028b47d0048e6bb62275d477c0c8a320446f6ab38be6dcc8a04c35b3de2483",
+    "source_digest": "408c30db4eb53e975c892c753d481fb988d6baf2f61d4bf9ecc3fec96d2cc928"
   },
   "mapping": {
     "id": "omics_to_current",
@@ -31,7 +31,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_deg_instance.migrated.jsonl",
-      "sha256": "8a946acebbac0d091e20bea13bce502021dbcc61c6a68d7422299a1d0d9983df"
+      "sha256": "80dc6f6f3567afdddef2a3e0eb988eca88ebb338be1c560003e6686efeda381f"
     },
     "errors": {
       "file": "synthetic_deg_instance.migrated.errors.jsonl",
@@ -39,7 +39,7 @@
     },
     "residue": {
       "file": "synthetic_deg_instance.residue.json",
-      "sha256": "8efaafd93528945f884f9358b60aea4b51377e43de209077c133022ad27db3e6"
+      "sha256": "51774bf7dd89eef7378df1c123266d98b32f57a67c8e5f92ac8b75256247d588"
     }
   },
   "tooling": {

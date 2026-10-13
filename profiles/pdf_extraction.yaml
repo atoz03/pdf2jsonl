@@ -194,6 +194,11 @@ evidence_policy:
   page_search_radius: 1
   max_quote_chars: 1200
   value_presence_check: warning
+  # Only fields whose value is a fact of the paper (a name, id, coordinate, measurement, statistic) are checked
+  # for verbatim presence. Fields the paper states in its own words (assertion, method_spec, condition,
+  # interface_spec, study_design) are paraphrases by definition, so the check would flag the writing, not an
+  # error — see docs/review.md and AMB-014.
+  value_presence_roles: [entity_mention, entity_id, entity_attribute, reference_frame, context_key, measurement, statistic]
   value_presence_exempt: [common.source_language]
 required_fields:
   always: [common.schema_name]

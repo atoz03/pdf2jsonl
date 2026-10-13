@@ -4,11 +4,11 @@
   "created_at": "2026-09-21T14:13:20Z",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.5.0",
+    "schema_version": "3.5.1",
     "release_status": "released",
-    "requested": "3.5.0",
-    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
-    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
+    "requested": "3.5.1",
+    "release_sha256": "a3028b47d0048e6bb62275d477c0c8a320446f6ab38be6dcc8a04c35b3de2483",
+    "source_digest": "408c30db4eb53e975c892c753d481fb988d6baf2f61d4bf9ecc3fec96d2cc928"
   },
   "profile": {
     "name": "pdf_extraction",
@@ -82,8 +82,8 @@
   },
   "options": {},
   "environment": {
-    "python": "3.10.12",
-    "platform": "Linux-6.8.0-94-generic-x86_64-with-glibc2.35",
+    "python": "3.12",
+    "platform": "Linux",
     "packages": {
       "jsonschema": "4.26.0",
       "PyYAML": "6.0.3",
@@ -99,7 +99,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_rice_heat.jsonl",
-      "sha256": "630872b176bb356b372a17e7276fd1cee04d61adce11f356fd07815cb9f35c11"
+      "sha256": "9ba4379c97bf8fd5180187bd1c52e086aa7029f058e4acacde1e6d74fe6a1e5c"
     },
     "errors": {
       "file": "synthetic_rice_heat.errors.jsonl",
@@ -107,7 +107,7 @@
     },
     "validation": {
       "file": "synthetic_rice_heat.validation.json",
-      "sha256": "f9e8314da3a30e489ea515f3eadb738f7902e7eebec6c460bdce23e57d47e361"
+      "sha256": "2a3c55a4547591b0a27c0708e58f7bb5fcbd8c5485cdd1a3b3f2c8e3dd19539b"
     }
   },
   "source_parts": {
