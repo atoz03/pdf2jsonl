@@ -74,6 +74,21 @@ def test_profile_schema_restricts_fields(root):
     assert set(schema["properties"]) <= set(rc.contract["groups"])
 
 
+def test_pdf_extraction_scopes_value_presence_to_value_bearing_roles(root):
+    prof = load_profile("pdf_extraction", "latest", root)
+    roles = prof["evidence_policy"]["value_presence_roles"]
+    assert set(roles) == {"entity_mention", "entity_id", "entity_attribute", "reference_frame", "context_key",
+                          "measurement", "statistic"}
+    # every named role is a declared key_role and is used by at least one field of the profile
+    codes = resolve_schema("latest", root).contract["codes"]["key_role"]
+    used = {f.get("key_role") for f in prof["fields"]}
+    assert set(roles) <= set(codes) and set(roles) <= used
+    # a paraphrase field is never checked; a value-bearing field is
+    roles_by_path = {f["path"]: f.get("key_role") for f in prof["fields"]}
+    assert roles_by_path["agent.finding_text"] not in roles      # assertion: the paper's own words
+    assert roles_by_path["common.qtl_names"] in roles           # entity_mention: a name that must be verbatim
+
+
 def test_every_profile_fill_rule_is_implemented(root):
     from pdf2jsonl_skill.fill_rules import IMPLEMENTED_RULES
     rc = resolve_schema("latest", root)

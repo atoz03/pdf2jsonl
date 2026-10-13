@@ -35,7 +35,7 @@
 | [字段目录](https://atoz03.github.io/pdf2jsonl/#fields) | **412 个字段**：含义、类型、JSON 示意、键角色、服务功能、功能分类标签（可多选）和来源 |
 | [抽取演示](https://atoz03.github.io/pdf2jsonl/#demo) | 合成论文从 PDF 到 JSONL 的全过程：候选、证据核验、记录、证据链审计 |
 | [下游派生](https://atoz03.github.io/pdf2jsonl/#downstream) | 同一批记录派生出的关系语句、知识图谱、带标注的语料、问答种子和关系表 |
-| [论文看板](https://atoz03.github.io/pdf2jsonl/papers.html) | 按论文查看 PDF、每次运行的记录、原文证据、复核问题，并下载结果 |
+| [论文看板](https://atoz03.github.io/pdf2jsonl/papers.html) | 按论文查看 PDF、每次运行的记录、原文证据、研究流程、语义校验与复核问题；校验提示按“取值核验 / 填写规则 / 记录链接 / 来源完整性”分组并可逐条筛选，结果可下载 |
 | [存量导入](https://atoz03.github.io/pdf2jsonl/#importers) | legacy、omics、merged 三种已有格式的导入器：映射覆盖、示例运行、问题登记 |
 | [数据管线](https://atoz03.github.io/pdf2jsonl/pipeline.html) | 管线全景图，支持中英文切换与 SVG 下载 |
 

@@ -168,6 +168,9 @@ def resolve_profile(contract: dict, raw_profiles: dict[str, dict], name: str) ->
         need(path, "required_fields.always")
     for path in (p.get("evidence_policy") or {}).get("value_presence_exempt") or []:
         need(path, "evidence_policy.value_presence_exempt")
+    for role in (p.get("evidence_policy") or {}).get("value_presence_roles") or []:
+        if role not in (contract["codes"].get("key_role") or {}):
+            raise ContractError(f"profile {name}: evidence_policy.value_presence_roles names unknown key_role {role!r}")
 
     extra = [f["path"] for f in contract["fields"]
              if f["path"] not in selected and (f["path"] in roles_of or

@@ -36,7 +36,11 @@ A consumer chooses its threshold: a candidate graph may load `auto_validated`, a
 
 - **Schema and rules** of the contract (`bdc validate`).
 - **Evidence.** The quote must occur on the stated page of the stated part, otherwise the candidate is
-  rejected. Values that are not literally on the page raise a warning.
+  rejected. A value that is not literally on the page raises a warning — for the fields whose value is a fact
+  of the paper (a name, id, coordinate, measurement, statistic; the `key_role`s listed in
+  `evidence_policy.value_presence_roles`). A field the paper states in its own words (`assertion`,
+  `method_spec`, `condition`, `interface_spec`, `study_design`) is a paraphrase by definition and is not
+  checked: a warning there would flag the writing, not an error (AMB-014).
 - **Link closure.** A link to a rejected, missing or wrong-kind candidate is dropped and flagged.
 - **Evidence chain** (`argument_structure`): which Toulmin/Flavell elements a statement has, own and through
   its links.
@@ -110,6 +114,19 @@ Every judged record gets `common.verification_run_id`, a new `common.record_vers
 `common.record_updated_at`. Its ID and its content stay as they were: a wrong value is corrected by fixing the
 candidates and running the extraction again, or by a reviewer. Conflicts and omissions go to the report as
 candidates for review and are written to no record.
+
+The paper dashboard reads the report: when `<stem>.verification.json` (and `<stem>.verified.jsonl`) sits next
+to a run's records — or in a `review/` directory beside them, the invocation above — the page shows that run
+under its post-verification statuses and lists the findings, conflict candidates and omission candidates, with
+the report and the verified records downloadable. It only displays them; it changes no record.
+
+The same page groups a run's record-validation warnings into families, so the queue can be read by what a
+warning is about rather than by code: **取值核验** (`VALUE_*`, `EVIDENCE_*`, `DOCUMENT_VALUE_*`), **填写规则**
+(`RULE_*`), **记录链接**, **来源完整性** and **运行文件检查** (`OUTPUT_INTEGRITY`). Records can be filtered by
+family in the 抽取记录 tab, and each record's own warnings appear in its detail dialog. The value family also
+carries the run's `evidence_policy`: a 3.5.1-or-later run says which `key_role`s it checked, and a run without
+`value_presence_roles` is marked as having checked every field, so its count of value warnings is not
+comparable with a later run's.
 
 In the example (`examples/output/review/`), 41 tasks are judged for 21 records. Seventeen records become
 `model_verified`. Two are sent back: the observation whose line name is not in its quote, and the step whose

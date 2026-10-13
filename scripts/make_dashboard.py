@@ -28,7 +28,7 @@ from urllib.parse import quote, unquote
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 
-from breeding_contract.api import resolve_schema  # noqa: E402
+from breeding_contract.api import load_profile, resolve_schema  # noqa: E402
 from breeding_contract.derive import Deriver, counts as derive_counts  # noqa: E402
 from breeding_contract.util import load_yaml, sha256_file  # noqa: E402
 
@@ -64,6 +64,62 @@ def _read_json(path, notes):
     except (OSError, ValueError) as exc:
         notes.append(f'{path.name}: {exc.__class__.__name__}')
         return None
+
+
+# A record-validation warning belongs to one of a few families, so the page can say what class of thing a
+# warning is about instead of leaving the reader with a code. `code` is the pipeline code, or RULE_<id>.
+WARNING_FAMILIES = (
+    ('value', '取值核验', '原文没有逐字写出的字段取值（事实类字段）',
+     ('VALUE_', 'DOCUMENT_VALUE_', 'EVIDENCE_PAGE_CORRECTED', 'EVIDENCE_TABLE_NOT_ON_PAGE', 'EVIDENCE_CELL_KEY_NOT_ON_PAGE')),
+    ('rule', '填写规则', '契约的跨字段规则（R001..R035）没有通过', ('RULE_',)),
+    ('link', '记录链接', '记录引用的其他记录或链接没有解析到', ('CANDIDATE_LINK_', 'UNRESOLVED_LINK', 'LINK_')),
+    ('source', '来源完整性', '本次运行缺少论文的某个部分', ('SOURCE_PART_',)),
+    ('integrity', '输出完整性', '运行产物自身的问题：文件缺失或哈希不一致', ('OUTPUT_INTEGRITY',)),
+)
+VALUE_WARNING_CODES = ('VALUE_', 'DOCUMENT_VALUE_')
+RULE_SEVERITY = {'error': '错误', 'warning': '提示'}
+
+
+def _warning_family(code):
+    text = str(code or '')
+    for key, _, _, prefixes in WARNING_FAMILIES:
+        if text.startswith(prefixes):
+            return key
+    return 'other'
+
+
+def _summarize_warnings(rows):
+    """Group the record warnings of one run, and the rule codes they name, for the page and its filters."""
+    groups = {key: {'label': label, 'description': description, 'count': 0,
+                    'by_code': Counter(), 'by_field': Counter(), 'records': set()}
+              for key, label, description, _ in WARNING_FAMILIES}
+    groups['other'] = {'label': '其他提示', 'description': '', 'count': 0,
+                       'by_code': Counter(), 'by_field': Counter(), 'records': set()}
+    rule_help, rule_severity, value_records = {}, {}, set()
+    for row in rows:
+        rid = row.get('record_id')
+        for issue in row.get('warnings', []):
+            code = issue.get('code')
+            family = _warning_family(code)
+            group = groups[family]
+            group['count'] += 1
+            group['by_code'][code] += 1
+            if issue.get('path'):
+                group['by_field'][issue['path']] += 1
+            if rid:
+                group['records'].add(rid)
+            if family == 'value' and rid:
+                value_records.add(rid)
+            if family == 'rule':
+                rule_id = str(code or '').removeprefix('RULE_')
+                rule_help[rule_id] = issue.get('message')
+                rule_severity[rule_id] = RULE_SEVERITY.get(issue.get('severity'), issue.get('severity'))
+    for group in groups.values():
+        group['records'] = len(group['records'])
+        group['by_code'] = dict(group['by_code'].most_common())
+        group['by_field'] = dict(group['by_field'].most_common())
+    return {'groups': groups, 'rule_help': rule_help, 'rule_severity': rule_severity,
+            'value_warning_records': sorted(value_records)}
 
 
 def _read_rows(path, notes):
@@ -114,6 +170,70 @@ def _scan(root, scan=None):
     return pdfs, manifests, requests
 
 
+def _verification(root, records_file, notes):
+    """Read the output of `bdc verify apply` for a run, if it is next to the records file.
+
+    `bdc verify` writes <stem>.verification.json and <stem>.verified.jsonl next to the records (or where its
+    --out points). The verified records carry the moved review fields (`model_verified`, `VERIFY_*` codes);
+    the report carries what a model judged and what it flagged: conflicts between records of the paper, and
+    statements the extraction missed. Neither is invented here — a run without a verification pass yields
+    empty results and the raw records are shown unchanged."""
+    blank = {'report': None, 'records': [], 'report_url': None, 'verified_url': None, 'verified_raw': None}
+    if records_file is None:
+        return blank
+    stem = records_file.name[:-6] if records_file.name.endswith('.jsonl') else records_file.stem
+    # `bdc verify apply ... --out review/` writes into a review directory beside the records (docs/review.md);
+    # a verifier run without --out writes next to them.
+    for folder in (records_file.parent, records_file.parent / 'review'):
+        report_path = folder / f'{stem}.verification.json'
+        if report_path.is_file():
+            break
+    else:
+        return blank
+    report = _read_json(report_path, notes)
+    if not isinstance(report, dict) or report.get('verification_format') != 1:
+        return blank
+    verified_path = folder / f'{stem}.verified.jsonl'
+    verified, verified_raw = [], None
+    if verified_path.is_file():
+        digest = (report.get('output') or {}).get('sha256')
+        if digest and sha256_file(verified_path) != digest:
+            notes.append('语义校验：已核验记录文件哈希与校验报告不一致')
+        verified = _read_rows(verified_path, notes)
+        verified_raw = verified_path.read_bytes().decode('utf-8')
+    elif (report.get('output') or {}).get('file'):
+        notes.append('语义校验：已核验记录文件缺失')
+    return {'report': report,
+            'records': verified or [],
+            'report_url': _url(root, report_path),
+            'verified_url': _url(root, verified_path) if verified else None,
+            'verified_raw': verified_raw}
+
+
+def _presence_policy(version, profile, contract_cache, root):
+    """What the run's own profile checked for verbatim value presence.
+
+    From 3.5.1 a profile may scope that check with `evidence_policy.value_presence_roles`: only fields whose
+    `key_role` is listed there are checked, because a field the paper states in its own words (assertion,
+    method_spec, condition …) is a paraphrase and never appears verbatim. A run whose profile has no such key
+    checks every field, which is why its value warnings are not comparable with a later run's (docs/review.md).
+    """
+    key = ('presence', version, profile)
+    if key not in contract_cache:
+        roles, known = None, {}
+        try:
+            policy = (load_profile(profile, version, root).get('evidence_policy') or {}) if profile else {}
+            if policy.get('value_presence_roles'):
+                roles = list(policy['value_presence_roles'])
+            for code, spec in (resolve_schema(version, root).contract.get('codes', {}).get('key_role') or {}).items():
+                known[code] = spec.get('label_zh') or code
+        except Exception:
+            roles, known = None, {}
+        contract_cache[key] = {'selective': roles is not None, 'roles': roles,
+                               'checked': [known.get(r, r) for r in roles or []]}
+    return contract_cache[key]
+
+
 def _run(root, path, manifest, contract_cache):
     notes = []
     outputs = manifest.get('outputs') or {}
@@ -142,15 +262,21 @@ def _run(root, path, manifest, contract_cache):
     declared = (manifest.get('counts') or {}).get('records')
     if isinstance(declared, int) and declared != len(records):
         notes.append(f'清单声明 {declared} 条记录，实际读到 {len(records)} 条')
+    verification = _verification(root, files.get('records'), notes)
+    if verification['records']:
+        records = verification['records']
     review = Counter((r.get('common') or {}).get('review_status', 'unknown') for r in records)
     by_kind = Counter((r.get('common') or {}).get('record_kind', 'unknown') for r in records)
     warnings = [{**issue, 'record_id': row.get('record_id'), 'record_kind': row.get('record_kind')}
                 for row in validation.get('records', []) for issue in row.get('warnings', [])]
+    warning_summary = _summarize_warnings(validation.get('records', []))
     audit = validation.get('argument_structure') or {}
     workflow = validation.get('workflow_structure') or {}
     source_parts = validation.get('source_parts') if isinstance(validation.get('source_parts'), dict) else None
     derived = None
     version = (manifest.get('contract') or {}).get('schema_version')
+    record_profile = (manifest.get('profile') or {}).get('name', '')
+    selective = _presence_policy(version, record_profile, contract_cache, root)
     try:
         if version not in contract_cache:
             contract_cache[version] = resolve_schema(version, root).contract
@@ -158,7 +284,9 @@ def _run(root, path, manifest, contract_cache):
         totals = derive_counts(views)
         derived = {**views, 'counts': {'tables': len(views['tables']), 'triples': totals['triples'],
                                        'corpus': totals['corpus_chunks'], 'statements': totals['statements'],
-                                       'graph_nodes': totals['graph_nodes'], 'qa': totals['qa_seeds']}}
+                                       'graph_nodes': totals['graph_nodes'], 'qa': totals['qa_seeds'],
+                                       'workflow_nodes': totals.get('workflow_nodes', 0),
+                                       'workflow_edges': totals.get('workflow_edges', 0)}}
     except Exception as exc:
         notes.append(f'派生预览不可用: {exc.__class__.__name__}')
     model = (manifest.get('backend') or {}).get('model') or (manifest.get('backend') or {}).get('name', 'unknown')
@@ -167,15 +295,27 @@ def _run(root, path, manifest, contract_cache):
     raw_outputs = {kind: artifact.read_bytes().decode('utf-8') for kind, artifact in files.items()
                    if kind in {'records', 'errors', 'validation', 'bundle'}}
     raw_outputs['manifest'] = path.read_bytes().decode('utf-8')
+    if verification['verified_raw']:
+        raw_outputs['verified'] = verification['verified_raw']
     return {'id': hashlib.sha256(_relative(root, path).encode()).hexdigest()[:20],
             'run_id': manifest.get('run_id', path.stem), 'name': name, 'path': _relative(root, path.parent),
             'manifest_url': _url(root, path), 'created_at': manifest.get('created_at', ''),
             'version': version, 'profile': (manifest.get('profile') or {}).get('name', ''), 'model': model,
             'records': records, 'errors': errors, 'warnings': warnings, 'audit': audit, 'workflow': workflow,
+            'warning_summary': warning_summary, 'rule_help': warning_summary['rule_help'],
+            'rule_severity': warning_summary['rule_severity'],
+            'value_warning_records': warning_summary['value_warning_records'],
+            'presence_policy': selective,
             'source_parts': source_parts,
+            'verification': verification['report'], 'verification_url': verification['report_url'],
+            'verified_url': verification['verified_url'],
             'counts': {'records': len(records), 'rejected': len(errors), 'pending': review.get('pending_review', 0),
                        'auto_validated': review.get('auto_validated', 0), 'audit_flags': sum((audit.get('flags') or {}).values()),
                        'workflow_flags': sum((workflow.get('flags') or {}).values()),
+                       'value_flags': warning_summary['groups']['value']['count'],
+                       'value_records': warning_summary['groups']['value']['records'],
+                       'model_verified': review.get('model_verified', 0),
+                       'expert_approved': review.get('expert_approved', 0) + review.get('rejected', 0),
                        'by_kind': dict(by_kind), 'by_review': dict(review)},
             'manifest': manifest, 'validation': validation, 'bundle': bundle, 'derived': derived,
             'raw_outputs': raw_outputs,
@@ -277,6 +417,9 @@ def build_data(root: Path = ROOT, scan=None):
             paper['status'] = 'prepared' if paper['tasks'] else 'unprocessed'
     items = sorted(papers.values(), key=lambda p: ((p['runs'][0]['created_at'] if p['runs'] else ''), p['title']), reverse=True)
     latest_runs = [p['runs'][0] for p in items if p['runs']]
+    verified = [r for r in latest_runs if r['verification']]
+    reviewed = [r for r in verified if r['counts']['model_verified'] or r['counts']['expert_approved']]
+    value_flagged = sum(r['counts'].get('value_records', 0) for r in latest_runs)
     try:
         current = resolve_schema('latest', root)
         classification = load_yaml(root / 'docs/field_classification.yaml')
@@ -290,16 +433,22 @@ def build_data(root: Path = ROOT, scan=None):
             'version': version, 'papers': items, 'fields': fields, 'diagnostics': diagnostics,
             'summary': {'papers': len(items), 'processed': len(latest_runs), 'runs': sum(len(p['runs']) for p in items),
                         'records': sum(r['counts']['records'] for r in latest_runs),
-                        'pending': sum(r['counts']['pending'] for r in latest_runs)}}
+                        'pending': sum(r['counts']['pending'] for r in latest_runs),
+                        'value_flags': sum(r['counts'].get('value_flags', 0) for r in latest_runs),
+                        'value_records': value_flagged,
+                        'selective_presence': sum(1 for r in latest_runs if r['presence_policy']['selective']),
+                        'verified': len(verified), 'reviewed': len(reviewed)}}
 
 
 def _linked_files(data):
-    """Repository-relative paths of every file the page links to (PDFs, run manifests and outputs)."""
+    """Repository-relative paths of every file the page links to (PDFs, run manifests and outputs, the
+    verification report and the verified records)."""
     urls = [p.get('pdf_url') for p in data.get('papers', [])]
     urls += [s.get('pdf_url') for p in data.get('papers', []) for s in p.get('supplements') or []]
     for paper in data.get('papers', []):
         for run in paper['runs']:
-            urls += [run.get('manifest_url'), *(run.get('urls') or {}).values()]
+            urls += [run.get('manifest_url'), run.get('verification_url'), run.get('verified_url'),
+                     *(run.get('urls') or {}).values()]
     return sorted({unquote(u[2:]) for u in urls if isinstance(u, str) and u.startswith('./')})
 
 

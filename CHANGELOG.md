@@ -12,6 +12,24 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and versions
 
 Each heading `## [X.Y.Z] - YYYY-MM-DD` provides the release date that `bdc release` records.
 
+## [3.5.1] - 2026-10-13
+
+A trial extraction of two papers showed that the verbatim value-presence check dominated the review queue: of
+191 warnings it raised, 149 came from fields whose value the paper states in its own words (`agent.finding_text`
+alone accounted for 99), and they were the sole reason 98 records sat in `pending_review`. The check is now
+scoped to fields whose value is a fact of the paper, so it reports the values that must appear verbatim instead
+of the writing that never will.
+
+### Changed
+- **`evidence_policy.value_presence_roles`** (new profile key, `profiles/pdf_extraction.yaml`): the
+  `VALUE_NOT_ON_EVIDENCE_PAGE` / `VALUE_NOT_IN_SOURCE` check now runs only for fields whose `key_role` is one of
+  `entity_mention`, `entity_id`, `entity_attribute`, `reference_frame`, `context_key`, `measurement`, `statistic`.
+  A field the paper states in its own words (`assertion`, `method_spec`, `condition`, `interface_spec`,
+  `study_design`) is a paraphrase by definition, so a value-presence warning about it flagged the writing, not an
+  error (AMB-014). Omitting the key keeps the previous behaviour: every field is checked. The check's severity
+  (`warning`) and the rest of `evidence_policy` are unchanged, and no field, vocabulary or rule changes — this is
+  a profile-internal change with no effect on a record's validity (hence PATCH).
+
 ## [3.5.0] - 2026-10-10
 
 This release answers three questions raised by Topic 2 after a trial extraction of a mechanism paper: how a

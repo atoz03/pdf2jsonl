@@ -4,7 +4,7 @@
     "model": "example-verifier",
     "notes": "Hand-written verdicts that stand in for a second model (not the extractor)."
   },
-  "input_sha256": "630872b176bb356b372a17e7276fd1cee04d61adce11f356fd07815cb9f35c11",
+  "input_sha256": "9ba4379c97bf8fd5180187bd1c52e086aa7029f058e4acacde1e6d74fe6a1e5c",
   "verdicts": [
     {
       "task_id": "vt_63ab23dbeb28f8ffc351",
