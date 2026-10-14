@@ -4,11 +4,11 @@
   "created_at": "2026-09-21T14:13:20Z",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.5.0",
+    "schema_version": "3.5.1",
     "release_status": "released",
-    "requested": "3.5.0",
-    "release_sha256": "3decdebc9b43064ac284421d4a05bec7a328babc392ab471332456ef94bed377",
-    "source_digest": "cbe65670a387bc75abbe95d7fed80894eccc71009c86429b69d1a9a006b35b29"
+    "requested": "3.5.1",
+    "release_sha256": "a3028b47d0048e6bb62275d477c0c8a320446f6ab38be6dcc8a04c35b3de2483",
+    "source_digest": "408c30db4eb53e975c892c753d481fb988d6baf2f61d4bf9ecc3fec96d2cc928"
   },
   "profile": {
     "name": "pdf_extraction",
@@ -85,7 +85,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_rice_qtl.jsonl",
-      "sha256": "84ff4e83565de0b521dc5888dff16991e1f98c6727353c199762c6fde67b0b11"
+      "sha256": "9ffbf080ffe2b8412b42cadf7c75df4dfd5dfd2c0b32084b1ac06ac4efc46f2b"
     },
     "errors": {
       "file": "synthetic_rice_qtl.errors.jsonl",
@@ -93,11 +93,11 @@
     },
     "validation": {
       "file": "synthetic_rice_qtl.validation.json",
-      "sha256": "180fc37c4e85c1a2ce33790a81fea828a1aecb15fb0d52ae5976601aa458ca47"
+      "sha256": "b0c6be9f1e51fee55adb3f333a9e60a66025ef3b99c8aa95dc35fbb0f3954305"
     },
     "bundle": {
       "file": "synthetic_rice_qtl.bundle.json",
-      "sha256": "1458b5c86044796889af06834f3a44f160ccae32930e187d4199d6f8db15bc08"
+      "sha256": "3b0c1150b7a580f48c3145d944eedfa2357cd4c1142e9781ae5deb07298c95c1"
     }
   },
   "source_parts": {

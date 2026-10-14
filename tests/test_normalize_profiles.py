@@ -1,10 +1,12 @@
 """Deterministic normalization and profile resolution."""
 from __future__ import annotations
 
+import jsonschema
 import pytest
 
 from breeding_contract import load_profile, resolve_schema
 from breeding_contract.normalize import normalize_value, parse_raw_value
+from breeding_contract.sources import meta_schema
 from breeding_contract.util import load_yaml
 
 
@@ -72,6 +74,30 @@ def test_profile_schema_restricts_fields(root):
     assert len(compact["fields"]) == 158  # 157 v3 compact fields + common.schema_name (3.1.0)
     schema = rc.profile_schema("compact")
     assert set(schema["properties"]) <= set(rc.contract["groups"])
+
+
+def test_pdf_extraction_scopes_value_presence_to_value_bearing_roles(root):
+    prof = load_profile("pdf_extraction", "latest", root)
+    roles = prof["evidence_policy"]["value_presence_roles"]
+    assert set(roles) == {"entity_mention", "entity_id", "entity_attribute", "reference_frame", "context_key",
+                          "measurement", "statistic"}
+    # every named role is a declared key_role and is used by at least one field of the profile
+    codes = resolve_schema("latest", root).contract["codes"]["key_role"]
+    used = {f.get("key_role") for f in prof["fields"]}
+    assert set(roles) <= set(codes) and set(roles) <= used
+    # a paraphrase field is never checked; a value-bearing field is
+    roles_by_path = {f["path"]: f.get("key_role") for f in prof["fields"]}
+    assert roles_by_path["agent.finding_text"] not in roles      # assertion: the paper's own words
+    assert roles_by_path["common.qtl_names"] in roles           # entity_mention: a name that must be verbatim
+
+
+def test_value_presence_roles_cannot_be_empty(root):
+    """An empty role list would read as "check nothing"; value_presence_check: off already says that."""
+    validator = jsonschema.Draft202012Validator(meta_schema(root, "profile"))
+    raw = load_yaml(root / "profiles/pdf_extraction.yaml")
+    assert validator.is_valid(raw)
+    raw["evidence_policy"]["value_presence_roles"] = []
+    assert not validator.is_valid(raw)
 
 
 def test_every_profile_fill_rule_is_implemented(root):

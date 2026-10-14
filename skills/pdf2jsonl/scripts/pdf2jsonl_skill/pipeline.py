@@ -146,6 +146,11 @@ class Assembler:
         self.prov = (p.get("roles") or {}).get("provenance") or {}
         self.policy = p.get("evidence_policy") or {}
         self.exempt = set(self.policy.get("value_presence_exempt") or [])
+        # None = check every field. A profile that lists value_presence_roles checks only fields of those
+        # key_roles: a value the paper states in its own words (assertion, method_spec, condition, ...) will
+        # not reappear verbatim, so the check would flag the paraphrase, not an error.
+        roles = self.policy.get("value_presence_roles")
+        self.presence_roles = set(roles) if roles is not None else None
         sys_fields = list((p.get("system_fields") or {}).items())
         self.phase1 = sorted([(k, s) for k, s in sys_fields if REGISTRY[s["rule"]].phase == 1],
                              key=lambda kv: REGISTRY[kv[1]["rule"]].order)
@@ -266,7 +271,10 @@ class Assembler:
         pages = [p for p in range(page - radius, page + radius + 1) if 1 <= p <= index.doc.page_count]
         out = []
         for path, value in cand["fields"].items():
-            if path in self.exempt or self.fields.get(path, {}).get("vocabulary"):
+            f = self.fields.get(path, {})
+            if path in self.exempt or f.get("vocabulary"):
+                continue
+            if self.presence_roles is not None and f.get("key_role") not in self.presence_roles:
                 continue
             code = self._present(value, pages, index)
             if code:

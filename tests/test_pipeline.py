@@ -92,6 +92,31 @@ def test_rerun_is_deterministic(tmp_path, epoch):
         assert a[k].read_bytes() == b[k].read_bytes(), k
 
 
+def test_value_presence_is_checked_only_for_value_bearing_roles(tmp_path, epoch):
+    """A paraphrase field is not expected on the page; a name/number that is not on the page still warns."""
+    raw = json.loads(EXAMPLE_CANDIDATES.read_text())
+    q = "qPH7.1 was located between markers S7_1203 and S7_1377 with a LOD score of 12.8."
+    raw["candidates"] = [
+        # agent.finding_text (assertion): the paper states this in its own words — no value-presence warning
+        {"record_kind": "claim", "ref": "p", "fields": {"agent.finding_text": "A paraphrase never written verbatim.",
+                                                        "common.qtl_names": ["qPH7.1"]},
+         "evidence": {"page": 3, "quote": q}},
+        # common.qtl_names (entity_mention) with a name absent from the source — still a warning
+        {"record_kind": "claim", "ref": "n", "fields": {"common.qtl_names": ["qZZ9"], "agent.finding_text": q},
+         "evidence": {"page": 3, "quote": q}},
+    ]
+    path = tmp_path / "candidates.json"
+    path.write_text(json.dumps(raw, ensure_ascii=False), encoding="utf-8")
+    res = run(EXAMPLE_PDF, RunOptions(backend="candidates", candidates_file=str(path), out_dir=str(tmp_path / "out"),
+                                      run_id="run_roles"))
+    report = json.loads(res.outputs["validation"].read_text())
+    warned = {w["code"] for row in report["records"] for w in row["warnings"] if w["code"].startswith("VALUE_")}
+    assert warned == {"VALUE_NOT_IN_SOURCE"}
+    by_ref = {row["candidate_index"]: {w["code"] for w in row["warnings"]} for row in report["records"]}
+    assert "VALUE_NOT_IN_SOURCE" not in by_ref[0]      # the paraphrase field is not checked
+    assert "VALUE_NOT_IN_SOURCE" in by_ref[1]          # the entity mention is
+
+
 def test_explicit_older_version(tmp_path, epoch):
     opts = RunOptions(schema_version="3.0.0", backend="mock", out_dir=str(tmp_path), run_id="run_300")
     res = run(EXAMPLE_PDF, opts)
