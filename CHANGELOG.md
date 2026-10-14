@@ -20,6 +20,11 @@ alone accounted for 99), and they were the sole reason 98 records sat in `pendin
 scoped to fields whose value is a fact of the paper, so it reports the values that must appear verbatim instead
 of the writing that never will.
 
+The same release closes the loop on 3.5.0's semantic verification in the paper dashboard: the page now reads a
+run's verification report and shows the run under its post-verification statuses, gains 研究流程 (workflow) and
+语义校验 (verify) detail tabs, and groups a run's record warnings into families — the value family carrying the
+run's `value_presence_roles` so warning counts are only compared between runs that checked the same fields.
+
 ### Changed
 - **`evidence_policy.value_presence_roles`** (new profile key, `profiles/pdf_extraction.yaml`): the
   `VALUE_NOT_ON_EVIDENCE_PAGE` / `VALUE_NOT_IN_SOURCE` check now runs only for fields whose `key_role` is one of
@@ -29,6 +34,48 @@ of the writing that never will.
   error (AMB-014). Omitting the key keeps the previous behaviour: every field is checked. The check's severity
   (`warning`) and the rest of `evidence_policy` are unchanged, and no field, vocabulary or rule changes — this is
   a profile-internal change with no effect on a record's validity (hence PATCH).
+  - `schemas/meta/profile.meta.schema.json` accepts the key (an array of `key_role` codes, no `enum`);
+    `compile.resolve_profile` rejects a profile naming an unknown `key_role`.
+  - `skills/pdf2jsonl/scripts/pdf2jsonl_skill/pipeline.py` gates the per-field check on
+    `Assembler.presence_roles` (`None` = check every field). `check_document` (`DOCUMENT_VALUE_NOT_IN_SOURCE`)
+    is not gated by the key.
+
+### Added
+- **Dashboard reads the verification report** (`scripts/make_dashboard.py`, `site/dashboard.template.html`). When
+  `<stem>.verification.json` (and `<stem>.verified.jsonl`) sits next to a run's records — or in a `review/`
+  directory beside them, where `bdc verify apply … --out review/` writes — the page shows that run under its
+  post-verification statuses and lists the findings, conflict candidates and omission candidates, with the report
+  and the verified records downloadable. It only displays; it changes no record. A `review/` subdirectory is
+  searched as well as the records' own directory, and tampering is surfaced: if the verified records' `sha256`
+  no longer matches the report, the page says so.
+- **研究流程 and 语义校验 detail tabs.** A run's detail dialog goes from
+  `[records, 原文与证据, 校验与审计, 运行历史, 导出文件]` to
+  `[records, 研究流程, 原文与证据, 语义校验, 校验与审计, 运行历史, 导出文件]`; the 研究流程 tab renders the
+  derived workflow view (or an empty state noting it needs contract 3.5.0 and `statement_role`), the 语义校验 tab
+  shows the verification findings.
+- **Warning families.** A run's record warnings are grouped for the page and its filter as 取值核验 (`VALUE_*`,
+  `DOCUMENT_VALUE_*`, `EVIDENCE_PAGE_CORRECTED`, `EVIDENCE_TABLE_NOT_ON_PAGE`, `EVIDENCE_CELL_KEY_NOT_ON_PAGE`),
+  填写规则 (`RULE_*`), 记录链接 (`CANDIDATE_LINK_*`, `UNRESOLVED_LINK`, `LINK_*`), 来源完整性 (`SOURCE_PART_*`)
+  and 输出完整性 (`OUTPUT_INTEGRITY`); records can be filtered by family.
+- **Comparability flag.** The value family carries the run's `evidence_policy`: a run whose profile has
+  `value_presence_roles` is marked as having checked those `key_role`s, a run without it (or before 3.5.1) as
+  having checked every field — the two runs' value-warning counts are not comparable, and the page says so.
+- **Dashboard guide gains the verification step** (`site/dashboard.template.html`). The "添加论文与更新看板"
+  dialog goes from three steps to four, inserting **3 （可选）运行语义校验**
+  (`bdc verify tasks out/paper.jsonl --out review/ && bdc verify apply out/paper.jsonl --verdicts
+  review/paper.verify.verdicts.json --out review/`) before **4 重新生成，然后刷新页面** (`make dashboard`);
+  step 1 also notes 补充材料 / `--supplement`.
+
+### Docs
+- `docs/review.md` rewrites the Layer-1 Evidence paragraph (role-scoped value check, AMB-014) and documents the
+  dashboard's verification report, warning families and comparability flag. `README.md` enlarges the 论文看板 row
+  with 研究流程、语义校验 and the warning-family grouping.
+
+### Tests
+- `tests/test_pipeline.py::test_value_presence_is_checked_only_for_value_bearing_roles`,
+  `tests/test_normalize_profiles.py::test_pdf_extraction_scopes_value_presence_to_value_bearing_roles`, and eight
+  `tests/test_dashboard.py` cases (verified-run ingestion, a run without verification, warning families, the
+  presence policy, the example run's filter, verification under `review/`, and tamper detection).
 
 ## [3.5.0] - 2026-10-10
 
