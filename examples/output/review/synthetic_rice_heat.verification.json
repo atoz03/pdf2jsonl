@@ -88,12 +88,12 @@
   "unknown_task_ids": [],
   "input": {
     "file": "synthetic_rice_heat.jsonl",
-    "sha256": "9ba4379c97bf8fd5180187bd1c52e086aa7029f058e4acacde1e6d74fe6a1e5c",
+    "sha256": "c18d30c056ff90c2a55ba3158821aa2293a7228c50bc0dd3f1f58faa2383c829",
     "verdicts_file": "synthetic_rice_heat.verify.verdicts.json",
-    "verdicts_sha256": "27d46717fbde1a05703865c89bffb9b07032c154953fc54f20f91b8871573641"
+    "verdicts_sha256": "c2a6c40e1f186042efa77f48d05ee5914d57d6dcf91cb7137e2eeb8468fcd073"
   },
   "output": {
     "file": "synthetic_rice_heat.verified.jsonl",
-    "sha256": "772fc2a88082942795dc0bfa9b91d501342be36afb35ced99ed137647b0e8ec4"
+    "sha256": "bf0acffd4183dab845798e4211cd86bc34fad6a8d939fed4c8995b7158b7a604"
   }
 }

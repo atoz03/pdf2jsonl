@@ -2,7 +2,7 @@
   "verify_format": 1,
   "input": {
     "file": "synthetic_rice_heat.jsonl",
-    "sha256": "9ba4379c97bf8fd5180187bd1c52e086aa7029f058e4acacde1e6d74fe6a1e5c"
+    "sha256": "c18d30c056ff90c2a55ba3158821aa2293a7228c50bc0dd3f1f58faa2383c829"
   },
   "contract": {
     "schema_name": "breeding-literature-record",

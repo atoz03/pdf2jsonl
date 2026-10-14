@@ -82,8 +82,8 @@
   },
   "options": {},
   "environment": {
-    "python": "3.12",
-    "platform": "Linux",
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-94-generic-x86_64-with-glibc2.35",
     "packages": {
       "jsonschema": "4.26.0",
       "PyYAML": "6.0.3",
@@ -99,7 +99,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_rice_heat.jsonl",
-      "sha256": "9ba4379c97bf8fd5180187bd1c52e086aa7029f058e4acacde1e6d74fe6a1e5c"
+      "sha256": "c18d30c056ff90c2a55ba3158821aa2293a7228c50bc0dd3f1f58faa2383c829"
     },
     "errors": {
       "file": "synthetic_rice_heat.errors.jsonl",
@@ -107,7 +107,7 @@
     },
     "validation": {
       "file": "synthetic_rice_heat.validation.json",
-      "sha256": "2a3c55a4547591b0a27c0708e58f7bb5fcbd8c5485cdd1a3b3f2c8e3dd19539b"
+      "sha256": "8a04b5cfb3faff993e99bed9f37fded950af5e0f5141018eeb649ff1b111f1da"
     }
   },
   "source_parts": {
