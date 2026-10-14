@@ -131,3 +131,108 @@ def test_supplement_listed_by_a_run_is_a_part_not_a_paper(root, tmp_path):
     assert paper['runs'][0]['source_parts']['complete'] is True
     assert './synthetic_rice_heat.supplement.pdf' in ['./'+x for x in dashboard._linked_files(data)]
 
+
+def verified_run(root, tmp_path):
+    """The checked-in example run plus the `bdc verify apply` outputs placed beside its records."""
+    out = tmp_path/'out'; out.mkdir()
+    for path in (root/'examples/output').glob('synthetic_rice_heat.*'):
+        shutil.copyfile(path, out/path.name)
+    for path in (root/'examples/output/review').glob('synthetic_rice_heat.*'):
+        shutil.copyfile(path, out/path.name)
+    return out
+
+
+def test_verification_report_and_verified_records_are_ingested(root, tmp_path):
+    out = verified_run(root, tmp_path)
+    [paper] = dashboard.build_data(tmp_path)['papers']
+    [run] = paper['runs']
+    report = json.loads((out/'synthetic_rice_heat.verification.json').read_text())
+    assert run['verification']['run_id'] == report['run_id']
+    assert run['verification_url'] == './out/synthetic_rice_heat.verification.json'
+    assert run['verified_url'] == './out/synthetic_rice_heat.verified.jsonl'
+    # the review statuses shown come from the verified records, not the pre-verification ones
+    assert run['counts']['by_review'] == report['counts']['review_status_after']
+    assert run['counts']['model_verified'] == report['counts']['review_status_after']['model_verified']
+    assert any((r.get('common') or {}).get('review_status') == 'model_verified' for r in run['records'])
+    assert run['raw_outputs']['verified'] == (out/'synthetic_rice_heat.verified.jsonl').read_text()
+    linked = ['./'+x for x in dashboard._linked_files(dashboard.build_data(tmp_path))]
+    assert './out/synthetic_rice_heat.verification.json' in linked
+    assert './out/synthetic_rice_heat.verified.jsonl' in linked
+
+
+def test_run_without_verification_reports_none(root, tmp_path):
+    path, manifest, contracts = sample_run(root, tmp_path)
+    run = dashboard._run(tmp_path, path, manifest, contracts)
+    assert run['verification'] is None and run['verified_url'] is None
+    assert run['counts']['model_verified'] == 0
+
+
+def test_warnings_are_grouped_into_families_with_their_fields(root, tmp_path):
+    path, manifest, contracts = sample_run(root, tmp_path)
+    folder = path.parent
+    (folder / 'paper.validation.json').write_text(json.dumps({
+        'report_format': 1, 'argument_structure': {'flags': {}},
+        'records': [{'record_id': 'rec_1', 'warnings': [
+            {'code': 'VALUE_NOT_IN_SOURCE', 'severity': 'warning', 'path': 'common.gene_names',
+             'message': 'common.gene_names 的取值未在证据页（±1）逐字出现'},
+            {'code': 'VALUE_NOT_ON_EVIDENCE_PAGE', 'severity': 'warning', 'path': 'agent.p_value',
+             'message': 'agent.p_value 的取值未在证据页（±1）逐字出现'},
+        ]}, {'record_id': 'rec_2', 'warnings': [
+            {'code': 'RULE_R007', 'severity': 'warning', 'path': 'common.record_kind',
+             'message': '表型/环境单值观测应含一个测量值'}]}]}))
+    manifest['outputs']['validation']['sha256'] = hashlib.sha256((folder / 'paper.validation.json').read_bytes()).hexdigest()
+    run = dashboard._run(tmp_path, path, manifest, contracts)
+    value = run['warning_summary']['groups']['value']
+    assert value['count'] == 2 and value['records'] == 1
+    assert list(value['by_field']) == ['common.gene_names', 'agent.p_value']
+    rule = run['warning_summary']['groups']['rule']
+    assert rule['count'] == 1 and run['rule_help']['R007'].startswith('表型/环境单值观测')
+    assert run['rule_severity']['R007'] == '提示'
+    assert sorted(run['value_warning_records']) == ['rec_1']
+    assert run['counts']['value_flags'] == 2 and run['counts']['value_records'] == 1
+
+
+def test_presence_policy_says_whether_the_run_checked_every_field(root, tmp_path):
+    path, manifest, contracts = sample_run(root, tmp_path)  # 3.3.0: no value_presence_roles
+    old = dashboard._run(tmp_path, path, manifest, contracts)
+    assert old['presence_policy'] == {'selective': False, 'roles': None, 'checked': []}
+    manifest['contract']['schema_version'] = '3.5.1'
+    new = dashboard._run(tmp_path, path, manifest, contracts)
+    assert new['presence_policy']['selective']
+    assert 'entity_mention' in new['presence_policy']['roles'] and 'assertion' not in new['presence_policy']['roles']
+    assert new['presence_policy']['checked']  # rendered key_role labels, not raw codes
+
+
+def test_example_run_carries_warning_groups_and_the_page_offers_a_filter(root):
+    data = dashboard.build_data(root)
+    paper = next(p for p in data['papers'] if p['filename'] == 'synthetic_rice_qtl.pdf')
+    run = paper['runs'][0]
+    assert run['warning_summary']['groups']['rule']['count'] >= 1
+    assert run['warning_summary']['groups']['rule']['by_code'].get('RULE_R018')
+    template = (root / 'site/dashboard.template.html').read_text(encoding='utf-8')
+    assert '校验提示' in template  # the record filter the page renders when a run has warnings
+    assert dashboard.WARNING_FAMILIES[0][1] == '取值核验'  # the value family label the page shows
+
+
+def test_verification_in_a_review_subdirectory_is_found(root, tmp_path):
+    # `bdc verify apply ... --out review/` is the documented invocation (docs/review.md).
+    out = tmp_path/'out'; out.mkdir()
+    for path in (root/'examples/output').glob('synthetic_rice_heat.*'):
+        shutil.copyfile(path, out/path.name)
+    review = out/'review'; review.mkdir()
+    for path in (root/'examples/output/review').glob('synthetic_rice_heat.*'):
+        shutil.copyfile(path, review/path.name)
+    [run] = dashboard.build_data(tmp_path)['papers'][0]['runs']
+    assert run['verification'] is not None
+    assert run['verification_url'] == './out/review/synthetic_rice_heat.verification.json'
+    assert run['counts']['model_verified'] == 17
+
+
+def test_tampered_verified_records_are_flagged(root, tmp_path):
+    out = verified_run(root, tmp_path)
+    (out/'synthetic_rice_heat.verified.jsonl').write_text('{}\n')
+    [run] = dashboard.build_data(tmp_path)['papers'][0]['runs']
+    assert any('语义校验' in n and '哈希' in n for n in run['notes'])
+    assert not run['integrity_ok']
+
+

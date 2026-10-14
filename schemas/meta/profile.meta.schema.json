@@ -91,6 +91,9 @@
         "page_search_radius": {"type": "integer", "minimum": 0},
         "max_quote_chars": {"type": "integer", "minimum": 20},
         "value_presence_check": {"enum": ["off", "warning", "error"]},
+        "value_presence_roles": {"type": "array", "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+                                 "minItems": 1, "uniqueItems": true,
+                                 "description": "key_role codes whose field values must appear verbatim on the evidence page; fields of other roles are not checked (they are stated in the paper's own words)"},
         "value_presence_exempt": {"type": "array", "items": {"$ref": "#/$defs/path"}, "uniqueItems": true,
                                   "description": "fields whose values are observable but not literally quotable (e.g. language)"}
       }

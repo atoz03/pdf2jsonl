@@ -1,0 +1,5 @@
+# Manifests, verification reports, derive lineage and RELEASE.json record the sha256 of files in these trees.
+# Line-ending conversion (core.autocrlf on Windows) would change the bytes under those digests, so these files
+# are stored and checked out exactly as written: CRLF where Python's csv writer emits it, LF everywhere else.
+examples/** -text
+releases/** -text
