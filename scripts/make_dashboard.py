@@ -223,7 +223,7 @@ def _presence_policy(version, profile, contract_cache, root):
         roles, known = None, {}
         try:
             policy = (load_profile(profile, version, root).get('evidence_policy') or {}) if profile else {}
-            if policy.get('value_presence_roles'):
+            if policy.get('value_presence_roles') is not None:
                 roles = list(policy['value_presence_roles'])
             for code, spec in (resolve_schema(version, root).contract.get('codes', {}).get('key_role') or {}).items():
                 known[code] = spec.get('label_zh') or code
@@ -315,7 +315,7 @@ def _run(root, path, manifest, contract_cache):
                        'value_flags': warning_summary['groups']['value']['count'],
                        'value_records': warning_summary['groups']['value']['records'],
                        'model_verified': review.get('model_verified', 0),
-                       'expert_approved': review.get('expert_approved', 0) + review.get('rejected', 0),
+                       'expert_approved': review.get('expert_approved', 0),
                        'by_kind': dict(by_kind), 'by_review': dict(review)},
             'manifest': manifest, 'validation': validation, 'bundle': bundle, 'derived': derived,
             'raw_outputs': raw_outputs,
