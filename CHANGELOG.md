@@ -34,7 +34,7 @@ run's `value_presence_roles` so warning counts are only compared between runs th
   error (AMB-014). Omitting the key keeps the previous behaviour: every field is checked. The check's severity
   (`warning`) and the rest of `evidence_policy` are unchanged, and no field, vocabulary or rule changes — this is
   a profile-internal change with no effect on a record's validity (hence PATCH).
-  - `schemas/meta/profile.meta.schema.json` accepts the key (an array of `key_role` codes, no `enum`);
+  - `schemas/meta/profile.meta.schema.json` accepts the key (a non-empty array of `key_role` codes, no `enum`);
     `compile.resolve_profile` rejects a profile naming an unknown `key_role`.
   - `skills/pdf2jsonl/scripts/pdf2jsonl_skill/pipeline.py` gates the per-field check on
     `Assembler.presence_roles` (`None` = check every field). `check_document` (`DOCUMENT_VALUE_NOT_IN_SOURCE`)
@@ -66,6 +66,17 @@ run's `value_presence_roles` so warning counts are only compared between runs th
   review/paper.verify.verdicts.json --out review/`) before **4 重新生成，然后刷新页面** (`make dashboard`);
   step 1 also notes 补充材料 / `--supplement`.
 
+### Fixed
+- **Checked-in artifacts are byte-identical on every platform.** `bdc derive` records its lineage output paths,
+  and `scripts/make_site.py` its file links, with `/` on Windows too (they used the OS separator). A new
+  `.gitattributes` marks `examples/**` and `releases/**` as `-text`, so a Windows checkout with `core.autocrlf`
+  no longer rewrites the CRLF that Python's `csv` writer emits or the LF of JSON whose `sha256` a manifest, a
+  verification report or `RELEASE.json` records.
+- `evidence_policy.value_presence_roles` must be non-empty (`minItems: 1`); an explicit list is taken literally by
+  the pipeline and the dashboard. To turn the check off, use `value_presence_check: off`.
+- The dashboard's `counts.expert_approved` counts `expert_approved` records only; it also counted `rejected`,
+  which the 语义校验 card's 已提升 figure does not mean.
+
 ### Docs
 - `docs/review.md` rewrites the Layer-1 Evidence paragraph (role-scoped value check, AMB-014) and documents the
   dashboard's verification report, warning families and comparability flag. `README.md` enlarges the 论文看板 row
@@ -76,6 +87,8 @@ run's `value_presence_roles` so warning counts are only compared between runs th
   `tests/test_normalize_profiles.py::test_pdf_extraction_scopes_value_presence_to_value_bearing_roles`, and eight
   `tests/test_dashboard.py` cases (verified-run ingestion, a run without verification, warning families, the
   presence policy, the example run's filter, verification under `review/`, and tamper detection).
+- `tests/test_normalize_profiles.py::test_value_presence_roles_cannot_be_empty`, and
+  `tests/test_source_parts.py::test_derived_views_record_their_lineage` asserts POSIX lineage paths.
 
 ## [3.5.0] - 2026-10-10
 

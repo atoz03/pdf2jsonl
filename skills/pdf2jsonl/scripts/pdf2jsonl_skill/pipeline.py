@@ -150,7 +150,7 @@ class Assembler:
         # key_roles: a value the paper states in its own words (assertion, method_spec, condition, ...) will
         # not reappear verbatim, so the check would flag the paraphrase, not an error.
         roles = self.policy.get("value_presence_roles")
-        self.presence_roles = set(roles) if roles else None
+        self.presence_roles = set(roles) if roles is not None else None
         sys_fields = list((p.get("system_fields") or {}).items())
         self.phase1 = sorted([(k, s) for k, s in sys_fields if REGISTRY[s["rule"]].phase == 1],
                              key=lambda kv: REGISTRY[kv[1]["rule"]].order)
