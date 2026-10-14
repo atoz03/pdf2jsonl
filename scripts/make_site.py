@@ -150,7 +150,7 @@ def demo_data(out_dir: Path) -> dict:
     rc_demo, profile = resolve_contract(version, "pdf_extraction", False)
     records = jsonl(out / f"{PAPER}.jsonl")
     report = derive_file(out / f"{PAPER}.jsonl", out_dir / "derived", rc_demo)
-    files = sorted(str(p.relative_to(out_dir)) for p in (out_dir / "derived").rglob("*") if p.is_file())
+    files = sorted(p.relative_to(out_dir).as_posix() for p in (out_dir / "derived").rglob("*") if p.is_file())
     return {
         "file_name": f"{PAPER}.pdf",
         "pages": [p.text for p in doc.pages],
@@ -192,7 +192,7 @@ def importers(contract: dict) -> list[dict]:
             "counts": report["counts"], "contract_version": report["contract"]["schema_version"],
             "by_kind": dict(Counter(r["common"]["record_kind"] for r in records)),
             "rejected_by_code": dict(Counter(e.get("code", "?") for e in errors)),
-            "example_dir": str((EX / spec["example"]).parent.relative_to(ROOT)),
+            "example_dir": (EX / spec["example"]).parent.relative_to(ROOT).as_posix(),
             "sample": next((r for r in records if r["common"]["record_kind"] not in ("input_asset",)), records[0]),
         })
     return out
@@ -201,7 +201,7 @@ def importers(contract: dict) -> list[dict]:
 def gallery() -> list[dict]:
     items = []
     for p in sorted((EX / "records").glob("*.jsonl")):
-        items.append({"source": "curated example", "file": str(p.relative_to(ROOT)), "record": jsonl(p)[0]})
+        items.append({"source": "curated example", "file": p.relative_to(ROOT).as_posix(), "record": jsonl(p)[0]})
     seen = set()
     sources = [("pdf2jsonl output", EX / "output" / f"{PAPER}.jsonl")]
     sources += [(f"{spec['command']} import", EX / f"{spec['example']}.migrated.jsonl") for spec in IMPORTERS]
@@ -210,7 +210,7 @@ def gallery() -> list[dict]:
             key = (label, r["common"]["record_kind"])
             if key not in seen:
                 seen.add(key)
-                items.append({"source": label, "file": str(p.relative_to(ROOT)), "record": r})
+                items.append({"source": label, "file": p.relative_to(ROOT).as_posix(), "record": r})
     order = list(resolve_schema("latest", ROOT).contract["record_kinds"])
     items.sort(key=lambda x: (order.index(x["record"]["common"]["record_kind"]), x["source"]))
     return items

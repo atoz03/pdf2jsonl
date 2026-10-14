@@ -54,7 +54,7 @@
       "name": "pypdf",
       "version": "6.19.0"
     },
-    "candidates_sha256": "64f8b72764656a1aa8dda55f2a58b57a5e544bcf45944b9eb3916e2d9dcfdc3c"
+    "candidates_sha256": "30a91ba9c0105ba68e0b3e4fc71e6c54f35d41d1e950860975e60f8630a4723f"
   },
   "pipeline": {
     "name": "pdf2jsonl",
@@ -68,8 +68,8 @@
   },
   "options": {},
   "environment": {
-    "python": "3.12",
-    "platform": "Linux",
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-94-generic-x86_64-with-glibc2.35",
     "packages": {
       "jsonschema": "4.26.0",
       "PyYAML": "6.0.3",
@@ -85,7 +85,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_rice_heat.jsonl",
-      "sha256": "9351a0ec9eb1849ae7c082c67da39eca741b38019176867329734bc7700f8c28"
+      "sha256": "b880301e916f8fa801ddc39657904a74e3a817533e99e1c1476e4f0862de0578"
     },
     "errors": {
       "file": "synthetic_rice_heat.errors.jsonl",
@@ -93,7 +93,7 @@
     },
     "validation": {
       "file": "synthetic_rice_heat.validation.json",
-      "sha256": "1c58b2341cc4d75a8c3416b313c4a9edfe117097cddb9b2a1f4fe4f9fd2fa7ce"
+      "sha256": "ef47cb3231a556713524bb99575e14ad4688e633c4951f3feed0e84c3f940001"
     }
   },
   "source_parts": {

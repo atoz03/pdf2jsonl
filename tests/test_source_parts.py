@@ -267,6 +267,7 @@ def test_derived_views_record_their_lineage(full, tmp_path, root):
     stem = full.outputs["records"].name[:-6]
     assert f"{stem}.workflow.json" in lineage["outputs"]
     for rel, digest in lineage["outputs"].items():
+        assert "\\" not in rel      # POSIX on every platform, so a lineage written on Windows matches
         assert sha256_file(tmp_path / rel) == digest
     corpus = read_jsonl(tmp_path / f"{stem}.corpus.jsonl")
     ids = {r["common"]["record_id"] for r in read_jsonl(full.outputs["records"])}

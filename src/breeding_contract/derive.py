@@ -492,6 +492,6 @@ def derive_file(path: Path | str, out_dir: Path | str, rc) -> dict:
               "counts": {**counts(views), "records": len(records)},
               "lineage": {"derived_from": {"file": path.name, "sha256": _sha256(path), "records": len(records),
                                            "source_ids": sources},
-                          "outputs": {str(p.relative_to(out_dir)): _sha256(p) for p in written}}}
+                          "outputs": {p.relative_to(out_dir).as_posix(): _sha256(p) for p in written}}}
     (out_dir / f"{stem}.derive.json").write_text(dumps_json(report), encoding="utf-8")
     return report
