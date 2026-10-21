@@ -175,7 +175,8 @@ values:
 - code: locus_regulated_by_gene
   label_zh: 位点-受基因调控
   code_status: proposed
-  cues: [regulated by, regulates, 调控, 调节]
+  # passive cues only: the subject is the regulated locus, so "A regulates B" must not match
+  cues: [regulated by]
   subject_types: [qtl, gene, feature]
   object_types: [gene, feature]
   nature: causal

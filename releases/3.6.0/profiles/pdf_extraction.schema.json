@@ -2369,7 +2369,7 @@
   "x-contract": {
     "name": "breeding-literature-record",
     "version": "3.6.0",
-    "source_digest": "cd1990104bd181ed793a7d44327ecdddc2d70210cb6c8a315485b703aa4ccdbd"
+    "source_digest": "e3c5edb64a249ab758fdb9c5314ae6a0931b438dcc13a3bc7cfbd9d3d1058215"
   },
   "$defs": {
     "array_evidence_item": {

@@ -47,7 +47,7 @@ layers that do not substitute for one another.
   contract draws is visible in the derived views, not only in the record. When a record has no reviewed
   `predicate_label`, the nature falls back to the `nature` of the code `predicate_code` matched — the same
   deterministic judgement, never a second reading. `derive_format` is **4**.
-- **The paper dashboard gains a 关系 tab** (`site/dashboard.template.html`): every statement is listed as
+- **The paper dashboard gains a 关系 tab** (`site/pages/papers.html`): every statement is listed as
   subject – predicate – object with its 因果 / 相关 / 结构 / 描述 / 未知 label and a filter by nature, so a reader
   can separate the relations that can guide an experiment from those that only co-vary.
 - `predicate_label` cues extended so verbatim predicates of a real paper (`was correlated with`,
@@ -59,10 +59,16 @@ layers that do not substitute for one another.
   A code's declared `subject_types` / `object_types` filter only ends that have a type — an end no entity field
   lists carries none, and is not evidence against the code (`relations.predicate_code`). `variety_derived_from`
   now also accepts a `population` / `parent` subject and a `population` object.
-- **Every long tab pages.** Only `抽取记录` used to paginate; 关系 / 研究流程 / 语义校验 / 校验与审计 / 运行历史
-  rendered every row and the page grew without bound. They now share one pager (`buildPager` / `pageList`, page
-  numbers plus previous/next) and each renderer clears its panel first, so changing page replaces rows instead of
-  appending to them.
+- **A predicate keeps its direction.** A cue counts only where it is used in its own voice: an active cue used
+  passively ("plant height was controlled by qPH7.1", "受…调控") would put the trait at the causing end, and an
+  untyped end leaves no type check to catch it, so it no longer matches. In English the participle is followed by
+  "by" (an adverb may sit between); in Chinese 受 / 被 precede the verb (not 受体, nor 被认为 / 被发现 …). A "by"
+  that only modifies the object ("decreased the transparency values conferred by") leaves the verb active. The
+  passive code `locus_regulated_by_gene` carries the passive cue `regulated by` only, so an active "A regulates
+  B" never matches it.
+- **Every long list pages.** Only `抽取记录` used to paginate; the lists under 关系 / 研究流程 / 语义校验 / 校验与审计 /
+  运行历史 rendered every row and the page grew without bound. Each now pages through the shared pager, on a key of
+  its own, so paging one list never moves another.
 
 ## [3.5.1] - 2026-10-13
 

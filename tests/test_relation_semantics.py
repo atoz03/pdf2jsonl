@@ -172,3 +172,24 @@ def test_derived_statement_carries_the_assertion_mode(rc, statement):
     rec = copy.deepcopy(statement)
     set_path(rec, "transform.relation_assertion_mode", "hedged")
     assert Deriver(rc.contract).statement(rec)["relation_assertion_mode"] == "hedged"
+
+
+def test_a_predicate_keeps_its_direction(rc):
+    """A cue counts only in a mention of its own voice, so no edge comes out reversed — with or without types."""
+    from breeding_contract.relations import predicate_code
+    voc = rc.contract["vocabularies"]["predicate_label"]
+    # active: the subject acts on the object
+    assert predicate_code(voc, "controlled", ["gene"], ["trait"]) == "genotype_controls_trait"
+    assert predicate_code(voc, "affected", [], ["trait"]) == "environment_affects_trait"
+    # passive: "plant height was controlled by qPH7.1" has the trait as subject; no active code may take it
+    assert predicate_code(voc, "was controlled by", [], []) is None
+    assert predicate_code(voc, "was affected by", ["trait"], []) is None
+    assert predicate_code(voc, "were controlled mainly by", [], []) is None
+    assert predicate_code(voc, "受一个主效基因调控", ["qtl"], ["gene"]) is None
+    # a "by" that only modifies the object leaves the main verb active; 被认为 (is considered) is no passive
+    assert predicate_code(voc, "decreased the degree of chalkiness conferred by", [], ["trait"]) == "locus_decreases_trait"
+    assert predicate_code(voc, "被认为与株高显著相关", ["qtl"], ["trait"]) == "qtl_associated_with_trait"
+    # the passive code names the regulated locus as its subject, so an active "regulates" never matches it
+    assert predicate_code(voc, "are likely regulated by", ["qtl"], ["gene"]) == "locus_regulated_by_gene"
+    assert predicate_code(voc, "regulates", ["gene"], ["gene"]) is None
+    assert predicate_code(voc, "调控", ["gene"], ["gene"]) is None

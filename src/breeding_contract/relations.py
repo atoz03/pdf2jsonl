@@ -134,11 +134,27 @@ def negated(*texts) -> bool:
     return any(isinstance(t, str) and NEGATION.search(normalize_text(t)) for t in texts)
 
 
+# An active cue used passively reads the relation backwards: "plant height was controlled by qPH7.1" has the trait
+# as its subject. In English such a participle is followed by "by" (an adverb may sit between); in Chinese 受 or 被
+# comes before the verb — not the 受 of 受体 (receptor), nor 被 in 被认为 / 被发现 … (is considered, is found).
+BY_AFTER = re.compile(r"\s+(?:[a-z]+ly\s+)?by(?![a-z0-9])")
+PASSIVE_ZH = re.compile(r"受(?!体)|被(?!认为|视为|发现|证明|证实|鉴定|报道|用于)")
+
+
+def _passive_cue(cue: str) -> bool:
+    """A cue that is itself passive ("regulated by", "受…调控"): it states the code's own direction."""
+    return re.search(r"(?<![a-z0-9])by(?![a-z0-9])", cue) is not None or PASSIVE_ZH.search(cue) is not None
+
+
 def _cue_in(cue: str, text: str) -> bool:
+    """The cue occurs in the (normalized) mention in its own voice: a passive cue anywhere, an active cue at least
+    once where it is not used passively."""
     cue = normalize_text(cue)
-    if cue.isascii():
-        return re.search(f"(?<![a-z0-9]){re.escape(cue)}(?![a-z0-9])", text) is not None
-    return cue in text
+    pattern = f"(?<![a-z0-9]){re.escape(cue)}(?![a-z0-9])" if cue.isascii() else re.escape(cue)
+    hits = list(re.finditer(pattern, text))
+    if not hits or _passive_cue(cue):
+        return bool(hits)
+    return any(not BY_AFTER.match(text, m.end()) and not PASSIVE_ZH.search(text, 0, m.start()) for m in hits)
 
 
 def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_types: list[str],
@@ -157,6 +173,10 @@ def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_t
     evidence against the code: a wrong subject must be excluded because its type is known to differ, not
     because it is unknown. So an untyped end passes the filter, and only a typed end that misses the list
     rejects the code.
+
+    A cue counts only where it is used in its own voice. An active cue used passively ("was controlled by",
+    "受…调控") would read the relation backwards, and with an untyped end no type check is left to catch it. A
+    passive code carries passive cues only ("regulated by"), so an active "regulates" never matches it.
     """
     if not isinstance(mention, str) or not mention.strip() or negated(mention, context):
         return None

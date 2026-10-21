@@ -7,8 +7,8 @@
     "schema_version": "3.6.0",
     "release_status": "released",
     "requested": "3.6.0",
-    "release_sha256": "6631b46839828fd390aadf38bbb6d3e18e1b1838f853b73a8f7c52780957c840",
-    "source_digest": "cd1990104bd181ed793a7d44327ecdddc2d70210cb6c8a315485b703aa4ccdbd"
+    "release_sha256": "e51608a630182e973ea0b0607b833c3bd8bc8d173be1fbb947e962ee7ac9d906",
+    "source_digest": "e3c5edb64a249ab758fdb9c5314ae6a0931b438dcc13a3bc7cfbd9d3d1058215"
   },
   "profile": {
     "name": "pdf_extraction",
@@ -69,8 +69,8 @@
   },
   "options": {},
   "environment": {
-    "python": "3.13.9",
-    "platform": "Linux-3.10.0-1062.el7.x86_64-x86_64-with-glibc2.28",
+    "python": "3.10.12",
+    "platform": "Linux-6.8.0-94-generic-x86_64-with-glibc2.35",
     "packages": {
       "jsonschema": "4.26.0",
       "PyYAML": "6.0.3",
@@ -94,7 +94,7 @@
     },
     "validation": {
       "file": "synthetic_rice_heat.validation.json",
-      "sha256": "ae71b86cdc63a610fb07c523a07926d87ceb5df3fbae212d946164a1d2efa856"
+      "sha256": "9d0ca2d904593f42dac9f48460c5d5ad8129055bf38da20461627286dca8cab8"
     }
   },
   "source_parts": {

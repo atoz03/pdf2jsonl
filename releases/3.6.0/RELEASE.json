@@ -4,19 +4,19 @@
   "version": "3.6.0",
   "released_on": "2026-10-19",
   "generator_version": "1.0.0",
-  "source_digest": "cd1990104bd181ed793a7d44327ecdddc2d70210cb6c8a315485b703aa4ccdbd",
+  "source_digest": "e3c5edb64a249ab758fdb9c5314ae6a0931b438dcc13a3bc7cfbd9d3d1058215",
   "files": {
-    "contract.json": "701fab736999171ca35c521177a4f2a9b534fefd04afc8265581a02e26fe36d2",
+    "contract.json": "73e56b513eef533c2ede3d68cbcababfa89fa23e037ad718ed5b4d12b7222e1a",
     "profiles/compact.json": "1b85f680c9f894357695a0226627ced8c68c7cdb40f0d272101191afedfef3ca",
-    "profiles/compact.schema.json": "4fe84a0d0d80c4d1e781d6aaa90ccd4b462dec578e0635502e8ff7fb00adf91a",
+    "profiles/compact.schema.json": "d95b815f40d4c17383f2d879d58158f547be69d58a8ef0077c8507e1d78f9151",
     "profiles/full.json": "608114064004781741f0fd282833468d5fffa5540b1a66034059e25fb4358d60",
-    "profiles/full.schema.json": "0152e26e080d88500f828ffc0cd5495b4df44eef30a5e41fcd360861950bdeb5",
+    "profiles/full.schema.json": "e5341287107934ee5cd08eb47b51506ce0d3cfd013e895e3a069018947ef9c87",
     "profiles/pdf_extraction.candidate.schema.json": "e535e0addc18072cbb93ef093aee7e887c750ca2d6f597e2b5ca6d362581faf2",
     "profiles/pdf_extraction.json": "8a1da5b850181c1f673e7c40d1074d5549540bb2f222c05c512e9b8b3c1c3d38",
-    "profiles/pdf_extraction.schema.json": "04774397a6fdfe34bb3b6a006f17c46f35b1c8d59736cb58c4c26e19e6b65772",
+    "profiles/pdf_extraction.schema.json": "684d0319202aa21273b910087ad7412f1690cb737467c09b997b49fb5e3ddcc7",
     "profiles/pdf_extraction_omics.candidate.schema.json": "c9a04834c62f399da1d1f26670e2a01421a345a61c399841d0de613350199b38",
     "profiles/pdf_extraction_omics.json": "b6913f4766958e87f5031d20f2870ffa3c1d7677f0aa4b75f19272cc41e2cedc",
-    "profiles/pdf_extraction_omics.schema.json": "35c0f0a6c33ddfdf578f84372fb8359592646605d1f73207cdf61a7ef6f3352c",
-    "record.schema.json": "16dca565238b621443d2988213e69fa52361878cae9be18d254d55d8fcde7dd0"
+    "profiles/pdf_extraction_omics.schema.json": "ccee55341e73009a5e95247979f5fcdf2950deee2488013103dfc3204ab02982",
+    "record.schema.json": "38ba7112a657092a47738eaa9ec92cef53896f576698837b5e751f0929009f9c"
   }
 }
