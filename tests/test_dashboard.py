@@ -222,54 +222,25 @@ def test_the_page_has_a_relations_tab_that_surfaces_the_nature(root):
     data = dashboard.build_data(root)
     paper = next(p for p in data['papers'] if p['filename'] == 'synthetic_rice_qtl.pdf')
     run = paper['runs'][0]
-    assert run['derived']['counts']['statements'] >= 1  # the tab's count comes from here
-    template = (root / 'site/dashboard.template.html').read_text(encoding='utf-8')
-    assert 'renderRelations' in template and "'关系'" in template
-    assert 'NATURES' in template and '因果' in template and '相关' in template  # the line only a cause-drawn edge may cross
+    statements = run['derived']['tables']['statements']
+    assert statements and any(s.get('relation_nature') for s in statements)  # the tab lists these rows
+    page = (root / 'site/pages/papers.html').read_text(encoding='utf-8')
+    assert '["relations", "关系", "Relations"' in page and 'function relationsHTML(' in page
+    assert all(f'{code}: ["{zh}"' in page for code, zh in (('causal', '因果'), ('associational', '相关'), ('unknown', '未知')))
 
 
-def test_every_tab_that_can_run_long_paginates_like_the_records_tab(root):
-    """A tab that lists many rows must page instead of growing the page indefinitely.
-
-    `抽取记录` pages; the tabs that list relations, workflow nodes, issue cards and runs used to render every
-    row, so the page kept scrolling. Each renderer must call `clear(body)` (else a page change stacks rows), and
-    each list must slice its rows and end in a pager: a `clear` alone still renders every row.
-
-    The assertion reads the slice out of the renderer, not just the presence of a call, so deleting the paging
-    from a tab fails here instead of passing on a technicality.
-    """
+def test_every_list_that_can_run_long_pages_on_its_own_key(root):
+    """A tab that lists many rows pages instead of growing the page; each list keeps its own page, so paging
+    one list (say the warnings under 校验与审计) never moves another."""
     import re
-    template = (root / 'site/dashboard.template.html').read_text(encoding='utf-8')
-    # (renderer, page key, the function that actually slices) — the records tab splits its toolbar from its table.
-    paged = [('renderRecords', 'state.recordPage', 'renderRecordTable'),
-             ('renderRelations', 'state.relations', 'renderRelations'),
-             ('renderWorkflow', 'state.workflow', 'renderWorkflow'),
-             ('renderVerify', 'state.verify', 'renderVerify'),
-             ('renderIssues', 'state.issues', 'renderIssues'),
-             ('renderHistory', 'state.history', 'renderHistory')]
-    for name, key, slicer in paged:
-        body = template.split(f'function {name}(body', 1)[1].split('\nfunction ', 1)[0]
-        assert body.startswith(','), name                            # sanity: split landed inside the signature
-        assert body.count('clear(body)') == 1, f'{name} must clear the panel exactly once'
-        # the list is windowed on its own page key: slice((<key>-1)*<size>, <key>*<size>)
-        target = template.split(f'function {slicer}(', 1)[1].split('\nfunction ', 1)[0] if slicer != name else body
-        window = re.search(r'\.slice\(\(([A-Za-z.]+?)-1\)\*[a-z]+,([A-Za-z.]+?)\*[a-z]+\)', target)
-        assert window, f'{slicer} must slice its rows to one page'
-        assert window.group(1) == key and window.group(2) == key, f'{name} must slice on {key}'
-        assert 'buildPager(' in target, f'{name} must end in the shared pager'
-    # A pager must window its number strip around the page it is rendering, not around the records tab's page:
-    # `pageList` taking only `total` made every other tab highlight the wrong page and hide its own.
-    assert re.search(r'function pageList\(total,\s*page\)', template)
-    assert not re.search(r'pageList\([^,)]*\)\s*\{[^}]*state\.recordPage', template)
-    assert len(re.findall(r'buildPager\(', template)) >= len(paged)
-    # 校验与审计 holds several independent lists; each keeps its own page, or paging one list would move the
-    # others too.
-    for key in ('state.issuesW', 'state.issuesA', 'state.issuesF'):
-        assert key in template, f'{key} must page its own list'
-    # Source and exports clear their panel too, so switching pages never stacks the old rows.
-    for name in ('renderSource', 'renderExports'):
-        body = template.split(f'function {name}(body', 1)[1].split('\nfunction ', 1)[0]
-        assert body.count('clear(body)') == 1, f'{name} must clear the panel exactly once'
+    page = (root / 'site/pages/papers.html').read_text(encoding='utf-8')
+    keys = re.findall(r'\bpage[dr]\("([a-z]+)"', page)
+    assert len(keys) == len(set(keys)), 'two lists share a page key'
+    # records, relations, workflow nodes, findings, conflicts, omissions, rejections, warnings, audit, workflow
+    # structure, run history
+    assert set(keys) >= {'rec', 'rel', 'wfn', 'find', 'conf', 'omit', 'err', 'warn', 'aud', 'wf', 'hist'}
+    # the pager windows the list on the page of its own key
+    assert re.search(r'function paged\(key, items, size\) \{[^}]*st\.pages\[key\]', page)
 
 
 def test_verification_in_a_review_subdirectory_is_found(root, tmp_path):
