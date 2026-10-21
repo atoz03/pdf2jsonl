@@ -331,6 +331,8 @@ def vocabularies_md(contract: dict) -> str:
                 extra.append(f"粒度 {v['grain']}")
             if v.get("aliases"):
                 extra.append("别名 " + "/".join(v["aliases"]))
+            if v.get("nature"):
+                extra.append(f"性质 {v['nature']}")
             if v.get("code_status"):
                 extra.append(v["code_status"])
             if v.get("description_zh"):

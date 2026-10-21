@@ -73,6 +73,7 @@
 .ps.off b { background: var(--surface); color: var(--ink-3); border: 1.5px dashed var(--line-2); }
 .dtabs { padding: 12px 22px 0; }
 .dtabs .tabs { width: max-content; }
+.dtabs .tabs button { padding: 7px 9px; font-size: 13px; gap: 4px; }
 .tb { padding: 18px 22px 22px; min-height: 320px; }
 @media (max-width: 640px) { .dh, .prog, .tb { padding-inline: 16px; } .dtabs { padding-inline: 16px; } }
 
@@ -84,6 +85,10 @@
 .rsum { all: unset; cursor: pointer; display: block; font-weight: 560; line-height: 1.5; color: var(--ink); }
 .rsum:hover { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
 .rid { font: 11px var(--mono); color: var(--ink-3); margin-top: 3px; }
+.rsum.rel { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-weight: 600; }
+.rsum.rel b { font-weight: 650; }
+.rp { font: 560 12.5px var(--mono); color: var(--ink-2); background: var(--surface-3); border: 1px solid var(--line); border-radius: 999px; padding: 1px 10px 1px 9px; position: relative; }
+.rp::after { content: "→"; margin-left: 6px; color: var(--ink-3); }
 .pgl { all: unset; cursor: pointer; font: 650 12px var(--mono); color: var(--brand); padding: 2px 7px; border-radius: 6px; background: var(--brand-soft); }
 .pgl:hover { filter: brightness(.96); }
 .wbtn { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 650; color: var(--amber); background: var(--amber-soft); border: 1px solid var(--amber-line); border-radius: 999px; padding: 0 8px; margin-top: 5px; }
@@ -101,7 +106,7 @@
   .tbl.rtbl td:nth-child(3) { grid-column: 1 / -1; }
 }
 .pager { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; font-size: 12.5px; color: var(--ink-3); }
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; margin-bottom: 16px; }
 .tile { border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; background: var(--surface-2); }
 .tile b { display: block; font-size: 23px; font-weight: 760; letter-spacing: -.02em; line-height: 1.15; font-variant-numeric: tabular-nums; color: var(--tc, var(--ink)); }
 .tile span { font-size: 12px; color: var(--ink-3); }
@@ -213,6 +218,10 @@ const FAM = {
   other: ["其他提示", "Other warnings", "", ""] };
 const WARN_PREFIX = { value: ["VALUE_", "DOCUMENT_VALUE_", "EVIDENCE_PAGE_CORRECTED", "EVIDENCE_TABLE_NOT_ON_PAGE", "EVIDENCE_CELL_KEY_NOT_ON_PAGE"], rule: ["RULE_"],
   link: ["CANDIDATE_LINK_", "UNRESOLVED_LINK", "LINK_"], source: ["SOURCE_PART_"], integrity: ["OUTPUT_INTEGRITY"], other: [] };
+// relation_nature comes from the predicate vocabulary (3.6.0), never from the extraction model
+const NATURE = { causal: ["因果", "causal", "brand", "var(--brand)"], associational: ["相关", "associational", "gold", "var(--gold)"],
+  structural: ["结构", "structural", "info", "var(--info)"], descriptive: ["描述", "descriptive", "", "var(--ink-3)"], unknown: ["未知", "unknown", "", "var(--line-2)"] };
+const ASSERTION = { stated: ["明确陈述", "stated"], hedged: ["限定表述", "hedged"], unclear: ["无法判断", "unclear"] };
 const VERDICT = { supported: ["支持", "supported", "var(--ok)"], uncertain: ["无法判断", "uncertain", "var(--amber)"], not_supported: ["不支持", "not supported", "var(--clay)"] };
 const STEP_HINT = {
   HYPOTHESIS_UNTESTED: ["假设没有被任何步骤、观测或结果链接为检验对象。", "No step, observation or result is linked as testing the hypothesis."],
@@ -246,7 +255,7 @@ const presenceNote = p => p.selective
 // ---------------------------------------------------------------- state
 const H0 = K.hash();
 const st = { paper: PAPERS.some(p => p.id === H0.paper) ? H0.paper : (PAPERS[0] || {}).id || "", run: H0.run || "", tab: H0.tab || "records",
-  kind: "all", review: "all", warn: "all", q: "", pages: {}, lib: { q: "", status: "all" }, src: { part: "", page: 1, quote: "", rec: "", mode: "text" } };
+  kind: "all", review: "all", warn: "all", nature: "all", assertion: "all", q: "", pages: {}, lib: { q: "", status: "all" }, src: { part: "", page: 1, quote: "", rec: "", mode: "text" } };
 const paper = () => PAPERS.find(p => p.id === st.paper);
 const run = () => { const p = paper(); return p && (p.runs.find(r => r.id === st.run) || p.runs[0]); };
 const recordFor = id => (run()?.records || []).find(r => r.common?.record_id === id);
@@ -257,7 +266,7 @@ function setHash() {
   const r = run(), p = paper();
   K.setHash({ paper: st.paper, run: p && r && r.id !== p.runs[0]?.id ? r.id : "", tab: st.tab !== "records" ? st.tab : "" });
 }
-const TABS = ["records", "workflow", "source", "verify", "issues", "history", "exports"];
+const TABS = ["records", "relations", "workflow", "source", "verify", "issues", "history", "exports"];
 if (!TABS.includes(st.tab)) st.tab = "records";
 
 // ---------------------------------------------------------------- shared bits
@@ -314,8 +323,8 @@ function detailHTML() {
   if (!p) return `<div class="tb">${empty(PAPERS.length ? T("未找到匹配论文", "No paper matches") : T("还没有论文", "No papers yet"), T("将 PDF 放入仓库，运行 make dashboard 后即可在这里查看。", "Put a PDF into the repository and run make dashboard to see it here."), "library")}</div>`;
   const r = run(), s = STATUS[r ? runStatus(r) : p.status];
   const issues = r ? r.errors.length + r.warnings.length + r.counts.audit_flags + (r.counts.workflow_flags || 0) + (r.source_parts?.complete === false ? 1 : 0) + r.notes.length : 0;
-  const tabs = [["records", "抽取记录", "Records", r?.records.length], ["workflow", "研究流程", "Workflow", r?.derived?.workflow ? r.derived.workflow.nodes.length : null],
-    ["source", "原文与证据", "Source", p.page_count], ["verify", "语义校验", "Verification", r?.verification ? (r.verification.findings || []).length : null],
+  const tabs = [["records", "抽取记录", "Records", r?.records.length], ["relations", "关系", "Relations", r?.derived ? statements(r).length : null], ["workflow", "研究流程", "Workflow", r?.derived?.workflow ? r.derived.workflow.nodes.length : null],
+    ["source", "原文与证据", "Source", p.page_count], ["verify", "语义校验", "Verifier", r?.verification ? (r.verification.findings || []).length : null],
     ["issues", "校验与审计", "Issues", issues], ["history", "运行历史", "History", p.runs.length], ["exports", "导出文件", "Exports", null]];
   const steps = [["文档收录", "Document", !!p.pdf_url], ["文本解析", "Parsed", !!r || !!p.tasks.length], ["候选抽取", "Candidates", !!r || p.tasks.some(t => t.has_candidates)],
     ["记录校验", "Validated", !!r && !!r.validation.report_format], ["语义校验", "Verified", !!r && !!r.verification], ["记录派生", "Derived", !!r && !!r.derived], ["结果输出", "Written", !!r && !!r.urls.records]];
@@ -341,6 +350,7 @@ function renderTab() {
     p.tasks.length ? T("任务正在等待模型候选或 finalize。完成后重新生成看板即可查看结果。", "The task waits for the model's candidates or for finalize. Rebuild the dashboard afterwards to see the results.")
       : T("这篇 PDF 已被收录，运行 pdf2jsonl 后即可查看抽取记录。", "The PDF is in the repository; run pdf2jsonl to see its records here."), "clock");
   else if (st.tab === "records") { box.innerHTML = recordsBarHTML(r) + `<div id="rec-table"></div>`; renderRecordTable(); }
+  else if (st.tab === "relations") box.innerHTML = relationsHTML(r);
   else if (st.tab === "workflow") { box.innerHTML = workflowHTML(r); const w = r.derived?.workflow; if (w?.nodes?.length) K.workflow($("#wf-graph"), w, { onNode: id => { const x = recordFor(id); if (x) openRecord(x); } }); scrollHint($("#wf-graph .wf-scroll")); }
   else if (st.tab === "verify") box.innerHTML = verifyHTML(r);
   else if (st.tab === "issues") box.innerHTML = issuesHTML(r);
@@ -382,6 +392,37 @@ function renderRecordTable() {
         <td data-l="${T("复核状态", "Review")}">${reviewTag(c.review_status) || `<span class="muted">${T("未标记", "unmarked")}</span>`}${ws.length ? `<br><button type="button" class="wbtn" data-rec="${esc(c.record_id)}" title="${esc(ws[0].message || ws[0].code)}">${icon("alert")}${T(`提示 ${ws.length}`, `${ws.length} warning${ws.length > 1 ? "s" : ""}`)}</button>` : ""}</td></tr>`; }).join("")}</tbody></table></div>${foot}`;
 }
 
+// relations: one row per subject–predicate–object statement, with what the predicate asserts
+const statements = r => r.derived?.tables?.statements || [];
+const natureOf = s => NATURE[s.relation_nature] ? s.relation_nature : "unknown";
+function relationRows(r) {
+  return statements(r).filter(s => (st.nature === "all" || natureOf(s) === st.nature) && (st.assertion === "all" || (s.relation_assertion_mode || "") === st.assertion));
+}
+function relationsHTML(r) {
+  const all = statements(r);
+  if (!all.length) return empty(T("当前运行没有关系语句", "No statements in this run"), T("关系语句来自记录里的主语 / 谓语 / 宾语钩子；没有关系钩子的运行不会产生语句。", "Statements come from the subject / predicate / object hooks of the records; a run without them has none."), "graph");
+  const by = all.reduce((m, s) => (m[natureOf(s)] = (m[natureOf(s)] || 0) + 1, m), {});
+  const modes = all.reduce((m, s) => (s.relation_assertion_mode && (m[s.relation_assertion_mode] = (m[s.relation_assertion_mode] || 0) + 1), m), {});
+  const rows = relationRows(r), kinds = Object.keys(NATURE).filter(k => by[k]);
+  const { rows: page, foot } = paged("rel", rows, 8);
+  return `<div class="tiles">${kinds.map(k => tile(by[k], T(NATURE[k][0], NATURE[k][1]), k === "unknown" ? "" : NATURE[k][3])).join("")}</div>
+    <div class="vbar" role="img" aria-label="${esc(kinds.map(k => `${by[k]} ${NATURE[k][1]}`).join(", "))}">${kinds.map(k => `<i style="flex:${by[k]};background:${NATURE[k][3]}" title="${by[k]} ${esc(T(NATURE[k][0], NATURE[k][1]))}"></i>`).join("")}</div>
+    <p class="xs muted" style="margin:0 0 14px">${T("关系性质取自谓词词表中每个编码的 nature，由代码确定，不由抽取模型判断；谓词没有对应编码时记为“未知”。只有因果关系能直接指导实验。", "The nature comes from the nature of each code in the predicate vocabulary, assigned by code, never by the extraction model; a predicate with no code is unknown. Only a causal relation can directly guide an experiment.")}</p>
+    <div class="bar">
+      ${sel("nature", T("关系性质", "Nature"), [["all", T("全部关系性质", "Any nature")], ...kinds.map(k => [k, `${T(NATURE[k][0], NATURE[k][1])} (${by[k]})`])], st.nature)}
+      ${Object.keys(modes).length ? sel("assertion", T("表述方式", "Wording"), [["all", T("全部表述方式", "Any wording")], ...Object.entries(modes).map(([k, n]) => [k, `${ASSERTION[k] ? T(...ASSERTION[k]) : k} (${n})`])], st.assertion) : ""}
+      <button type="button" class="btn sm" data-relcsv>${icon("download")}${T("下载这些关系 CSV", "These statements as CSV")}</button></div>
+    ${rows.length ? `<div class="table-wrap"><table class="tbl cards"><thead><tr><th>${T("关系", "Statement")}</th><th>${T("性质", "Nature")}</th><th>${T("表述", "Wording")}</th><th>${T("证据类型", "Evidence")}</th><th>${T("来源", "Source")}</th></tr></thead><tbody>
+      ${page.map(s => { const n = NATURE[natureOf(s)];
+        return `<tr><td><button type="button" class="rsum rel" data-rec="${esc(s.record_id)}"><b>${esc(s.subject_mention || s.subject || "—")}</b><span class="rp">${esc(s.predicate_mention || s.predicate || "—")}</span><b>${esc(s.object_mention || s.object || "—")}</b></button>
+            ${s.predicate_status === "lexicon" && s.predicate ? `<div class="rid">${esc(s.predicate)}</div>` : `<div class="rid">${T("谓词未编码，保留原文", "uncoded predicate, kept verbatim")}</div>`}</td>
+          <td data-l="${T("性质", "Nature")}"><span class="tag ${n[2]}">${esc(T(n[0], n[1]))}</span></td>
+          <td data-l="${T("表述", "Wording")}">${s.relation_assertion_mode ? esc(ASSERTION[s.relation_assertion_mode] ? T(...ASSERTION[s.relation_assertion_mode]) : s.relation_assertion_mode) : `<span class="muted">—</span>`}</td>
+          <td data-l="${T("证据类型", "Evidence")}" class="mono xs">${esc(s.relation_evidence_type || "—")}</td>
+          <td data-l="${T("来源", "Source")}">${s.source_page != null && recordFor(s.record_id) ? `<button type="button" class="pgl" data-ev="${esc(s.record_id)}">p.${esc(s.source_page)}</button>` : "—"}</td></tr>`; }).join("")}</tbody></table></div>${foot}`
+      : empty(T("没有匹配的关系", "No matching statement"), T("换一个关系性质或表述方式。", "Try another nature or wording."), "search")}`;
+}
+
 // workflow
 function workflowHTML(r) {
   const w = r.derived?.workflow;
@@ -390,7 +431,7 @@ function workflowHTML(r) {
   const label = id => { const n = w.nodes.find(x => x.id === id); return n ? clip(n.label || n.id, 48) : id; };
   const order = w.step_order || [], seq = new Map(order.map((id, i) => [id, i + 1]));
   const nodes = [...order.map(id => w.nodes.find(n => n.id === id)).filter(Boolean), ...w.nodes.filter(n => !order.includes(n.id))];
-  const flags = Object.values(w.flags || {}).reduce((a, b) => a + b, 0);
+  const flags = Object.values(w.flags || {}).reduce((a, b) => a + b, 0), { rows: nodePage, foot: nodeFoot } = paged("wfn", nodes, 12);
   return `<div class="tiles">${tile(w.nodes.length, T("节点", "nodes"))}${tile(w.edges.length, T("关系边", "edges"))}${tile((w.hypotheses || []).length, T("假设", "hypotheses"))}${tile((w.branch_points || []).length, T("分支点", "branch points"))}${tile(flags, T("结构提示", "structure flags"), flags ? "var(--amber)" : "")}</div>
     <div class="row" style="margin-bottom:14px">${Object.entries(w.stages || {}).map(([s, n]) => `<span class="tag">${esc(K.stageLabel(s))} · ${n}</span>`).join("")}</div>
     <p class="wf-hint">${icon("arrow")}${T("左右滑动查看全部阶段；悬停节点高亮它的链接，点击查看记录。", "Scroll sideways for every stage; hover a node to light its links, click it for the record.")}</p>
@@ -402,10 +443,10 @@ function workflowHTML(r) {
         <div class="act">${recBtn(h.hypothesis || h.id, T("查看假设记录", "Open the hypothesis"))}</div></div>`; }).join("")) : ""}
     ${sec(`${icon("table")}${T("流程节点", "Workflow nodes")}`, nodes.length, T("有前置依赖的步骤按依赖顺序排列。", "Steps with prerequisites come in dependency order."),
       `<div class="table-wrap"><table class="tbl compact cards"><thead><tr><th>${T("阶段", "Stage")}</th><th>${T("记录内容", "Record")}</th><th>${T("页", "Page")}</th><th>${T("结构提示", "Flags")}</th></tr></thead><tbody>
-      ${nodes.map(n => `<tr><td class="nowrap"><span class="tag">${esc(K.stageLabel(n.stage))}</span>${seq.has(n.id) ? ` <span class="xs muted mono">#${seq.get(n.id)}</span>` : ""}</td>
+      ${nodePage.map(n => `<tr><td class="nowrap"><span class="tag">${esc(K.stageLabel(n.stage))}</span>${seq.has(n.id) ? ` <span class="xs muted mono">#${seq.get(n.id)}</span>` : ""}</td>
         <td data-l="${T("记录内容", "Record")}"><button type="button" class="rsum" data-rec="${esc(n.id)}">${esc(n.label || n.id)}</button>${n.condition ? `<div class="xs muted">${T("条件", "condition")} · ${esc(n.condition)}</div>` : ""}</td>
         <td data-l="${T("页", "Page")}">${n.source_page != null ? `<button type="button" class="pgl" data-ev="${esc(n.id)}">p.${esc(n.source_page)}</button>` : "—"}</td>
-        <td data-l="${T("结构提示", "Flags")}">${(n.flags || []).map(f => `<span class="tag amber">${esc(K.FLAG_LABEL[f] ? T(...K.FLAG_LABEL[f]) : f)}</span>`).join(" ")}</td></tr>`).join("")}</tbody></table></div>`)}
+        <td data-l="${T("结构提示", "Flags")}">${(n.flags || []).map(f => `<span class="tag amber">${esc(K.FLAG_LABEL[f] ? T(...K.FLAG_LABEL[f]) : f)}</span>`).join(" ")}</td></tr>`).join("")}</tbody></table></div>${nodeFoot}`)}
     <p class="xs muted" style="margin-top:12px">${T("研究流程是记录的派生视图：节点即记录，边来自 tests / addresses / prerequisite / method / evidence 链接。结构提示只说明连通性，不代表实验是否成立。", "The workflow is a view derived from the records: nodes are records, edges come from the tests / addresses / prerequisite / method / evidence links. A flag speaks to connectivity only, not to whether an experiment holds.")}
       ${K.local ? "" : ` <a href="outputs.html#workflow">${T("下游派生页里的研究流程 →", "The workflow on the outputs page →")}</a>`}</p>`;
 }
@@ -426,9 +467,9 @@ function verifyHTML(r) {
       pager("find", findings, 6, f => { const lbl = f.kind === "link" ? `${T("链接", "link")} · ${f.field || ""} → ${f.target_record_id && recordFor(f.target_record_id) ? clip(summary(recordFor(f.target_record_id)), 36) : (f.target_record_id || T("未解析", "unresolved"))}` : `${T("字段", "fields")} · ${(f.unsupported_fields || []).join(", ") || T("记录取值", "the values")}`;
         return issue(`${T(...(VERDICT[f.verdict] || [f.verdict, f.verdict]).slice(0, 2))} · ${lbl}`, f.reason || "", { rid: f.record_id, tone: f.verdict === "not_supported" ? "error" : "warn" }); })) : ""}
     ${conflicts.length ? sec(`${icon("alert")}${T("发现的记录冲突", "Conflicting records")}`, conflicts.length, T("同一来源中互相矛盾的记录。冲突由专家裁决，看板只列出候选。", "Records of the same source that contradict each other. An expert decides; the dashboard only lists them."),
-      conflicts.map(x => issue(T("记录冲突", "CONFLICT"), x.reason || "", { tone: "error", extra: `<div class="act">${(x.record_ids || []).map(id => recBtn(id, recordFor(id) ? clip(summary(recordFor(id)), 44) : id)).join("")}</div>` })).join("")) : ""}
+      pager("conf", conflicts, 5, x => issue(T("记录冲突", "CONFLICT"), x.reason || "", { tone: "error", extra: `<div class="act">${(x.record_ids || []).map(id => recBtn(id, recordFor(id) ? clip(summary(recordFor(id)), 44) : id)).join("")}</div>` }))) : ""}
     ${omissions.length ? sec(`${icon("search")}${T("疑似漏抽", "Possible omissions")}`, omissions.length, T("校验者认为原文中有重要陈述未被任何记录捕获。补齐需要重新抽取，看板不改写记录。", "Statements the verifier found in the text that no record captures. Filling them in needs a re-extraction; the dashboard rewrites nothing."),
-      omissions.map(o => issue(`p.${o.page ?? "—"}${o.source_part ? " · " + partName(o.source_part) : ""}`, o.note || "", { tone: "info", extra: o.quote ? `<div class="q">${esc(o.quote)}</div>` : "" })).join("")) : ""}
+      pager("omit", omissions, 5, o => issue(`p.${o.page ?? "—"}${o.source_part ? " · " + partName(o.source_part) : ""}`, o.note || "", { tone: "info", extra: o.quote ? `<div class="q">${esc(o.quote)}</div>` : "" }))) : ""}
     ${!findings.length && !conflicts.length && !omissions.length ? empty(T("语义校验没有发现问题", "Verification found nothing"), T("每条记录与每个链接都被判定为“支持”。这只说明引文支持记录内容，不代表科学结论已经成立。", "Every record and every link was judged supported. That means the quotes support the records, not that the conclusions hold."), "check") : ""}`;
 }
 
@@ -501,10 +542,10 @@ function issuesHTML(r) {
 // history
 function historyHTML(p, r) {
   if (!p.runs.length) return empty(T("还没有完成的运行", "No finished run yet"), T("完成抽取后，每次保存在不同输出目录的运行都会列在这里。", "After an extraction, every run saved to its own output directory is listed here."), "clock");
-  return p.runs.map(x => `<div class="hist${x.id === r.id ? " cur" : ""}"><div><b>${esc(runName(x))}</b> <span class="tag dot ${STATUS[runStatus(x)][2]}">${esc(T(...STATUS[runStatus(x)].slice(0, 2)))}</span>
+  return pager("hist", p.runs, 8, x => `<div class="hist${x.id === r.id ? " cur" : ""}"><div><b>${esc(runName(x))}</b> <span class="tag dot ${STATUS[runStatus(x)][2]}">${esc(T(...STATUS[runStatus(x)].slice(0, 2)))}</span>
       <div class="m">${esc(date(x.created_at))} · ${T("契约", "contract")} ${esc(x.version || "—")} · ${esc(x.profile || "—")}</div><div class="m mono">${esc(x.path)} · ${esc(x.run_id)}</div>
       <div class="chips"><span class="tag">${x.counts.records} ${T("条记录", "records")}</span><span class="tag ${x.counts.rejected ? "clay" : ""}">${x.counts.rejected} ${T("个拒绝", "rejected")}</span><span class="tag ${x.counts.pending ? "amber" : ""}">${x.counts.pending} ${T("条待复核", "pending")}</span>${x.verification ? `<span class="tag brand">${T("已语义校验", "verified")}</span>` : ""}${x.source_parts?.complete === false ? `<span class="tag amber">${T("来源不完整", "source incomplete")}</span>` : ""}</div></div>
-    ${x.id === r.id ? `<span class="tag brand">${T("当前运行", "Current run")}</span>` : `<button type="button" class="btn sm primary" data-run="${esc(x.id)}">${T("查看此运行", "Open this run")}</button>`}</div>`).join("");
+    ${x.id === r.id ? `<span class="tag brand">${T("当前运行", "Current run")}</span>` : `<button type="button" class="btn sm primary" data-run="${esc(x.id)}">${T("查看此运行", "Open this run")}</button>`}</div>`);
 }
 
 // exports
@@ -574,8 +615,7 @@ function openGuide() {
 
 // ---------------------------------------------------------------- page
 function selectPaper(id) {
-  st.paper = id; st.run = ""; st.kind = st.review = st.warn = "all"; st.q = ""; st.pages = {}; st.src = { part: "", page: 1, quote: "", rec: "", mode: "text" };
-  if (!["records", "source", "history", "exports", "issues", "verify", "workflow"].includes(st.tab)) st.tab = "records";
+  st.paper = id; st.run = ""; st.kind = st.review = st.warn = st.nature = st.assertion = "all"; st.q = ""; st.pages = {}; st.src = { part: "", page: 1, quote: "", rec: "", mode: "text" };
   setHash(); $("#lib-list").innerHTML = listHTML(); $("#det").innerHTML = detailHTML(); renderTab();
 }
 function render() {
@@ -622,12 +662,14 @@ function render() {
       const rn = t.closest("[data-run]"); if (rn) { chooseRun(rn.dataset.run); return; }
       const dl = t.closest("[data-dl]"); if (dl) { const it = downloads(paper(), run()).find(x => x[0] === dl.dataset.dl); if (it) it[4](); return; }
       const cv = t.closest("[data-csv]"); if (cv) { const rows = run().derived.tables[cv.dataset.csv]; K.download(`${stem(paper())}.${cv.dataset.csv}.csv`, csv(rows), "text/csv"); return; }
+      if (t.closest("[data-relcsv]")) { K.download(`${stem(paper())}.statements.csv`, csv(relationRows(run())), "text/csv"); return; }
       if (t.closest("[data-guide]")) { openGuide(); return; }
     });
     main.addEventListener("change", e => {
       if (e.target.id === "run-sel") { chooseRun(e.target.value); return; }
       const f = e.target.dataset.f; if (!f) return;
       if (f === "kind" || f === "review" || f === "warn") { st[f] = e.target.value; st.pages.rec = 1; renderRecordTable(); }
+      else if (f === "nature" || f === "assertion") { st[f] = e.target.value; st.pages.rel = 1; renderTab(); }
       else if (f === "part") { st.src = { ...st.src, part: e.target.value, page: 1, quote: "", rec: "" }; renderTab(); }
       else if (f === "spage") { st.src = { ...st.src, page: +e.target.value, quote: "", rec: "" }; renderTab(); }
     });
@@ -645,7 +687,7 @@ function render() {
   const h = K.hash();
   if (h.rec) { const x = recordFor(h.rec); if (x) openRecord(x); }
 }
-function chooseRun(id) { st.run = id; st.kind = st.review = st.warn = "all"; st.q = ""; st.pages = {}; setHash(); $("#det").innerHTML = detailHTML(); renderTab(); }
+function chooseRun(id) { st.run = id; st.kind = st.review = st.warn = st.nature = st.assertion = "all"; st.q = ""; st.pages = {}; setHash(); $("#det").innerHTML = detailHTML(); renderTab(); }
 K.mount({ title: () => T("论文看板 · pdf2jsonl", "Papers · pdf2jsonl"), render });
 </script>
 </body>

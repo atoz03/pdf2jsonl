@@ -134,11 +134,27 @@ def negated(*texts) -> bool:
     return any(isinstance(t, str) and NEGATION.search(normalize_text(t)) for t in texts)
 
 
+# An active cue used passively reads the relation backwards: "plant height was controlled by qPH7.1" has the trait
+# as its subject. In English such a participle is followed by "by" (an adverb may sit between); in Chinese 受 or 被
+# comes before the verb — not the 受 of 受体 (receptor), nor 被 in 被认为 / 被发现 … (is considered, is found).
+BY_AFTER = re.compile(r"\s+(?:[a-z]+ly\s+)?by(?![a-z0-9])")
+PASSIVE_ZH = re.compile(r"受(?!体)|被(?!认为|视为|发现|证明|证实|鉴定|报道|用于)")
+
+
+def _passive_cue(cue: str) -> bool:
+    """A cue that is itself passive ("regulated by", "受…调控"): it states the code's own direction."""
+    return re.search(r"(?<![a-z0-9])by(?![a-z0-9])", cue) is not None or PASSIVE_ZH.search(cue) is not None
+
+
 def _cue_in(cue: str, text: str) -> bool:
+    """The cue occurs in the (normalized) mention in its own voice: a passive cue anywhere, an active cue at least
+    once where it is not used passively."""
     cue = normalize_text(cue)
-    if cue.isascii():
-        return re.search(f"(?<![a-z0-9]){re.escape(cue)}(?![a-z0-9])", text) is not None
-    return cue in text
+    pattern = f"(?<![a-z0-9]){re.escape(cue)}(?![a-z0-9])" if cue.isascii() else re.escape(cue)
+    hits = list(re.finditer(pattern, text))
+    if not hits or _passive_cue(cue):
+        return bool(hits)
+    return any(not BY_AFTER.match(text, m.end()) and not PASSIVE_ZH.search(text, 0, m.start()) for m in hits)
 
 
 def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_types: list[str],
@@ -150,6 +166,17 @@ def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_t
     match, gives None: the verbatim predicate stays the only statement of the relation. So does a negation, in
     the mention or in ``context`` (the quote between the two ends, see ``relation_context``): the codes name
     positive relations, and "was not associated with" must not become one. Polarity is a reviewer's call.
+
+    A declared type list is a filter only over ends that have a type. An end whose mention no entity field
+    lists carries no type — the pipeline types a mention by the field that holds it, and a paper states many
+    ends only in passing ("a single gene", a trait abbreviation defined in a table). Such an end is not
+    evidence against the code: a wrong subject must be excluded because its type is known to differ, not
+    because it is unknown. So an untyped end passes the filter, and only a typed end that misses the list
+    rejects the code.
+
+    A cue counts only where it is used in its own voice. An active cue used passively ("was controlled by",
+    "受…调控") would read the relation backwards, and with an untyped end no type check is left to catch it. A
+    passive code carries passive cues only ("regulated by"), so an active "regulates" never matches it.
     """
     if not isinstance(mention, str) or not mention.strip() or negated(mention, context):
         return None
@@ -159,9 +186,9 @@ def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_t
         cues = v.get("cues")
         if not cues:
             continue
-        if v.get("subject_types") and not set(v["subject_types"]) & set(subject_types):
+        if subject_types and v.get("subject_types") and not set(v["subject_types"]) & set(subject_types):
             continue
-        if v.get("object_types") and not set(v["object_types"]) & set(object_types):
+        if object_types and v.get("object_types") and not set(v["object_types"]) & set(object_types):
             continue
         best = max((len(c) for c in cues if _cue_in(c, text)), default=0)
         if best:

@@ -32,6 +32,14 @@ def compile_contract(src: Sources) -> dict:
     if rk:
         for v in rk["values"]:
             record_kinds[v["code"]] = {k: v.get(k) for k in ("label_zh", "grain", "description_zh")}
+    # code -> semantic nature (causal/associational/structural/descriptive/unknown). The `predicate_label`
+    # codes are the vocabulary that carries `nature`; the map lets the pipeline derive `transform.relation_nature`
+    # from the contract instead of leaving the causal/associational judgement to whoever reads a record.
+    relation_natures = {}
+    pl = src.vocabularies.get("predicate_label")
+    if pl:
+        for v in pl["values"]:
+            relation_natures[v["code"]] = v.get("nature") or "unknown"
     vocabularies = {name: {k: v for k, v in doc.items() if k != "vocabulary_format"}
                     for name, doc in src.vocabularies.items()}
     return {
@@ -46,6 +54,7 @@ def compile_contract(src: Sources) -> dict:
         "groups": cat["groups"],
         "types": cat["types"],
         "record_kinds": record_kinds,
+        "relation_natures": relation_natures,
         "fields": fields,
         "rules": cat["rules"],
         "vocabularies": vocabularies,
@@ -183,8 +192,15 @@ def resolve_profile(contract: dict, raw_profiles: dict[str, dict], name: str) ->
             raise ContractError(f"profile {name}: role {role} -> {path} is not part of the profile field set")
     for n in p.get("normalizers") or []:
         for path in n["inputs"].values():
+            # A normalizer input must be a contract field, not a profile field: a curated (I) field such as
+            # transform.predicate_label is deliberately not offered to the extraction model but still drives a
+            # deterministic derivation (transform.relation_nature, AMB-042). An input that no field ever holds
+            # stays an error; outputs are always written, so they must be part of the profile.
+            if path not in idx:
+                raise ContractError(f"profile {name}: normalizer input {path} is not a contract field")
+        for path in n.get("outputs", {}).values():
             if path not in final:
-                raise ContractError(f"profile {name}: normalizer input {path} is not part of the profile")
+                raise ContractError(f"profile {name}: normalizer output {path} is not part of the profile")
 
     out_fields = []
     for path in final:

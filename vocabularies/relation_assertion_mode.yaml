@@ -1,0 +1,24 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: relation_assertion_mode
+title_zh: 关系断言方式
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 3.6.0
+origin: [repository]
+source:
+  ref: docs/relation_semantics.md
+  quote_zh: 文献已包含大量因果表达；抽取须保留原文的语气，不得把推测写成断言
+notes_zh: '代码由仓库拟定。本字段记录原文**怎么说的**（语气），不记录关系真假：如 was associated with 且用 may 限定即 hedged。语气由原文判断，属直接抽取（D）。'
+ambiguities: [AMB-042]
+values:
+- code: stated
+  label_zh: 明确陈述
+  description_zh: 原文以直陈语气断言该关系
+- code: hedged
+  label_zh: 限定表述
+  description_zh: 原文以 may、might、suggest、可能、推测等限定措辞表述该关系
+- code: unclear
+  label_zh: 无法判断
+  description_zh: 原文表述不完整或语气无法从引文判断

@@ -29,7 +29,7 @@ from .relations import RELATION_ENDS, entity_type, find_span
 from .util import canonical_json, dumps_json, dumps_jsonl, get_path, iter_fields
 from .workflow import workflow_view
 
-DERIVE_FORMAT = 3
+DERIVE_FORMAT = 4
 SOURCE_ROLES = ("source_identity", "bibliographic")
 ENTITY_ROLES = ("entity_mention", "entity_id")
 QUALIFIER_ROLES = ("condition", "context_key")   # the conditions under which a statement holds
@@ -83,6 +83,18 @@ class Deriver:
     def _rel(self, rec: dict, leaf: str):
         path = self.relation.get(leaf)
         return get_path(rec, path, None) if path else None
+
+    def _nature_from_code(self, rec: dict):
+        """The nature of a relation the record did not carry, taken from the reviewed vocabulary code.
+
+        The extraction profile fills ``relation_nature`` only from ``predicate_label`` (availability I), so a
+        fresh run always comes back with the field absent. ``predicate_code`` is the same judgement made
+        deterministically: it is set only when exactly one vocabulary code's cue matched, so the code's
+        ``nature`` is contract data, not a second reading of the record. The record's own value wins; this
+        fallback keeps the causal/associational line visible without a reviewer (AMB-042).
+        """
+        code = self._rel(rec, "predicate_code")
+        return (self.contract.get("relation_natures") or {}).get(code) if code else None
 
     def _markers(self, rec: dict) -> list[dict]:
         value = get_path(rec, self.markers_path, None) if self.markers_path else None
@@ -145,6 +157,8 @@ class Deriver:
             "object": ends["object"]["node"], "object_mention": ends["object"]["mention"],
             "object_type": ends["object"]["type"], "object_id": ends["object"]["id"],
             "relation_polarity": self._rel(rec, "relation_polarity"),
+            "relation_nature": self._rel(rec, "relation_nature") or self._nature_from_code(rec),
+            "relation_assertion_mode": self._rel(rec, "relation_assertion_mode"),
             "relation_evidence_type": self._rel(rec, "relation_evidence_type"),
             "hedge": next((get_path(rec, p, None) for p in self.hedge_paths if get_path(rec, p, None)), None),
             "qualifiers": qualifiers or None,
@@ -256,7 +270,8 @@ class Deriver:
                     if s[end] not in labelled and s.get(f"{end}_mention") and s[end].startswith("ent:"):
                         add(s[end], "rdfs:label", s[f"{end}_mention"], "literal", rid)
                         add(s[end], "rdf:type", f"bdc:entity/{s.get(f'{end}_type') or 'entity'}", "iri", rid)
-                extra = {k: s[k] for k in ("predicate_status", "predicate_mention", "relation_polarity", "hedge",
+                extra = {k: s[k] for k in ("predicate_status", "predicate_mention", "relation_polarity",
+                                           "relation_nature", "relation_assertion_mode", "hedge",
                                            "qualifiers", "relation_evidence_type") if k in s}
                 add(s["subject"], s["predicate"], s["object"], "iri", rid, statement=s["statement_id"], **extra)
         return out
@@ -311,7 +326,8 @@ class Deriver:
             edges.append({"s": s["subject"], "p": s["predicate"], "o": s["object"], "kind": "statement",
                           "record_id": s["record_id"],
                           **{k: s[k] for k in ("statement_id", "predicate_status", "predicate_mention",
-                                               "relation_polarity", "hedge", "qualifiers") if k in s}})
+                                               "relation_polarity", "relation_nature", "relation_assertion_mode",
+                                               "hedge", "qualifiers") if k in s}})
         return {"nodes": list(nodes.values()), "edges": edges}
 
     # ------------------------------------------------------------------ corpus

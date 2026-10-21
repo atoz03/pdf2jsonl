@@ -5384,6 +5384,22 @@ fields:
   key_role: relation
   serves: [derivation]
   source_ref: docs/downstream.md
+- path: transform.relation_nature
+  type: string
+  availability: N
+  required: N
+  definition_zh: 关系的语义性质（因果、相关、结构、描述或未知）；由 predicate_label 词表的值属性 nature 在契约编译期派生，不由抽取模型判断
+  data_source_zh: transform.predicate_label 词表属性 nature
+  since: 3.6.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: relation_nature
+  ambiguities: [AMB-042]
+  key_role: relation
+  serves: [derivation, topic2]
+  argument_role: warrant
+  source_ref: docs/relation_semantics.md
 - path: transform.predicate_start_offset
   type: integer
   availability: N
@@ -5807,6 +5823,22 @@ fields:
   serves: [derivation, iteration]
   argument_role: evaluation
   source_ref: sources/fields_v3/breeding_fields_259_final.md#L256
+- path: transform.relation_assertion_mode
+  type: string
+  availability: D
+  required: N
+  definition_zh: 原文对该关系的断言方式（明确陈述、限定表述或无法判断）；记录原文的语气，不记录关系真假
+  data_source_zh: 结论原文
+  since: 3.6.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: relation_assertion_mode
+  ambiguities: [AMB-042]
+  key_role: relation
+  serves: [derivation, topic2]
+  argument_role: qualifier
+  source_ref: docs/relation_semantics.md
 - path: transform.relation_evidence_type
   type: string
   availability: I
@@ -7424,6 +7456,34 @@ rules:
   source_zh: agent.tests_record_ids、agent.addresses_record_ids、agent.prerequisite_record_ids 定义：同一来源中记录的 record_id
   since: 3.5.0
   ambiguities: [AMB-039]
+- id: R036
+  kind: require_any_when
+  severity: warning
+  basis: inferred
+  title_zh: 关系被表述为直接结论时宜给出因果证据
+  when:
+    all:
+    - field: transform.relation_nature
+      equals: associational
+    - field: transform.relation_assertion_mode
+      equals: stated
+  require_any: [agent.supporting_evidence, transform.relation_evidence_type]
+  source_zh: 填写原则5：关联证据不能自动升级为因果结论；只有因果关系才能直接指导实验，关联结论直接陈述时须给出原文证据或证据类型
+  since: 3.6.0
+  ambiguities: [AMB-042]
+- id: R037
+  kind: require_any_when
+  severity: warning
+  basis: inferred
+  title_zh: 因果性质的关系宜给出关系证据类型
+  when:
+    all:
+    - field: transform.relation_nature
+      equals: causal
+  require_any: [transform.relation_evidence_type]
+  source_zh: transform.relation_evidence_type 定义：关系依据是统计定位、表达支持还是功能验证；因果性质的关系须说明其依据
+  since: 3.6.0
+  ambiguities: [AMB-042]
 ambiguities:
 - id: AMB-001
   status: decided
@@ -7672,3 +7732,9 @@ ambiguities:
   finding_zh: 一篇论文可能由正文、补充材料、附录等多个文件组成，文献库中可能只有其中一部分（如缺少补充材料，而材料与方法恰在其中）。管线一次只读一个文件，不能发现正文引用了未提供的补充图表；缺失字段只能标为 not_located；补充材料另行抽取时与正文共用 source_id，页码重叠，候选引用不能跨运行。此外只有本体版本而没有本体标识，无法区分领域本体与专题本体。
   resolution_zh: 新增 common.source_part（N，词表 source_part）；管线接受正文之外的补充文件，证据以“部分+该文件内物理页码”定位，每个文件各有资产清单记录，定位符与跨度在非正文部分带 part 键，正文记录的 record_id 不变。管线扫描正文对补充图表、补充材料的引用，在校验报告与清单中给出来源完整性（已提供、被引用、缺失的部分）；引文引用了缺失部分的记录标记 SOURCE_PART_UNAVAILABLE 并待复核，其缺失原因记为 missing_reason 新增代码 source_part_unavailable。补充材料到位后重新抽取，沿用 record_version 与 common.replaces_record_ids。新增 transform.ontology_id（N）。原始数据、来源文件、记录、图谱、流程、语料与本体之间的关系以三种关系刻画：派生自（记录→文件与位置，派生产物→记录）、生成于（运行、契约版本与画像）、对齐到（本体标识与版本）；记录是唯一可编辑层，派生产物只重新生成。记录到原始数据集资产的链接（skills.input_asset_refs 为 F）仍待确定。
   since: 3.5.0
+- id: AMB-042
+  status: provisional
+  title_zh: 关系的语义性质、证据强度与断言语气之间没有区分
+  finding_zh: '知识图谱按主-谓-宾抽取关系，但契约没有区分三件事：谓词本身断言的是因果还是相关（predicate_label 的规范化名称看不出性质，只有一个开放的中文名列表）；支持关系的证据到了哪一级（relation_evidence_type 回答的是依据类型，不是强度阶梯）；原文用什么语气说（predicate_mention 只存逐字词语，未标注断言还是限定）。agent.causal_direction 与 agent.association_vs_causation 表达的正是这一区分，但可用性为 I 且取值未定义（AMB-024），抽取画像不暴露，抽取阶段看不到。于是模型可以把“关联”写成直接结论，下游无法据此判断能否用该关系设计干预实验——只有因果关系才能直接指导实验。'
+  resolution_zh: '分三层，语法分别落在数据上而不再依赖抽取者的解读：(1) 谓词性质——predicate_label 每个值新增 nature（causal / associational / structural / descriptive / unknown），编译期映射为 contract["relation_natures"]，由填充规则 relation_nature_from_predicate 派生 transform.relation_nature（N，词表 relation_nature）；这是谓词语义，与证据强弱无关，不由模型判断。(2) 原文语气——新增 transform.relation_assertion_mode（D，词表 relation_assertion_mode，stated / hedged / unclear），只记录原文怎么说的；逐字谓词沿用 transform.predicate_mention（AMB-038）。(3) 证据强度——沿用 transform.relation_evidence_type（I），其七个代码（AMB-040）即强度阶梯。规则：R036 在关联性质的关系被明确陈述且既无 transform.relation_evidence_type 也无 agent.supporting_evidence 时提示补证据或降级表述；R037 在因果性质的关系缺少 transform.relation_evidence_type 时提示说明依据。nature 各值、语气代码与规则号均为仓库拟定；agent.causal_direction 与 agent.association_vs_causation 的取值仍待数据负责人确定（AMB-024），两者保持 I，抽取画像不暴露。跨组学-调控补为 predicate_label 的代码 cross_omics_regulates（nature: causal）。'
+  since: 3.6.0

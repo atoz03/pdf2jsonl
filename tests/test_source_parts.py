@@ -260,7 +260,7 @@ def test_rerun_with_other_supplements_is_refused(tmp_path):
 def test_derived_views_record_their_lineage(full, tmp_path, root):
     rc = resolve_schema("latest", root)
     report = derive_file(full.outputs["records"], tmp_path, rc)
-    assert report["derive_format"] == 3
+    assert report["derive_format"] == 4
     lineage = report["lineage"]
     assert lineage["derived_from"]["sha256"] == sha256_file(full.outputs["records"])
     assert lineage["derived_from"]["source_ids"] == ["doi:10.0000/synthetic.2026.002"]

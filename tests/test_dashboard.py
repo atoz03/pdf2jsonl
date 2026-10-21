@@ -217,6 +217,32 @@ def test_example_run_carries_warning_groups_and_the_page_offers_a_filter(root):
     assert dashboard.WARNING_FAMILIES[0][1] == '取值核验'  # the value family label the page shows
 
 
+def test_the_page_has_a_relations_tab_that_surfaces_the_nature(root):
+    """The causal/associational line the contract draws must reach the page, not only the derived rows."""
+    data = dashboard.build_data(root)
+    paper = next(p for p in data['papers'] if p['filename'] == 'synthetic_rice_qtl.pdf')
+    run = paper['runs'][0]
+    statements = run['derived']['tables']['statements']
+    assert statements and any(s.get('relation_nature') for s in statements)  # the tab lists these rows
+    page = (root / 'site/pages/papers.html').read_text(encoding='utf-8')
+    assert '["relations", "关系", "Relations"' in page and 'function relationsHTML(' in page
+    assert all(f'{code}: ["{zh}"' in page for code, zh in (('causal', '因果'), ('associational', '相关'), ('unknown', '未知')))
+
+
+def test_every_list_that_can_run_long_pages_on_its_own_key(root):
+    """A tab that lists many rows pages instead of growing the page; each list keeps its own page, so paging
+    one list (say the warnings under 校验与审计) never moves another."""
+    import re
+    page = (root / 'site/pages/papers.html').read_text(encoding='utf-8')
+    keys = re.findall(r'\bpage[dr]\("([a-z]+)"', page)
+    assert len(keys) == len(set(keys)), 'two lists share a page key'
+    # records, relations, workflow nodes, findings, conflicts, omissions, rejections, warnings, audit, workflow
+    # structure, run history
+    assert set(keys) >= {'rec', 'rel', 'wfn', 'find', 'conf', 'omit', 'err', 'warn', 'aud', 'wf', 'hist'}
+    # the pager windows the list on the page of its own key
+    assert re.search(r'function paged\(key, items, size\) \{[^}]*st\.pages\[key\]', page)
+
+
 def test_verification_in_a_review_subdirectory_is_found(root, tmp_path):
     # `bdc verify apply ... --out review/` is the documented invocation (docs/review.md).
     out = tmp_path/'out'; out.mkdir()

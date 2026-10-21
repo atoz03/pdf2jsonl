@@ -2,15 +2,15 @@
   "verify_format": 1,
   "input": {
     "file": "synthetic_rice_heat.jsonl",
-    "sha256": "c18d30c056ff90c2a55ba3158821aa2293a7228c50bc0dd3f1f58faa2383c829"
+    "sha256": "71bd2ca35ac8e7cd03e81589be52cc141b2aec62ba0ec0736a3121ca7f55c2bd"
   },
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.5.1",
+    "schema_version": "3.6.0",
     "release_status": "released",
-    "requested": "3.5.1",
-    "release_sha256": "a3028b47d0048e6bb62275d477c0c8a320446f6ab38be6dcc8a04c35b3de2483",
-    "source_digest": "408c30db4eb53e975c892c753d481fb988d6baf2f61d4bf9ecc3fec96d2cc928"
+    "requested": "3.6.0",
+    "release_sha256": "e51608a630182e973ea0b0607b833c3bd8bc8d173be1fbb947e962ee7ac9d906",
+    "source_digest": "e3c5edb64a249ab758fdb9c5314ae6a0931b438dcc13a3bc7cfbd9d3d1058215"
   },
   "verdicts": [
     "supported",

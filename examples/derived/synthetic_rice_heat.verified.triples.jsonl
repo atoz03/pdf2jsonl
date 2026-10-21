@@ -21,7 +21,7 @@
 {"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.asset_kind", "o": "raw_pdf", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
 {"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.asset_size_bytes", "o": 2904, "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
 {"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.asset_sha256", "o": "3b7b2d44c8fa34ca7530ada4302fae62eeb29ed2cf4174a1ec3aab3de139cc3a", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
-{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
+{"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
 {"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.qc_failure_codes", "o": "RULE_R018", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
 {"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
 {"s": "rec:rec_d0d87732dff67a2694847f7d0f0fbc61", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_d0d87732dff67a2694847f7d0f0fbc61"}
@@ -48,7 +48,7 @@
 {"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.asset_kind", "o": "raw_pdf", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
 {"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.asset_size_bytes", "o": 1691, "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
 {"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.asset_sha256", "o": "835b7a290289d34dec43e5737ebc195b7001b19f271517b78841de9c894c0829", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
-{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
+{"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
 {"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.qc_failure_codes", "o": "RULE_R018", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
 {"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
 {"s": "rec:rec_c679c3c2c1343cfab188306fefdbb11a", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_c679c3c2c1343cfab188306fefdbb11a"}
@@ -77,7 +77,7 @@
 {"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
 {"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
 {"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
-{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
+{"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
 {"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
 {"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
 {"s": "rec:rec_dc41a78de16f39e31079ea5147e533a6", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_dc41a78de16f39e31079ea5147e533a6"}
@@ -106,7 +106,7 @@
 {"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
 {"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
 {"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
-{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
+{"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
 {"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
 {"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
 {"s": "rec:rec_78858b935a834f96996e2a9d46e4961d", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_78858b935a834f96996e2a9d46e4961d"}
@@ -139,7 +139,7 @@
 {"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
 {"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
 {"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
-{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
+{"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
 {"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
 {"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
 {"s": "rec:rec_79044e3e05f535856832154a51c8a87f", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_79044e3e05f535856832154a51c8a87f"}
@@ -178,7 +178,7 @@
 {"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
 {"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
 {"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
-{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
+{"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
 {"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
 {"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
 {"s": "rec:rec_eb88edbd3cdd1ce77d844d368affb702", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_eb88edbd3cdd1ce77d844d368affb702"}
@@ -211,7 +211,7 @@
 {"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
 {"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
 {"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
-{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
+{"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
 {"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
 {"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
 {"s": "rec:rec_2f056a171ec8867c073c350da2562919", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_2f056a171ec8867c073c350da2562919"}
@@ -248,7 +248,7 @@
 {"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.missing_fields", "o": "{\"common.record_grain\": \"ambiguous_in_contract\"}", "o_kind": "json", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
 {"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
 {"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
-{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
+{"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
 {"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
 {"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
 {"s": "rec:rec_3a0f62bc1262074f9c1a657e29403cd9", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_3a0f62bc1262074f9c1a657e29403cd9"}
@@ -277,7 +277,7 @@
 {"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
 {"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
 {"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
-{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
+{"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
 {"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
 {"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
 {"s": "rec:rec_69945ca262a0be13812fc69f7f90fd65", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_69945ca262a0be13812fc69f7f90fd65"}
@@ -314,7 +314,7 @@
 {"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
 {"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
 {"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
-{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
+{"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
 {"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
 {"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
 {"s": "rec:rec_4dab0ec5f5f6e600d7ec24b5bc89bf95", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_4dab0ec5f5f6e600d7ec24b5bc89bf95"}
@@ -348,7 +348,7 @@
 {"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.review_status", "o": "pending_review", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
 {"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
 {"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
-{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
+{"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
 {"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
 {"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
 {"s": "rec:rec_6427ec708013a88c3bd6d089815d21ec", "p": "bdc:common.qc_failure_codes", "o": "VERIFY_UNCERTAIN", "o_kind": "literal", "record_id": "rec_6427ec708013a88c3bd6d089815d21ec"}
@@ -387,7 +387,7 @@
 {"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.review_status", "o": "pending_review", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
 {"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
 {"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
-{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
+{"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
 {"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
 {"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
 {"s": "rec:rec_0944532bb7d56a7c673ef0c19413b5a3", "p": "bdc:common.qc_failure_codes", "o": "VERIFY_FIELD_NOT_SUPPORTED", "o_kind": "literal", "record_id": "rec_0944532bb7d56a7c673ef0c19413b5a3"}
@@ -427,7 +427,7 @@
 {"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
 {"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
 {"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
-{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
+{"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
 {"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
 {"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
 {"s": "rec:rec_996ddd2fb171c0a2199a4019d1970653", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_996ddd2fb171c0a2199a4019d1970653"}
@@ -467,7 +467,7 @@
 {"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
 {"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
 {"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
-{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
+{"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
 {"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
 {"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
 {"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
@@ -475,7 +475,7 @@
 {"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:agent.actual_observation", "o": "HTR1 interacted with HTR2 in a split-luciferase assay", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
 {"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:agent.statement_role", "o": "result", "o_kind": "literal", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
 {"s": "rec:rec_2d21f963dafe36ae2335bd207c74a610", "p": "bdc:skills.method_record_ids", "o": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610"}
-{"s": "ent:gene/htr1", "p": "bdc:gene_interacts_with_gene", "o": "ent:gene/htr2", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610", "statement": "stm_eff24b9aeeae505e5ad37b62", "predicate_status": "lexicon", "predicate_mention": "interacted with"}
+{"s": "ent:gene/htr1", "p": "bdc:gene_interacts_with_gene", "o": "ent:gene/htr2", "o_kind": "iri", "record_id": "rec_2d21f963dafe36ae2335bd207c74a610", "statement": "stm_eff24b9aeeae505e5ad37b62", "predicate_status": "lexicon", "predicate_mention": "interacted with", "relation_nature": "causal"}
 {"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "rdf:type", "o": "bdc:claim", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
 {"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_type", "o": "paper", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
 {"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_title", "o": "A two-gene module at the qHT3 locus protects chloroplasts under heat in a synthetic rice population", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
@@ -504,7 +504,7 @@
 {"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
 {"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
 {"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
-{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
+{"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
 {"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
 {"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
 {"s": "rec:rec_e4822d11955faccebf5bed73e5a40750", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_e4822d11955faccebf5bed73e5a40750"}
@@ -540,7 +540,7 @@
 {"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
 {"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
 {"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
-{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
+{"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
 {"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
 {"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.source_part", "o": "main_text", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
 {"s": "rec:rec_477b03ee1f164c8ec52f92b6dd7a3e40", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_477b03ee1f164c8ec52f92b6dd7a3e40"}
@@ -568,7 +568,7 @@
 {"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
 {"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
 {"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
-{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
+{"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
 {"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
 {"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
 {"s": "rec:rec_4347364e90ac28cf4607e75c85f2c399", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_4347364e90ac28cf4607e75c85f2c399"}
@@ -597,7 +597,7 @@
 {"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
 {"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
 {"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
-{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
+{"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
 {"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
 {"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
 {"s": "rec:rec_e9fa66c06dd335641622897f8abae636", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_e9fa66c06dd335641622897f8abae636"}
@@ -626,7 +626,7 @@
 {"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
 {"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
 {"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
-{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
+{"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
 {"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
 {"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
 {"s": "rec:rec_25e38f650b4ac0b365090b3d3f707721", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_25e38f650b4ac0b365090b3d3f707721"}
@@ -655,7 +655,7 @@
 {"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.review_status", "o": "model_verified", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
 {"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
 {"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
-{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
+{"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
 {"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
 {"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
 {"s": "rec:rec_070cf8ff10ae8d8f729e6999e89b0a43", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_070cf8ff10ae8d8f729e6999e89b0a43"}
@@ -696,7 +696,7 @@
 {"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.normalized_unit", "o": "%", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
 {"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.extraction_run_id", "o": "run_example_heat", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
 {"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_uri", "o": "https://doi.org/10.0000/synthetic.2026.002", "o_kind": "iri", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
-{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.5.1+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
+{"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.qc_rule_set_version", "o": "breeding-literature-record@3.6.0+pdf2jsonl@0.4.0", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
 {"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.extraction_profile", "o": "pdf_extraction", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
 {"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.source_part", "o": "supplement", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
 {"s": "rec:rec_5053cc01ca8c0044b8d3f59925e2a888", "p": "bdc:common.verification_run_id", "o": "ver_example_heat", "o_kind": "literal", "record_id": "rec_5053cc01ca8c0044b8d3f59925e2a888"}
