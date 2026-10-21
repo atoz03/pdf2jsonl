@@ -14,7 +14,7 @@ a corpus, QA seeds and relational tables from the same records.
 <a href="https://atoz03.github.io/pdf2jsonl/papers.html"><img src="docs/assets/icons/paper.svg" width="54" height="54" alt="Paper dashboard"><br><strong>Paper dashboard</strong></a><br><sub>Papers & run history</sub>
 </td>
 <td align="center" width="25%">
-<a href="https://atoz03.github.io/pdf2jsonl/#fields"><img src="docs/assets/icons/fields.svg" width="54" height="54" alt="Field guide"><br><strong>Field guide</strong></a><br><sub>Definitions & examples</sub>
+<a href="https://atoz03.github.io/pdf2jsonl/fields.html"><img src="docs/assets/icons/fields.svg" width="54" height="54" alt="Field guide"><br><strong>Field guide</strong></a><br><sub>Definitions & examples</sub>
 </td>
 <td align="center" width="25%">
 <a href="https://atoz03.github.io/pdf2jsonl/pipeline.html"><img src="docs/assets/icons/pipeline.svg" width="54" height="54" alt="Pipeline map"><br><strong>Pipeline map</strong></a><br><sub>From PDF to records</sub>
@@ -32,13 +32,14 @@ latest release and the checked-in examples, and deployed from `main`.
 
 | Page | What it shows |
 | --- | --- |
-| [Overview](https://atoz03.github.io/pdf2jsonl/) | How papers and existing data become records and how records are consumed; releases, groups, rules |
-| [Field catalog](https://atoz03.github.io/pdf2jsonl/#fields) | All **412 fields**: meaning, type, JSON example, key role, functions, multi-select tags, origin |
-| [PDF → JSONL demo](https://atoz03.github.io/pdf2jsonl/#demo) | The synthetic paper end to end: candidates, evidence verification, records, evidence-chain audit |
-| [Downstream outputs](https://atoz03.github.io/pdf2jsonl/#downstream) | Statements, knowledge graph, annotated corpus, QA seeds and tables derived from the same records |
-| [Papers](https://atoz03.github.io/pdf2jsonl/papers.html) | Paper dashboard: PDF, records of each run, evidence, review issues, downloads (UI in Chinese) |
-| [Importers](https://atoz03.github.io/pdf2jsonl/#importers) | The legacy, omics and merged importers: mapping coverage, example runs, issue registers |
-| [Pipeline](https://atoz03.github.io/pdf2jsonl/pipeline.html) | The pipeline diagram, in Chinese and English, with SVG download |
+| [Home](https://atoz03.github.io/pdf2jsonl/) | How a paper becomes traceable data: the whole project, its four kinds of downstream use, a tour of the site |
+| [Pipeline](https://atoz03.github.io/pdf2jsonl/pipeline.html) | Every stage from contract, extraction, checks, assembly and validation to verification, derivation and review; how each candidate of the example paper fares; the poster (SVG, Chinese and English) |
+| [Walk-through](https://atoz03.github.io/pdf2jsonl/demo.html) | The synthetic paper end to end: candidates, evidence checks, repairs, a rejection, the evidence-chain audit |
+| [Outputs](https://atoz03.github.io/pdf2jsonl/outputs.html) | Statements, knowledge graph, research workflow, annotated corpus, QA seeds and tables derived from the same records |
+| [Papers](https://atoz03.github.io/pdf2jsonl/papers.html) | Paper dashboard: the PDF, the records of each run, their evidence on the page, verification, review issues, downloads |
+| [Importers](https://atoz03.github.io/pdf2jsonl/importers.html) | The legacy, omics and merged importers: mapping coverage, example runs, issue registers |
+| [Fields](https://atoz03.github.io/pdf2jsonl/fields.html) | All **412 fields**: meaning, type, JSON example, key role, functions, multi-select tags, origin |
+| [Contract](https://atoz03.github.io/pdf2jsonl/contract.html) | Record kinds, profiles, vocabularies, rules, the ambiguity register and the release history; records from every source (curated, pdf2jsonl, the three importers) side by side |
 
 Preview locally with `make site` and open `_site/index.html`. `make dashboard` also writes an untracked
 `dashboard.html` that includes papers and runs from local directories such as `out/`.
@@ -135,7 +136,7 @@ languages and downloads the SVG. Run `make diagram` to regenerate both README im
 - `review_status` is a ladder: `pending_review` → `auto_validated` (deterministic checks) → `model_verified`
   (an independent verifier) → `expert_approved` / `rejected` (a person).
 
-See the [online field catalog](https://atoz03.github.io/pdf2jsonl/#fields), [field definitions and examples](docs/generated/field_definitions.md), the
+See the [online field catalog](https://atoz03.github.io/pdf2jsonl/fields.html), [field definitions and examples](docs/generated/field_definitions.md), the
 [detailed dictionary](docs/generated/field_dictionary.md) (also [CSV](docs/generated/field_dictionary.csv);
 `bdc generate --xlsx out.xlsx` for Excel), and
 [field functions](docs/generated/field_functions.md) (every key by function, with its role and facets).

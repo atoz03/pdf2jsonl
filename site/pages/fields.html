@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>字段目录 · pdf2jsonl</title>
+<meta name="description" content="Every field of the breeding-literature record contract: definition, JSON example, availability, key role, the functions it serves, origin, rules and vocabularies.">
+<!--__HEAD__-->
+<style>
+/* ---------------------------------------------------------------- the field mosaic: one square per field */
+.mosaic { padding: 18px 22px 20px; position: relative; overflow: hidden; }
+.mo-top { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.mo-top .hint { font-size: 12.5px; color: var(--ink-3); }
+.av-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.av-chips .chip { padding: 4px 11px 4px 6px; font-size: 12.5px; }
+.av-chips .chip .badge { height: 19px; min-width: 20px; font-size: 11px; }
+.av-chips .chip[aria-pressed="false"] { opacity: .5; background: none; }
+.av-chips .chip[aria-pressed="true"] { background: var(--surface); border-color: var(--line-2); color: var(--ink); }
+.mo-row { display: grid; grid-template-columns: 188px minmax(0, 1fr); gap: 18px; align-items: start; padding: 12px 0; border-top: 1px dashed var(--line); }
+.mo-row:first-of-type { border-top: 0; }
+.mo-h { display: grid; grid-template-columns: auto 1fr; gap: 0 10px; align-items: baseline; cursor: pointer; border-radius: 8px; }
+.mo-h:hover b { color: var(--brand); }
+.mo-h .n { grid-row: span 2; font: 760 24px/1 var(--sans); letter-spacing: -.03em; color: var(--ink); min-width: 42px; font-variant-numeric: tabular-nums; }
+.mo-h b { font: 700 13.5px var(--mono); display: flex; gap: 6px; align-items: center; }
+.mo-h b i { width: 8px; height: 8px; border-radius: 50%; background: var(--gc); }
+.mo-h span { font-size: 12px; color: var(--ink-3); line-height: 1.4; }
+.mo-row.sel .mo-h b { color: var(--brand); }
+.cells { display: flex; flex-wrap: wrap; gap: 3px; padding-top: 3px; }
+.cell { width: 14px; height: 14px; border-radius: 3.5px; background: var(--av); border: 0; padding: 0; position: relative; transition: opacity .3s, transform .15s, box-shadow .15s; }
+.cell.prov { background: color-mix(in srgb, var(--av) 42%, var(--surface)); box-shadow: inset 0 0 0 1.5px var(--av); }
+.cell:hover, .cell:focus-visible { transform: scale(1.55); z-index: 2; box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--av); outline: none; }
+.cell.off { opacity: .12; }
+.cell.open { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+.c-D { --av: var(--av-D); } .c-N { --av: var(--av-N); } .c-I { --av: var(--av-I); } .c-G { --av: var(--av-G); } .c-F { --av: var(--av-F); }
+.mosaic.reveal .cell { transform: scale(0); }
+.mosaic.reveal.in .cell { animation: cell-in .5s var(--ease) both; animation-delay: calc(var(--i) * 1.6ms); }
+@keyframes cell-in { from { transform: scale(0); } 60% { transform: scale(1.25); } to { transform: none; } }
+.mo-foot { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-3); }
+.mo-foot .k { display: inline-flex; gap: 6px; align-items: center; }
+.mo-foot .k i { width: 12px; height: 12px; border-radius: 3px; background: var(--ink-3); }
+.mo-foot .k i.p { background: color-mix(in srgb, var(--ink-3) 35%, var(--surface)); box-shadow: inset 0 0 0 1.5px var(--ink-3); }
+.mo-foot b { color: var(--ink); font-variant-numeric: tabular-nums; }
+@media (max-width: 720px) { .mo-row { grid-template-columns: 1fr; gap: 8px; } .mosaic { padding: 14px; } .cell { width: 12px; height: 12px; } }
+.g-common { --gc: var(--c1); } .g-agent { --gc: var(--c7); } .g-skills { --gc: var(--c2); } .g-transform { --gc: var(--c3); } .g-omics { --gc: var(--c5); }
+
+/* hover tip */
+
+/* ---------------------------------------------------------------- filters */
+.filters { position: sticky; top: calc(var(--header-h) + env(safe-area-inset-top, 0px)); z-index: 20; padding: 12px 0; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.filters .controls { gap: 8px; }
+.filters .select { max-width: 210px; font-size: 13.5px; padding-block: 7px; }
+.fn-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; align-items: center; }
+.fn-chips .lbl { font-size: 12px; font-weight: 700; color: var(--ink-3); margin-right: 2px; }
+.active-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 10px; font-size: 13px; }
+.active-row .count { font-weight: 650; color: var(--ink); }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 2px 4px 2px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-ink); border: 1px solid var(--brand-line); }
+:root[data-theme="dark"] .pill { color: var(--brand-2); }
+.pill button { border: 0; background: none; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: inherit; padding: 0; }
+.pill button:hover { background: color-mix(in srgb, var(--brand) 18%, transparent); }
+.pill svg { width: 12px; height: 12px; }
+@media (max-width: 720px) { .filters { position: static; } .filters .select { max-width: none; flex: 1 1 45%; } }
+
+/* ---------------------------------------------------------------- table */
+.fp { font: 600 13px var(--mono); white-space: nowrap; }
+.fp .g { color: var(--ink-3); font-weight: 500; }
+.fp .g::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--gc); margin-right: 6px; vertical-align: 1px; }
+.req { font: 700 12px var(--mono); }
+.req-Y { color: var(--clay); } .req-C { color: var(--amber); } .req-N { color: var(--ink-3); }
+.ex { font: 11.5px var(--mono); color: var(--ink-3); margin-top: 3px; overflow-wrap: anywhere; }
+.fn { font-size: 11px; padding: 0 7px; }
+.fn.src { background: var(--brand-soft); color: var(--brand-ink); border-color: var(--brand-line); }
+:root[data-theme="dark"] .fn.src { color: var(--brand-2); }
+.role-tag { font-size: 11.5px; }
+td.defn { min-width: 280px; max-width: 520px; }
+.tbl tr.click td { transition: background .12s; }
+.more-row { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+@media (max-width: 640px) { td.defn { min-width: 0; } .fp { white-space: normal; overflow-wrap: anywhere; } }
+
+/* ---------------------------------------------------------------- field drawer */
+.fd-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.fd-def { font: 16px/1.75 var(--serif); padding: 14px 16px; border-left: 3px solid var(--gold); background: var(--surface-2); border-radius: 0 10px 10px 0; }
+.fd-sec { margin-top: 20px; }
+.fd-sec > h3 { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.fd-sec > h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.proj { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.proj div { border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; background: var(--surface-2); font-size: 13px; }
+.proj small { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 2px; }
+.proj small svg { width: 14px; height: 14px; color: var(--brand); }
+.serves-list { display: flex; flex-direction: column; gap: 6px; }
+.serves-list div { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; color: var(--ink-2); }
+.codes { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.codes code { font-size: 11.5px; }
+.item-keys { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; }
+.item-keys code { justify-self: start; }
+.fd-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+</style>
+</head>
+<body data-page="fields">
+<header id="top"></header>
+<main id="main"></main>
+<footer id="foot"></footer>
+<!--__DATA__-->
+<!--__KIT__-->
+<script>
+"use strict";
+const { T, esc, icon, fmt, DATA, $, $$, json, av, count, short, clip, copy, openDialog } = K;
+const C = DATA.contract, FL = C.fields, CODES = C.codes;
+const BY = Object.fromEntries(FL.map(f => [f.path, f]));
+const GROUPS = Object.keys(C.groups);
+const AV = ["D", "N", "I", "G", "F"];
+const AVC = CODES.availability || {};
+const FN = CODES.function || {}, FNS = Object.keys(FN);
+const ROLE = CODES.key_role || {}, FAM = CODES.key_role_family || {};
+const ARG = CODES.argument_role || {}, CARD = CODES.card || {}, ORIGIN = CODES.origin || {}, REQ = CODES.requirement || {};
+const TAGS = C.tags || {};
+const VOC = Object.fromEntries((C.vocabularies || []).map(v => [v.name, v]));
+const AMB = Object.fromEntries((C.ambiguities || []).map(a => [a.id, a]));
+const SINCES = [...new Set(FL.map(f => f.since))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+// The contract names its groups, roles and tags in Chinese; English pages use these names (the codes, spelled out).
+const GROUP_EN = { common: "Common", agent: "Scientific agent", skills: "Tool skills", transform: "AI derivation", omics: "Multi-omics" };
+const human = k => String(k).replace(/_/g, " ").replace(/(\D)(\d)/, "$1 $2").replace(/^\w/, c => c.toUpperCase());
+const groupName = g => T((C.groups[g] || {}).title_zh || g, GROUP_EN[g] || human(g));
+const roleName = k => T((ROLE[k] || {}).label_zh || k, human(k));
+const famName = k => T((FAM[k] || {}).label_zh || k, human(k));
+const fnShort = k => T((FN[k] || {}).short_zh || k, ((FN[k] || {}).label_en || k).split(" — ")[0].replace("Our own iteration", "Iteration"));
+const fnName = k => T((FN[k] || {}).label_zh || k, (FN[k] || {}).label_en || k);
+const tagName = k => T((TAGS[k] || {}).label_zh || k, human(k));
+const avName = a => T((AVC[a] || {}).label_zh || a, (AVC[a] || {}).label_en || a);
+const PROFILE_ROLE = {
+  extract: ["模型逐字抽取", "extracted by the model with a verbatim quote"], system: ["管线生成", "set by the pipeline"],
+  document: ["文档级，传播到每条记录", "document level, carried to every record"], normalized: ["按命名规则标准化", "normalized by a named rule"],
+  provenance: ["运行溯源", "run provenance"], linked: ["由候选链接解析", "resolved from candidate links"], generated: ["后续生成", "generated downstream"], field: ["收录", "included"],
+};
+const isSrc = (f, fn) => (f.serves_src || []).includes(fn);
+const fnTag = (f, fn) => `<span class="tag fn${isSrc(f, fn) ? " src" : ""}" title="${esc(fnName(fn))} — ${isSrc(f, fn) ? T("来源规定", "stated by the source") : T("仓库按键角色补充", "added by the repository from the key role")}">${esc(fnShort(fn))}${isSrc(f, fn) ? "" : "⁺"}</span>`;
+const roleTag = k => k ? `<span class="tag role-tag" title="${esc((ROLE[k] || {}).description_zh || "")}">${esc(roleName(k))}</span>` : "";
+
+// ---------------------------------------------------------------- filter state (mirrored in the URL hash)
+const KEYS = ["q", "group", "profile", "maturity", "since", "req", "fn", "role", "tag", "origin"];
+const F = { q: "", group: "", profile: "", maturity: "", since: "", req: "", fn: "", role: "", tag: "", origin: "", av: new Set(AV) };
+let shown = 60, openPath = null;
+function readHash() {
+  const h = K.hash();
+  for (const k of KEYS) F[k] = h[k] || "";
+  const a = (h.av || "").split(",").filter(x => AV.includes(x));
+  F.av = new Set(a.length ? a : AV);
+  openPath = BY[h.field] ? h.field : null;
+}
+function writeHash() {
+  K.setHash({ ...Object.fromEntries(KEYS.map(k => [k, F[k]])), av: F.av.size === AV.length ? "" : [...F.av].join(","), field: openPath || "" });
+}
+const haystack = f => (f.path + " " + (f.definition_zh || "") + " " + (f.data_source_zh || "") + " " + (f.downstream_zh || "") + " " + (f.vocabulary || "") + " " +
+  (f.key_role || "") + " " + ((ROLE[f.key_role] || {}).label_zh || "") + " " + human(f.key_role || "") + " " + (f.tags || []).map(t => ((TAGS[t] || {}).label_zh || "") + " " + human(t)).join(" ") + " " +
+  (f.example !== undefined ? short(f.example) : "")).toLowerCase();
+const HAY = Object.fromEntries(FL.map(f => [f.path, null]));
+function matches(f) {
+  const prof = F.profile && C.profiles[F.profile];
+  if (F.group && f.group !== F.group) return false;
+  if (!F.av.has(f.availability)) return false;
+  if (prof && !prof.roles[f.path]) return false;
+  if (F.maturity && f.maturity !== F.maturity) return false;
+  if (F.since && f.since !== F.since) return false;
+  if (F.req && f.required !== F.req) return false;
+  if (F.fn && !(f.serves || []).includes(F.fn)) return false;
+  if (F.role && f.key_role !== F.role) return false;
+  if (F.tag && !(f.tags || []).includes(F.tag)) return false;
+  if (F.origin && !(f.origin || []).includes(F.origin)) return false;
+  const q = F.q.trim().toLowerCase();
+  if (q) { HAY[f.path] = HAY[f.path] || haystack(f); if (!HAY[f.path].includes(q)) return false; }
+  return true;
+}
+const anyFilter = () => KEYS.some(k => F[k]) || F.av.size !== AV.length;
+
+// ---------------------------------------------------------------- mosaic
+function mosaicHTML() {
+  const avCount = a => count(FL, f => f.availability === a);
+  let i = 0;
+  const rows = GROUPS.map(g => {
+    const fs = FL.filter(f => f.group === g).sort((a, b) => AV.indexOf(a.availability) - AV.indexOf(b.availability) || (a.maturity === "provisional") - (b.maturity === "provisional"));
+    return `<div class="mo-row g-${g}${F.group === g ? " sel" : ""}"><div class="mo-h" data-group="${g}" title="${esc((C.groups[g] || {}).purpose_zh || "")}"><span class="n">${fs.length}</span><b><i></i>${esc(g)}</b><span>${esc(groupName(g))}</span></div>
+      <div class="cells">${fs.map(f => `<button type="button" class="cell c-${f.availability}${f.maturity === "provisional" ? " prov" : ""}" style="--i:${i++}" data-path="${esc(f.path)}" aria-label="${esc(f.path)}"></button>`).join("")}</div></div>`;
+  }).join("");
+  return `<div class="card mosaic reveal" id="mosaic">
+    <div class="mo-top"><div class="av-chips" role="group" aria-label="${T("可获得性", "Availability")}">${AV.map(a => `<button type="button" class="chip" data-av="${a}" aria-pressed="${F.av.has(a)}">${av(a)} ${esc(avName(a))} <span class="n">${avCount(a)}</span></button>`).join("")}</div>
+      <span class="hint">${T("一格一个字段。悬停查看，点击打开；点击图例或分组即可筛选。", "One square per field. Hover to read, click to open; click the legend or a group to filter.")}</span></div>
+    ${rows}
+    <div class="mo-foot"><span class="k"><i></i>${T("实心：v3 已验证基线", "solid: verified v3 baseline")} <b>${fmt(count(FL, f => f.maturity === "verified"))}</b></span>
+      <span class="k"><i class="p"></i>${T("空心：仓库合并或补充，待确认", "outlined: merged or added by the repository, provisional")} <b>${fmt(count(FL, f => f.maturity === "provisional"))}</b></span>
+      <span class="spacer"></span><span id="mo-count"></span></div></div>`;
+}
+function paintMosaic() {
+  let n = 0;
+  $$(".cell", $("#mosaic")).forEach(c => { const on = matches(BY[c.dataset.path]); c.classList.toggle("off", !on); c.classList.toggle("open", c.dataset.path === openPath); n += on; });
+  $$(".av-chips .chip").forEach(b => b.setAttribute("aria-pressed", F.av.has(b.dataset.av)));
+  $$(".mo-row").forEach(r => r.classList.toggle("sel", F.group !== "" && r.classList.contains("g-" + F.group)));
+  $("#mo-count").innerHTML = anyFilter() ? T(`<b>${n}</b> / ${FL.length} 个字段符合筛选`, `<b>${n}</b> of ${FL.length} fields match`) : T(`共 <b>${FL.length}</b> 个字段`, `<b>${FL.length}</b> fields`);
+}
+let tip = null;
+function showTip(cell) {
+  const f = BY[cell.dataset.path]; if (!f) return;
+  tip = tip || Object.assign(document.createElement("div"), { className: "tip" });
+  if (!tip.isConnected) document.body.append(tip);
+  tip.innerHTML = `<b>${esc(f.path)}</b>${esc(clip(f.definition_zh || "", 120))}<div class="m"><span>${esc(f.availability)} · ${esc(avName(f.availability))}</span><span>${esc(roleName(f.key_role || ""))}</span><span>${esc(f.type)}</span></div>`;
+  const r = cell.getBoundingClientRect(), w = Math.min(340, innerWidth - 24);
+  tip.style.maxWidth = w + "px";
+  tip.style.left = Math.max(12, Math.min(innerWidth - w - 12, r.left + r.width / 2 - w / 2)) + "px";
+  const below = r.top < 170;
+  tip.style.top = (below ? r.bottom + 10 : r.top - 10) + "px";
+  tip.style.transform = below ? "none" : "translateY(-100%)";
+  tip.classList.add("show");
+}
+const hideTip = () => tip && tip.classList.remove("show");
+
+// ---------------------------------------------------------------- filters bar
+function filtersHTML() {
+  const opt = (v, label, cur) => `<option value="${esc(v)}"${v === cur ? " selected" : ""}>${esc(label)}</option>`;
+  const sel = (key, label, options) => `<select class="select" data-f="${key}" aria-label="${esc(label)}">${opt("", label, F[key])}${options}</select>`;
+  return `<div class="filters" id="filters"><div class="wrap">
+    <div class="controls">
+      <label class="search">${icon("search")}<input class="input" id="q" type="search" value="${esc(F.q)}" placeholder="${T("搜索字段路径、定义、来源或示例……", "Search path, definition, source or example…")}" aria-label="${T("搜索字段", "Search fields")}"></label>
+      ${sel("group", T("全部分组", "All groups"), GROUPS.map(g => opt(g, `${g} · ${groupName(g)}`, F.group)).join(""))}
+      ${sel("role", T("任意键角色", "Any key role"), Object.keys(FAM).map(fam => `<optgroup label="${esc(famName(fam))}">${Object.entries(ROLE).filter(([, r]) => r.family === fam).map(([k]) => opt(k, roleName(k), F.role)).join("")}</optgroup>`).join(""))}
+      ${sel("profile", T("任意画像", "Any profile"), Object.entries(C.profiles).map(([k, p]) => opt(k, `${k} · ${p.title_zh || ""}`, F.profile)).join(""))}
+      ${sel("tag", T("任意分类", "Any tag"), Object.keys(TAGS).map(k => opt(k, tagName(k), F.tag)).join(""))}
+      ${sel("origin", T("任意来源", "Any origin"), Object.keys(ORIGIN).map(k => opt(k, k, F.origin)).join(""))}
+      ${sel("req", T("任意填写要求", "Any requirement"), Object.keys(REQ).map(k => opt(k, `${k} · ${T(REQ[k].label_zh, REQ[k].label_en)}`, F.req)).join(""))}
+      ${sel("maturity", T("任意成熟度", "Any maturity"), ["verified", "provisional"].map(k => opt(k, k, F.maturity)).join(""))}
+      ${sel("since", T("任意版本", "Any version"), SINCES.map(s => opt(s, T(`自 ${s} 起`, `since ${s}`), F.since)).join(""))}
+    </div>
+    <div class="fn-chips"><span class="lbl">${T("服务功能", "Serves")}</span>${FNS.map(k => `<button type="button" class="chip" data-fn="${esc(k)}" aria-pressed="${F.fn === k}" title="${esc(fnName(k))}">${esc(fnShort(k))} <span class="n">${count(FL, f => (f.serves || []).includes(k))}</span></button>`).join("")}</div>
+    <div class="active-row" id="active-row"></div>
+  </div></div>`;
+}
+function activeHTML(n) {
+  const label = { q: T("搜索", "search"), group: T("分组", "group"), profile: T("画像", "profile"), maturity: T("成熟度", "maturity"), since: T("版本", "since"), req: T("要求", "required"),
+    fn: T("功能", "serves"), role: T("键角色", "role"), tag: T("分类", "tag"), origin: T("来源", "origin") };
+  const val = (k, v) => k === "fn" ? fnShort(v) : k === "role" ? roleName(v) : k === "tag" ? tagName(v) : k === "group" ? `${v} · ${groupName(v)}` : v;
+  const pills = KEYS.filter(k => F[k]).map(k => `<span class="pill">${esc(label[k])}: ${esc(val(k, F[k]))}<button type="button" data-clear="${k}" aria-label="${T("移除", "Remove")}">${icon("x")}</button></span>`);
+  if (F.av.size !== AV.length) pills.push(`<span class="pill">${T("可获得性", "availability")}: ${[...F.av].join(" ")}<button type="button" data-clear="av" aria-label="${T("移除", "Remove")}">${icon("x")}</button></span>`);
+  return `<span class="count">${T(`${n} / ${FL.length} 个字段`, `${n} of ${FL.length} fields`)}</span>${pills.join("")}${pills.length ? `<button type="button" class="btn ghost sm" data-clear="all">${T("清除全部", "Clear all")}</button>` : ""}`;
+}
+
+// ---------------------------------------------------------------- table
+function rowHTML(f) {
+  const name = f.path.slice(f.group.length + 1);
+  const ex = f.example !== undefined ? short(f.example) : "";
+  return `<tr class="click" data-path="${esc(f.path)}">
+    <td><span class="fp g-${f.group}"><span class="g">${esc(f.group)}.</span>${esc(name)}</span>${f.maturity === "provisional" ? ` <span class="tag" title="${esc((CODES.maturity.provisional || {}).label_zh || "")}">prov.</span>` : ""}</td>
+    <td class="mono small" data-l="${T("类型", "Type")}">${esc(f.type)}</td>
+    <td data-l="${T("可获得性", "Availability")}">${av(f.availability)}</td>
+    <td data-l="${T("要求", "Required")}"><span class="req req-${esc(f.required)}" title="${esc(REQ[f.required] ? T(REQ[f.required].label_zh, REQ[f.required].label_en) : "")}">${esc(f.required)}</span></td>
+    <td data-l="${T("键角色 · 功能", "Role · functions")}"><div class="row" style="gap:4px">${roleTag(f.key_role)}${(f.serves || []).map(fn => fnTag(f, fn)).join("")}</div></td>
+    <td class="defn" data-l="${T("定义", "Definition")}">${esc(f.definition_zh || "")}${ex ? `<div class="ex">${esc(clip(ex, 110))}</div>` : ""}</td></tr>`;
+}
+function renderRows() {
+  const rows = FL.filter(matches);
+  $("#active-row").innerHTML = activeHTML(rows.length);
+  $("#f-body").innerHTML = rows.slice(0, shown).map(rowHTML).join("") ||
+    `<tr><td colspan="6"><div class="empty">${icon("filter")}<h3>${T("没有字段符合这些筛选", "No field matches these filters")}</h3><p>${T("放宽一个条件，或清除全部筛选。", "Loosen a condition, or clear every filter.")}</p></div></td></tr>`;
+  $("#more").innerHTML = rows.length > shown ? `<button type="button" class="btn" data-more="60">${T(`再显示 60 个`, `Show 60 more`)}</button><button type="button" class="btn ghost" data-more="all">${T(`显示全部 ${rows.length} 个`, `Show all ${rows.length}`)}</button>` : "";
+  paintMosaic();
+}
+function update({ keepShown = false } = {}) { if (!keepShown) shown = 60; writeHash(); renderRows(); }
+
+// ---------------------------------------------------------------- field drawer
+const PROJ = [["kg", "graph", "知识图谱", "Knowledge graph"], ["rdb", "table", "关系库", "Relational tables"], ["triple", "link", "三元组", "Triples"], ["qa_corpus", "quote", "问答 / 语料", "QA / corpus"]];
+function openField(path, { push = true } = {}) {
+  const f = BY[path]; if (!f) return;
+  openPath = path; if (push) writeHash(); paintMosaic();
+  const role = ROLE[f.key_role] || {};
+  const voc = f.vocabulary && VOC[f.vocabulary];
+  const item = f.type.startsWith("array_") && ((C.types[f.type] || {}).item || {}).properties;
+  const rules = (C.rules || []).filter(r => r.fields.includes(f.path));
+  const profiles = Object.entries(C.profiles).filter(([, p]) => p.roles[f.path]);
+  const facets = fn => ((role.facets || {})[fn] || []).map(k => T((((FN[fn] || {}).facets || {})[k] || {}).label_zh || k, k)).join(" · ");
+  const sec = (zh, en, body) => body ? `<section class="fd-sec"><h3>${T(zh, en)}</h3>${body}</section>` : "";
+  const body = `
+    <div class="fd-tags">${av(f.availability)}<span class="tag">${esc(avName(f.availability))}</span>
+      <span class="tag">${T("要求", "required")} · <b class="req req-${esc(f.required)}">${esc(f.required)}</b></span><span class="tag mono">${esc(f.type)}</span>
+      <span class="tag ${f.maturity === "verified" ? "ok" : "amber"}">${esc(f.maturity)}</span><span class="tag">${T("自", "since")} ${esc(f.since)}</span>
+      ${(f.tags || []).map(t => `<a class="tag gold" href="#tag=${encodeURIComponent(t)}" data-goto="tag" data-v="${esc(t)}" title="${esc((TAGS[t] || {}).description_zh || "")}">${esc(tagName(t))}</a>`).join("")}</div>
+    <div class="fd-def">${esc(f.definition_zh || "")}</div>
+    ${K.lang === "en" ? `<p class="xs muted" style="margin-top:6px">${T("", "Definitions are quoted from the contract, which is written in Chinese.")}</p>` : ""}
+    ${sec("JSON 示例", "JSON example", f.example !== undefined ? `<div class="code-box"><pre class="json">${json({ [f.group]: { [f.path.slice(f.group.length + 1)]: f.example } }, { wrap: true, link: false })}</pre></div>
+      <p class="xs muted" style="margin-top:6px">${T("示例是这个字段的合成取值，不是默认值，也不是完整记录。", "A synthetic value for this one field: not a default and not a complete record.")}</p>` : "")}
+    ${sec("数组项的键", "Item keys", item ? `<div class="item-keys">${Object.entries(item).map(([k, v]) => `<code>${esc(k)}</code><span class="small dim">${esc(v.description || v.type || "")}</span>`).join("")}</div>` : "")}
+    ${sec("键角色", "Key role", f.key_role ? `<div class="row">${roleTag(f.key_role)}<span class="small muted">${esc(famName(role.family))}</span><span class="small dim">${esc(role.description_zh || "")}</span></div>
+      <div class="proj">${PROJ.map(([k, ic, zh, en]) => `<div><small>${icon(ic)}${T(zh, en)}</small>${esc((role.projection || {})[k] || "—")}</div>`).join("")}</div>
+      <p class="xs muted" style="margin-top:8px">${T("bdc derive 按键角色决定字段落在哪里，", "bdc derive places a field by its key role; ")}<a href="contract.html#roles">${T("全部角色 →", "every role →")}</a></p>` : "")}
+    ${sec("服务功能 · 分面", "Serves · facets", (f.serves || []).length ? `<div class="serves-list">${f.serves.map(fn => `<div>${fnTag(f, fn)}<span>${esc(facets(fn))}</span></div>`).join("")}</div>` : "")}
+    ${sec("卡片与证据链", "Card and evidence chain", f.card || f.argument_role ? `<div class="row">${f.card ? `<span class="tag">${T("卡片", "card")} · ${esc(T((CARD[f.card] || {}).label_zh || f.card, human(f.card)))}</span>` : ""}
+      ${f.argument_role ? `<span class="tag brand">${T("证据链要素", "evidence-chain element")} · ${esc(T((ARG[f.argument_role] || {}).label_zh || f.argument_role, (ARG[f.argument_role] || {}).label_en || f.argument_role))}</span>` : ""}</div>` : "")}
+    ${sec("来源与用途", "Source and use", `<dl class="kv"><dt>${T("数据来源", "Data source")}</dt><dd>${esc(f.data_source_zh || "—")}</dd><dt>${T("下游用途", "Downstream")}</dt><dd>${esc(f.downstream_zh || "—")}</dd>
+      <dt>${T("字段来源", "Origin")}</dt><dd>${(f.origin || []).map(o => `<a href="#origin=${encodeURIComponent(o)}" data-goto="origin" data-v="${esc(o)}" class="mono">${esc(o)}</a> <span class="small muted">${esc((ORIGIN[o] || {}).label_zh || "")}</span>`).join("<br>")}</dd>
+      ${f.notes_zh ? `<dt>${T("说明", "Notes")}</dt><dd class="small">${esc(f.notes_zh)}</dd>` : ""}
+      ${f.constraints ? `<dt>${T("约束", "Constraints")}</dt><dd><code>${esc(Object.entries(f.constraints).filter(([k]) => !["basis", "note_zh"].includes(k)).map(([k, v]) => `${k}: ${short(v)}`).join("; "))}</code>${f.constraints.note_zh ? `<div class="small muted" style="margin-top:4px">${esc(f.constraints.note_zh)}</div>` : ""}</dd>` : ""}
+      <dt>${T("出处", "Source reference")}</dt><dd class="mono small" style="overflow-wrap:anywhere">${esc(f.source_ref || "—")}</dd></dl>`)}
+    ${sec("词表", "Vocabulary", voc ? `<div class="row"><a class="mono" href="contract.html#vocab=${encodeURIComponent(voc.name)}">${esc(voc.name)}</a><span class="small muted">${esc(voc.title_zh || "")}</span>
+      <span class="tag ${voc.enforcement === "error" ? "clay" : voc.enforcement === "warning" ? "amber" : ""}">${esc(voc.enforcement)}</span><span class="tag">${esc(voc.closure)}</span></div>
+      <div class="codes">${voc.values.slice(0, 40).map(v => `<code title="${esc(v.label_zh || "")}">${esc(v.code)}</code>`).join("")}${voc.values.length > 40 ? ` <span class="small muted">+${voc.values.length - 40}</span>` : ""}</div>` : "")}
+    ${sec("跨字段规则", "Rules", rules.length ? `<div class="stack">${rules.map(r => `<div class="row" style="flex-wrap:nowrap;align-items:flex-start"><a class="tag ${r.severity === "error" ? "clay" : "amber"} mono" href="contract.html#rule=${encodeURIComponent(r.id)}">${esc(r.id)}</a><span class="small">${esc(r.title_zh)}</span></div>`).join("")}</div>` : "")}
+    ${sec("画像中的角色", "Role in each profile", `<div class="row">${profiles.map(([n, p]) => `<span class="tag" title="${esc(p.title_zh || "")}"><b class="mono">${esc(n)}</b>&nbsp;${esc(T(...(PROFILE_ROLE[p.roles[f.path]] || [p.roles[f.path], p.roles[f.path]])))}</span>`).join("") || `<span class="muted small">${T("不在任何画像中", "not in any profile")}</span>`}</div>`)}
+    ${sec("歧义登记", "Ambiguities", (f.ambiguities || []).length ? `<div class="stack">${f.ambiguities.map(id => { const a = AMB[id] || {}; return `<div class="row" style="flex-wrap:nowrap;align-items:flex-start"><a class="mono small" href="contract.html#amb=${encodeURIComponent(id)}">${esc(id)}</a><span class="tag ${a.status === "decided" ? "ok" : a.status === "open" ? "amber" : ""}">${esc(a.status || "")}</span><span class="small">${esc(a.title_zh || "")}</span></div>`; }).join("")}</div>` : "")}
+    <div class="fd-actions"><button type="button" class="btn sm" data-copy="${esc(f.path)}">${icon("copy")}${T("复制路径", "Copy path")}</button>
+      <button type="button" class="btn sm" data-copy="${esc(location.href.split("#")[0] + "#field=" + encodeURIComponent(f.path))}">${icon("link")}${T("复制链接", "Copy link")}</button></div>`;
+  openDialog("field-dlg", { title: `<span class="mono">${esc(f.path)}</span>`, sub: `${esc(groupName(f.group))} · ${esc(roleName(f.key_role || ""))}`, body,
+    onClose: () => { openPath = null; writeHash(); paintMosaic(); } });
+}
+
+// ---------------------------------------------------------------- page
+function render() {
+  const nV = count(FL, f => f.maturity === "verified");
+  $("#main").innerHTML = `
+  <section class="page-hero wrap">
+    <span class="eyebrow">${T("字段目录", "Field catalog")}</span>
+    <h1>${T(`${FL.length} 个字段，<em>每个都写明自己的用途</em>`, `${FL.length} fields, <em>each says what it is for</em>`)}</h1>
+    <p class="lead">${T(`契约 ${esc(C.version)} 的全部字段，由 <code>field_catalog/field_catalog.yaml</code> 生成。记录按分组嵌套：字段 <code>common.record_id</code> 写成 <code>{"common": {"record_id": …}}</code>。每个字段都有定义、可获得性（谁来填）、键角色、服务的功能、JSON 示例和出处。`,
+      `Every field of contract ${esc(C.version)}, generated from <code>field_catalog/field_catalog.yaml</code>. Records nest by group: the field <code>common.record_id</code> is written <code>{"common": {"record_id": …}}</code>. Each field states its definition, its availability (who fills it), its key role, the functions it serves, a JSON example and where it comes from.`)}</p>
+    <div class="stats" style="margin-top:26px">
+      <div class="stat reveal"><span class="bar-accent"></span><div class="k">${T("字段", "Fields")}</div><div class="v" data-count="${FL.length}">0</div><div class="s">${T(`${GROUPS.length} 个分组`, `${GROUPS.length} groups`)}</div></div>
+      <div class="stat reveal"><span class="bar-accent"></span><div class="k">${T("已验证", "Verified")}</div><div class="v" data-count="${nV}">0</div><div class="s">${T("v3 基线，定义逐字保留", "v3 baseline, definitions kept verbatim")}</div></div>
+      <div class="stat gold reveal"><span class="bar-accent"></span><div class="k">${T("待确认", "Provisional")}</div><div class="v" data-count="${FL.length - nV}">0</div><div class="s">${T("仓库合并或补充", "merged or added here")}</div></div>
+      <div class="stat reveal"><span class="bar-accent"></span><div class="k">${T("键角色", "Key roles")}</div><div class="v" data-count="${Object.keys(ROLE).length}">0</div><div class="s"><a href="contract.html#roles">${T("在规范页查看 →", "see the contract →")}</a></div></div>
+      <div class="stat reveal"><span class="bar-accent"></span><div class="k">${T("画像", "Profiles")}</div><div class="v" data-count="${Object.keys(C.profiles).length}">0</div><div class="s">${esc(Object.keys(C.profiles).join(" · "))}</div></div>
+    </div>
+  </section>
+  <section class="wrap" style="padding-bottom:8px">${mosaicHTML()}</section>
+  ${filtersHTML()}
+  <section class="wrap" style="padding-top:6px">
+    <div class="table-wrap"><table class="tbl cards" id="f-table"><thead><tr><th>${T("字段路径", "Field path")}</th><th>${T("类型", "Type")}</th><th>${T("可获得性", "Avail.")}</th><th>${T("要求", "Req.")}</th><th>${T("键角色 · 功能", "Role · functions")}</th><th>${T("定义", "Definition")}</th></tr></thead><tbody id="f-body"></tbody></table></div>
+    <div class="more-row" id="more"></div>
+    <p class="small muted" style="margin-top:14px">${T("功能标签：", "Function tags: ")}<span class="tag fn src">${T("来源规定", "stated by the source")}</span> ${T("由分组或 v3 下游用途推出，", "follow from the group or the v3 downstream column; ")}<span class="tag fn">${T("补充", "added")}⁺</span> ${T("由仓库按键角色补充（AMB-032）。", "were added by the repository from the key role (AMB-032).")}
+      ${T("可获得性说明值是什么、由谁填写，不是质量分数。", "Availability says what a value is and who fills it in; it is not a quality score.")} <a href="contract.html#availability">${T("五种可获得性 →", "The five availability codes →")}</a></p>
+  </section>`;
+
+  if (!render.wired) {
+    render.wired = true;
+    const main = $("#main");
+    main.addEventListener("click", e => {
+      const cell = e.target.closest(".cell"); if (cell) { hideTip(); openField(cell.dataset.path); return; }
+      const tr = e.target.closest("tr.click"); if (tr && !e.target.closest("a")) { openField(tr.dataset.path); return; }
+      const a = e.target.closest("[data-av]");
+      if (a) { const k = a.dataset.av; if (F.av.has(k) && F.av.size === 1) F.av = new Set(AV); else if (F.av.size === AV.length) F.av = new Set([k]); else F.av.has(k) ? F.av.delete(k) : F.av.add(k); update(); return; }
+      const g = e.target.closest("[data-group]"); if (g) { F.group = F.group === g.dataset.group ? "" : g.dataset.group; syncControls(); update(); $("#filters").scrollIntoView({ block: "start", behavior: K.reduced() ? "auto" : "smooth" }); return; }
+      const fn = e.target.closest("[data-fn]"); if (fn) { F.fn = F.fn === fn.dataset.fn ? "" : fn.dataset.fn; syncControls(); update(); return; }
+      const c = e.target.closest("[data-clear]");
+      if (c) { const k = c.dataset.clear; if (k === "all") { KEYS.forEach(x => F[x] = ""); F.av = new Set(AV); } else if (k === "av") F.av = new Set(AV); else F[k] = ""; syncControls(); update(); return; }
+      const m = e.target.closest("[data-more]"); if (m) { shown = m.dataset.more === "all" ? Infinity : shown + 60; renderRows(); }
+    });
+    main.addEventListener("input", e => {
+      if (e.target.id === "q") { F.q = e.target.value; update(); }
+      else if (e.target.dataset.f) { F[e.target.dataset.f] = e.target.value; update(); }
+    });
+    main.addEventListener("pointerover", e => { const c = e.target.closest(".cell"); if (c) showTip(c); });
+    main.addEventListener("pointerout", e => { if (e.target.closest(".cell")) hideTip(); });
+    main.addEventListener("focusin", e => { const c = e.target.closest(".cell"); if (c) showTip(c); });
+    main.addEventListener("focusout", e => { if (e.target.closest(".cell")) hideTip(); });
+    addEventListener("scroll", hideTip, { passive: true });
+    // links inside the drawer that filter this page
+    document.addEventListener("click", e => {
+      const g = e.target.closest("dialog [data-goto]"); if (!g) return;
+      e.preventDefault(); KEYS.forEach(x => F[x] = ""); F.av = new Set(AV); F[g.dataset.goto] = g.dataset.v;
+      $("#field-dlg")?.close(); syncControls(); update(); $("#filters").scrollIntoView({ block: "start" });
+    });
+    addEventListener("hashchange", () => { readHash(); syncControls(); renderRows(); if (openPath) openField(openPath, { push: false }); });
+  }
+  renderRows();
+  if (openPath) openField(openPath, { push: false });
+}
+function syncControls() {
+  const q = $("#q"); if (q && q.value !== F.q) q.value = F.q;
+  $$("[data-f]").forEach(s => { s.value = F[s.dataset.f]; });
+  $$("[data-fn]").forEach(b => b.setAttribute("aria-pressed", F.fn === b.dataset.fn));
+}
+readHash();
+K.mount({ title: () => T("字段目录 · pdf2jsonl", "Fields · pdf2jsonl"), render });
+</script>
+</body>
+</html>

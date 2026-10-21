@@ -9,7 +9,7 @@ help:
 	@echo "make test       pytest"
 	@echo "make generate   rebuild docs/generated from the catalog"
 	@echo "make diagram    export Chinese/English pipeline SVGs from the HTML diagram"
-	@echo "make site       build the Pages site into _site/ (contract browser, papers, pipeline, downstream outputs)"
+	@echo "make site       build the eight-page Pages site into _site/ (overview, pipeline, walk-through, outputs, papers, importers, fields, contract)"
 	@echo "make dashboard  write an untracked dashboard.html that also covers local run directories"
 	@echo "make readme-art regenerate the breeding-themed README banner and icons"
 	@echo "make release    freeze VERSION as releases/<VERSION> (needs a CHANGELOG entry)"

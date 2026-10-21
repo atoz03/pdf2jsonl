@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>规范 · pdf2jsonl</title>
+<meta name="description" content="The breeding-literature record contract: functions and key roles, availability, record kinds, profiles, the evidence chain, vocabularies, rules, ambiguities and releases.">
+<!--__HEAD__-->
+<style>
+/* ---------------------------------------------------------------- on this page */
+.toc { position: sticky; top: var(--header-h); z-index: 20; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.toc .wrap { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-block: 8px; }
+.toc a { flex: none; font-size: 13px; font-weight: 600; color: var(--ink-2); padding: 5px 11px; border-radius: 999px; white-space: nowrap; }
+.toc a span { font: 600 10.5px var(--mono); color: var(--gold); margin-right: 5px; }
+.toc a:hover { background: var(--surface-3); text-decoration: none; color: var(--ink); }
+.toc a.on { background: var(--brand-soft); color: var(--brand-ink); }
+:root[data-theme="dark"] .toc a.on { color: var(--brand-2); }
+.section { scroll-margin-top: calc(var(--header-h) + 52px); }
+
+/* ---------------------------------------------------------------- 01 functions */
+.fn-card { padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+.fn-card h3 { font-size: 15.5px; font-weight: 700; line-height: 1.35; }
+.fn-card .big { display: flex; align-items: baseline; gap: 8px; }
+.fn-card .big b { font-size: 34px; font-weight: 760; letter-spacing: -.03em; line-height: 1; }
+.fn-card .big span { font-size: 12.5px; color: var(--ink-3); }
+.split { display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--surface-3); gap: 2px; }
+.split i { display: block; height: 100%; }
+.split .a { background: var(--brand); } .split .b { background: color-mix(in srgb, var(--brand) 32%, var(--surface)); }
+.split-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--ink-3); }
+.split-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.facets { display: flex; flex-wrap: wrap; gap: 4px; }
+.facets .tag { font-size: 11px; }
+.fn-card .desc { font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+.fn-card .go { margin-top: auto; font-size: 13px; font-weight: 600; }
+
+/* ---------------------------------------------------------------- 02 roles heatmap */
+.roles { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.heat { width: 100%; border-collapse: separate; border-spacing: 3px; font-size: 13px; }
+.heat th { font-size: 11.5px; font-weight: 700; color: var(--ink-3); text-align: center; padding: 6px 4px; white-space: nowrap; }
+.heat th:nth-child(-n+2) { text-align: left; }
+.heat td { padding: 0; }
+.heat td.fam { font-size: 11px; font-weight: 700; color: var(--ink-3); letter-spacing: .03em; padding: 8px 8px 0 0; vertical-align: top; width: 92px; }
+.heat tr.fam-start td { border-top: 1px dashed var(--line); }
+.heat td.rn button { width: 100%; text-align: left; border: 0; background: none; padding: 7px 8px; border-radius: 8px; font-weight: 600; color: var(--ink); display: flex; gap: 8px; align-items: baseline; }
+.heat td.rn button small { font: 11px var(--mono); color: var(--ink-3); font-weight: 400; }
+.heat tr:hover td.rn button, .heat tr.sel td.rn button { background: var(--surface-3); }
+.heat tr.sel td.rn button { box-shadow: inset 3px 0 0 var(--brand); }
+.heat td.tot { text-align: right; font-weight: 700; padding-right: 8px; font-variant-numeric: tabular-nums; }
+.heat a.hc { display: grid; place-items: center; height: 30px; min-width: 44px; border-radius: 7px; font: 700 12px var(--mono); color: var(--ink); background: color-mix(in srgb, var(--brand) var(--x), var(--surface-2)); transition: transform .15s, box-shadow .15s; }
+.heat a.hc.dark { color: #fff; }
+:root[data-theme="dark"] .heat a.hc.dark { color: #04140e; }
+.heat a.hc:hover { text-decoration: none; transform: scale(1.08); box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--brand); }
+.heat span.hc0 { display: grid; place-items: center; height: 30px; color: var(--line-2); }
+.role-card { position: sticky; top: calc(var(--header-h) + 62px); padding: 20px 22px; }
+.role-card .fam { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.role-card h3 { font-size: 22px; font-weight: 740; margin: 4px 0 2px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.role-card h3 small { font: 13px var(--mono); color: var(--ink-3); font-weight: 400; }
+.role-card .desc { color: var(--ink-2); margin: 8px 0 14px; }
+.proj { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.proj div { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--surface-2); font-size: 13px; line-height: 1.5; }
+.proj small { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.proj small svg { width: 14px; height: 14px; color: var(--brand); }
+.role-fields { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12.5px; margin-top: 8px; }
+.mini-h { font-size: 11.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); margin: 16px 0 6px; }
+@media (max-width: 1000px) { .roles { grid-template-columns: 1fr; } .role-card { position: static; } }
+
+/* ---------------------------------------------------------------- 03 availability */
+.av-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.av-card { padding: 16px; border-top: 4px solid var(--avc); display: flex; flex-direction: column; gap: 6px; }
+.av-card .letter { font: 800 30px/1 var(--mono); color: var(--avc); }
+.av-card b { font-size: 14px; }
+.av-card p { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+.av-card .n { margin-top: auto; font-size: 12.5px; color: var(--ink-3); }
+.av-card .n a { font-weight: 700; font-size: 18px; }
+@media (max-width: 1000px) { .av-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.bars { padding: 18px 20px; }
+.bar-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 46px; gap: 14px; align-items: center; padding: 7px 0; }
+.bar-row .lbl b { font: 700 13px var(--mono); display: block; }
+.bar-row .lbl span { font-size: 12px; color: var(--ink-3); }
+.bar-row .tot { font-weight: 740; font-size: 15px; text-align: right; font-variant-numeric: tabular-nums; }
+.stack-bar { display: flex; gap: 2px; height: 26px; }
+.stack-bar a { display: grid; place-items: center; height: 100%; background: var(--avc); color: #fff; font: 700 11px var(--mono); min-width: 0; overflow: hidden; transition: filter .15s, transform .25s var(--ease); transform-origin: left; }
+.stack-bar a:first-child { border-radius: 6px 0 0 6px; } .stack-bar a:last-child { border-radius: 0 6px 6px 0; } .stack-bar a:only-child { border-radius: 6px; }
+.stack-bar a:hover { filter: brightness(1.1); text-decoration: none; }
+.bars.reveal .stack-bar a { transform: scaleX(0); }
+.bars.reveal.in .stack-bar a { transform: none; transition-delay: calc(var(--k) * 60ms + 150ms); transition-duration: .7s; }
+.a-D { --avc: var(--av-D); } .a-N { --avc: var(--av-N); } .a-I { --avc: var(--av-I); } .a-G { --avc: var(--av-G); } .a-F { --avc: var(--av-F); }
+@media (max-width: 640px) { .bar-row { grid-template-columns: 1fr 40px; } .bar-row .lbl { grid-column: 1 / -1; } }
+
+/* ---------------------------------------------------------------- 04 kinds & profiles */
+.kind-card { padding: 16px 18px; border-top: 3px solid var(--kc); display: flex; flex-direction: column; gap: 8px; }
+.kind-card h3 { font-size: 16px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.kind-card h3 code { font-size: 12px; }
+.kind-card p { font-size: 13px; color: var(--ink-2); }
+.kind-card .ex { margin-top: auto; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding-top: 8px; border-top: 1px dashed var(--line); }
+.kind-card .ex small { font-size: 11.5px; color: var(--ink-3); font-weight: 600; }
+.src-btn { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink-2); display: inline-flex; gap: 5px; align-items: center; }
+.src-btn:hover { border-color: var(--kc); color: var(--ink); }
+.src-btn i { width: 7px; height: 7px; border-radius: 50%; background: var(--sc); }
+.s-curated { --sc: var(--c4); } .s-pdf2jsonl { --sc: var(--brand); } .s-legacy { --sc: var(--c7); } .s-omics { --sc: var(--c5); } .s-merged { --sc: var(--c2); }
+.prof { padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+.prof h3 { font: 700 14.5px var(--mono); display: flex; justify-content: space-between; gap: 10px; }
+.prof h3 span { font-family: var(--sans); font-size: 22px; font-weight: 760; letter-spacing: -.02em; }
+.prof .t { font-weight: 650; font-size: 13.5px; }
+.prof p { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
+.prof .meter { height: 6px; border-radius: 99px; background: var(--surface-3); overflow: hidden; }
+.prof .meter i { display: block; height: 100%; background: linear-gradient(90deg, var(--brand), var(--gold)); border-radius: 99px; }
+
+/* ---------------------------------------------------------------- 05 evidence chain */
+#trace-box .wf-node { gap: 6px; }
+#trace-box .wf-node .flds { font: 11px var(--mono); color: var(--ink-3); line-height: 1.5; }
+.tr-claim { --st: var(--brand); } .tr-data { --st: var(--c1); } .tr-warrant { --st: var(--c7); } .tr-backing { --st: var(--c3); } .tr-qualifier { --st: var(--c4); } .tr-rebuttal { --st: var(--clay); }
+.tr-monitoring, .tr-evaluation { --st: var(--ink-3); }
+.cards-flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; position: relative; }
+.cards-flow .card { padding: 14px 16px; }
+.cards-flow b { font-size: 14px; display: block; }
+.cards-flow .n { font-size: 26px; font-weight: 760; letter-spacing: -.02em; }
+.cards-flow small { font-size: 12px; color: var(--ink-3); }
+.edge-list { display: flex; flex-direction: column; gap: 8px; }
+.edge-list div { display: grid; grid-template-columns: 22px 110px 1fr; gap: 10px; align-items: baseline; font-size: 13px; }
+.edge-list i { height: 3px; border-radius: 2px; background: var(--ec); align-self: center; }
+.edge-list b { font-weight: 650; }
+@media (max-width: 680px) { .cards-flow { grid-template-columns: 1fr; } .edge-list div { grid-template-columns: 22px 1fr; } .edge-list div span { grid-column: 2; } }
+
+/* ---------------------------------------------------------------- 06 vocabularies */
+.vpane { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 14px; margin-top: 14px; align-items: start; }
+.vlist { max-height: 620px; overflow-y: auto; padding: 6px; }
+.vi { width: 100%; display: grid; grid-template-columns: 10px 1fr auto; gap: 10px; align-items: center; text-align: left; border: 0; background: none; padding: 8px 10px; border-radius: 9px; color: var(--ink); }
+.vi:hover { background: var(--surface-2); }
+.vi.on { background: var(--brand-soft); }
+.vi i { width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); }
+.vi i.e-error { background: var(--clay); } .vi i.e-warning { background: var(--amber); }
+.vi b { font: 650 12.5px var(--mono); display: block; }
+.vi small { font-size: 11.5px; color: var(--ink-3); }
+.vi em { font: 600 11px var(--mono); font-style: normal; color: var(--ink-3); }
+.voc { padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; min-height: 320px; }
+.voc h3 { font: 700 17px var(--mono); display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.voc h3 span { font: 500 13.5px var(--sans); color: var(--ink-3); }
+.voc .used { font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 3px 10px; align-items: baseline; }
+.vt-wrap { max-height: 470px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; }
+.vt { width: 100%; border-collapse: collapse; font-size: 13px; }
+.vt th { position: sticky; top: 0; background: var(--surface-2); text-align: left; font-size: 11.5px; color: var(--ink-3); padding: 7px 12px; }
+.vt td { padding: 7px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+.vt td:first-child { font: 12.5px var(--mono); color: var(--ink); white-space: nowrap; }
+.vt td:nth-child(2) { color: var(--ink-2); }
+.vt .al { color: var(--ink-3); font-size: 11.5px; }
+@media (max-width: 860px) { .vpane { grid-template-columns: 1fr; } .vlist { max-height: 260px; } }
+
+/* ---------------------------------------------------------------- 07 rules, 08 ambiguities */
+.rule-row.hl td { background: var(--gold-soft) !important; }
+.amb-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+details.amb { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-1); }
+details.amb.hl { box-shadow: 0 0 0 2px var(--brand), var(--shadow-2); }
+details.amb summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 82px 96px 1fr auto; gap: 12px; align-items: center; padding: 11px 16px; }
+details.amb summary::-webkit-details-marker { display: none; }
+details.amb summary .mono { font-weight: 650; font-size: 12.5px; }
+details.amb summary .t { font-weight: 600; font-size: 14px; }
+details.amb summary .v { font: 11px var(--mono); color: var(--ink-3); }
+details.amb[open] summary { border-bottom: 1px solid var(--line); }
+details.amb .body { padding: 12px 16px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 13.5px; line-height: 1.7; }
+details.amb .body small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+@media (max-width: 720px) { details.amb summary { grid-template-columns: auto auto 1fr; } details.amb summary .t { grid-column: 1 / -1; } details.amb summary .v { display: none; } details.amb .body { grid-template-columns: 1fr; } }
+
+/* ---------------------------------------------------------------- 09 releases */
+.rel-chart { padding: 18px 20px 12px; }
+.rel-chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.rel-chart .bar { fill: color-mix(in srgb, var(--brand) 26%, var(--surface)); stroke: var(--brand); stroke-width: 1.5; transition: fill .2s; }
+.rel-chart .bar.base { fill: var(--brand); }
+.rel-chart g.r:hover .bar { fill: color-mix(in srgb, var(--brand) 45%, var(--surface)); }
+.rel-chart .gl { stroke: var(--line); stroke-dasharray: 3 4; }
+.rel-chart text { font: 12px var(--sans); fill: var(--ink-3); }
+.rel-chart .v { font: 700 13px var(--sans); fill: var(--ink); text-anchor: middle; }
+.rel-chart .d { font: 700 11.5px var(--mono); fill: var(--gold); text-anchor: middle; }
+.rel-chart .x { font: 600 12px var(--mono); fill: var(--ink-2); text-anchor: middle; }
+.rel-chart .xd { font-size: 11px; text-anchor: middle; }
+.rel-chart.reveal .bar { transform: scaleY(0); transform-box: fill-box; transform-origin: bottom; }
+.rel-chart.reveal.in .bar { transform: none; transition: transform .8s var(--ease); transition-delay: calc(var(--k) * 80ms); }
+.timeline { position: relative; margin-top: 18px; padding-left: 26px; }
+.timeline::before { content: ""; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: linear-gradient(var(--brand), var(--gold)); border-radius: 2px; }
+.tl { position: relative; padding: 0 0 18px; }
+.tl::before { content: ""; position: absolute; left: -24px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 3px solid var(--brand); }
+.tl.latest::before { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 0 4px var(--gold-soft); }
+.tl h3 { font-size: 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.tl h3 .mono { font-size: 15px; font-weight: 750; }
+.tl h3 small { font-size: 12.5px; color: var(--ink-3); font-weight: 500; }
+.tl p { font-size: 13.5px; color: var(--ink-2); margin-top: 6px; max-width: 900px; line-height: 1.7; }
+.tl .row { margin-top: 8px; }
+</style>
+</head>
+<body data-page="contract">
+<header id="top"></header>
+<main id="main"></main>
+<footer id="foot"></footer>
+<!--__DATA__-->
+<!--__KIT__-->
+<script>
+"use strict";
+const { T, esc, icon, fmt, DATA, $, $$, av, count, short, clip, kindLabel, kindColor, summary, fieldLink } = K;
+const C = DATA.contract, CODES = C.codes, FL = C.fields, ST = DATA.stats;
+const GROUPS = Object.keys(C.groups);
+const AV = ["D", "N", "I", "G", "F"], AVC = CODES.availability || {};
+const FN = CODES.function || {}, FNS = Object.keys(FN);
+const ROLE = CODES.key_role || {}, FAM = CODES.key_role_family || {};
+const ARG = CODES.argument_role || {}, CARD = CODES.card || {}, WE = CODES.workflow_edge || {}, REQ = CODES.requirement || {};
+const GROUP_EN = { common: "Common", agent: "Scientific agent", skills: "Tool skills", transform: "AI derivation", omics: "Multi-omics" };
+const human = k => String(k).replace(/_/g, " ").replace(/^\w/, c => c.toUpperCase());
+const groupName = g => T((C.groups[g] || {}).title_zh || g, GROUP_EN[g] || human(g));
+const roleName = k => T((ROLE[k] || {}).label_zh || k, human(k));
+const famName = k => T((FAM[k] || {}).label_zh || k, human(k));
+const fnName = k => T((FN[k] || {}).label_zh || k, (FN[k] || {}).label_en || k);
+const fnShort = k => T((FN[k] || {}).short_zh || k, ((FN[k] || {}).label_en || k).split(" — ")[0].replace("Our own iteration", "Iteration"));
+const facetName = (fn, k) => T((((FN[fn] || {}).facets || {})[k] || {}).label_zh || k, k);
+const avName = a => T((AVC[a] || {}).label_zh || a, (AVC[a] || {}).label_en || a);
+const fieldsOf = pred => FL.filter(pred);
+const isSrc = (f, fn) => (f.serves_src || []).includes(fn);
+const href = params => "fields.html#" + new URLSearchParams(params).toString();
+
+const SECTIONS = [["functions", "功能", "Functions"], ["roles", "键角色", "Key roles"], ["availability", "可获得性", "Availability"], ["kinds", "记录类型", "Record kinds"],
+  ["profiles", "画像", "Profiles"], ["trace", "证据链", "Evidence chain"], ["vocab", "词表", "Vocabularies"], ["rules", "规则", "Rules"], ["ambiguities", "歧义", "Ambiguities"], ["releases", "版本", "Releases"]];
+const head = (id, zh, en, pzh, pen) => { const i = SECTIONS.findIndex(s => s[0] === id) + 1; return `<div class="section-head"><span class="no">${String(i).padStart(2, "0")}</span><h2>${T(zh, en)}</h2><p>${T(pzh, pen)}</p></div>`; };
+
+// ---------------------------------------------------------------- 01 functions
+function functionsHTML() {
+  return `<div class="grid g4">${FNS.map(k => {
+    const fs = fieldsOf(f => (f.serves || []).includes(k)), src = count(fs, f => isSrc(f, k));
+    return `<div class="card fn-card lift reveal"><h3>${esc(fnName(k))}</h3>
+      <div class="big"><b data-count="${fs.length}">0</b><span>${T("个字段服务于它", "fields serve it")}</span></div>
+      <div class="split" title="${src} / ${fs.length}"><i class="a" style="width:${(100 * src / Math.max(1, fs.length)).toFixed(1)}%"></i><i class="b" style="flex:1"></i></div>
+      <div class="split-legend"><span><i style="background:var(--brand)"></i>${T(`来源规定 ${src}`, `stated by the source ${src}`)}</span><span><i style="background:color-mix(in srgb, var(--brand) 32%, var(--surface))"></i>${T(`仓库补充 ${fs.length - src}`, `added ${fs.length - src}`)}</span></div>
+      ${K.lang === "zh" && FN[k].description_zh ? `<p class="desc">${esc(clip(FN[k].description_zh, 110))}</p>` : ""}
+      <div class="facets">${Object.keys(FN[k].facets || {}).map(f => `<span class="tag">${esc(facetName(k, f))}</span>`).join("")}</div>
+      <a class="go" href="${href({ fn: k })}">${T("列出这些字段 →", "List these fields →")}</a></div>`;
+  }).join("")}</div>
+  <p class="small muted" style="margin-top:12px">${T("来源规定的功能由分组与 v3 下游用途推出，bdc check 保证不被删除；其余由仓库按键角色补充（AMB-032）。", "Functions stated by the source follow from the group and the v3 downstream column, and bdc check keeps them; the rest were added by the repository from the key role (AMB-032).")}</p>`;
+}
+
+// ---------------------------------------------------------------- 02 key roles × functions
+let roleSel = "relation";
+function rolesHTML() {
+  const cell = {}; let max = 1;
+  for (const f of FL) for (const fn of f.serves || []) { const k = f.key_role + "|" + fn; cell[k] = (cell[k] || 0) + 1; max = Math.max(max, cell[k]); }
+  const rows = Object.keys(FAM).map(fam => Object.keys(ROLE).filter(k => ROLE[k].family === fam).map((k, i, arr) => `<tr class="${i === 0 ? "fam-start" : ""}${k === roleSel ? " sel" : ""}" data-role-row="${esc(k)}">
+      ${i === 0 ? `<td class="fam" rowspan="${arr.length}">${esc(famName(fam))}</td>` : ""}
+      <td class="rn"><button type="button" data-role="${esc(k)}">${esc(roleName(k))}${K.lang === "zh" ? ` <small>${esc(k)}</small>` : ""}</button></td>
+      <td class="tot">${count(FL, f => f.key_role === k)}</td>
+      ${FNS.map(fn => { const n = cell[k + "|" + fn] || 0, x = Math.round(10 + 70 * n / max);
+        return `<td>${n ? `<a class="hc${x > 46 ? " dark" : ""}" style="--x:${x}%" href="${href({ role: k, fn })}" title="${esc(roleName(k))} × ${esc(fnShort(fn))}: ${n}">${n}</a>` : `<span class="hc0">·</span>`}</td>`; }).join("")}</tr>`).join("")).join("");
+  return `<div class="roles"><div class="card" style="padding:12px 14px;overflow-x:auto">
+      <table class="heat"><thead><tr><th>${T("家族", "Family")}</th><th>${T("键角色", "Key role")}</th><th style="text-align:right">${T("字段", "Fields")}</th>${FNS.map(fn => `<th title="${esc(fnName(fn))}">${esc(fnShort(fn))}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>
+      <p class="xs muted" style="padding:8px 6px 2px">${T("格子里是同时具有该角色、服务该功能的字段数，颜色越深越多；点格子列出字段，点角色名查看它如何落到派生结果里。", "Each cell counts the fields with that role that serve that function; darker holds more. Click a cell to list them, click a role to see how it lands in derived outputs.")}</p></div>
+    <div class="card role-card" id="role-card">${roleCardHTML()}</div></div>`;
+}
+const PROJ = [["kg", "graph", "知识图谱", "Knowledge graph"], ["rdb", "table", "关系库", "Relational tables"], ["triple", "link", "三元组", "Triples"], ["qa_corpus", "quote", "问答 / 语料", "QA / corpus"]];
+function roleCardHTML() {
+  const r = ROLE[roleSel] || {}, fs = fieldsOf(f => f.key_role === roleSel);
+  return `<div class="fam">${esc(famName(r.family))}</div><h3>${esc(roleName(roleSel))}<small>${esc(roleSel)}</small></h3>
+    <p class="desc">${esc(r.description_zh || "")}</p>
+    <div class="mini-h">${T("在派生结果中", "In the derived outputs")}</div>
+    <div class="proj">${PROJ.map(([k, ic, zh, en]) => `<div><small>${icon(ic)}${T(zh, en)}</small>${esc((r.projection || {})[k] || "—")}</div>`).join("")}</div>
+    <div class="mini-h">${T("服务的分面", "Facets it serves")}</div>
+    <div class="facets">${Object.entries(r.facets || {}).flatMap(([fn, ks]) => ks.map(k => `<span class="tag" title="${esc(fnName(fn))}">${esc(fnShort(fn))} · ${esc(facetName(fn, k))}</span>`)).join("")}</div>
+    <div class="mini-h">${T(`${fs.length} 个字段`, `${fs.length} fields`)}</div>
+    <div class="role-fields">${fs.slice(0, 14).map(f => fieldLink(f.path)).join("")}${fs.length > 14 ? `<a href="${href({ role: roleSel })}">+${fs.length - 14} →</a>` : ""}</div>
+    <p class="xs muted" style="margin-top:12px">${T("bdc derive 照这张表放置字段，代码里不列字段名。", "bdc derive follows this table; no field list is hard-coded.")} <a href="outputs.html#hooks">${T("看它在示例上的结果 →", "See it on the example →")}</a></p>`;
+}
+
+// ---------------------------------------------------------------- 03 availability
+const WHO = { D: ["抽取模型填写，并附逐字引文", "the extraction model fills it, with a verbatim quote"], N: ["管线按命名的确定性规则生成", "the pipeline computes it by named deterministic rules"],
+  I: ["人工复核者填写；从不暴露给模型", "a human reviewer fills it; never shown to the model"], G: ["后续处理生成（只有后端报告的置信度）", "later processing (only a confidence the backend reports)"], F: ["留给未来的外部来源；从不编造", "left to future external sources; never invented"] };
+function availabilityHTML() {
+  const max = Math.max(...GROUPS.map(g => count(FL, f => f.group === g)));
+  return `<div class="av-cards">${AV.map(a => `<div class="card av-card a-${a} reveal"><span class="letter">${a}</span><b>${esc(avName(a))}</b>
+      <p>${T("PDF 管线中：", "In the PDF pipeline: ")}${esc(T(...WHO[a]))}</p>
+      <span class="n"><a href="${href({ av: a })}">${count(FL, f => f.availability === a)}</a> ${T("个字段", "fields")}</span></div>`).join("")}</div>
+    <div class="card bars reveal" style="margin-top:14px">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px"><b style="font-size:14px">${T("各分组的字段，按可获得性", "Fields per group, by availability")}</b>
+        <div class="legend">${AV.map(a => `<span><i class="swatch" style="background:var(--av-${a})"></i>${a}</span>`).join("")}</div></div>
+      ${GROUPS.map(g => { const fs = fieldsOf(f => f.group === g);
+        return `<div class="bar-row"><div class="lbl"><b>${esc(g)}</b><span>${esc(groupName(g))}</span></div>
+          <div><div class="stack-bar" style="width:${(100 * fs.length / max).toFixed(1)}%">${AV.map((a, k) => { const n = count(fs, f => f.availability === a);
+            return n ? `<a class="a-${a}" style="flex:${n};--k:${k}" href="${href({ group: g, av: a })}" title="${esc(g)} · ${a} ${esc(avName(a))}: ${n}">${n / fs.length > .07 ? n : ""}</a>` : ""; }).join("")}</div></div>
+          <span class="tot">${fs.length}</span></div>`; }).join("")}
+    </div>
+    <div class="row" style="margin-top:14px;font-size:13px">${Object.entries(REQ).map(([k, r]) => `<span class="tag"><b class="mono">${esc(k)}</b>&nbsp;${esc(T(r.label_zh, r.label_en))} · ${count(FL, f => f.required === k)}</span>`).join("")}
+      <span class="muted">${T("缺失的信息直接省略，从不写 null 或空值。", "Missing information is omitted, never written as null or an empty value.")}</span></div>
+    ${K.lang === "zh" && CODES.availability_note_zh ? `<p class="small muted" style="margin-top:8px">${esc(CODES.availability_note_zh)}</p>` : ""}`;
+}
+
+// ---------------------------------------------------------------- 04 record kinds, profiles
+const SRC_LABEL = { curated: ["人工示例", "curated"], pdf2jsonl: ["pdf2jsonl 输出", "pdf2jsonl output"], legacy: ["legacy 导入", "legacy import"], omics: ["omics 导入", "omics import"], merged: ["merged 导入", "merged import"] };
+function kindsHTML() {
+  return `<div class="grid g3">${Object.entries(C.record_kinds).map(([k, v]) => {
+    const ex = DATA.gallery.map((g, i) => [g, i]).filter(([g]) => g.record.common.record_kind === k);
+    return `<div class="card kind-card reveal" style="--kc:${kindColor(k)}"><h3>${esc(T(v.label_zh || kindLabel(k), kindLabel(k)))} <code>${esc(k)}</code></h3>
+      <div class="row">${v.grain ? `<span class="tag mono">${esc(v.grain)}</span>` : `<span class="tag">${T("粒度随内容", "grain varies")}</span>`}</div>
+      <p>${esc(v.description_zh || "")}</p>
+      <div class="ex"><small>${T("示例", "Examples")}</small>${ex.map(([g, i]) => `<button type="button" class="src-btn s-${esc(g.source)}" data-ex="${i}"><i></i>${esc(T(...(SRC_LABEL[g.source] || [g.source, g.source])))}</button>`).join("") || `<span class="xs muted">—</span>`}</div></div>`;
+  }).join("")}</div>
+  <p class="small muted" style="margin-top:12px">${T("每种记录类型、每种来路各一条有效记录：人工示例、pdf2jsonl 输出和三种导入。每条都带 schema_name 与 schema_version、稳定的 record_id 和出处，缺失的值直接省略。", "One valid record per kind and way in: curated examples, pdf2jsonl output and each importer. Every record carries schema_name and schema_version, a stable record_id and provenance, and omits missing values.")}</p>`;
+}
+function profilesHTML() {
+  return `<div class="grid g4">${Object.entries(C.profiles).map(([k, p]) => `<div class="card prof reveal"><h3>${esc(k)}<span>${p.fields}</span></h3>
+    <div class="meter"><i style="width:${(100 * p.fields / FL.length).toFixed(1)}%"></i></div>
+    <div class="t">${esc(p.title_zh || "")}</div><p>${esc(p.description_zh || "")}</p><a class="small" href="${href({ profile: k })}" style="margin-top:auto">${T("这个画像的字段 →", "Its fields →")}</a></div>`).join("")}</div>`;
+}
+
+// ---------------------------------------------------------------- 05 evidence chain (TRACE), cards, workflow edges
+function traceHTML() {
+  const cards = Object.entries(CARD);
+  const wcolor = { addresses: "var(--c7)", tests: "var(--c2)", method: "var(--c1)", evidence: "var(--c3)", prerequisite: "var(--c4)" };
+  return `<div class="card" style="padding:18px 20px"><div id="trace-box"></div></div>
+    <div class="grid g2" style="margin-top:14px;align-items:start">
+      <div><h3 class="sub" style="margin-top:6px">${icon("layers")}${T("卡片：课题二 → 课题三的流转", "Cards: the Topic 2 → Topic 3 flow")}</h3>
+        <div class="cards-flow">${cards.map(([k, c]) => { const n = count(FL, f => f.card === k); return `<a class="card lift" href="${href({ q: "" })}" data-card="${esc(k)}"><b>${esc(T(c.label_zh || k, human(k) + " card"))}</b><span class="n">${n}</span> <small>${T("个字段", "fields")}</small></a>`; }).join("")}</div>
+        ${K.lang === "zh" && CODES.card_note_zh ? `<p class="xs muted" style="margin-top:8px">${esc(CODES.card_note_zh)}</p>` : ""}</div>
+      <div><h3 class="sub" style="margin-top:6px">${icon("flow")}${T("研究流程的边", "Research-workflow edges")}</h3>
+        <div class="card pad edge-list">${Object.entries(WE).map(([k, e]) => `<div style="--ec:${wcolor[k] || "var(--ink-3)"}"><i></i><b>${esc(T(e.label_zh, e.label_en))}</b><span class="small dim">${esc(e.description_zh || "")}</span></div>`).join("")}</div>
+        <p class="xs muted" style="margin-top:8px">${T("链接字段标注它在研究流程中的边类型（AMB-039）；", "Link fields name their edge type in the workflow view (AMB-039); ")}<a href="outputs.html#workflow">${T("看示例的研究流程 →", "see the example workflow →")}</a></p></div>
+    </div>`;
+}
+function drawTrace() {
+  const host = $("#trace-box"); if (!host) return;
+  const node = k => { const a = ARG[k] || {}, fs = fieldsOf(f => f.argument_role === k);
+    return { id: k, cls: "tr-" + k, html: `<span class="wf-stage">${esc(T(a.label_zh || k, a.label_en || k))} · ${fs.length}</span><span class="wf-label">${esc(T(a.description_zh || "", a.label_en || ""))}</span><span class="flds">${fs.slice(0, 3).map(f => esc(f.path.split(".").pop())).join(" · ")}${fs.length > 3 ? " …" : ""}</span>` }; };
+  const cols = [
+    { title: T("依据与支撑", "Grounds"), nodes: ["data", "backing"].map(node) },
+    { title: T("推理", "Reasoning"), nodes: ["warrant", "qualifier", "rebuttal"].map(node) },
+    { title: T("结论", "Claim"), nodes: ["claim"].map(node) },
+    { title: T("元认知（Flavell）", "Metacognition (Flavell)"), nodes: ["monitoring", "evaluation"].map(node) },
+  ];
+  const edges = [["data", "warrant", "--c1"], ["backing", "warrant", "--c3"], ["warrant", "claim", "--c7"], ["qualifier", "claim", "--c4"], ["rebuttal", "claim", "--clay"], ["monitoring", "evaluation", "--ink-3"]]
+    .map(([s, o, v]) => ({ s, o, color: `var(${v})`, key: `${s} → ${o}` }));
+  K.linkedColumns(host, cols, edges, { minWidth: 860, onNode: openElement,
+    legend: `<p class="xs muted" style="margin-top:12px">${esc(CODES.argument_role_source || "")}. ${T("管线的审计报告每条陈述具备哪些要素、通过链接又能到达哪些，不打分。", "The pipeline's audit reports which elements each statement has and which it reaches through its links; it gives no score.")}</p>` });
+}
+function openElement(k) {
+  const a = ARG[k] || {}, fs = fieldsOf(f => f.argument_role === k);
+  K.openDialog("el-dlg", { title: esc(T(a.label_zh || k, a.label_en || k)), sub: `${esc(a.framework || "")} · ${fs.length} ${T("个字段", "fields")}`,
+    body: `<blockquote class="quote">${esc(a.description_zh || "")}</blockquote><div class="table-wrap"><table class="tbl compact"><tbody>${fs.map(f => `<tr><td>${fieldLink(f.path)}</td><td>${av(f.availability)}</td><td class="small dim">${esc(K.fieldDef(f.path))}</td></tr>`).join("")}</tbody></table></div>` });
+}
+
+// ---------------------------------------------------------------- 06 vocabularies: a list and the selected one
+const VS = { q: "", enf: "", sel: (C.vocabularies.find(v => v.name === "predicate_label") || C.vocabularies[0] || {}).name };
+const ENF_TONE = { error: "clay", warning: "amber", open: "" };
+function vocabHTML() {
+  return `<div class="controls"><label class="search">${icon("search")}<input class="input" id="v-q" type="search" value="${esc(VS.q)}" placeholder="${T("搜索词表、代码或标签……", "Search vocabulary, code or label…")}" aria-label="${T("搜索词表", "Search vocabularies")}"></label>
+      ${["", "error", "warning", "open"].map(e => `<button type="button" class="chip" data-enf="${e}" aria-pressed="${VS.enf === e}">${e ? esc(e) : T("全部", "all")} <span class="n">${e ? count(C.vocabularies, v => v.enforcement === e) : C.vocabularies.length}</span></button>`).join("")}</div>
+    <p class="small muted" style="margin-top:10px">${T("error 词表由模式强制；warning 词表对未知代码给提示；open 词表只给建议。仓库为纯中文来源列表提出的代码在确认前都是 warning 级。", "error vocabularies are enforced by the schema; warning vocabularies report unknown codes; open vocabularies only suggest. Codes the repository proposed for Chinese-only source lists stay at warning level until confirmed.")}</p>
+    <div class="vpane"><div class="card vlist" id="v-list"></div><div class="card voc" id="v-detail"></div></div>`;
+}
+function renderVocab() {
+  const s = VS.q.trim().toLowerCase();
+  const list = C.vocabularies.filter(v => (!VS.enf || v.enforcement === VS.enf) && (!s || JSON.stringify(v).toLowerCase().includes(s)));
+  if (list.length && !list.some(v => v.name === VS.sel)) VS.sel = list[0].name;
+  $("#v-list").innerHTML = list.map(v => `<button type="button" class="vi${v.name === VS.sel ? " on" : ""}" data-voc="${esc(v.name)}" id="voc-${esc(v.name)}"><i class="e-${esc(v.enforcement)}"></i><span><b>${esc(v.name)}</b><small>${esc(v.title_zh || "")}</small></span><em>${v.values.length}</em></button>`).join("")
+    || `<div class="empty">${icon("search")}<h3>${T("没有匹配的词表", "No vocabulary matches")}</h3></div>`;
+  const v = list.find(x => x.name === VS.sel);
+  $("#v-detail").innerHTML = !v ? "" : (() => {
+    const used = FL.filter(f => f.vocabulary === v.name);
+    const types = v.values.some(x => x.subject_types || x.object_types);
+    return `<h3>${esc(v.name)}<span>${esc(v.title_zh || "")}</span></h3>
+      <div class="row"><span class="tag ${ENF_TONE[v.enforcement] || ""}" title="enforcement">${esc(v.enforcement)}</span><span class="tag">${T("封闭性", "closure")} · ${esc(v.closure)}</span><span class="tag">${T("代码来源", "codes from")} · ${esc(v.code_status)}</span><span class="xs muted">${v.values.length} ${T("个代码", "codes")}</span></div>
+      <div class="used"><span class="xs muted">${T("绑定字段", "Bound to")}</span>${used.map(f => fieldLink(f.path)).join("") || `<span class="muted">${T("未绑定字段（供规则或派生使用）", "no field (used by rules or derivation)")}</span>`}</div>
+      <div class="vt-wrap"><table class="vt"><thead><tr><th>${T("代码", "Code")}</th><th>${T("标签", "Label")}</th>${types ? `<th>${T("主语 → 宾语类型", "Subject → object types")}</th>` : ""}</tr></thead><tbody>${v.values.map(x => `<tr><td>${esc(x.code)}</td><td>${esc(x.label_zh || "")}${x.aliases ? ` <span class="al">(${esc(x.aliases.join(", "))})</span>` : ""}${x.cues ? `<div class="al">${T("提示词", "cues")}: ${esc(x.cues.join(" · "))}</div>` : ""}</td>${types ? `<td class="al mono">${esc((x.subject_types || []).join("/"))} → ${esc((x.object_types || []).join("/"))}</td>` : ""}</tr>`).join("")}</tbody></table></div>`;
+  })();
+}
+
+// ---------------------------------------------------------------- 07 rules
+const RS = { sev: "", q: "", hl: "" };
+const BASIS = { explicit: ["来源明文", "stated by the source"], definitional: ["定义推出", "follows from a definition"], inferred: ["推断", "inferred"] };
+function rulesHTML() {
+  return `<div class="controls"><label class="search">${icon("search")}<input class="input" id="r-q" type="search" value="${esc(RS.q)}" placeholder="${T("搜索规则编号、内容或字段……", "Search rule ID, text or field…")}" aria-label="${T("搜索规则", "Search rules")}"></label>
+      ${["", "error", "warning"].map(s => `<button type="button" class="chip" data-sev="${s}" aria-pressed="${RS.sev === s}">${s ? esc(s) : T("全部", "all")} <span class="n">${s ? count(C.rules, r => r.severity === s) : C.rules.length}</span></button>`).join("")}</div>
+    <p class="small muted" style="margin:10px 0 12px">${T("来源明文写出的规则是 error；只是由来源暗示的规则是 warning：契约从不强制推断出来的语义。", "Rules taken from explicit source statements are errors; anything only implied by the sources is a warning: the contract never enforces inferred semantics.")}</p>
+    <div class="table-wrap"><table class="tbl cards"><thead><tr><th>ID</th><th>${T("级别", "Severity")}</th><th>${T("依据", "Basis")}</th><th>${T("类型", "Kind")}</th><th>${T("规则", "Rule")}</th><th>${T("字段", "Fields")}</th></tr></thead><tbody id="r-body"></tbody></table></div>`;
+}
+function renderRules() {
+  const s = RS.q.trim().toLowerCase();
+  const list = C.rules.filter(r => (!RS.sev || r.severity === RS.sev) && (!s || JSON.stringify(r).toLowerCase().includes(s)));
+  $("#r-body").innerHTML = list.map(r => `<tr class="rule-row${RS.hl === r.id ? " hl" : ""}" id="rule-${esc(r.id)}"><td class="mono"><b>${esc(r.id)}</b></td>
+    <td data-l="${T("级别", "Severity")}"><span class="tag ${r.severity === "error" ? "clay" : "amber"}">${esc(r.severity)}</span></td>
+    <td class="small" data-l="${T("依据", "Basis")}">${esc(T(...(BASIS[r.basis] || [r.basis, r.basis])))}</td>
+    <td class="mono small" data-l="${T("类型", "Kind")}">${esc(r.kind)}</td>
+    <td data-l="${T("规则", "Rule")}">${esc(r.title_zh)}</td>
+    <td class="small" data-l="${T("字段", "Fields")}"><div class="row" style="gap:2px 8px">${r.fields.map(p => p === "*" ? `<i>${T("全部字段", "all fields")}</i>` : fieldLink(p)).join("")}</div></td></tr>`).join("") ||
+    `<tr><td colspan="6" class="muted">${T("没有匹配的规则", "No rule matches")}</td></tr>`;
+}
+
+// ---------------------------------------------------------------- 08 ambiguities
+const AS = { status: "", hl: "" };
+const AMB_STATUS = { decided: ["已决定", "decided", "ok"], provisional: ["暂定", "provisional", "gold"], open: ["待定", "open", "amber"] };
+function ambHTML() {
+  return `<div class="controls">${["", "decided", "provisional", "open"].map(s => `<button type="button" class="chip" data-ast="${s}" aria-pressed="${AS.status === s}">${s ? esc(T(AMB_STATUS[s][0], AMB_STATUS[s][1])) : T("全部", "all")} <span class="n">${s ? count(C.ambiguities, a => a.status === s) : C.ambiguities.length}</span></button>`).join("")}
+    <span class="small muted">${T("来源沉默或互相矛盾的地方，决定记在这里，而不是悄悄做掉。open 与 provisional 等待数据负责人。", "Where the sources are silent or disagree, the decision is recorded here instead of being made silently. open and provisional items await the data owners.")}</span></div>
+    <div class="amb-list" id="amb-list"></div>`;
+}
+function renderAmb() {
+  $("#amb-list").innerHTML = C.ambiguities.filter(a => !AS.status || a.status === AS.status).map(a => { const s = AMB_STATUS[a.status] || [a.status, a.status, ""];
+    return `<details class="amb${AS.hl === a.id ? " hl" : ""}" id="amb-${esc(a.id)}"${AS.hl === a.id ? " open" : ""}><summary><span class="mono">${esc(a.id)}</span><span class="tag ${s[2]}">${esc(T(s[0], s[1]))}</span><span class="t">${esc(a.title_zh)}</span><span class="v">${a.since ? esc(a.since) : ""}</span></summary>
+      <div class="body"><div><small>${T("发现", "Finding")}</small>${esc(a.finding_zh || "—")}</div><div><small>${T("处理", "Resolution")}</small>${esc(a.resolution_zh || "—")}</div></div></details>`; }).join("");
+}
+
+// ---------------------------------------------------------------- 09 releases
+const V0 = () => DATA.versions[0].fields;
+function releasesHTML() {
+  const V = DATA.versions, W = 1100, H = 250, pad = { l: 40, r: 10, t: 30, b: 46 };
+  const max = Math.ceil(Math.max(...V.map(v => v.fields)) / 100) * 100, step = (W - pad.l - pad.r) / V.length, bw = Math.min(70, step * .52);
+  const y = n => pad.t + (H - pad.t - pad.b) * (1 - n / max);
+  const grid = [0, max / 4, max / 2, 3 * max / 4, max].map(n => `<line class="gl" x1="${pad.l}" x2="${W - pad.r}" y1="${y(n)}" y2="${y(n)}"/><text x="${pad.l - 8}" y="${y(n) + 4}" text-anchor="end">${n}</text>`).join("");
+  const base = V[0].fields;
+  const bars = V.map((v, i) => { const x = pad.l + step * i + step / 2, d = i ? v.fields - V[i - 1].fields : 0, b = Math.min(base, v.fields);
+    return `<g class="r"><title>${esc(v.version)} · ${v.released_on} · ${v.fields} ${T("个字段", "fields")} · ${v.rules} ${T("条规则", "rules")} · ${v.vocabularies} ${T("个词表", "vocabularies")}</title>
+      <rect class="bar base" style="--k:${i}" x="${x - bw / 2}" y="${y(b)}" width="${bw}" height="${y(0) - y(b)}" rx="4"/>
+      ${v.fields > b ? `<rect class="bar" style="--k:${i}" x="${x - bw / 2}" y="${y(v.fields)}" width="${bw}" height="${y(b) - y(v.fields)}" rx="4"/>` : ""}
+      <text class="v" x="${x}" y="${y(v.fields) - 8}">${v.fields}</text>${d ? `<text class="d" x="${x}" y="${y(v.fields) - 24}">+${d}</text>` : ""}
+      <text class="x" x="${x}" y="${H - pad.b + 20}">${esc(v.version)}</text><text class="xd" x="${x}" y="${H - pad.b + 36}">${esc(v.released_on.slice(5))}</text></g>`; }).join("");
+  return `<div class="card rel-chart reveal"><div class="row" style="justify-content:space-between"><b style="font-size:14px">${T("每个版本的字段数", "Fields per release")}</b><span class="xs muted"><span class="legend"><span><i class="swatch" style="background:var(--brand)"></i>${T(`v3 基线 ${V0()}`, `v3 baseline ${V0()}`)}</span><span><i class="swatch" style="background:color-mix(in srgb, var(--brand) 26%, var(--surface));box-shadow:inset 0 0 0 1.5px var(--brand)"></i>${T("此后新增（provisional）", "added since (provisional)")}</span><span style="color:var(--gold);font-weight:700">+n</span>${T("相对上一版", "since the previous release")}</span></span></div>
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${T("各版本字段数柱状图", "Bar chart of fields per release")}">${grid}${bars}</svg></div>
+    <div class="timeline">${[...V].reverse().map((v, i, arr) => { const prev = arr[i + 1];
+      return `<div class="tl reveal${v.latest ? " latest" : ""}"><h3><span class="mono">${esc(v.version)}</span>${v.latest ? `<span class="tag gold">${T("最新", "latest")}</span>` : ""}<small>${esc(v.released_on)}</small></h3>
+        ${v.note ? `<p>${esc(v.note)}</p>` : ""}
+        <div class="row"><span class="tag">${v.fields} ${T("个字段", "fields")}${prev && v.fields !== prev.fields ? ` · +${v.fields - prev.fields}` : ""}</span><span class="tag">${v.rules} ${T("条规则", "rules")}${prev && v.rules !== prev.rules ? ` · +${v.rules - prev.rules}` : ""}</span>
+          <span class="tag">${v.vocabularies} ${T("个词表", "vocabularies")}</span><span class="tag mono">${esc(v.profiles.join(" · "))}</span></div></div>`; }).join("")}</div>
+    <p class="small muted">${T("每个版本冻结在 releases/&lt;version&gt;/ 下，带哈希；记录写明自己的 schema_version，旧版本的记录始终有效。", "Every release is frozen under releases/&lt;version&gt;/ with its hash; a record names its schema_version, and records of earlier releases stay valid.")} <a href="${esc(DATA.site.repo || "#")}/blob/main/CHANGELOG.md">CHANGELOG ↗</a></p>`;
+}
+
+// ---------------------------------------------------------------- page
+function render() {
+  $("#main").innerHTML = `
+  <section class="page-hero wrap">
+    <span class="eyebrow">${T("规范", "Contract")} · ${esc(C.name)}</span>
+    <h1>${T("一份带版本的契约，<em>约束每一条记录</em>", "One versioned contract <em>governs every record</em>")}</h1>
+    <p class="lead">${T(`${esc(C.title_zh)}：契约写明每个字段是什么、为谁服务、由谁填写，以及记录类型、词表、跨字段规则和每个未决问题。抽取和三种导入都按同一份契约校验。${esc(C.baseline_zh || "")}。`,
+      `${esc(C.title_zh)} (${esc(C.name)}): the contract states what every field is, whom it serves and who fills it in, plus the record kinds, vocabularies, cross-field rules and every open question. Extraction and the three importers are validated against the same contract. ${ST.verified} fields form the verified v3 baseline; every field added since is provisional until the data owners confirm it.`)}</p>
+    <div class="stats" style="margin-top:26px">
+      <a class="stat reveal" href="fields.html"><span class="bar-accent"></span><div class="k">${T("字段", "Fields")}</div><div class="v" data-count="${ST.fields}">0</div><div class="s">${T(`${ST.verified} 个已验证`, `${ST.verified} verified`)}</div></a>
+      <a class="stat reveal" href="#kinds"><span class="bar-accent"></span><div class="k">${T("记录类型", "Record kinds")}</div><div class="v" data-count="${ST.record_kinds}">0</div><div class="s">${T("一行 JSONL 一个事实", "one fact per JSONL line")}</div></a>
+      <a class="stat reveal" href="#vocab"><span class="bar-accent"></span><div class="k">${T("词表", "Vocabularies")}</div><div class="v" data-count="${ST.vocabularies}">0</div><div class="s">${T("另有单位换算表", "plus a unit-conversion table")}</div></a>
+      <a class="stat clay reveal" href="#rules"><span class="bar-accent"></span><div class="k">${T("跨字段规则", "Cross-field rules")}</div><div class="v" data-count="${ST.rules}">0</div><div class="s">${ST.rules_error} error · ${ST.rules - ST.rules_error} warning</div></a>
+      <a class="stat amber reveal" href="#ambiguities"><span class="bar-accent"></span><div class="k">${T("歧义登记", "Ambiguities")}</div><div class="v" data-count="${ST.ambiguities}">0</div><div class="s">${count(C.ambiguities, a => a.status === "open")} open</div></a>
+      <a class="stat gold reveal" href="#releases"><span class="bar-accent"></span><div class="k">${T("版本", "Releases")}</div><div class="v" data-count="${ST.releases}">0</div><div class="s">${T("最新", "latest")} ${esc(C.version)}</div></a>
+    </div>
+  </section>
+  <nav class="toc" aria-label="${T("本页目录", "On this page")}"><div class="wrap">${SECTIONS.map(([id, zh, en], i) => `<a href="#${id}" data-toc="${id}"><span>${String(i + 1).padStart(2, "0")}</span>${T(zh, en)}</a>`).join("")}</div></nav>
+  <section class="section wrap" id="functions">${head("functions", "记录为谁服务", "What the records are for",
+    "一条记录服务四种功能：课题二的科学智能体、课题三的工具技能化、派生为知识图谱/关系表/问答/语料/三元组，以及我们自身的迭代（课题一：数据标准、质量、本体与知识融合）。",
+    "A record serves four functions: the Topic 2 scientific agent, the Topic 3 skills, derivation into knowledge graphs, tables, QA, corpora and triples, and our own iteration (Topic 1: standards, quality, ontology, knowledge fusion).")}${functionsHTML()}</section>
+  <section class="section wrap" id="roles">${head("roles", "键角色：每个键在做什么", "Key roles: what every key does",
+    "每个字段写明它的键角色：它做什么，以及它如何投影到每一种派生形式。键角色决定字段服务哪些功能，也决定 bdc derive 把它放在哪里。",
+    "Every field states its key role: what it does, and how it projects into each derived form. The role decides which functions a field serves and where bdc derive puts it.")}${rolesHTML()}</section>
+  <section class="section wrap" id="availability">${head("availability", "可获得性：值是什么，由谁填写", "Availability: what a value is, and who fills it in",
+    "D/N/I/G/F 说明一个值从哪里来，不是质量分数。抽取模型只填 D 字段，并附逐字引文；N 由管线按规则生成；I/G/F 不暴露给模型，也从不补造。",
+    "D/N/I/G/F says where a value comes from; it is not a quality score. The extraction model fills only D fields, each with a verbatim quote; N is computed by the pipeline; I, G and F are never shown to the model and never invented.")}${availabilityHTML()}</section>
+  <section class="section wrap" id="kinds">${head("kinds", "记录类型", "Record kinds",
+    "一条记录就是一个原子事实：一个结论、一次观测、一个方法、一个单值测量、一项资产。点击示例查看完整记录。",
+    "A record is one atomic fact: a claim, an observation, a method, a single measured value, an asset. Click an example to read the whole record.")}${kindsHTML()}</section>
+  <section class="section wrap" id="profiles">${head("profiles", "画像：一次运行暴露哪些字段", "Profiles: which fields a run exposes",
+    "画像是契约的子集。PDF 抽取画像只把 D 字段交给模型，其余由管线生成或留空。",
+    "A profile is a subset of the contract. The PDF extraction profiles hand only D fields to the model; the rest is computed by the pipeline or left out.")}${profilesHTML()}</section>
+  <section class="section wrap" id="trace">${head("trace", "证据链：TRACE 的八个要素", "The evidence chain: eight TRACE elements",
+    "Toulmin 的六个论证要素加上 Flavell 的两个元认知要素。每个要素由哪些字段承载，点开即可查看。",
+    "Toulmin's six argument elements plus Flavell's two metacognitive ones. Open an element to see the fields that carry it.")}${traceHTML()}</section>
+  <section class="section wrap" id="vocab">${head("vocab", "受控词表", "Controlled vocabularies", "代码、标签、别名和关系谓词的提示词。", "Codes, labels, aliases and the cue words of relation predicates.")}${vocabHTML()}</section>
+  <section class="section wrap" id="rules">${head("rules", "跨字段规则", "Cross-field rules", "规则写明它约束的字段和它的依据。", "Each rule names the fields it constrains and where it comes from.")}${rulesHTML()}</section>
+  <section class="section wrap" id="ambiguities">${head("ambiguities", "歧义登记", "Ambiguity register", "每个未写明的决定都有编号，字段和规则引用它。", "Every decision the sources did not make has an ID, and fields and rules cite it.")}${ambHTML()}</section>
+  <section class="section wrap" id="releases">${head("releases", "版本", "Releases", "契约只增不改：新字段一律 provisional，已有字段的类型、可获得性和含义不变。", "The contract grows without breaking: new fields start provisional, and no existing field changes type, availability or meaning.")}${releasesHTML()}</section>`;
+
+  renderVocab(); renderRules(); renderAmb(); drawTrace();
+  if (!render.wired) {
+    render.wired = true;
+    const main = $("#main");
+    main.addEventListener("click", e => {
+      const r = e.target.closest("[data-role]"); if (r) { roleSel = r.dataset.role; $$("[data-role-row]").forEach(x => x.classList.toggle("sel", x.dataset.roleRow === roleSel)); $("#role-card").innerHTML = roleCardHTML(); return; }
+      const ex = e.target.closest("[data-ex]"); if (ex) { const g = DATA.gallery[+ex.dataset.ex]; K.recordDrawer(g.record, { note: `<p class="xs muted" style="margin:-4px 0 12px">${esc(T(...(SRC_LABEL[g.source] || [g.source, g.source])))} · <span class="mono">${esc(g.file)}</span></p>` }); return; }
+      const cd = e.target.closest("[data-card]"); if (cd) { e.preventDefault(); const k = cd.dataset.card, fs = fieldsOf(f => f.card === k);
+        K.openDialog("el-dlg", { title: esc(T((CARD[k] || {}).label_zh || k, human(k) + " card")), sub: `${fs.length} ${T("个字段", "fields")}`, body: `<div class="table-wrap"><table class="tbl compact"><tbody>${fs.map(f => `<tr><td>${fieldLink(f.path)}</td><td>${av(f.availability)}</td><td class="small dim">${esc(K.fieldDef(f.path))}</td></tr>`).join("")}</tbody></table></div>` }); return; }
+      const en = e.target.closest("[data-enf]"); if (en) { VS.enf = en.dataset.enf; $$("[data-enf]").forEach(b => b.setAttribute("aria-pressed", b.dataset.enf === VS.enf)); renderVocab(); return; }
+      const vo = e.target.closest("[data-voc]"); if (vo) { VS.sel = vo.dataset.voc; renderVocab(); return; }
+      const sv = e.target.closest("[data-sev]"); if (sv) { RS.sev = sv.dataset.sev; $$("[data-sev]").forEach(b => b.setAttribute("aria-pressed", b.dataset.sev === RS.sev)); renderRules(); return; }
+      const at = e.target.closest("[data-ast]"); if (at) { AS.status = at.dataset.ast; $$("[data-ast]").forEach(b => b.setAttribute("aria-pressed", b.dataset.ast === AS.status)); renderAmb(); }
+    });
+    main.addEventListener("input", e => {
+      if (e.target.id === "v-q") { VS.q = e.target.value; renderVocab(); }
+      if (e.target.id === "r-q") { RS.q = e.target.value; renderRules(); }
+    });
+    addEventListener("hashchange", focusHash);
+  }
+  watchToc();
+  focusHash();
+}
+
+// #rule=R033, #amb=AMB-011, #vocab=crop_name, or a section id
+function focusHash() {
+  const h = K.hash(), raw = location.hash.slice(1);
+  let target = null;
+  if (h.rule) { RS.hl = h.rule; RS.sev = ""; RS.q = ""; renderRules(); target = document.getElementById("rule-" + h.rule); }
+  else if (h.amb) { AS.hl = h.amb; AS.status = ""; renderAmb(); target = document.getElementById("amb-" + h.amb); }
+  else if (h.vocab) { VS.sel = h.vocab; VS.enf = ""; VS.q = ""; renderVocab(); target = document.getElementById("vocab"); }
+  else if (raw && document.getElementById(raw)) target = document.getElementById(raw);
+  if (target) requestAnimationFrame(() => target.scrollIntoView({ block: h.rule || h.amb ? "center" : "start" }));
+}
+let tocIO = null;
+function watchToc() {
+  if (!("IntersectionObserver" in window)) return;
+  tocIO?.disconnect();
+  tocIO = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    $$("[data-toc]").forEach(a => a.classList.toggle("on", a.dataset.toc === e.target.id));
+    const on = $(`[data-toc="${e.target.id}"]`), bar = on?.parentElement;
+    if (bar) bar.scrollLeft = on.offsetLeft - bar.clientWidth / 2 + on.clientWidth / 2;
+  }), { rootMargin: "-40% 0px -55% 0px" });
+  SECTIONS.forEach(([id]) => { const el = document.getElementById(id); if (el) tocIO.observe(el); });
+}
+K.mount({ title: () => T("规范 · pdf2jsonl", "Contract · pdf2jsonl"), render });
+</script>
+</body>
+</html>

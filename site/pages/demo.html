@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>抽取演示 · pdf2jsonl</title>
+<meta name="description" content="A run of the pdf2jsonl pipeline on a synthetic three-page breeding paper: every candidate followed through repair, evidence check, assembly, linking and validation.">
+<!--__HEAD__-->
+<style>
+/* ---------------------------------------------------------------- hero: the files of the run */
+.files { display: flex; align-items: stretch; gap: 0; margin-top: 30px; overflow-x: auto; padding-bottom: 6px; }
+.fgrp { display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+.fgrp.g2f { display: grid; grid-template-columns: repeat(2, auto); }
+.fgrp.g2f > small { grid-column: 1 / -1; }
+.fgrp > small .mono { text-transform: none; letter-spacing: 0; font-weight: 600; }
+.fgrp > small { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.file { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-1); color: var(--ink); min-width: 170px; transition: transform .15s, border-color .15s; }
+a.file:hover { text-decoration: none; border-color: var(--brand-line); transform: translateY(-2px); }
+.file .ic { width: 30px; height: 36px; border-radius: 6px; display: grid; place-items: center; font: 700 9px var(--mono); color: #fff; background: var(--ink-3); flex: none; position: relative; }
+.file .ic::after { content: ""; position: absolute; right: 0; top: 0; border: 5px solid; border-color: var(--surface) var(--surface) transparent transparent; }
+.file b { display: block; font: 600 12.5px var(--mono); white-space: nowrap; }
+.file span { display: block; font-size: 11.5px; color: var(--ink-3); white-space: nowrap; }
+.ic.pdf { background: var(--clay); } .ic.json { background: var(--c7); } .ic.ok { background: var(--brand); } .ic.err { background: var(--clay); } .ic.rep { background: var(--gold); }
+.farrow { display: grid; place-items: center; padding-inline: 14px; color: var(--ink-3); flex: none; }
+.farrow svg { width: 64px; height: 20px; overflow: visible; }
+.farrow path { fill: none; stroke: var(--brand); stroke-width: 2; }
+.farrow .flowing { stroke-dasharray: 4 6; }
+.farrow small { display: block; text-align: center; font-size: 11px; color: var(--ink-3); margin-top: 2px; white-space: nowrap; }
+
+/* ---------------------------------------------------------------- 01 the run as a flow */
+.flow-card { padding: 18px 18px 8px; overflow-x: auto; }
+svg.sankey { display: block; width: 100%; min-width: 760px; height: auto; }
+.sk-band { opacity: .2; transition: opacity .2s; }
+.sk-band.hot { opacity: .42; }
+.sk-dots { fill: none; stroke: #fff; stroke-linecap: round; stroke-dasharray: 0 26; opacity: .85; animation: sk-flow 1.6s linear infinite; pointer-events: none; }
+:root[data-theme="dark"] .sk-dots { stroke: var(--deep-ink); opacity: .55; }
+@keyframes sk-flow { to { stroke-dashoffset: -26; } }
+.sk-node { cursor: pointer; outline: none; }
+.sk-node rect { transition: filter .2s; }
+.sk-node:hover rect, .sk-node:focus-visible rect { filter: brightness(1.12) drop-shadow(0 0 6px currentColor); }
+.sk-num { font: 760 26px var(--sans); fill: var(--ink); letter-spacing: -.03em; }
+.sk-lab { font: 650 13px var(--sans); fill: var(--ink); }
+.sk-sub { font: 500 11.5px var(--sans); fill: var(--ink-3); }
+.sk-halo { paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+.cases { display: grid; grid-template-columns: repeat(auto-fit, minmax(176px, 1fr)); gap: 12px; margin-top: 16px; }
+.case { text-align: left; border: 1px solid var(--line); border-top: 3px solid var(--tone); background: var(--surface); border-radius: 12px; padding: 13px 15px; box-shadow: var(--shadow-1); display: flex; flex-direction: column; gap: 6px; transition: transform .15s, box-shadow .15s; }
+.case:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.case b { font-size: 14px; display: flex; align-items: center; gap: 7px; }
+.case b svg { color: var(--tone); }
+.case span { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+.case small { font: 600 11px var(--mono); color: var(--ink-3); margin-top: auto; }
+.tone-ok { --tone: var(--ok); } .tone-fix { --tone: var(--gold); } .tone-warn { --tone: var(--amber); } .tone-fail { --tone: var(--clay); } .tone-skip { --tone: var(--ink-3); }
+
+/* ---------------------------------------------------------------- 02 the journey of one candidate */
+.jr { padding: 0; overflow: hidden; }
+.jr-top { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.jr-top .lbl { font-size: 12px; font-weight: 700; color: var(--ink-3); margin-right: 4px; }
+.jr-top .chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--tone, var(--brand)); }
+.jr-who { padding: 18px 22px 4px; display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.jr-who .sum { flex-basis: 100%; font-size: 16px; font-weight: 600; line-height: 1.5; color: var(--ink); }
+.jr-who .ids { font: 12px var(--mono); color: var(--ink-3); }
+.track-wrap { overflow-x: auto; padding: 18px 22px 8px; }
+.track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; min-width: 660px; }
+.rail { position: absolute; left: calc(100% / 12); right: calc(100% / 12); top: 21px; height: 4px; border-radius: 4px; background: var(--line); }
+.rail .fill { position: absolute; inset: 0 auto 0 0; width: calc(var(--p, 0) * 100%); border-radius: 4px; background: linear-gradient(90deg, var(--brand), var(--gold)); transition: width .7s var(--ease); overflow: hidden; }
+.rail .fill::after { content: ""; position: absolute; top: 0; bottom: 0; width: 60px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .85), transparent); animation: spark 1.8s linear infinite; }
+@keyframes spark { from { left: -60px; } to { left: 100%; } }
+.st button { width: 100%; border: 0; background: none; padding: 0 4px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; color: var(--ink); }
+.st .dot { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 2px solid var(--c); color: var(--c); position: relative; z-index: 1; transition: transform .3s var(--ease), opacity .3s, box-shadow .3s; }
+.st .dot svg { width: 20px; height: 20px; stroke-width: 2.2; }
+.st b { font-size: 13.5px; font-weight: 650; line-height: 1.3; }
+.st small { font: 600 11px var(--mono); color: var(--c); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-ok { --c: var(--ok); } .st-fix { --c: var(--gold); } .st-warn { --c: var(--amber); } .st-fail { --c: var(--clay); } .st-skip { --c: var(--ink-3); }
+.st-ok .dot { background: var(--ok-soft); } .st-fix .dot { background: var(--gold-soft); } .st-warn .dot { background: var(--amber-soft); } .st-fail .dot { background: var(--clay-soft); }
+.st-skip .dot { border-style: dashed; background: var(--surface-2); }
+.st.ahead .dot { opacity: .35; transform: scale(.88); }
+.st.ahead b, .st.ahead small { opacity: .45; }
+.st.on .dot { transform: scale(1.14); box-shadow: 0 0 0 6px color-mix(in srgb, var(--c) 18%, transparent); animation: ring 1.8s var(--ease) infinite; }
+@keyframes ring { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c) 45%, transparent); } 100% { box-shadow: 0 0 0 14px transparent; } }
+.st.result .dot { border-radius: 14px; width: 52px; }
+.jr-body { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); gap: 22px; padding: 14px 22px 22px; }
+@media (max-width: 920px) { .jr-body { grid-template-columns: 1fr; } }
+.jr-text { animation: fade-up .4s var(--ease); }
+.jr-text .no { font: 700 12px var(--mono); color: var(--gold); letter-spacing: .06em; }
+.jr-text h3 { font-size: 21px; font-weight: 720; margin: 4px 0 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.jr-text p { color: var(--ink-2); line-height: 1.75; }
+.jr-text p + p { margin-top: 8px; }
+.jr-text ul { margin: 12px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.jr-text li { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; line-height: 1.6; padding: 9px 12px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); }
+.jr-text li > svg { color: var(--c, var(--brand)); margin-top: 2px; }
+.jr-text li .mono { overflow-wrap: anywhere; }
+.arrow-v { color: var(--ink-3); margin-inline: 4px; }
+.from { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--clay) 70%, transparent); color: var(--ink-3); }
+.to { color: var(--brand-ink); font-weight: 600; }
+:root[data-theme="dark"] .to { color: var(--brand-2); }
+.jr-panel { animation: fade-up .45s var(--ease); min-width: 0; }
+.pn { border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); overflow: hidden; }
+.pn + .pn { margin-top: 12px; }
+.pn-h { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; padding: 9px 14px; border-bottom: 1px solid var(--line); background: var(--surface); font-size: 12.5px; }
+.pn-h b { font-weight: 650; }
+.pn-h span { font: 11.5px var(--mono); color: var(--ink-3); overflow-wrap: anywhere; text-align: right; }
+.pn pre.json { max-height: 420px; font-size: 12px; }
+.pn .page { padding: 14px 16px; max-height: 420px; overflow: auto; font: 14px/1.85 var(--serif); white-space: pre-wrap; color: var(--ink-2); }
+.pn .page mark.ev { color: var(--ink); }
+.pn .legend { padding: 8px 14px; border-top: 1px solid var(--line); background: var(--surface); }
+.missing { margin: 14px 16px; padding: 12px 14px; border: 1.5px dashed var(--clay); border-radius: 10px; color: var(--clay); background: var(--clay-soft); font: 14px/1.7 var(--serif); position: relative; }
+.missing s { text-decoration-thickness: 1.5px; }
+.stamp { position: absolute; right: 10px; top: -11px; font: 800 10.5px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--clay); background: var(--surface); border: 1.5px solid var(--clay); border-radius: 6px; padding: 2px 7px; transform: rotate(-3deg); }
+.faded { opacity: .55; }
+.jr-ctrl { display: flex; align-items: center; gap: 8px; padding: 12px 22px; border-top: 1px solid var(--line); background: var(--surface-2); }
+.jr-ctrl .hint { font-size: 12px; color: var(--ink-3); margin-right: auto; }
+.quote-sp { font: 15px/1.8 var(--serif); padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.spo { margin-top: 10px; }
+
+/* ---------------------------------------------------------------- 03 paper & records */
+.explore { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 920px) { .explore { grid-template-columns: 1fr; } }
+.pages { max-height: 560px; overflow: auto; padding: 4px 22px 20px; }
+.pg-h { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 12px 0 8px; background: var(--surface); font: 700 11.5px var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.pg-h::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.pages .paper-text { font-size: 15px; }
+.list-h { padding: 12px 14px; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px; }
+.items { max-height: 505px; overflow: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.it { text-align: left; border: 1px solid transparent; background: none; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 5px; transition: background .12s, border-color .12s; }
+.it:hover { background: var(--surface-2); }
+.it.sel { background: var(--brand-soft); border-color: var(--brand-line); }
+.it .r1 { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.it .r1 .pg { margin-left: auto; font: 600 11px var(--mono); color: var(--ink-3); }
+.it .sm { font-size: 13.5px; line-height: 1.5; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.it .mt { font: 11px var(--mono); color: var(--ink-3); }
+.it.rej .sm { color: var(--clay); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--clay) 50%, transparent); }
+
+/* ---------------------------------------------------------------- 04 evidence chain */
+.wf-node .els { display: flex; gap: 3px; margin-top: 2px; }
+.el { width: 13px; height: 13px; border-radius: 3px; border: 1.5px solid var(--brand); }
+.el.own { background: var(--brand); }
+.el.chain { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--brand) 45%, transparent) 0 2px, transparent 2px 4px); }
+.el.none { border-color: var(--line-2); border-style: dashed; }
+.wf-node.ghost { border-style: dashed; border-color: var(--clay-line); border-left: 3px dashed var(--clay); background: color-mix(in srgb, var(--clay-soft) 60%, var(--surface)); }
+.wf-node.ghost .wf-label { color: var(--clay); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--clay) 50%, transparent); }
+.wf-edges path.lost { stroke-dasharray: 5 5; }
+.wf-node .row { gap: 5px; }
+.cov { display: grid; grid-template-columns: minmax(110px, auto) 1fr auto; gap: 9px 14px; align-items: center; }
+.cov .k { font-size: 13.5px; font-weight: 600; }
+.cov .k small { display: block; font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+.cov .bar { height: 14px; border-radius: 4px; background: var(--surface-3); position: relative; overflow: hidden; }
+.cov .bar i { position: absolute; inset: 0 auto 0 0; border-radius: 0 4px 4px 0; transform-origin: left; transition: transform .9s var(--ease); }
+.cov .bar i.chain { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--brand) 50%, transparent) 0 3px, color-mix(in srgb, var(--brand) 20%, transparent) 3px 6px); }
+.cov .bar i.own { background: var(--brand); }
+.reveal:not(.in) .cov .bar i { transform: scaleX(0); }
+.cov .v { font: 600 12.5px var(--mono); color: var(--ink-2); white-space: nowrap; }
+.audit { display: grid; grid-template-columns: 36px 1fr; gap: 10px; align-items: start; font-size: 14px; line-height: 1.55; }
+.audit .tag { justify-content: center; }
+.fw { font: 700 10px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); grid-column: 1 / -1; margin-top: 6px; }
+
+/* ---------------------------------------------------------------- 05 / 06 */
+.never { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+.never .card { border-left: 3px solid var(--tone); }
+.never b { display: flex; gap: 8px; align-items: center; font-size: 14px; margin-bottom: 4px; }
+.never b svg { color: var(--tone); }
+.never p { font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+.outline { margin: 0; padding: 0; list-style: none; columns: 2 220px; column-gap: 24px; }
+.outline li { font-size: 13px; padding: 4px 0; color: var(--ink-2); break-inside: avoid; display: flex; gap: 8px; }
+.outline li::before { content: ""; width: 6px; height: 6px; margin-top: 8px; border-radius: 2px; background: var(--gold); flex: none; }
+.outline li.h3 { padding-left: 14px; font-size: 12.5px; color: var(--ink-3); }
+.outline li.h3::before { background: var(--line-2); }
+pre.brief { margin: 0; max-height: 520px; overflow: auto; padding: 14px 16px; font: 12px/1.65 var(--mono); white-space: pre-wrap; color: var(--ink-2); background: var(--surface-2); border-radius: 10px; border: 1px solid var(--line); }
+.dl { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+.dl .file { min-width: 0; }
+.dl .file b { overflow: hidden; text-overflow: ellipsis; }
+.dl .file > span:last-child { min-width: 0; }
+</style>
+</head>
+<body data-page="demo">
+<header id="top"></header>
+<main id="main"></main>
+<footer id="foot"></footer>
+<!--__DATA__-->
+<!--__KIT__-->
+<script>
+"use strict";
+const { T, esc, icon, fmt, DATA, $, $$, json, annotate, kindTag, reviewTag, kindLabel, fieldLink, summary, clip, SITE } = K;
+const D = DATA.demo, V = D.validation, RUN = DATA.run, ARG = DATA.argument_roles || {};
+const CANDS = D.candidates.candidates, DOC = D.candidates.document || {};
+const VREC = Object.fromEntries(V.records.map(r => [r.record_id, r]));
+const RID = Object.fromEntries(D.records.map(r => [r.common.record_id, r]));
+const AS = V.argument_structure || null;
+const AREC = AS ? Object.fromEntries(AS.records.map(r => [r.record_id, r])) : {};
+const LINKF = Object.entries(D.record_links || {}).map(([name, s]) => ({ name, path: s.field }));
+const getp = (rec, path) => { const i = path.indexOf("."); return (rec[path.slice(0, i)] || {})[path.slice(i + 1)]; };
+const linksOf = rec => LINKF.map(l => ({ ...l, ids: getp(rec, l.path) || [] })).filter(l => l.ids.length);
+const linkedBy = id => D.records.flatMap(r => linksOf(r).filter(l => l.ids.includes(id)).map(l => ({ id: r.common.record_id, via: l.name })));
+const STM = Object.fromEntries((D.statements || []).map(s => [s.record_id, s]));
+const CHUNK = {};
+for (const c of D.corpus || []) for (const id of c.chunk_support_ids) CHUNK[id] = CHUNK[id] || c;
+const spanOf = r => { const m = /page=(\d+);char=(\d+)-(\d+)/.exec((r.common || {}).source_span || ""); return m ? { page: +m[1], a: +m[2], b: +m[3] } : null; };
+const repairsOf = ci => V.repairs.filter(x => x.where === `candidates[${ci}]`);
+const REF = Object.fromEntries(CANDS.map((c, i) => [c.ref, i]).filter(([r]) => r));
+const FILE = name => (D.files || []).find(f => f.path.endsWith(name));
+const STEM = D.file_name.replace(/\.pdf$/, "");
+const fileHref = name => { const f = FILE(name); return f ? f.path : `${SITE.repo}/blob/main/examples/output/${name}`; };
+
+// every row of the run: records (with the candidate they came from) and rejected candidates
+const ITEMS = [
+  ...D.records.map(r => {
+    const v = VREC[r.common.record_id] || {}, ci = v.candidate_index ?? null;
+    return { id: r.common.record_id, type: ci == null ? "system" : "record", rec: r, v, ci, cand: ci != null ? CANDS[ci] : null };
+  }),
+  ...D.errors.map((e, k) => ({ id: "cand-" + e.candidate_index, type: "rejected", err: e, line: k + 1, ci: e.candidate_index,
+    cand: e.candidate || CANDS[e.candidate_index], v: {} })),
+];
+const ITEM = Object.fromEntries(ITEMS.map(x => [x.id, x]));
+const BY_CAND = Object.fromEntries(ITEMS.filter(x => x.ci != null).map(x => [x.ci, x]));
+const warnsOf = it => (it.v && it.v.warnings) || [];
+const pending = it => it.rec && it.rec.common.review_status === "pending_review";
+const refOfWarning = w => (w.detail && w.detail.ref) || ((/'([^']+)'/.exec(w.message) || [])[1]);
+const ACTIONS = {
+  coerced_type: ["类型转换", "type coerced"], mapped_vocabulary_label: ["词表标签映射为代码", "vocabulary label mapped to its code"],
+  normalized_record_kind: ["记录类型规范化", "record kind normalized"], dropped_empty_value: ["丢弃空值", "empty value dropped"],
+  dropped_field: ["丢弃管线专属字段", "pipeline-owned field dropped"],
+};
+const actionLabel = a => ACTIONS[a] ? T(...ACTIONS[a]) : a;
+const WARN_STAGE = w => w.code.startsWith("CANDIDATE_") ? 3 : (w.code.startsWith("EVIDENCE_") || w.code.includes("VALUE_")) ? 2 : 4;
+const rejectedStage = e => ({ candidate: 1, evidence: 2, validation: 4, dataset: 4 })[e.stage] ?? 4;
+const lit = v => `<span class="mono">${esc(JSON.stringify(v))}</span>`;
+const recBtn = id => RID[id] ? `<a href="#rec=${encodeURIComponent(id)}" data-sel="${esc(id)}">${esc(kindLabel(RID[id].common.record_kind))}: ${esc(clip(summary(RID[id]), 70))}</a>` : `<span class="mono">${esc(id)}</span>`;
+const linkLabel = n => ({ evidence: T("依据", "evidence"), method: T("方法", "method"), tests: T("检验", "tests"), addresses: T("回应", "addresses"), prerequisite: T("前置", "prerequisite") })[n] || n;
+
+// What the record carries that the candidate did not write: the pipeline's own fields
+function fieldPaths(c) {
+  const out = new Set();
+  for (const [k, v] of Object.entries((c && c.fields) || {})) {
+    if (k.includes(".")) out.add(k);
+    else if (v && typeof v === "object" && !Array.isArray(v)) Object.keys(v).forEach(x => out.add(k + "." + x));
+  }
+  return out;
+}
+const candidatePaths = c => new Set(["common.record_kind", "common.source_page", "common.source_section", "common.source_quote", ...Object.keys(DOC), ...fieldPaths(c)]);
+function addedPaths(it) {
+  const have = candidatePaths(it.cand), out = new Set();
+  for (const [g, o] of Object.entries(it.rec)) if (o && typeof o === "object") for (const k of Object.keys(o)) if (!have.has(g + "." + k)) out.add(g + "." + k);
+  return out;
+}
+
+// ---------------------------------------------------------------- the stations of one candidate
+const STATIONS = [["候选", "Candidate"], ["结构检查与修复", "Shape & repair"], ["证据核验", "Evidence check"], ["组装与关联", "Assemble & link"], ["契约校验", "Validation"]];
+const ST_ICON = { ok: "check", fix: "wrench", warn: "alert", fail: "x", skip: "" };
+// The parsed text with soft line breaks (a long line that runs on into a lowercase word or a digit) shown as spaces;
+// the length is unchanged, so character offsets from source_span still apply.
+const soft = text => String(text || "").split("\n").map((line, i, all) =>
+  line + (i === all.length - 1 ? "" : line.length >= 50 && !/[.:]$/.test(line) && /^[a-z0-9(]/.test(all[i + 1]) ? " " : "\n")).join("");
+const pane = (title, sub, body, foot = "") => `<div class="pn"><div class="pn-h"><b>${title}</b><span>${sub}</span></div>${body}${foot}</div>`;
+const jsonPane = (title, sub, v, mark) => pane(title, sub, `<pre class="json">${json(v, { mark, wrap: true })}</pre>`,
+  mark && mark.size ? `<div class="legend"><span><span class="j-new" style="padding:0 6px;border-radius:4px;background:color-mix(in srgb, var(--brand) 14%, transparent)">key</span> ${T("高亮", "highlighted")}: ${mark.label}</span></div>` : "");
+function pageExcerpt(page, a, b, cls = "ev sel") {
+  const text = soft(D.pages[page - 1]);
+  return `<div class="page">${esc(text.slice(0, a))}<mark class="${cls}">${esc(text.slice(a, b))}</mark>${esc(text.slice(b))}</div>`;
+}
+const li = (ic, html, c) => `<li${c ? ` style="--c:var(--${c})"` : ""}>${icon(ic)}<span>${html}</span></li>`;
+
+function stations(it) {
+  const c = it.cand, ci = it.ci, rec = it.rec, warns = warnsOf(it), out = [];
+  const failAt = it.type === "rejected" ? rejectedStage(it.err) : 99;
+  const skip = (k, why) => ({ status: "skip", label: T("未执行", "not run"), text: `<p>${why}</p>`, panel: "" });
+  const after = k => skip(k, T("候选在前一站被拒绝，后面的步骤不再执行。", "The candidate was rejected at an earlier station; nothing after it runs."));
+
+  // 1 · candidate
+  if (it.type === "system") out.push({ status: "skip", label: T("无候选", "no candidate"),
+    text: `<p>${T("这条记录没有候选：画像规定每个输入文件有一条资产记录，由管线根据文件本身（大小、哈希、格式）生成，不经过 agent。",
+      "There is no candidate for this record: the profile has one asset record per input file, which the pipeline writes from the file itself (size, hash, format) without the agent.")}</p>`,
+    panel: pane(T("输入文件", "Input file"), "manifest.json → input", `<pre class="json">${json(D.manifest.input)}</pre>`) });
+  else {
+    const n = fieldPaths(c).size, links = Object.entries(c.links || {});
+    out.push({ status: "ok", label: `candidates[${ci}]`,
+      text: `<p>${T("Agent 只读了说明（brief.md）和逐页文本（pages.txt），然后写出这条候选：记录类型、它能直接从原文读出的字段值，以及一句逐字引文和页码。它不写记录 ID、来源哈希、复核状态这些管线字段。",
+        "The agent read only the brief (brief.md) and the page texts (pages.txt), then wrote this candidate: a record kind, the values it can read directly off the paper, and one verbatim quote with its page. It does not write record IDs, source hashes, review status or any other pipeline field.")}</p>
+        <ul>${li("tag", `${T("记录类型", "Record kind")} ${lit(c.record_kind)} · ${n} ${T("个字段值", "field values")}`)}
+          ${li("quote", `${T("第", "Page ")}${esc(c.evidence?.page)}${T(" 页", "")}${c.evidence?.section ? ` · ${esc(c.evidence.section)}` : ""} · <i>“${esc(clip(c.evidence?.quote, 110))}”</i>`)}
+          ${c.ref ? li("link", `${T("引用名", "Reference name")} <span class="mono">ref = ${esc(c.ref)}</span>${links.length ? ` · ${T("关联", "links")} ${links.map(([k, v]) => `${esc(linkLabel(k))} → <span class="mono">${esc(v.join(", "))}</span>`).join(" · ")}` : ""}`) : ""}</ul>`,
+      panel: jsonPane(T("Agent 写的候选", "The candidate as written"), `${STEM}.candidates.json → candidates[${ci}]`, c) });
+  }
+
+  // 2 · shape & repair
+  if (it.type === "system") out.push(skip(1, T("没有候选，无需检查结构。", "No candidate, so there is no shape to check.")));
+  else if (failAt === 1) out.push({ status: "fail", label: esc(it.err.code), text: `<p>${esc(it.err.message)}</p>`, panel: jsonPane(T("错误记录", "Error record"), `${STEM}.errors.jsonl`, it.err) });
+  else {
+    const reps = repairsOf(ci);
+    const mark = new Set(reps.map(r => r.key === "evidence.page" ? "evidence.page" : r.action === "normalized_record_kind" ? "record_kind" : r.key).filter(Boolean));
+    mark.label = T("被修复的键", "the repaired keys");
+    out.push(reps.length ? { status: "fix", label: T(`${reps.length} 处修复`, `${reps.length} repair${reps.length > 1 ? "s" : ""}`),
+      text: `<p>${T("候选的格式不完全合规，但内容可以确定：管线做了下面这些结构修复，每一处都记进校验报告的 <code>repairs</code>。修复只改格式、类型、词表标签和管线专属字段，从不改动值的含义。",
+        "The candidate's shape is off, but what it says is unambiguous, so the pipeline repairs the structure. Each repair is logged under <code>repairs</code> in the validation report. Repairs touch formatting, types, vocabulary labels and pipeline-owned fields, never what a value means.")}</p>
+        <ul>${reps.map(r => li("wrench", `<b>${esc(actionLabel(r.action))}</b>${r.key ? ` · ${fieldLink(r.key)}` : ""}${"from" in r ? `<br>${`<span class="from mono">${esc(JSON.stringify(r.from))}</span>`}<span class="arrow-v">→</span>${"to" in r ? `<span class="to mono">${esc(JSON.stringify(r.to))}</span>` : ""}` : ""}${r.reason ? ` <span class="muted small">(${esc(r.reason)})</span>` : ""}`, "gold")).join("")}</ul>`,
+      panel: jsonPane(T("修复前的候选", "The candidate before repair"), `candidates[${ci}]`, c, mark) }
+      : { status: "ok", label: T("无需修复", "no repair"),
+        text: `<p>${T("候选符合候选格式（candidate.schema.json）：记录类型合法，字段名都在画像允许的 D 类字段中，类型正确，词表值是代码。不需要修复。",
+          "The candidate matches candidate.schema.json: a known record kind, only the D (directly extracted) fields the profile allows, correct types, vocabulary codes. Nothing to repair.")}</p>`,
+        panel: jsonPane(T("候选", "Candidate"), `candidates[${ci}]`, c) });
+  }
+
+  // 3 · evidence
+  if (it.type === "system") out.push(skip(2, T("资产记录描述文件本身，没有引文需要核对。", "An asset record describes the file itself; there is no quote to check.")));
+  else if (failAt < 2) out.push(after(2));
+  else if (failAt === 2) {
+    const e = it.err, d = e.detail || {}, p = d.stated_page || c.evidence?.page, r = d.radius ?? 1;
+    const searched = [...Array(2 * r + 1)].map((_, k) => p - r + k).filter(x => x >= 1 && x <= D.pages.length);
+    out.push({ status: "fail", label: esc(e.code),
+      text: `<p>${T(`引文要在声明的第 ${p} 页（以及前后各 ${r} 页）逐字出现，才能把这条结论落到原文上。管线在第 ${searched.join("、")} 页都没有找到它。`,
+        `The quote has to occur verbatim on the stated page ${p} (or within ${r} page${r > 1 ? "s" : ""} of it) for the statement to be grounded in the paper. The pipeline searched page${searched.length > 1 ? "s" : ""} ${searched.join(", ")} and did not find it.`)}</p>
+        <p><b>${T("找不到就拒绝，不会修复或改写。", "Not found means rejected: never repaired, never reworded.")}</b> ${T("这条候选写进 errors.jsonl，不会进入记录文件。", "The candidate goes to errors.jsonl and never into the records file.")}</p>
+        <ul>${li("x", `<span class="mono">${esc(e.code)}</span> · ${esc(e.message)}`, "clay")}</ul>`,
+      panel: `<div class="pn"><div class="pn-h"><b>${T("候选里的引文", "The quote in the candidate")}</b><span>evidence.quote</span></div>
+          <div class="missing"><span class="stamp">${T("原文中不存在", "not in the paper")}</span><s>${esc(c.evidence?.quote)}</s></div></div>
+        ${pane(T(`第 ${p} 页的解析文本`, `Parsed text of page ${p}`), `pages.txt · page ${p}`, `<div class="page faded">${esc(soft(D.pages[p - 1]))}</div>`)}` });
+  } else {
+    const sp = spanOf(rec), corr = warns.find(w => w.code === "EVIDENCE_PAGE_CORRECTED"), vw = warns.filter(w => WARN_STAGE(w) === 2 && w !== corr);
+    const stated = Number(c.evidence?.page);
+    out.push({ status: corr ? "fix" : vw.length ? "warn" : "ok", label: corr ? T("页码已更正", "page corrected") : T(`第 ${sp.page} 页找到`, `found on p.${sp.page}`),
+      text: (corr ? `<p>${T(`候选写的是第 ${stated} 页，但这句引文实际在第 ${sp.page} 页。引文本身逐字存在，所以记录保留下来，页码改为实际位置；这次更正记一条警告，记录因此转为待复核。`,
+        `The candidate says page ${stated}, but the quote is on page ${sp.page}. The quote itself occurs verbatim, so the record is kept with the page where the quote really is; the correction is recorded as a warning, which sends the record to review.`)}</p>`
+        : `<p>${T(`引文在第 ${sp.page} 页逐字找到（解析文本的第 ${sp.a}–${sp.b} 个字符）。管线把这个位置写进记录的 <code>source_span</code>，任何人都能回到原文核对。`,
+          `The quote occurs verbatim on page ${sp.page} (characters ${sp.a}–${sp.b} of the parsed text). The pipeline writes that position into the record's <code>source_span</code>, so anyone can check it against the paper.`)}</p>`) +
+        `<ul>${corr ? li("alert", `<span class="mono">${esc(corr.code)}</span> · ${T("页码", "page")} <span class="from mono">${stated}</span><span class="arrow-v">→</span><span class="to mono">${sp.page}</span>`, "amber") : ""}
+          ${li("check", `${fieldLink("common.source_span")} = <span class="mono">${esc(rec.common.source_span)}</span>`, "ok")}
+          ${vw.map(w => li("alert", `<span class="mono">${esc(w.code)}</span> ${w.path ? fieldLink(w.path) : ""} · ${esc(w.message)}`, "amber")).join("")}</ul>`,
+      panel: pane(T(`第 ${sp.page} 页的解析文本`, `Parsed text of page ${sp.page}`), `pages.txt · page ${sp.page} · char ${sp.a}–${sp.b}`, pageExcerpt(sp.page, sp.a, sp.b)) });
+  }
+
+  // 4 · assemble & link
+  if (failAt < 3) out.push(after(3));
+  else {
+    const added = addedPaths(it), lw = warns.filter(w => WARN_STAGE(w) === 3), lk = linksOf(rec);
+    added.label = T("管线补齐的键", "keys the pipeline filled in");
+    const fill = (D.manifest.profile.fill_rules || []).length;
+    out.push({ status: lw.length ? "warn" : "ok", label: lw.length ? T("关联已丢弃", "link dropped") : lk.length ? T(`${lk.reduce((n, l) => n + l.ids.length, 0)} 条关联`, `${lk.reduce((n, l) => n + l.ids.length, 0)} link(s)`) : T(`补齐 ${added.size} 个键`, `${added.size} keys added`),
+      text: `<p>${it.type === "system" ? T("管线根据输入文件写出资产记录，", "The pipeline writes the asset record from the input file, ") : T("管线把候选组装成一条原子记录：", "The pipeline assembles the candidate into one atomic record: ")}${T(
+        `按画像的 ${fill} 条填充规则补上 ${added.size} 个它负责的键，包括稳定的记录 ID（由内容计算，重跑不变）、规范与画像版本、来源哈希与定位、运行 ID。`,
+        `the profile's ${fill} fill rules add the ${added.size} keys it owns, among them a stable record ID (computed from the content, so a re-run keeps it), contract and profile versions, the source hash and locator, and the run ID.`)}</p>
+        ${(it.cand && it.cand.links) || lk.length || lw.length ? `<p>${T("候选之间用 <code>ref</code> 名字互相引用；管线把这些名字解析成记录 ID。指向不存在或被拒绝的候选的关联会被丢弃并标记，绝不猜测。",
+          "Candidates refer to each other by their <code>ref</code> names; the pipeline resolves those names to record IDs. A link to a candidate that does not exist or was rejected is dropped and flagged, never guessed.")}</p>` : ""}
+        <ul>${lk.map(l => li("link", `${esc(linkLabel(l.name))} · ${fieldLink(l.path)} → ${l.ids.map(recBtn).join(" · ")}`, "ok")).join("")}
+          ${lw.map(w => li("x", `<span class="mono">${esc(w.code)}</span> · <span class="from mono">${esc(refOfWarning(w) || "")}</span> ${T("被拒绝，关联已丢弃", "was rejected; the link is dropped")} · ${w.path ? fieldLink(w.path) : ""}`, "clay")).join("")}
+          ${linkedBy(it.id).map(b => li("back", `${T("被引用", "Cited as")} ${esc(linkLabel(b.via))} ← ${recBtn(b.id)}`)).join("")}</ul>`,
+      panel: jsonPane(T("组装后的记录", "The assembled record"), `${STEM}.jsonl · ${T("第", "line ")}${it.v.line}${T(" 行", "")}`, rec, added) });
+  }
+
+  // 5 · validation
+  if (failAt < 4) out.push(after(4));
+  else if (failAt === 4) out.push({ status: "fail", label: esc(it.err.code), text: `<p>${esc(it.err.message)}</p>`, panel: jsonPane(T("错误记录", "Error record"), `${STEM}.errors.jsonl`, it.err) });
+  else {
+    const rs = rec.common.review_status;
+    out.push({ status: warns.length ? "warn" : "ok", label: rs,
+      text: (warns.length ? `<p>${T(`记录满足契约 ${esc(rec.common.schema_version)}，可以写入；但它带着 ${warns.length} 条警告，所以复核状态是 <b>待复核</b>（pending_review），警告代码写进 <code>qc_failure_codes</code>，等专家确认。`,
+          `The record satisfies contract ${esc(rec.common.schema_version)} and is written, but it carries ${warns.length} warning${warns.length > 1 ? "s" : ""}, so its review status is <b>pending_review</b> and the codes go into <code>qc_failure_codes</code> for an expert to confirm.`)}</p>`
+        : `<p>${T(`记录通过契约 ${esc(rec.common.schema_version)} 的全部规则（类型、词表、必填、跨字段规则），没有警告，复核状态是 <b>校验通过</b>（auto_validated）。`,
+          `The record passes every rule of contract ${esc(rec.common.schema_version)} (types, vocabularies, required fields, cross-field rules) with no warnings, so its review status is <b>auto_validated</b>.`)}</p>`) +
+        `<ul>${warns.map(w => li("alert", `<span class="mono">${esc(w.code)}</span>${w.path ? ` · ${fieldLink(w.path)}` : ""}<br>${esc(w.message)}`, "amber")).join("") || li("check", T("没有警告", "No warnings"), "ok")}
+          ${li("shield", `${fieldLink("common.review_status")} = ${reviewTag(rs)}`, warns.length ? "amber" : "ok")}</ul>`,
+      panel: jsonPane(T("校验报告中的这一行", "This record in the validation report"), `${STEM}.validation.json → records[${it.v.line - 1}]`, it.v) +
+        jsonPane(T("记录里的复核字段", "Review fields in the record"), "common.*", { common: Object.fromEntries(["review_status", "qc_failure_codes", "qc_rule_set_version", "missing_fields"].filter(k => k in rec.common).map(k => [k, rec.common[k]])) }) });
+  }
+
+  // result
+  if (it.type === "rejected") out.push({ status: "fail", result: true, label: `errors.jsonl #${it.line}`,
+    text: `<p>${T("候选被拒绝，写进错误文件；记录文件里没有它。", "The candidate is rejected and written to the error file; the records file does not contain it.")}</p>
+      ${(() => { const lost = ITEMS.filter(x => warnsOf(x).some(w => w.code === "CANDIDATE_LINK_UNRESOLVED" && refOfWarning(w) === c.ref)); return lost.length ? `<ul>${lost.map(x => li("link", `${T("引用它的关联被丢弃，引用方转待复核：", "Links to it were dropped and the linking record sent to review: ")}${recBtn(x.id)}`, "clay")).join("")}</ul>` : ""; })()}`,
+    panel: jsonPane(T("错误记录", "Error record"), `${STEM}.errors.jsonl · ${T("第", "line ")}${it.line}${T(" 行", "")}`, it.err) });
+  else {
+    const st = STM[it.id], ch = CHUNK[it.id];
+    const hooks = st ? `<div class="quote-sp">${annotate(st.source_quote, ["subject", "predicate", "object"].filter(k => (st.anchors || {})[k]).map(k => ({ start: st.anchors[k][0], end: st.anchors[k][1], cls: "sp-" + k, title: k })))}</div>
+      <div class="spo"><span class="node-pill" style="--c:var(--s)">${esc(st.subject_mention)}</span><span class="edge-pill">${esc(st.predicate.replace(/^bdc:/, ""))}</span><span class="node-pill" style="--c:var(--o)">${esc(st.object_mention)}</span></div>` : "";
+    const paperId = "sha256:" + D.manifest.input.sha256;
+    out.push({ status: pending(it) ? "warn" : "ok", result: true, label: `.jsonl #${it.v.line}`,
+      text: `<p>${T(`记录写进 <code>${esc(STEM)}.jsonl</code> 第 ${it.v.line} 行。`, `The record is line ${it.v.line} of <code>${esc(STEM)}.jsonl</code>.`)}
+        ${st ? T("它陈述了一个关系，管线已在引文里标出主语、谓语和宾语，下游据此直接派生知识图谱的边：", "It states a relation; the pipeline has anchored subject, predicate and object in the quote, and the knowledge graph takes its edge from there:")
+          : ch ? T("它的引文会成为语料中的一段，带着实体位置。", "Its quote becomes a corpus chunk with entity offsets.") : ""}</p>
+        ${hooks}
+        <ul>${st ? li("graph", `<a href="outputs.html#statements">${T("在下游派生页查看这条陈述 →", "See this statement among the outputs →")}</a>`) : ""}
+          ${li("library", `<a href="papers.html#paper=${encodeURIComponent(paperId)}&rec=${encodeURIComponent(it.id)}">${T("在论文看板中打开这条记录 →", "Open this record in the paper dashboard →")}</a>`)}</ul>`,
+      panel: jsonPane(T("最终记录", "The final record"), `${STEM}.jsonl · ${T("第", "line ")}${it.v.line}${T(" 行", "")}`, rec) });
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------- journey: state, track, playback
+const J = { id: null, i: 0, steps: [], reach: 0, timer: 0, playing: false, seen: false };
+function caseList() {
+  const recs = ITEMS.filter(x => x.type === "record");
+  const ok = x => !repairsOf(x.ci).length && !warnsOf(x).length;
+  const clean = recs.find(x => ok(x) && STM[x.id]) || recs.find(x => ok(x) && linksOf(x.rec).length) || recs.find(ok);
+  const repaired = [...recs].sort((a, b) => repairsOf(b.ci).length - repairsOf(a.ci).length)[0];
+  const page = recs.find(x => warnsOf(x).some(w => w.code === "EVIDENCE_PAGE_CORRECTED"));
+  const rej = ITEMS.find(x => x.type === "rejected");
+  const link = recs.find(x => warnsOf(x).some(w => w.code === "CANDIDATE_LINK_UNRESOLVED"));
+  const sys = ITEMS.find(x => x.type === "system");
+  const out = [];
+  if (clean) out.push({ it: clean, tone: "ok", ic: "check", t: T("顺利的一条", "A clean run"),
+    d: T(`引文在第 ${clean.rec.common.source_page} 页逐字找到，${linksOf(clean.rec).length ? "关联解析成功，" : ""}无修复、无警告，直接校验通过。`, `Quote found verbatim on page ${clean.rec.common.source_page}${linksOf(clean.rec).length ? ", link resolved" : ""}; no repair, no warning, auto-validated.`) });
+  if (repaired && repairsOf(repaired.ci).length) { const reps = repairsOf(repaired.ci);
+    out.push({ it: repaired, tone: "fix", ic: "wrench", t: T("结构修复", "Repaired"),
+      d: T(`${reps.length} 处修复：${[...new Set(reps.map(r => actionLabel(r.action)))].join("、")}。`, `${reps.length} repairs: ${[...new Set(reps.map(r => actionLabel(r.action)))].join(", ")}.`) }); }
+  if (page) { const w = warnsOf(page).find(x => x.code === "EVIDENCE_PAGE_CORRECTED");
+    out.push({ it: page, tone: "warn", ic: "file", t: T("页码更正", "Page corrected"),
+      d: T(`候选写第 ${page.cand.evidence.page} 页，引文实际在第 ${page.rec.common.source_page} 页：改正页码并转待复核。`, `Candidate says page ${page.cand.evidence.page}, the quote is on page ${page.rec.common.source_page}: corrected and sent to review.`), w }); }
+  if (rej) out.push({ it: rej, tone: "fail", ic: "x", t: T("编造的引文", "A fabricated quote"),
+    d: T("引文在原文中找不到：拒绝，写入 errors.jsonl，从不修补。", "The quote is not in the paper: rejected to errors.jsonl, never patched.") });
+  if (link) { const ref = refOfWarning(warnsOf(link).find(w => w.code === "CANDIDATE_LINK_UNRESOLVED"));
+    out.push({ it: link, tone: "warn", ic: "link", t: T("断开的关联", "A broken link"),
+      d: T(`引用了被拒绝的候选 ${ref}：关联丢弃而不是猜测，转待复核。`, `Cites the rejected candidate ${ref}: the link is dropped, not guessed, and the record goes to review.`) }); }
+  if (sys) out.push({ it: sys, tone: "skip", ic: "file", t: T("系统记录", "A system record"),
+    d: T("没有候选：管线为输入 PDF 写一条资产记录。", "No candidate: the pipeline writes an asset record for the input PDF.") });
+  return out;
+}
+function itemRef(it) { return it.ci != null ? `candidates[${it.ci}]` : T("系统记录", "system record"); }
+function renderJourney() {
+  const it = ITEM[J.id], cs = caseList();
+  const steps = J.steps = stations(it);
+  J.reach = steps.length - 1;
+  const head = `<div class="jr-top"><span class="lbl">${T("看一个案例：", "Pick a case:")}</span>${cs.map(c => `<button type="button" class="chip tone-${c.tone}" data-case="${esc(c.it.id)}" aria-pressed="${c.it.id === J.id}" title="${esc(c.d)}">${esc(c.t)}</button>`).join("")}
+      <span class="spacer"></span><span class="muted xs">${T("或在下方原文和列表里点任意一条", "or click any row in the paper and list below")}</span></div>
+    <div class="jr-who">${it.type === "rejected" ? `<span class="tag clay dot">${T("被拒绝", "Rejected")}</span>${kindTag(it.cand.record_kind)}` : `${kindTag(it.rec.common.record_kind)}${reviewTag(it.rec.common.review_status)}`}
+      <span class="ids">${esc(itemRef(it))}${it.rec ? ` → ${esc(it.id)}` : ` → ${STEM}.errors.jsonl`}</span>
+      <div class="sum">${esc(it.rec ? summary(it.rec) : (it.cand.fields && (Object.values(it.cand.fields)[0])) || it.err.message)}</div></div>`;
+  const labels = [...STATIONS, it.type === "rejected" ? ["被拒绝", "Rejected"] : ["写入记录", "Written"]];
+  const track = `<div class="track-wrap"><ol class="track" id="track"><div class="rail"><i class="fill"></i></div>${steps.map((s, k) => `<li class="st st-${s.status}${s.result ? " result" : ""}" data-i="${k}">
+      <button type="button" aria-label="${esc(T(...labels[k]))}"><span class="dot">${ST_ICON[s.status] ? icon(ST_ICON[s.status]) : ""}</span><b>${esc(T(...labels[k]))}</b><small>${s.label}</small></button></li>`).join("")}</ol></div>`;
+  $("#journey").innerHTML = head + track + `<div class="jr-body" id="jr-body"></div>
+    <div class="jr-ctrl"><span class="hint">${T("点任一站查看；← → 键逐站前进", "Click a station; ← → to step through")}</span>
+      <button type="button" class="btn sm ghost" id="jr-prev" aria-label="${T("上一站", "Previous")}">${icon("back")}</button>
+      <button type="button" class="btn sm" id="jr-play">${icon("play")}<span>${T("播放", "Play")}</span></button>
+      <button type="button" class="btn sm ghost" id="jr-next" aria-label="${T("下一站", "Next")}">${icon("arrow")}</button></div>`;
+  $$("[data-case]", $("#journey")).forEach(b => b.addEventListener("click", () => select(b.dataset.case, { play: true })));
+  $$(".st button", $("#journey")).forEach((b, k) => b.addEventListener("click", () => { stop(); go(k); }));
+  $("#jr-prev").addEventListener("click", () => { stop(); go(Math.max(0, J.i - 1)); });
+  $("#jr-next").addEventListener("click", () => { stop(); go(Math.min(J.steps.length - 1, J.i + 1)); });
+  $("#jr-play").addEventListener("click", () => J.playing ? stop() : play(J.i >= J.steps.length - 1 ? 0 : J.i));
+  go(J.i);
+}
+function go(k) {
+  J.i = k;
+  const s = J.steps[k], n = J.steps.length;
+  $$(".st", $("#track")).forEach((li, j) => { li.classList.toggle("on", j === k); li.classList.toggle("ahead", J.playing && j > k); });
+  $(".rail .fill", $("#track")).style.setProperty("--p", k / (n - 1));
+  const label = k === n - 1 ? (s.status === "fail" ? T("结果：被拒绝", "Result: rejected") : T("结果：写入记录", "Result: written")) : T(...STATIONS[k]);
+  const tag = { ok: `<span class="tag ok dot">${T("通过", "passed")}</span>`, fix: `<span class="tag gold dot">${T("已修复", "repaired")}</span>`, warn: `<span class="tag amber dot">${T("有警告", "warning")}</span>`,
+    fail: `<span class="tag clay dot">${T("拒绝", "rejected")}</span>`, skip: `<span class="tag">${T("跳过", "skipped")}</span>` }[s.status];
+  $("#jr-body").innerHTML = `<div class="jr-text"><div class="no">${String(k + 1).padStart(2, "0")} / ${String(n).padStart(2, "0")}</div><h3>${esc(label)} ${tag}</h3>${s.text}</div>
+    <div class="jr-panel">${s.panel || `<div class="empty">${icon("clock")}<p>${T("这一站没有执行。", "This station did not run.")}</p></div>`}</div>`;
+  const m = $("#jr-body mark.ev");
+  if (m) { const box = m.closest(".page"); box.scrollTop = Math.max(0, m.offsetTop - box.clientHeight / 3); }
+}
+function play(from = 0) {
+  stop(true); J.playing = true;
+  $("#jr-play").innerHTML = `${icon("pause")}<span>${T("暂停", "Pause")}</span>`;
+  go(from);
+  // stations that did not run pass quickly
+  const tick = () => { if (J.i >= J.steps.length - 1) return stop(); go(J.i + 1); J.timer = setTimeout(tick, J.steps[J.i].status === "skip" ? 1100 : 2600); };
+  J.timer = setTimeout(tick, 2200);
+}
+function stop(keep) {
+  clearTimeout(J.timer); J.playing = false;
+  if (keep) return;
+  const b = $("#jr-play"); if (b) b.innerHTML = `${icon("play")}<span>${T("播放", "Play")}</span>`;
+  $$(".st.ahead").forEach(x => x.classList.remove("ahead"));
+}
+function select(id, { play: autoplay = false, scroll = false, hash = true } = {}) {
+  if (!ITEM[id]) return;
+  stop(); J.id = id; J.i = 0;
+  renderJourney();
+  $$(".it").forEach(b => b.classList.toggle("sel", b.dataset.id === id));
+  $$("#pages mark.ev").forEach(m => m.classList.toggle("sel", m.dataset.ids.split(" ").includes(id)));
+  const it = ITEM[id];
+  if (hash) K.setHash(it.type === "rejected" ? { cand: it.ci } : { rec: id });
+  if (scroll) $("#journey").scrollIntoView({ behavior: K.reduced() ? "auto" : "smooth", block: "start" });
+  if (autoplay && !K.reduced()) play(0);
+}
+
+// ---------------------------------------------------------------- 01 the run as a flow
+function sankey() {
+  const c = V.counts, sys = RUN.system, ver = c.candidates - c.rejected, auto = c.by_review_status.auto_validated || 0, pend = c.by_review_status.pending_review || 0;
+  const u = 9.5, W = 1160, nw = 14, X = [214, 470, 750, 990];
+  const n = {
+    cand: { x: X[0], y: 46, v: c.candidates, cls: "brand", f: "all", num: c.candidates, lab: T("Agent 写出的候选", "Candidates from the agent"), sub: "candidates.json", side: "l" },
+    sys: { x: X[1], y: 8, v: sys, cls: "gold", f: "system", num: sys, lab: T("系统记录", "System record"), sub: T("输入 PDF 的资产记录", "the input PDF as an asset") },
+    ver: { x: X[1], y: 46 - 4, v: ver, cls: "brand", f: "candidate", num: ver, lab: T("引文核验通过", "Quote verified"), sub: T(`其中 ${new Set(V.repairs.map(r => r.where)).size} 条做过结构修复`, `${new Set(V.repairs.map(r => r.where)).size} of them structurally repaired`) },
+    rej: { x: X[1], y: 0, v: c.rejected, cls: "clay", f: "rejected", num: c.rejected, lab: T("被拒绝", "Rejected"), sub: T("引文找不到 → errors.jsonl", "quote not found → errors.jsonl") },
+    rec: { x: X[2], y: 30, v: c.records, cls: "brand", f: "all", num: c.records, lab: T("写入记录", "Records written"), sub: T(`${RUN.links} 条记录间关联`, `${RUN.links} links between records`) },
+    auto: { x: X[3], y: 14, v: auto, cls: "ok", f: "auto", num: auto, lab: T("校验通过", "Auto-validated"), sub: "auto_validated", side: "r" },
+    pend: { x: X[3], y: 0, v: pend, cls: "amber", f: "pending", num: pend, lab: T("待复核", "Pending review"), sub: T("带警告，等专家确认", "warnings for an expert"), side: "r" },
+  };
+  n.sys.y = 34; n.ver.y = n.sys.y + sys * u + 26; n.rej.y = n.ver.y + ver * u + 34; n.cand.y = n.ver.y + 6;
+  n.rec.y = n.ver.y - 6; n.auto.y = n.rec.y - 14; n.pend.y = n.auto.y + auto * u + 34;
+  for (const k in n) n[k].h = Math.max(4, n[k].v * u);
+  const H = Math.max(n.rej.y + n.rej.h, n.pend.y + n.pend.h) + 66;
+  // bands: [from, to, value, out offset, in offset]
+  const bands = [["cand", "ver", ver, 0, 0], ["cand", "rej", c.rejected, ver, 0], ["sys", "rec", sys, 0, 0], ["ver", "rec", ver, 0, sys], ["rec", "auto", auto, 0, 0], ["rec", "pend", pend, auto, 0]];
+  const col = { brand: "var(--brand)", gold: "var(--gold)", clay: "var(--clay)", ok: "var(--ok)", amber: "var(--amber)" };
+  const bandSVG = bands.filter(b => b[2] > 0).map(([a, b, v, oa, ob], k) => {
+    const A = n[a], B = n[b], x0 = A.x + nw, x1 = B.x, h = v * u, y0 = A.y + oa * u, y1 = B.y + ob * u, mx = (x0 + x1) / 2;
+    const d = `M${x0} ${y0}C${mx} ${y0} ${mx} ${y1} ${x1} ${y1}L${x1} ${y1 + h}C${mx} ${y1 + h} ${mx} ${y0 + h} ${x0} ${y0 + h}Z`;
+    const mid = `M${x0} ${y0 + h / 2}C${mx} ${y0 + h / 2} ${mx} ${y1 + h / 2} ${x1} ${y1 + h / 2}`;
+    return `<path class="sk-band" data-a="${a}" data-b="${b}" d="${d}" style="fill:${col[B.cls]}"><title>${esc(A.lab)} → ${esc(B.lab)}: ${v}</title></path>
+      <path class="sk-dots" d="${mid}" style="stroke-width:${Math.min(7, Math.max(3, h * .35))};animation-delay:${-k * .37}s"/>`;
+  }).join("");
+  const nodeSVG = Object.entries(n).map(([k, N]) => {
+    // the outer columns stack number, label and note; the middle ones put the label beside the number
+    const left = N.side === "l", stacked = !!N.side, tx = left ? N.x - 14 : N.x + nw + 12, anchor = left ? "end" : "start", cy = N.y + N.h / 2;
+    return `<g class="sk-node" data-f="${N.f}" data-k="${k}" tabindex="0" role="button" aria-label="${esc(N.lab)}: ${N.num}" style="color:${col[N.cls]}">
+      <rect x="${N.x}" y="${N.y}" width="${nw}" height="${N.h}" rx="4" style="fill:${col[N.cls]}"/>
+      <text class="sk-num sk-halo" x="${tx}" y="${cy - (stacked ? 8 : 2)}" text-anchor="${anchor}">${N.num}</text>
+      <text class="sk-lab sk-halo" x="${tx + (stacked ? 0 : String(N.num).length * 16 + 8)}" y="${cy - (stacked ? 8 : 3)}" text-anchor="${anchor}" ${stacked ? 'dy="19"' : ""}>${esc(N.lab)}</text>
+      <text class="sk-sub sk-halo" x="${tx}" y="${cy + (stacked ? 28 : 16)}" text-anchor="${anchor}">${esc(N.sub)}</text></g>`;
+  }).join("");
+  const steps = [[X[0] + nw / 2, T("agent", "agent")], [(X[0] + X[1]) / 2 + 6, T("修复 · 核验", "repair · verify")], [(X[1] + X[2]) / 2 + 6, T("组装 · 关联", "assemble · link")], [(X[2] + X[3]) / 2 + 6, T("契约校验", "validate")]];
+  const top = steps.map(([x, t]) => `<text class="sk-sub" x="${x}" y="${H - 4}" text-anchor="middle" style="font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:10.5px">${esc(t)}</text>`).join("");
+  return `<svg class="sankey" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T("这次运行的候选与记录流向", "Where the candidates of this run went")}">${bandSVG}${nodeSVG}${top}</svg>`;
+}
+
+// ---------------------------------------------------------------- 03 paper & list
+const FILTERS = [["all", "全部", "All", it => it.type !== "rejected" || true], ["pending", "待复核", "Pending", pending],
+  ["auto", "校验通过", "Auto-validated", it => it.rec && it.rec.common.review_status === "auto_validated"], ["repaired", "做过修复", "Repaired", it => it.ci != null && repairsOf(it.ci).length > 0],
+  ["rejected", "被拒绝", "Rejected", it => it.type === "rejected"], ["system", "系统记录", "System", it => it.type === "system"], ["candidate", "来自候选", "From candidates", it => it.type === "record"]];
+let filter = "all";
+function pagesHTML() {
+  const spans = D.records.map(r => ({ id: r.common.record_id, s: spanOf(r) })).filter(x => x.s);
+  return D.pages.map((raw, i) => {
+    const text = soft(raw), pg = i + 1, mine = spans.filter(x => x.s.page === pg);
+    const cuts = [...new Set([0, text.length, ...mine.flatMap(x => [x.s.a, x.s.b])])].filter(k => k >= 0 && k <= text.length).sort((a, b) => a - b);
+    let html = "";
+    for (let k = 0; k < cuts.length - 1; k++) {
+      const [a, b] = [cuts[k], cuts[k + 1]], seg = esc(text.slice(a, b)), ids = mine.filter(x => x.s.a <= a && x.s.b >= b).map(x => x.id);
+      html += ids.length ? `<mark class="ev" data-ids="${ids.join(" ")}" title="${esc(ids.map(id => kindLabel(RID[id].common.record_kind)).join(" · "))}">${seg}</mark>` : seg;
+    }
+    return `<div class="pg-h">${T(`第 ${pg} 页`, `Page ${pg}`)}</div><div class="paper-text">${html}</div>`;
+  }).join("");
+}
+function itemHTML(it) {
+  if (it.type === "rejected") return `<button type="button" class="it rej" data-id="${esc(it.id)}"><span class="r1"><span class="tag clay dot">${T("被拒绝", "Rejected")}</span>${kindTag(it.cand.record_kind)}<span class="pg">p.${esc(it.cand.evidence?.page)}</span></span>
+    <span class="sm">${esc(it.cand.evidence?.quote || "")}</span><span class="mt">candidates[${it.ci}] · ${esc(it.err.code)}</span></button>`;
+  const r = it.rec, reps = it.ci != null ? repairsOf(it.ci).length : 0, w = warnsOf(it).length, lk = linksOf(r).reduce((s, l) => s + l.ids.length, 0);
+  return `<button type="button" class="it" data-id="${esc(it.id)}"><span class="r1">${kindTag(r.common.record_kind)}${reviewTag(r.common.review_status)}
+      ${reps ? `<span class="tag gold">${icon("wrench")}${reps}</span>` : ""}${w ? `<span class="tag amber">${icon("alert")}${w}</span>` : ""}${lk ? `<span class="tag" title="${T("指向其他记录的关联", "links to other records")}">${icon("link")}${lk}</span>` : ""}
+      ${r.common.source_page ? `<span class="pg">p.${esc(r.common.source_page)}</span>` : ""}</span>
+    <span class="sm">${esc(summary(r))}</span><span class="mt">${esc(itemRef(it))} · ${esc(it.id)}</span></button>`;
+}
+function renderList() {
+  const f = FILTERS.find(x => x[0] === filter) || FILTERS[0];
+  $("#filters").innerHTML = FILTERS.map(([k, zh, en, fn]) => `<button type="button" class="chip" data-f="${k}" aria-pressed="${k === filter}">${esc(T(zh, en))} <span class="n">${ITEMS.filter(fn).length}</span></button>`).join("");
+  $("#items").innerHTML = ITEMS.filter(f[3]).map(itemHTML).join("");
+  $$("#items .it").forEach(b => b.classList.toggle("sel", b.dataset.id === J.id));
+}
+
+// ---------------------------------------------------------------- 04 evidence chain
+function chainHTML() {
+  if (!AS) return "";
+  const roots = AS.records.map(r => r.record_id), ids = new Set(roots), edges = [], queue = [...roots];
+  while (queue.length) {
+    const id = queue.shift(), r = RID[id]; if (!r) continue;
+    for (const l of linksOf(r)) for (const t of l.ids) { edges.push({ s: id, o: t, type: l.name }); if (!ids.has(t)) { ids.add(t); queue.push(t); } }
+  }
+  const ghosts = [];
+  for (const it of ITEMS) for (const w of warnsOf(it)) if (w.code === "CANDIDATE_LINK_UNRESOLVED" && ids.has(it.id)) {
+    const ref = refOfWarning(w), g = "ghost:" + ref; ghosts.push({ id: g, ref, it: BY_CAND[REF[ref]] }); edges.push({ s: it.id, o: g, type: "lost" });
+  }
+  // columns: longest path from the statements nobody cites; a statement that cites something sits just left of
+  // the nearest record it cites, so its arrows stay short
+  const all = [...ids, ...ghosts.map(g => g.id)], depth = {};
+  const dep = (id, seen = new Set()) => { if (id in depth) return depth[id]; if (seen.has(id)) return 0; seen.add(id);
+    return depth[id] = Math.max(0, ...edges.filter(e => e.o === id).map(e => dep(e.s, seen) + 1)); };
+  all.forEach(id => dep(id));
+  for (const id of all) if (!edges.some(e => e.o === id)) {
+    const out = edges.filter(e => e.s === id).map(e => depth[e.o]);
+    if (out.length) depth[id] = Math.max(0, Math.min(...out) - 1);
+  }
+  const maxD = Math.max(...Object.values(depth));
+  const firstSource = id => { const e = edges.find(x => x.o === id); return e ? all.indexOf(e.s) : 1e3 + all.indexOf(id); };
+  const elRow = id => { const a = AREC[id]; if (!a) return ""; return `<span class="els" title="${esc(Object.keys(ARG).map(e => `${T(ARG[e].label_zh, ARG[e].label_en)}: ${a.elements.includes(e) ? T("自身陈述", "stated") : a.chain_elements.includes(e) ? T("经关联获得", "via links") : "—"}`).join("\n"))}">${Object.keys(ARG).map(e => `<i class="el ${a.elements.includes(e) ? "own" : a.chain_elements.includes(e) ? "chain" : "none"}"></i>`).join("")}</span>`; };
+  const flagRow = id => { const a = AREC[id]; return ((a && a.flags) || []).map(f => `<span class="tag amber" title="${esc((AS.flag_help || {})[f] || "")}">${icon("alert")}${esc(f === "NO_WARRANT" ? T("缺推理依据", "no warrant") : f)}</span>`).join(""); };
+  const cols = [...Array(maxD + 1)].map((_, d) => {
+    const nodes = all.filter(id => depth[id] === d).sort((a, b) => (edges.some(e => e.s === b) - edges.some(e => e.s === a)) || firstSource(a) - firstSource(b)).map(id => {
+      if (id.startsWith("ghost:")) { const g = ghosts.find(x => x.id === id);
+        return { id, cls: "ghost", html: `<span class="row"><span class="tag clay dot">${T("被拒绝的候选", "Rejected candidate")}</span><span class="mono xs">${esc(g.ref)}</span></span>
+          <span class="wf-label">${esc(clip(g.it && g.it.cand.evidence ? g.it.cand.evidence.quote : g.ref, 110))}</span><span class="xs" style="color:var(--clay)">${T("关联已丢弃，不会被补出", "link dropped, never filled in")}</span>` }; }
+      const r = RID[id];
+      return { id, cls: `wf-${r.common.record_kind === "method" ? "design" : r.common.record_kind === "claim" ? "conclusion" : "result"}`,
+        html: `<span class="row">${kindTag(r.common.record_kind)}</span><span class="wf-label">${esc(clip(summary(r), 120))}</span>${elRow(id)}${flagRow(id)}` };
+    });
+    const kinds = [...new Set(nodes.filter(x => !x.id.startsWith("ghost:")).map(x => RID[x.id].common.record_kind))];
+    return { title: [...kinds.map(kindLabel), ...(nodes.some(x => x.id.startsWith("ghost:")) ? [T("被拒绝的候选", "rejected candidate")] : [])].join(" · "), nodes };
+  });
+  const COLORS = { evidence: "var(--c3)", method: "var(--c1)", lost: "var(--clay)" };
+  return { cols, edges: edges.map(e => ({ s: e.s, o: e.o, color: COLORS[e.type] || "var(--ink-3)", cls: e.type === "lost" ? "lost" : "", key: e.type })) };
+}
+function coverageHTML() {
+  if (!AS) return "";
+  const n = AS.statements, fw = {};
+  for (const [k, a] of Object.entries(ARG)) (fw[a.framework] = fw[a.framework] || []).push(k);
+  return `<div class="cov">${Object.entries(fw).map(([f, els]) => `<div class="fw">${f === "toulmin" ? "Toulmin" : f === "flavell" ? "Flavell" : esc(f)}</div>` + els.map(e => {
+    const c = AS.coverage[e] || { own: 0, chain: 0 };
+    return `<div class="k">${esc(T(ARG[e].label_zh, ARG[e].label_en))}<small>${esc(T(ARG[e].label_en, ARG[e].label_zh))}</small></div>
+      <div class="bar" title="${esc(ARG[e].description_zh || "")}"><i class="chain" style="width:${c.chain / n * 100}%"></i><i class="own" style="width:${c.own / n * 100}%"></i></div>
+      <div class="v">${c.own}${c.chain > c.own ? ` <span class="muted">→ ${c.chain}</span>` : ""} / ${n}</div>`;
+  }).join("")).join("")}</div>
+  <div class="legend" style="margin-top:14px"><span><i class="el own" style="display:inline-block;vertical-align:-2px;margin-right:6px"></i>${T("记录自身陈述", "stated by the record")}</span>
+    <span><i class="el chain" style="display:inline-block;vertical-align:-2px;margin-right:6px"></i>${T("经关联获得", "reached through its links")}</span></div>`;
+}
+
+// ---------------------------------------------------------------- page
+function render() {
+  const c = V.counts, m = D.manifest, cs = caseList();
+  const notes = (D.candidates.extraction || {}).notes || "";
+  const fileTile = (name, ic, cls, sub, href) => `<a class="file" href="${esc(href || fileHref(name))}" title="${esc(name)}"><span class="ic ${cls}">${ic}</span><span><b>${esc(name === D.file_name ? name : name.slice(STEM.length))}</b><span>${sub}</span></span></a>`;
+  const arrow = t => `<div class="farrow"><div><svg viewBox="0 0 64 20"><path class="flowing" d="M2 10H58"/><path d="M52 4l7 6-7 6"/></svg><small>${t}</small></div></div>`;
+  const brief = D.brief.split("\n").filter(l => /^#{2,3} /.test(l)).map(l => `<li class="${l.startsWith("###") ? "h3" : ""}">${esc(l.replace(/^#+ /, ""))}</li>`).join("");
+  $("#main").innerHTML = `
+  <section class="page-hero wrap">
+    <span class="eyebrow">${T("抽取演示 · 端到端", "Walk-through · end to end")}</span>
+    <h1>${T("一篇合成论文，<em>从 PDF 走到 JSONL</em>", "One synthetic paper, <em>from PDF to JSONL</em>")}</h1>
+    <p class="lead">${T(`这是管线在仓库内一篇三页合成论文上的真实运行：agent 按说明写出 ${c.candidates} 条候选，管线逐条修复结构、在原文中核对引文、组装成原子记录、解析记录间关联，再按数据契约 ${esc(m.contract.schema_version)} 校验。页面上的每个数字、每段文字和 JSON 都取自这次运行的输出文件。`,
+      `A real run of the pipeline on a synthetic three-page paper that ships with the repository. The agent read the brief and wrote ${c.candidates} candidates; the pipeline repaired their structure, checked every quote against the paper, assembled atomic records, resolved the links between them and validated the result against contract ${esc(m.contract.schema_version)}. Every number, sentence and JSON object on this page comes from that run's output files.`)}</p>
+    <div class="hero-meta"><span class="tag brand">${icon("book")}${T("契约", "contract")} ${esc(m.contract.schema_version)}</span><span class="tag">${T("画像", "profile")} ${esc(m.profile.name)} · ${fmt(m.profile.field_count)} ${T("字段", "fields")}</span>
+      <span class="tag">${T("解析器", "parser")} ${esc(m.input.parser.name)} ${esc(m.input.parser.version)}</span><span class="tag">${T("后端", "backend")} ${esc(m.backend.name)} · ${esc(m.backend.model || "")}</span><span class="tag mono">${esc(m.run_id)}</span></div>
+    <div class="files reveal">
+      <div class="fgrp"><small>${T("输入", "Input")}</small>${fileTile(D.file_name, "PDF", "pdf", `${D.pages.length} ${T("页", "pages")} · ${fmt(m.input.size_bytes)} B`, FILE(".pdf") && FILE(".pdf").path)}</div>
+      ${arrow(T("brief + pages.txt", "brief + pages.txt"))}
+      <div class="fgrp"><small>Agent · <span class="mono">${esc(STEM)}.*</span></small>${fileTile(`${STEM}.candidates.json`, "JSON", "json", T(`${c.candidates} 条候选`, `${c.candidates} candidates`), FILE(".candidates.json") && FILE(".candidates.json").path)}</div>
+      ${arrow(T("管线", "pipeline"))}
+      <div class="fgrp g2f"><small>${T("输出", "Output")} · <span class="mono">${esc(STEM)}.*</span></small>
+        ${fileTile(`${STEM}.jsonl`, "JSONL", "ok", T(`${c.records} 条记录`, `${c.records} records`))}
+        ${fileTile(`${STEM}.validation.json`, "QC", "rep", T(`${V.repairs.length} 处修复 · 证据链审计`, `${V.repairs.length} repairs · chain audit`))}
+        ${fileTile(`${STEM}.errors.jsonl`, "ERR", "err", T(`${c.rejected} 条被拒绝`, `${c.rejected} rejected`))}
+        ${fileTile(`${STEM}.manifest.json`, "MAN", "json", T("版本、哈希、环境", "versions, hashes, environment"))}</div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="run">
+    <div class="section-head"><span class="no">01</span><h2>${T("这次运行去了哪里", "Where the run went")}</h2>
+      <p>${T("左边是 agent 写的候选，右边是最终的复核状态。点任何一个节点，下面的列表就只显示那一部分。", "Candidates from the agent on the left, review status on the right. Click any node to filter the list below to it.")}</p></div>
+    <div class="card flow-card reveal">${sankey()}</div>
+    <div class="cases">${cs.map(x => `<button type="button" class="case tone-${x.tone}" data-go="${esc(x.it.id)}"><b>${icon(x.ic)}${esc(x.t)}</b><span>${esc(x.d)}</span><small>${esc(itemRef(x.it))}</small></button>`).join("")}</div>
+  </section>
+
+  <section class="section wrap">
+    <div class="section-head"><span class="no">02</span><h2>${T("跟着一条候选走完管线", "Follow one candidate through the pipeline")}</h2>
+      <p>${T("每条候选都要过五站：结构检查、证据核验、组装与关联、契约校验，最后写进记录或错误文件。选一个案例，看它在每一站发生了什么。", "Every candidate passes five stations: shape check, evidence check, assembly and linking, validation, and then either the records file or the error file. Pick a case and see what happened to it at each one.")}</p></div>
+    <div class="card jr" id="journey"></div>
+  </section>
+
+  <section class="section wrap" id="explore">
+    <div class="section-head"><span class="no">03</span><h2>${T("原文与全部记录", "The paper and every record")}</h2>
+      <p>${T("左边是管线核对引文所用的解析文本，黄色是有记录引用的句子；右边是全部记录和被拒绝的候选。点任何一处，上面的路线图就切换到它。",
+        "On the left, the parsed text the pipeline checks quotes against; yellow sentences are quoted by a record. On the right, every record and every rejected candidate. Click either to load it into the journey above.")}</p></div>
+    <div class="explore">
+      <div class="card"><div class="card-head"><span>${icon("file")} ${esc(D.file_name)}</span><span class="muted small">pages.txt · ${D.pages.length} ${T("页", "pages")}</span></div><div class="pages" id="pages">${pagesHTML()}</div></div>
+      <div class="card"><div class="list-h" id="filters"></div><div class="items" id="items"></div></div>
+    </div>
+    ${notes ? `<div class="callout" style="margin-top:14px">${icon("info")}<div><b>${T("关于这批候选", "About these candidates")}</b> <span class="dim">${T("（候选文件 extraction.notes，原文照录）", "(extraction.notes of the candidates file, verbatim)")}</span><br>${esc(notes)}</div></div>` : ""}
+  </section>
+
+  ${AS ? `<section class="section wrap" id="chain">
+    <div class="section-head"><span class="no">04</span><h2>${T("证据链：结论靠什么站住", "The evidence chain: what each claim rests on")}</h2>
+      <p>${T(`候选之间写的 ref 关联被解析成记录 ID 以后，就能看到每条结论背后的依据和方法。管线按 TRACE 的论证要素（Toulmin + Flavell）检查每条陈述：它自己陈述了哪些要素，又经关联获得了哪些。这只检查结构与连通性，不判断对错。`,
+        "Once the ref links between candidates are resolved to record IDs, each claim shows what it rests on. The pipeline checks every statement for the argument elements of TRACE (Toulmin + Flavell): which it states itself and which it reaches through its links. This checks structure and connectivity, not whether a claim is right.")}</p></div>
+    <div class="card pad reveal" id="chain-box"></div>
+    <div class="grid g21" style="margin-top:16px">
+      <div class="card pad reveal"><h3 class="sub" style="margin-top:0">${T(`论证要素覆盖（${AS.statements} 条陈述）`, `Element coverage over ${AS.statements} statements`)}</h3>${coverageHTML()}</div>
+      <div class="card pad reveal"><h3 class="sub" style="margin-top:0">${icon("shield")} ${T("审计结果", "Audit result")}</h3>
+        <div class="stack">
+          <div class="audit"><span class="tag brand">${AS.links.total}</span><span>${T("条关联全部解析为记录 ID", "links, all resolved to record IDs")}</span></div>
+          <div class="audit"><span class="tag clay">${ITEMS.reduce((s, x) => s + warnsOf(x).filter(w => w.code === "CANDIDATE_LINK_UNRESOLVED").length, 0)}</span><span>${T("条指向被拒绝候选的关联被丢弃", "link to a rejected candidate dropped")}</span></div>
+          ${Object.entries(AS.flags || {}).map(([f, k]) => `<div class="audit"><span class="tag amber">${k}</span><span>${esc(f === "NO_WARRANT" ? T("条陈述缺推理依据：没有统计检验、证据类型或关联方法", "statements without a warrant: no statistical test, evidence type or linked method") : f)}</span></div>`).join("")}
+          <p class="xs muted" style="margin-top:10px">${esc(AS.basis)}</p>
+          <a class="btn sm" href="contract.html#roles">${T("论证角色在规范中的定义", "How the contract defines argument roles")} ${icon("arrow")}</a>
+        </div></div>
+    </div>
+  </section>` : ""}
+
+  <section class="section wrap" id="repairs">
+    <div class="section-head"><span class="no">05</span><h2>${T("修什么，不修什么", "What gets repaired, and what never does")}</h2>
+      <p>${T(`这次运行的 ${V.repairs.length} 处修复全部在下表，每一处都写在校验报告里。修复只针对形式；凡是需要“猜”的地方，管线一律拒绝或标记待复核。`,
+        `All ${V.repairs.length} repairs of this run, each logged in the validation report. Repairs are about form only; wherever fixing would mean guessing, the pipeline rejects or flags instead.`)}</p></div>
+    <div class="table-wrap reveal"><table class="tbl"><thead><tr><th>${T("候选", "Candidate")}</th><th>${T("动作", "Action")}</th><th>${T("字段", "Field")}</th><th>${T("原值", "From")}</th><th>${T("修复后", "To")}</th></tr></thead><tbody>
+      ${V.repairs.map(r => { const ci = +(/\d+/.exec(r.where) || [])[0]; const it = BY_CAND[ci];
+        return `<tr class="click" data-go="${esc(it ? it.id : "")}"><td><span class="mono" style="color:var(--brand)">${esc(r.where)}</span></td><td>${esc(actionLabel(r.action))}<div class="xs muted mono">${esc(r.action)}${r.reason ? " · " + esc(r.reason) : ""}</div></td>
+          <td>${r.key ? (K.FIELDS[r.key] ? fieldLink(r.key) : `<span class="mono">${esc(r.key)}</span>`) : `<span class="mono">record_kind</span>`}</td>
+          <td>${"from" in r ? `<span class="from mono">${esc(JSON.stringify(r.from))}</span>` : `<span class="muted">—</span>`}</td><td>${"to" in r ? `<span class="to mono">${esc(JSON.stringify(r.to))}</span>` : `<span class="muted">${T("（已删除）", "(removed)")}</span>`}</td></tr>`; }).join("")}
+    </tbody></table></div>
+    <div class="never">
+      <div class="card pad tone-fail"><b>${icon("x")}${T("引文找不到", "A quote that is not there")}</b><p>${T("拒绝，写入 errors.jsonl。不会改写引文去“凑”原文。", "Rejected to errors.jsonl. The quote is never reworded to fit the paper.")}</p></div>
+      <div class="card pad tone-warn"><b>${icon("file")}${T("页码写错", "A wrong page")}</b><p>${T("引文在别的页逐字存在时改正页码，但记警告、转待复核。", "If the quote is verbatim on another page, the page is corrected, with a warning and a review.")}</p></div>
+      <div class="card pad tone-warn"><b>${icon("link")}${T("关联指向不存在的候选", "A link to nothing")}</b><p>${T("丢弃这条关联并标记，不会猜它本来指谁。", "The link is dropped and flagged; the pipeline never guesses what it meant.")}</p></div>
+      <div class="card pad tone-skip"><b>${icon("shield")}${T("管线字段", "Pipeline fields")}</b><p>${T("记录 ID、哈希、复核状态由管线计算；候选里写了也会被丢弃。", "Record IDs, hashes and review status are computed by the pipeline; if a candidate sets them, they are dropped.")}</p></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="inputs">
+    <div class="section-head"><span class="no">06</span><h2>${T("Agent 看到了什么，运行留下了什么", "What the agent saw, and what the run left behind")}</h2>
+      <p>${T("Agent 拿到的说明不是手写的：它在运行时由规范和画像生成，只对这个版本有效。运行清单记下规范、输入和输出的哈希，可以原样复现。",
+        "The brief the agent received is not hand-written: it is generated at run time from the contract and the profile and is valid for this version only. The manifest records the hashes of contract, input and outputs, so the run can be reproduced exactly.")}</p></div>
+    <div class="grid g2">
+      <div class="card pad reveal"><h3 class="sub" style="margin-top:0">${icon("book")} brief.md <span class="muted small" style="font-weight:500">${fmt(D.brief.length)} ${T("字符", "characters")}</span></h3>
+        <ul class="outline">${brief}</ul>
+        <details class="fold"><summary>${T("展开全文", "Show the full brief")}</summary><div class="fold-body"><pre class="brief">${esc(D.brief)}</pre></div></details></div>
+      <div class="card reveal"><div class="card-head"><span>${icon("shield")} ${STEM}.manifest.json</span><span class="muted small">${T("节选", "excerpt")}</span></div><pre class="json" style="max-height:470px">${json(m, { wrap: true })}</pre></div>
+    </div>
+    <h3 class="sub">${icon("download")} ${T("这次运行的文件", "The files of this run")}</h3>
+    <div class="dl">${(D.files || []).map(f => { const name = f.path.split("/").pop(), ext = name.endsWith(".pdf") ? ["PDF", "pdf"] : name.endsWith(".errors.jsonl") ? ["ERR", "err"] : name.endsWith(".jsonl") ? ["JSONL", "ok"] : name.includes("validation") ? ["QC", "rep"] : ["JSON", "json"];
+      return `<a class="file" href="${esc(f.path)}"><span class="ic ${ext[1]}">${ext[0]}</span><span><b>${esc(name)}</b><span>${esc(f.path.split("/").slice(0, -1).join("/"))}/ · ${fmt(f.bytes)} B</span></span></a>`; }).join("")}</div>
+    <h3 class="sub">${icon("play")} ${T("在本地重跑", "Run it yourself")}</h3>
+    ${K.term([T("# 用仓库里的候选文件重跑这次运行（不调用模型）", "# re-run this example from its checked-in candidates (no model involved)"),
+      `skills/pdf2jsonl/scripts/pdf2jsonl run examples/papers/${D.file_name} --candidates examples/papers/${STEM}.candidates.json --out-dir out/ --schema-version ${m.contract.schema_version}`,
+      T("# 校验输出，再派生下游视图", "# validate the output, then derive the downstream views"),
+      `bdc validate out/${STEM}.jsonl`, `bdc derive out/${STEM}.jsonl --out out/derived`])}
+  </section>`;
+
+  // wiring
+  $$("[data-go]").forEach(b => b.addEventListener("click", e => { e.preventDefault(); if (b.dataset.go) select(b.dataset.go, { play: true, scroll: true }); }));
+  $$(".sk-node").forEach(g => {
+    const act = () => { filter = g.dataset.f; renderList(); $("#explore").scrollIntoView({ behavior: K.reduced() ? "auto" : "smooth", block: "start" }); };
+    g.addEventListener("click", act); g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(); } });
+    g.addEventListener("pointerenter", () => $$(".sk-band").forEach(b => b.classList.toggle("hot", b.dataset.a === g.dataset.k || b.dataset.b === g.dataset.k)));
+    g.addEventListener("pointerleave", () => $$(".sk-band").forEach(b => b.classList.remove("hot")));
+  });
+  $("#filters").addEventListener("click", e => { const b = e.target.closest("[data-f]"); if (b) { filter = b.dataset.f; renderList(); } });
+  $("#items").addEventListener("click", e => { const b = e.target.closest(".it"); if (b) select(b.dataset.id, { play: true, scroll: true }); });
+  $("#pages").addEventListener("click", e => { const m = e.target.closest("mark.ev"); if (m) select(m.dataset.ids.split(" ")[0], { play: true, scroll: true }); });
+  if (!render.wired) { // #main outlives a language switch
+    render.wired = true;
+    $("#main").addEventListener("click", e => { const a = e.target.closest("a[data-sel]"); if (a) { e.preventDefault(); select(a.dataset.sel, { play: false, scroll: true }); } });
+  }
+  renderList();
+  if (AS) { const ch = chainHTML(); K.linkedColumns($("#chain-box"), ch.cols, ch.edges, { minWidth: 900, onNode: id => { if (!id.startsWith("ghost:")) select(id, { play: true, scroll: true }); else { const g = BY_CAND[REF[id.slice(6)]]; if (g) select(g.id, { play: true, scroll: true }); } },
+    legend: `<div class="legend" style="margin-top:12px"><span><i class="swatch" style="background:var(--c3);height:3px;width:16px;vertical-align:3px"></i>${T("依据", "evidence")}</span><span><i class="swatch" style="background:var(--c1);height:3px;width:16px;vertical-align:3px"></i>${T("方法", "method")}</span>
+      <span><i class="swatch" style="background:repeating-linear-gradient(90deg,var(--clay) 0 4px,transparent 4px 7px);height:3px;width:16px;vertical-align:3px"></i>${T("被丢弃的关联", "dropped link")}</span>
+      <span class="muted">${T("箭头指向它所依据的记录；方块是 8 个论证要素，实心 = 自身陈述，斜纹 = 经关联获得", "Arrows point at what a record rests on; the squares are the 8 argument elements, solid = stated, hatched = reached through links")}</span></div>` }); }
+
+  // initial selection: the hash, else the first case
+  const h = K.hash();
+  const first = (h.rec && ITEM[h.rec] && h.rec) || (h.cand != null && BY_CAND[+h.cand] && BY_CAND[+h.cand].id) || (cs.find(x => x.tone === "fix") || cs[0]).it.id;
+  const linked = !!(h.rec || h.cand != null);
+  select(first, { play: linked, scroll: linked, hash: false });
+  if (!linked) watchJourney();
+}
+// play the first case once, when the journey first comes into view
+function watchJourney() {
+  if (J.seen || K.reduced() || !("IntersectionObserver" in window)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && !J.seen) { J.seen = true; io.disconnect(); play(0); } }), { threshold: .35 });
+  io.observe($("#journey"));
+}
+document.addEventListener("keydown", e => {
+  if (!J.steps.length || e.target.closest("input, textarea, select")) return;
+  const r = $("#journey").getBoundingClientRect();
+  if (r.bottom < 0 || r.top > innerHeight) return;
+  if (e.key === "ArrowRight") { stop(); go(Math.min(J.steps.length - 1, J.i + 1)); }
+  if (e.key === "ArrowLeft") { stop(); go(Math.max(0, J.i - 1)); }
+});
+K.mount({ title: () => T("抽取演示 · pdf2jsonl", "Walk-through · pdf2jsonl"), render });
+</script>
+</body>
+</html>

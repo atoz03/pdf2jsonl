@@ -8,7 +8,9 @@ Two uses share this module:
 - `make dashboard` writes an untracked `dashboard.html` in the repository root that also covers local run
   directories. Rerun it after adding PDFs or running extraction.
 
-The HTML embeds its data so it works when opened directly, without a web server. Identical PDF bytes are
+Both render site/pages/papers.html with the site's shell (scripts/site_shell.py); the local page gets a header
+that links into the repository instead of the other site pages. The HTML embeds its data so it works when
+opened directly, without a web server. Identical PDF bytes are
 grouped by SHA-256; runs are never joined just because filenames match. A PDF that a run manifest lists as a
 supplement of its input is shown as a part of that paper, not as a paper of its own.
 """
@@ -27,18 +29,19 @@ from urllib.parse import quote, unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from breeding_contract.api import load_profile, resolve_schema  # noqa: E402
 from breeding_contract.derive import Deriver, counts as derive_counts  # noqa: E402
 from breeding_contract.util import load_yaml, sha256_file  # noqa: E402
+from scripts import site_shell  # noqa: E402
 
 SKIP_DIRS = {'.git', '.venv', '__pycache__', 'node_modules', '.pytest_cache', '_site', 'releases', 'dist', 'build'}
-# Sidebar links (label, icon, href). The local file points into the repository, the site page into the site.
-LOCAL_NAV = (('字段定义', 'table', 'docs/generated/field_definitions.md'), ('下游派生', 'layers', 'docs/downstream.md'),
-             ('数据管线', 'flow', 'docs/diagrams/pipeline.html'), ('项目说明', 'book', 'README.md'))
-SITE_NAV = (('规范总览', 'home', 'index.html#overview'), ('字段目录', 'table', 'index.html#fields'),
-            ('抽取演示', 'file', 'index.html#demo'), ('下游派生', 'layers', 'index.html#downstream'),
-            ('存量导入', 'download', 'index.html#importers'), ('数据管线', 'flow', 'pipeline.html'))
+# Header links of the local page (label_zh, label_en, href relative to the repository root).
+LOCAL_LINKS = (('字段定义', 'Field definitions', 'docs/generated/field_definitions.md'),
+               ('下游派生', 'Downstream outputs', 'docs/downstream.md'),
+               ('数据管线', 'Pipeline diagram', 'docs/diagrams/pipeline.html'), ('项目说明', 'README', 'README.md'))
 
 
 def _relative(root, path):
@@ -452,19 +455,11 @@ def _linked_files(data):
     return sorted({unquote(u[2:]) for u in urls if isinstance(u, str) and u.startswith('./')})
 
 
-def _nav(items):
-    return ''.join(f'<a href="{href}" class="side-link"><span data-icon="{icon}"></span>{label}</a>'
-                   for label, icon, href in items)
-
-
-def build(root: Path = ROOT, out: Path | None = None, scan=None, site: bool = False):
-    """Write the dashboard. With ``site`` the page is self-contained under its own directory: the files it
-    links to are copied next to it and the sidebar points at the other pages of the site."""
+def build(root: Path = ROOT, out: Path | None = None, scan=None, site: dict | None = None):
+    """Write the dashboard. ``site`` is the site's metadata (scripts/make_site.py): the page then becomes the
+    site's Papers page, self-contained under its own directory, with the files it links to copied next to it.
+    Without it the page is the local dashboard, linking into the repository it was built from."""
     data = build_data(root) if scan is None else build_data(root, scan)
-    template = (ROOT / 'site/dashboard.template.html').read_text(encoding='utf-8')
-    payload = json.dumps(data, ensure_ascii=False, separators=(',', ':'), allow_nan=False)
-    # Keep source text inside the JSON script element, including malicious </script> snippets.
-    payload = payload.replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
     destination = out or root / 'dashboard.html'
     destination.parent.mkdir(parents=True, exist_ok=True)
     if site:
@@ -473,17 +468,13 @@ def build(root: Path = ROOT, out: Path | None = None, scan=None, site: bool = Fa
             target = destination.parent / rel
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(root / rel, target)
+        page = {**data, 'site': site}
     else:
         base = quote(os.path.relpath(root.resolve(), destination.parent.resolve()), safe='/') + '/'
-    self_href = quote(destination.name) if site else quote(os.path.relpath(destination.resolve(), root.resolve()), safe='/')
-    values = {'/*__DASHBOARD_DATA__*/null': payload, '__ROOT_HREF__': base, '__SELF_HREF__': self_href,
-              '<!--__NAV__-->': _nav(SITE_NAV if site else LOCAL_NAV),
-              '__PIPELINE_SVG_HREF__': 'assets/pipeline.svg' if site else 'docs/diagrams/pipeline.svg',
-              '__SNAPSHOT_LABEL__': '示例数据快照' if site else '本地数据快照'}
-    result = template
-    for key, value in values.items():
-        result = result.replace(key, value)
-    destination.write_text(result, encoding='utf-8')
+        self_href = quote(os.path.relpath(destination.resolve(), root.resolve()), safe='/')
+        page = {**data, 'site': {'version': data.get('version', '')},
+                'shell': {'mode': 'local', 'self': self_href, 'links': [list(x) for x in LOCAL_LINKS]}}
+    destination.write_text(site_shell.render('papers', page, base=base), encoding='utf-8')
     return destination, data
 
 

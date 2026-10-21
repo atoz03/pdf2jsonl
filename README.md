@@ -13,7 +13,7 @@
 <a href="https://atoz03.github.io/pdf2jsonl/papers.html"><img src="docs/assets/icons/paper.svg" width="54" height="54" alt="论文看板"><br><strong>论文看板</strong></a><br><sub>看论文，也看每次运行</sub>
 </td>
 <td align="center" width="25%">
-<a href="https://atoz03.github.io/pdf2jsonl/#fields"><img src="docs/assets/icons/fields.svg" width="54" height="54" alt="字段图鉴"><br><strong>字段图鉴</strong></a><br><sub>含义、功能标签与示例</sub>
+<a href="https://atoz03.github.io/pdf2jsonl/fields.html"><img src="docs/assets/icons/fields.svg" width="54" height="54" alt="字段图鉴"><br><strong>字段图鉴</strong></a><br><sub>含义、功能标签与示例</sub>
 </td>
 <td align="center" width="25%">
 <a href="https://atoz03.github.io/pdf2jsonl/pipeline.html"><img src="docs/assets/icons/pipeline.svg" width="54" height="54" alt="管线地图"><br><strong>管线地图</strong></a><br><sub>从 PDF 到原子记录</sub>
@@ -31,13 +31,14 @@
 
 | 页面 | 内容 |
 | --- | --- |
-| [规范总览](https://atoz03.github.io/pdf2jsonl/) | 论文与存量数据如何变成记录，记录如何供下游使用；版本、字段组、规则概况 |
-| [字段目录](https://atoz03.github.io/pdf2jsonl/#fields) | **412 个字段**：含义、类型、JSON 示意、键角色、服务功能、功能分类标签（可多选）和来源 |
-| [抽取演示](https://atoz03.github.io/pdf2jsonl/#demo) | 合成论文从 PDF 到 JSONL 的全过程：候选、证据核验、记录、证据链审计 |
-| [下游派生](https://atoz03.github.io/pdf2jsonl/#downstream) | 同一批记录派生出的关系语句、知识图谱、带标注的语料、问答种子和关系表 |
+| [首页](https://atoz03.github.io/pdf2jsonl/) | 一篇论文怎样变成可回查的数据：项目全貌、四类下游用途和站内导览 |
+| [管线](https://atoz03.github.io/pdf2jsonl/pipeline.html) | 规范、抽取、核验、组装、校验、语义校验、派生到复核的每一步；示例论文的每个候选怎样过关，附全景图（中英文 SVG） |
+| [抽取演示](https://atoz03.github.io/pdf2jsonl/demo.html) | 合成论文从 PDF 到 JSONL 的全过程：候选、证据核验、修复、拒绝与证据链审计 |
+| [下游派生](https://atoz03.github.io/pdf2jsonl/outputs.html) | 同一批记录派生出的关系语句、知识图谱、研究流程、带标注的语料、问答种子和关系表 |
 | [论文看板](https://atoz03.github.io/pdf2jsonl/papers.html) | 按论文查看 PDF、每次运行的记录、原文证据、研究流程、语义校验与复核问题；校验提示按“取值核验 / 填写规则 / 记录链接 / 来源完整性”分组并可逐条筛选，结果可下载 |
-| [存量导入](https://atoz03.github.io/pdf2jsonl/#importers) | legacy、omics、merged 三种已有格式的导入器：映射覆盖、示例运行、问题登记 |
-| [数据管线](https://atoz03.github.io/pdf2jsonl/pipeline.html) | 管线全景图，支持中英文切换与 SVG 下载 |
+| [存量导入](https://atoz03.github.io/pdf2jsonl/importers.html) | legacy、omics、merged 三种已有格式的导入器：映射覆盖、示例运行、问题登记 |
+| [字段目录](https://atoz03.github.io/pdf2jsonl/fields.html) | **412 个字段**：含义、类型、JSON 示意、键角色、服务功能、功能分类标签（可多选）和来源 |
+| [规范](https://atoz03.github.io/pdf2jsonl/contract.html) | 记录类型、画像、受控词表、填写规则、歧义登记和版本历史；各来源（人工整理、pdf2jsonl、三种导入）的记录并排对照 |
 
 本地预览执行 `make site`，然后打开 `_site/index.html`。`make dashboard` 另外生成一个不入库的
 `dashboard.html`，会把本地 `out/` 等运行目录里的论文和运行也收进来。
@@ -124,7 +125,7 @@
 - `review_status` 分级递进：`pending_review` → `auto_validated`（确定性检查通过）→ `model_verified`
   （独立复核通过）→ `expert_approved`／`rejected`（人工决定）。
 
-查阅[在线字段目录](https://atoz03.github.io/pdf2jsonl/#fields)、[字段定义与示例](docs/generated/field_definitions.md)、[完整字段字典](docs/generated/field_dictionary.md)
+查阅[在线字段目录](https://atoz03.github.io/pdf2jsonl/fields.html)、[字段定义与示例](docs/generated/field_definitions.md)、[完整字段字典](docs/generated/field_dictionary.md)
 （也提供 [CSV](docs/generated/field_dictionary.csv)，运行 `bdc generate --xlsx out.xlsx` 可导出 Excel）和
 [按功能组织的字段表](docs/generated/field_functions.md)。
 

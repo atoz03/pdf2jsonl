@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>存量导入 · pdf2jsonl</title>
+<meta name="description" content="Three existing formats (legacy v1, omics 2.0.0, merged v2) mapped leaf by leaf into the same record contract: mapping coverage, example runs, residue and issue registers.">
+<!--__HEAD__-->
+<style>
+/* ---------------------------------------------------------------- hero sankey: every source leaf has a destination */
+.flow-card { padding: 20px 22px 16px; margin-top: 30px; }
+.flow-card .head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+.flow-card .head b { font-size: 15px; }
+.sk-scroll { overflow-x: auto; }
+svg.sk { display: block; width: 100%; min-width: 760px; height: auto; overflow: visible; }
+.sk .rib { fill: none; stroke-opacity: .32; transition: stroke-opacity .2s; }
+.sk .rib:hover, .sk.focus .rib.on { stroke-opacity: .7; }
+.sk.focus .rib:not(.on) { stroke-opacity: .07; }
+.sk .node rect { rx: 4; }
+.sk .node { cursor: pointer; }
+.sk text { font: 12.5px var(--sans); fill: var(--ink); }
+.sk text.n { font: 700 12px var(--mono); fill: var(--ink-3); }
+.sk text.h { font: 700 11px var(--sans); letter-spacing: .08em; text-transform: uppercase; fill: var(--ink-3); }
+.sk text.big { font: 760 15px var(--mono); }
+.sk.reveal .rib { stroke-dasharray: 1600; stroke-dashoffset: 1600; }
+.sk.reveal.in .rib { stroke-dashoffset: 0; transition: stroke-dashoffset 1.4s var(--ease), stroke-opacity .2s; }
+.st-mapped { --sc: var(--c3); } .st-merged { --sc: var(--c1); } .st-transformed { --sc: var(--c7); } .st-partial { --sc: var(--c4); }
+.st-control { --sc: var(--ink-3); } .st-view_only { --sc: var(--line-2); } .st-unmapped { --sc: var(--c5); } .st-forbidden { --sc: var(--c8); }
+
+/* ---------------------------------------------------------------- the five steps */
+.rail { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; position: relative; counter-reset: s; }
+.rail li { list-style: none; position: relative; padding: 0 14px 0 0; }
+.rail li::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--surface); border: 2px solid var(--brand); color: var(--brand); font: 700 13px var(--mono); position: relative; z-index: 1; margin-bottom: 10px; }
+.rail li::after { content: ""; position: absolute; top: 17px; left: 34px; right: 0; height: 2px; background: repeating-linear-gradient(90deg, var(--brand-line) 0 6px, transparent 6px 11px); }
+.rail li:last-child::after { display: none; }
+.rail b { display: block; font-size: 14.5px; margin-bottom: 4px; }
+.rail span { display: block; font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+@media (max-width: 860px) { .rail { grid-template-columns: 1fr; gap: 14px; } .rail li { display: grid; grid-template-columns: 34px 1fr; gap: 0 12px; padding: 0; } .rail li::before { grid-row: span 2; margin: 0; } .rail li::after { display: none; } }
+
+/* ---------------------------------------------------------------- importer detail */
+.imp-tabs { margin-bottom: 18px; }
+.imp-head { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.imp-head h3 { font: 750 22px var(--mono); letter-spacing: -.01em; }
+.imp-shape { color: var(--ink-2); margin: 8px 0 14px; max-width: 900px; }
+.cov { padding: 18px 20px; }
+.cov-bar { display: flex; gap: 2px; height: 30px; margin: 12px 0 10px; }
+.cov-bar i { display: block; height: 100%; background: var(--sc); transition: filter .15s; }
+.cov-bar i:first-child { border-radius: 7px 0 0 7px; } .cov-bar i:last-child { border-radius: 0 7px 7px 0; }
+.cov-bar i:hover { filter: brightness(1.12); }
+.cov-legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px 14px; }
+.cov-legend div { display: grid; grid-template-columns: 12px auto 1fr; gap: 8px; align-items: baseline; font-size: 13px; }
+.cov-legend i { width: 12px; height: 12px; border-radius: 3px; background: var(--sc); align-self: center; }
+.cov-legend b { font: 650 12.5px var(--mono); }
+.cov-legend span { color: var(--ink-3); font-size: 12px; }
+.cov-legend em { font-style: normal; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 12px; }
+.tile { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--surface-2); }
+.tile b { display: block; font-size: 26px; font-weight: 760; letter-spacing: -.02em; line-height: 1.1; }
+.tile span { font-size: 12px; color: var(--ink-3); }
+.tile.ok b { color: var(--ok); } .tile.clay b { color: var(--clay); } .tile.gold b { color: var(--gold); } .tile.amber b { color: var(--amber); }
+.principles { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.principles li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; font-size: 13.5px; color: var(--ink-2); line-height: 1.65; }
+.principles li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); margin: 8px 0 0 6px; }
+.sample { max-height: 360px; overflow: auto; }
+.cmp { width: 100%; }
+.cmp td b { font-variant-numeric: tabular-nums; }
+.mini-bar { display: flex; height: 8px; border-radius: 99px; overflow: hidden; gap: 1px; min-width: 160px; }
+.mini-bar i { background: var(--sc); }
+</style>
+</head>
+<body data-page="importers">
+<header id="top"></header>
+<main id="main"></main>
+<footer id="foot"></footer>
+<!--__DATA__-->
+<!--__KIT__-->
+<script>
+"use strict";
+const { T, esc, icon, fmt, DATA, $, $$, json, count, clip, kindTag, kindLabel, summary, fieldLink, term } = K;
+const IMP = DATA.importers, ORIGIN = DATA.origins || {};
+const REPO = (DATA.site || {}).repo || "";
+const STATUS = {
+  mapped: ["一对一复制", "copied to one contract field as is"], merged: ["并入共享字段", "lands in a field shared with other origins"],
+  transformed: ["按命名规则转换", "restructured by a named transform"], partial: ["部分迁移", "kept where the value fits the definition; the rest goes to the residue"],
+  control: ["只读来路由", "read to route, filter or resolve references; not copied"], view_only: ["仅用于 legacy 视图", "rebuilt only in the legacy projection"],
+  unmapped: ["不迁移，写入残留", "not migrated; kept in the residue file"], forbidden: ["禁止迁移", "must never be migrated"],
+};
+const ORDER = Object.keys(STATUS);
+const DEST = [
+  ["fields", ["mapped", "merged", "transformed", "partial"], "契约字段", "Contract fields"],
+  ["read", ["control", "view_only"], "只读，不复制", "Read, not copied"],
+  ["residue", ["unmapped"], "残留文件", "Residue file"],
+  ["refused", ["forbidden"], "拒绝迁移", "Never migrated"],
+];
+const stLabel = s => T(...(STATUS[s] || [s, s]));
+let cur = IMP.find(i => i.command === K.hash().imp)?.command || IMP[0].command;
+
+// ---------------------------------------------------------------- sankey: importer → mapping status → destination
+function sankey() {
+  const W = 1160, top = 34, gap = 14, u = 0.36;
+  const total = IMP.reduce((n, m) => n + m.leaves, 0);
+  const statuses = ORDER.filter(s => IMP.some(m => m.status[s]));
+  const sTotal = s => IMP.reduce((n, m) => n + (m.status[s] || 0), 0);
+  const dests = DEST.map(([k, ss, zh, en]) => ({ k, ss: ss.filter(s => statuses.includes(s)), zh, en })).filter(d => d.ss.length);
+  const X = [150, 520, 900], NW = 14;
+  // left nodes
+  let y = top; const L = IMP.map(m => { const n = { m, y, h: m.leaves * u }; y += n.h + gap * 2.2; return n; });
+  const H = Math.max(y, top + total * u + gap * (statuses.length - 1)) + 10;
+  // middle nodes, centred
+  const midH = total * u + gap * (statuses.length - 1);
+  y = top + (H - 10 - top - midH) / 2; const M = Object.fromEntries(statuses.map(s => { const n = { s, y, h: sTotal(s) * u }; y += n.h + gap; return [s, n]; }));
+  const rightH = total * u + gap * 1.6 * (dests.length - 1);
+  y = top + (H - 10 - top - rightH) / 2; const R = dests.map(d => { const n = { ...d, y, h: d.ss.reduce((a, s) => a + sTotal(s), 0) * u }; y += n.h + gap * 1.6; return n; });
+  const rib = (x0, y0, x1, y1, w, s, tip, key) => { const c = (x0 + x1) / 2;
+    return `<path class="rib st-${s}" data-k="${esc(key)}" style="stroke:var(--sc)" stroke-width="${Math.max(1, w).toFixed(1)}" d="M${x0} ${y0.toFixed(1)}C${c} ${y0.toFixed(1)} ${c} ${y1.toFixed(1)} ${x1} ${y1.toFixed(1)}"><title>${esc(tip)}</title></path>`; };
+  let ribs = "";
+  // source → status: stack within each source by status order, within each status by importer order
+  const mOff = Object.fromEntries(statuses.map(s => [s, M[s].y]));
+  for (const n of L) {
+    let off = n.y;
+    for (const s of statuses) { const v = n.m.status[s] || 0; if (!v) continue; const w = v * u;
+      ribs += rib(X[0] + NW, off + w / 2, X[1], mOff[s] + w / 2, w, s, `${n.m.command} · ${s} · ${v}`, `${n.m.command} ${s}`);
+      off += w; mOff[s] += w; }
+  }
+  // status → destination
+  const rOff = Object.fromEntries(R.map(r => [r.k, r.y]));
+  for (const s of statuses) { const r = R.find(d => d.ss.includes(s)), v = sTotal(s), w = v * u;
+    ribs += rib(X[1] + NW, M[s].y + w / 2, X[2], rOff[r.k] + w / 2, w, s, `${s} → ${T(r.zh, r.en)} · ${v}`, `${s} ${r.k}`); rOff[r.k] += w; }
+  const nodes = L.map(n => `<g class="node" data-imp="${esc(n.m.command)}"><rect x="${X[0]}" y="${n.y}" width="${NW}" height="${n.h}" fill="var(--brand)"/>
+      <text class="big" x="${X[0] - 12}" y="${n.y + n.h / 2 - 4}" text-anchor="end">${esc(n.m.command)}</text><text class="n" x="${X[0] - 12}" y="${n.y + n.h / 2 + 14}" text-anchor="end">${n.m.leaves} ${T("个叶子", "leaves")}</text></g>`).join("")
+    + statuses.map(s => { const n = M[s]; return `<g class="node st-${s}" data-st="${s}"><rect x="${X[1]}" y="${n.y}" width="${NW}" height="${Math.max(2, n.h)}" fill="var(--sc)"/>
+      <text x="${X[1] + NW + 8}" y="${n.y + n.h / 2 + 4}">${esc(s)} <tspan class="n">${sTotal(s)}</tspan></text></g>`; }).join("")
+    + R.map(n => `<g class="node" data-dest="${n.k}"><rect x="${X[2]}" y="${n.y}" width="${NW}" height="${Math.max(2, n.h)}" fill="${n.k === "fields" ? "var(--brand)" : n.k === "refused" ? "var(--c8)" : "var(--ink-3)"}"/>
+      <text x="${X[2] + NW + 10}" y="${n.y + n.h / 2 - 2}" style="font-weight:700">${esc(T(n.zh, n.en))}</text><text class="n" x="${X[2] + NW + 10}" y="${n.y + n.h / 2 + 15}">${n.ss.reduce((a, s) => a + sTotal(s), 0)} ${T("个叶子", "leaves")}</text></g>`).join("");
+  return `<svg class="sk reveal" id="sk" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T("三种来源格式的每个叶子按映射状态流向契约字段、残留或报告", "Every leaf of the three source formats flows by mapping status into contract fields, the residue or the report")}">
+    <text class="h" x="${X[0] + NW}" y="16" text-anchor="end">${T("来源格式", "Source format")}</text><text class="h" x="${X[1]}" y="16">${T("映射状态", "Mapping status")}</text><text class="h" x="${X[2]}" y="16">${T("去向", "Destination")}</text>
+    <g>${ribs}</g>${nodes}</svg>`;
+}
+
+// ---------------------------------------------------------------- one importer
+function detailHTML(m) {
+  const order = ORDER.filter(s => m.status[s]);
+  const cmd = `bdc migrate ${m.command} ${m.input} --out out/${m.command}${m.args ? " " + m.args : ""}`;
+  const c = m.counts;
+  const ver = m.version && !m.title_zh.includes(String(m.version).replace(/^v/, "")) ? ` · ${m.version}` : "";
+  return `<div class="imp-head"><h3>bdc migrate ${esc(m.command)}</h3><span class="tag brand mono">${esc(m.origin)}</span><span class="muted">${esc(m.title_zh)}${esc(ver)}</span></div>
+    <p class="imp-shape">${T("输入：", "Input: ")}${esc(T(m.shape_zh, m.shape_en))}${T("。", ".")}</p>
+    ${term([cmd])}
+    <div class="grid g2" style="margin-top:16px;align-items:start">
+      <div class="card cov"><div class="row" style="justify-content:space-between"><b>${T("映射覆盖", "Mapping coverage")}</b><a class="mono xs" href="${esc(REPO)}/blob/main/${esc(m.mapping_file)}">${esc(m.mapping_file)} ↗</a></div>
+        <div class="cov-bar" role="img" aria-label="${T(`${m.leaves} 个来源叶子的映射状态`, `Mapping status of ${m.leaves} source leaves`)}">${order.map(s => `<i class="st-${s}" style="flex:${m.status[s]}" title="${esc(s)} · ${m.status[s]} — ${esc(stLabel(s))}"></i>`).join("")}</div>
+        <div class="cov-legend">${order.map(s => `<div class="st-${s}"><i></i><b>${esc(s)}</b><em>${m.status[s]}</em><span style="grid-column:2 / -1">${esc(stLabel(s))}</span></div>`).join("")}</div>
+        <p class="small muted" style="margin-top:12px">${T(`${m.leaves} 个来源叶子全部有去向 · 落到 ${m.targets} 个契约字段 · `, `${m.leaves} source leaves, every one accounted for · ${m.targets} contract fields reached · `)}
+          <a href="fields.html#origin=${encodeURIComponent(m.origin)}">${T(`${m.fields_shared} 个字段列出这个来源`, `${m.fields_shared} field${m.fields_shared === 1 ? "" : "s"} list this origin`)}</a>${m.fields_added ? T(`（其中 ${m.fields_added} 个由它新增）`, ` (${m.fields_added} added by it)`) : ""}</p></div>
+      <div class="card cov"><div class="row" style="justify-content:space-between"><b>${T("示例运行", "Example run")}</b><span class="mono xs muted">${esc(m.example_dir)}/</span></div>
+        <div class="tiles"><div class="tile ok"><b>${c.records}</b><span>${T("条有效记录", "valid records")}</span></div><div class="tile clay"><b>${c.rejected}</b><span>${T("条被拒绝", "rejected")}</span></div>
+          <div class="tile gold"><b>${fmt(c.residue_leaves)}</b><span>${T("个残留叶子", "residue leaves")}</span></div>${c.review_candidates != null ? `<div class="tile amber"><b>${c.review_candidates}</b><span>${T("个待人工判断", "for human review")}</span></div>` : ""}</div>
+        <div class="row" style="margin-top:12px">${Object.entries(m.by_kind).map(([k, n]) => `${kindTag(k).replace(/<\/span>$/, ` · ${n}</span>`)}`).join("")}</div>
+        ${Object.keys(m.rejected_by_code).length ? `<p class="small muted" style="margin-top:10px">${T("拒绝原因：", "Rejected: ")}${Object.entries(m.rejected_by_code).map(([k, n]) => `<code>${esc(k)}</code> × ${n}`).join(" · ")}${c.rejected_issue_codes ? ` — ${Object.entries(c.rejected_issue_codes).map(([k, n]) => `<code>${esc(k)}</code> × ${n}`).join(" · ")}` : ""}</p>` : ""}
+        <p class="small muted" style="margin-top:6px">${T(`按契约 ${esc(m.contract_version)} 校验；所有导入记录都从 pending_review 开始。`, `Validated against contract ${esc(m.contract_version)}; every imported record starts as pending_review.`)}</p>
+        <button type="button" class="btn sm" data-sample style="margin-top:10px">${icon("eye")}${T("打开一条迁移后的记录", "Open a migrated record")}</button></div>
+    </div>
+    <div class="grid g12" style="margin-top:16px;align-items:start">
+      <div class="card pad"><b style="display:block;margin-bottom:10px">${T("映射原则", "Principles")}</b><ul class="principles">${m.principles_zh.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+      <div><div class="row" style="justify-content:space-between;margin-bottom:8px"><b>${T(`问题登记 · ${m.issues.length}`, `Issue register · ${m.issues.length}`)}</b><span class="xs muted">${esc(m.mapping_title_zh || "")}</span></div>
+        <div class="table-wrap" style="max-height:520px"><table class="tbl compact cards"><thead><tr><th>ID</th><th>${T("问题", "Issue")}</th><th>${T("发现", "Finding")}</th><th>${T("处理", "Resolution")}</th></tr></thead><tbody>
+          ${m.issues.map(x => `<tr><td class="mono nowrap"><b>${esc(x.id)}</b></td><td data-l="${T("问题", "Issue")}">${esc(x.title_zh || "")}</td><td class="small dim" data-l="${T("发现", "Finding")}">${esc(x.finding_zh || "")}</td><td class="small" data-l="${T("处理", "Resolution")}">${esc(x.resolution_zh || "")}</td></tr>`).join("")}
+        </tbody></table></div></div>
+    </div>`;
+}
+
+// ---------------------------------------------------------------- side by side
+function compareHTML() {
+  return `<div class="table-wrap"><table class="tbl cmp cards"><thead><tr><th>${T("命令", "Command")}</th><th>${T("来源", "Source")}</th><th class="num">${T("叶子", "Leaves")}</th><th>${T("映射状态", "Mapping status")}</th><th class="num">${T("触达字段", "Fields reached")}</th><th class="num">${T("记录", "Records")}</th><th class="num">${T("拒绝", "Rejected")}</th><th class="num">${T("残留", "Residue")}</th></tr></thead><tbody>
+    ${IMP.map(m => `<tr class="click" data-imp="${esc(m.command)}"><td class="mono"><b>${esc(m.command)}</b></td><td class="small" data-l="${T("来源", "Source")}">${esc(m.origin)} <span class="muted">${esc(m.version || "")}</span></td>
+      <td class="num" data-l="${T("叶子", "Leaves")}"><b>${m.leaves}</b></td><td data-l="${T("映射状态", "Mapping status")}"><div class="mini-bar">${ORDER.filter(s => m.status[s]).map(s => `<i class="st-${s}" style="flex:${m.status[s]}" title="${s} ${m.status[s]}"></i>`).join("")}</div></td>
+      <td class="num" data-l="${T("触达字段", "Fields reached")}">${m.targets}</td><td class="num" data-l="${T("记录", "Records")}"><b>${m.counts.records}</b></td><td class="num" data-l="${T("拒绝", "Rejected")}">${m.counts.rejected}</td><td class="num" data-l="${T("残留", "Residue")}">${fmt(m.counts.residue_leaves)}</td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+
+function render() {
+  const leaves = IMP.reduce((n, m) => n + m.leaves, 0), recs = IMP.reduce((n, m) => n + m.counts.records, 0);
+  const rej = IMP.reduce((n, m) => n + m.counts.rejected, 0), res = IMP.reduce((n, m) => n + m.counts.residue_leaves, 0);
+  $("#main").innerHTML = `
+  <section class="page-hero wrap">
+    <span class="eyebrow">${T("存量导入 · bdc migrate", "Importers · bdc migrate")}</span>
+    <h1>${T("已有的数据，<em>进入同一种记录</em>", "Existing data, <em>into the same records</em>")}</h1>
+    <p class="lead">${T("别的格式里已有的数据通过导入器进来，而不是另起一套模式。每个导入器读一种存档的来源格式，按一份覆盖该格式<b>每个</b>叶子的映射，把文档拆成原子记录，再按与抽取记录相同的契约校验。映射不了的写进残留文件，校验失败的写进错误文件：没有静默丢弃，也不为凑必填字段编造任何值。",
+      "Data that already exists in another shape enters through an importer, not through a second schema. Each importer reads one archived source format, follows a mapping that accounts for <b>every</b> leaf of that format, splits documents into atomic records and validates them against the same contract as extracted records. What cannot be mapped goes to a residue file and what fails validation to an errors file: nothing is dropped silently, and nothing is invented to fill a required field.")}</p>
+    <div class="stats" style="margin-top:26px">
+      <div class="stat reveal"><span class="bar-accent"></span><div class="k">${T("导入器", "Importers")}</div><div class="v" data-count="${IMP.length}">0</div><div class="s">${IMP.map(m => esc(m.command)).join(" · ")}</div></div>
+      <div class="stat reveal"><span class="bar-accent"></span><div class="k">${T("来源叶子", "Source leaves")}</div><div class="v" data-count="${leaves}">0</div><div class="s">${T("每个都有映射状态", "each with a mapping status")}</div></div>
+      <div class="stat reveal"><span class="bar-accent"></span><div class="k">${T("示例中的有效记录", "Valid records in the examples")}</div><div class="v" data-count="${recs}">0</div><div class="s">${T("按同一契约校验", "validated against the same contract")}</div></div>
+      <div class="stat clay reveal"><span class="bar-accent"></span><div class="k">${T("被拒绝", "Rejected")}</div><div class="v" data-count="${rej}">0</div><div class="s">${T("写入错误文件，附原因", "kept in the errors file with the reason")}</div></div>
+      <div class="stat gold reveal"><span class="bar-accent"></span><div class="k">${T("残留叶子", "Residue leaves")}</div><div class="v" data-count="${res}">0</div><div class="s">${T("没有迁移的值，原样保留", "values not migrated, kept as they were")}</div></div>
+    </div>
+    <div class="card flow-card reveal"><div class="head"><b>${T("每个来源叶子都有去向", "Every source leaf has a destination")}</b><span class="xs muted">${T("宽度 = 叶子数。悬停一条带子看数字，点击来源查看它的导入器。", "Width = number of leaves. Hover a ribbon for its count; click a source to open its importer.")}</span></div>
+      <div class="sk-scroll">${sankey()}</div></div>
+  </section>
+  <section class="section wrap" id="steps">
+    <div class="section-head"><span class="no">01</span><h2>${T("导入的五步", "Five steps of an import")}</h2><p>${T("三个导入器共用同一套步骤和输出后缀。", "The three importers share the same steps and output suffixes.")}</p></div>
+    <ol class="rail reveal">
+      <li><b>${T("检查来源", "Check the source")}</b><span>${T("按存档的来源模式与版本校验输入", "input validated against the archived source schema and version")}</span></li>
+      <li><b>${T("映射", "Map")}</b><span>${T("mappings/*.yaml 里每个来源叶子都有状态；bdc check 遇到未覆盖的叶子就失败", "every source leaf has a status in mappings/*.yaml; bdc check fails on an uncovered leaf")}</span></li>
+      <li><b>${T("拆分与关联", "Split and join")}</b><span>${T("一个事实一条记录；样本、测定与资产只按显式 ID 关联", "one record per fact; samples, assays and assets joined by explicit IDs only")}</span></li>
+      <li><b>${T("校验", "Validate")}</b><span>${T("与抽取记录相同的模式、规则和词表；导入记录一律从 pending_review 开始", "the same schema, rules and vocabularies as extracted records; imports start as pending_review")}</span></li>
+      <li><b>${T("记账", "Account")}</b><span>${T("记录 · 错误 · 残留 · 带来源与映射哈希的迁移报告", "records · errors · residue · a migration report with source and mapping hashes")}</span></li>
+    </ol>
+    <h3 class="sub">${icon("table")}${T("三个导入器并排", "The three side by side")}</h3>
+    ${compareHTML()}
+  </section>
+  <section class="section wrap" id="importer">
+    <div class="section-head"><span class="no">02</span><h2>${T("逐个看导入器", "Each importer in detail")}</h2><p>${T("映射覆盖、示例运行、映射原则和问题登记。", "Mapping coverage, the example run, the principles and the issue register.")}</p></div>
+    <div class="utabs imp-tabs" role="tablist">${IMP.map(m => `<button type="button" role="tab" data-tab="${esc(m.command)}" aria-selected="${m.command === cur}">${esc(m.command)} <span class="n">${m.leaves}</span></button>`).join("")}</div>
+    <div id="imp-box"></div>
+    <p class="small muted" style="margin-top:18px">${T("导入的记录与抽取的记录并列出现在", "Imported records appear next to extracted ones in the ")}<a href="contract.html#kinds">${T("规范页的记录示例", "record examples of the contract page")}</a>${T("。存档的来源文件和哈希列在 sources/SOURCES.md；来源之间的差异和合并决定见 docs/source_analysis.md。", ". The archived source files and their hashes are listed in sources/SOURCES.md; the differences between the sources and the merge decisions are in docs/source_analysis.md.")}</p>
+  </section>`;
+  const show = () => { $("#imp-box").innerHTML = detailHTML(IMP.find(m => m.command === cur)); $$("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === cur)); };
+  show();
+  if (!render.wired) {
+    render.wired = true;
+    $("#main").addEventListener("click", e => {
+      const t = e.target.closest("[data-tab]"); if (t) { cur = t.dataset.tab; K.setHash({ imp: cur }); show(); return; }
+      const i = e.target.closest("[data-imp]"); if (i) { cur = i.dataset.imp; K.setHash({ imp: cur }); show(); $("#importer").scrollIntoView({ behavior: K.reduced() ? "auto" : "smooth" }); return; }
+      if (e.target.closest("[data-sample]")) { const m = IMP.find(x => x.command === cur); K.recordDrawer(m.sample, { note: `<p class="xs muted" style="margin:-4px 0 12px">bdc migrate ${esc(m.command)} · <span class="mono">${esc(m.example_dir)}/</span></p>` }); }
+    });
+    $("#main").addEventListener("pointerover", e => {
+      const sk = $("#sk"); if (!sk) return;
+      const n = e.target.closest(".node"); if (!n) return;
+      const key = n.dataset.imp || n.dataset.st || n.dataset.dest;
+      const on = p => n.dataset.imp ? p.dataset.k.startsWith(key + " ") : n.dataset.st ? p.dataset.k.split(" ").includes(key) || p.classList.contains("st-" + key) : p.dataset.k.endsWith(" " + key) || DEST.find(d => d[0] === key)[1].some(s => p.classList.contains("st-" + s));
+      sk.classList.add("focus"); $$(".rib", sk).forEach(p => p.classList.toggle("on", on(p)));
+    });
+    $("#main").addEventListener("pointerout", e => { if (e.target.closest(".node")) $("#sk")?.classList.remove("focus"); });
+  }
+  if (K.hash().imp) requestAnimationFrame(() => $("#importer").scrollIntoView());
+}
+K.mount({ title: () => T("存量导入 · pdf2jsonl", "Importers · pdf2jsonl"), render });
+</script>
+</body>
+</html>

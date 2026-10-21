@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>下游派生 · pdf2jsonl</title>
+<meta name="description" content="What bdc derive builds from one set of evidence-anchored records: statements, a knowledge graph, a research workflow, an annotated corpus, QA seeds and relational tables.">
+<!--__HEAD__-->
+<style>
+/* ---------------------------------------------------------------- hero: one set of records fans out */
+.fan { position: relative; display: grid; grid-template-columns: minmax(0, 330px) minmax(0, 1fr); gap: 110px; margin-top: 34px; align-items: center; }
+.fan-beams { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.fan-beams path { fill: none; stroke-width: 1.8; stroke-dasharray: 5 7; animation: dash 1.1s linear infinite; opacity: .75; }
+.fan-beams circle { fill: var(--surface); stroke-width: 2; }
+.recs { padding: 16px; position: relative; z-index: 1; box-shadow: var(--shadow-3); }
+.recs h3 { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.recs h3 .mono { font-weight: 600; color: var(--ink-3); font-size: 11.5px; margin-left: auto; }
+.rr { display: flex; gap: 9px; align-items: center; font-size: 12.5px; padding: 7px 9px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); margin-top: 7px; color: var(--ink-2); }
+.rr i { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+.rr span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rr.more { justify-content: center; color: var(--ink-3); background: none; border-style: dashed; }
+.hooks-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.hooks-row .tag { font-size: 11px; }
+.hooks-row small { width: 100%; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.outs { display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
+a.card.out { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 2px 18px; padding: 10px 16px 10px 12px; align-items: center; color: inherit; }
+.out:hover { text-decoration: none; }
+.out .mini { grid-row: 1 / span 2; width: 96px; height: 52px; }
+.out .t { display: flex; align-items: center; gap: 8px; font-weight: 680; font-size: 15px; }
+.out .t svg { color: var(--brand); }
+.out .t .f { font: 11px var(--mono); color: var(--ink-3); font-weight: 400; margin-left: 4px; }
+.out .s { font-size: 12.5px; color: var(--ink-3); grid-column: 2; }
+.out .n { grid-row: 1 / span 2; grid-column: 3; font-size: 28px; font-weight: 760; letter-spacing: -.03em; line-height: 1; text-align: right; }
+.out .n small { display: block; font-size: 11.5px; font-weight: 600; color: var(--ink-3); letter-spacing: 0; margin-top: 3px; }
+@media (max-width: 980px) { .fan { grid-template-columns: 1fr; gap: 18px; } .fan-beams { display: none; } }
+@media (max-width: 560px) { a.card.out { grid-template-columns: 64px minmax(0, 1fr) auto; } .out .mini { width: 64px; } .out .t .f { display: none; } }
+
+/* ---------------------------------------------------------------- 01 hooks */
+.hook-quote { font: 19px/1.9 var(--serif); padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-1); }
+.hook-quote .sp { padding: 1px 2px; }
+.hook-legend { margin-top: 10px; }
+.hook-legend .sp { font-size: 12.5px; padding: 1px 6px; }
+table.hooks td:first-child { white-space: nowrap; font-weight: 650; }
+table.hooks td .mono { overflow-wrap: anywhere; }
+.val { font: 12.5px var(--mono); color: var(--ink); }
+.val.none { color: var(--ink-3); font-family: var(--sans); font-style: italic; }
+.reads { display: flex; flex-wrap: wrap; gap: 4px; }
+.reads a { font-size: 11.5px; }
+
+/* ---------------------------------------------------------------- 02 statements & the predicate ladder */
+.stm { padding: 16px 18px; }
+.stm .q { font: 15.5px/1.8 var(--serif); }
+.stm .spo { margin-top: 12px; }
+.stm .meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 12px; color: var(--ink-3); }
+.hedge { margin-top: 10px; font-size: 13px; padding: 8px 12px; border-radius: 9px; background: var(--amber-soft); border: 1px solid var(--amber-line); color: var(--ink); }
+.ladder { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ladder li { display: grid; grid-template-columns: 30px 1fr auto; gap: 12px; align-items: center; padding: 11px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); position: relative; }
+.ladder li .lv { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font: 700 12px var(--mono); color: #fff; background: var(--lc); }
+.ladder li b { font: 650 13px var(--mono); display: block; }
+.ladder li span { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+.ladder li .cnt { font: 700 18px var(--sans); color: var(--ink); min-width: 28px; text-align: right; }
+.ladder li.zero { opacity: .55; }
+.ladder li.zero .cnt { color: var(--ink-3); font-weight: 500; }
+
+/* ---------------------------------------------------------------- 03 graph */
+.g-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.g-controls .lbl { font-size: 12px; font-weight: 700; color: var(--ink-3); margin-right: 2px; }
+.g-legend { margin-top: 12px; }
+.g-legend .dotc { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: -1px; }
+.g-legend .sq { width: 10px; height: 10px; border-radius: 2px; border: 2px solid var(--ink-3); display: inline-block; margin-right: 6px; vertical-align: -1px; }
+
+/* ---------------------------------------------------------------- 04 workflow */
+.wf-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+.hyp { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 16px; }
+.hyp .card { border-left: 3px solid var(--c5); }
+.hyp b { font-size: 14px; display: block; margin: 4px 0 6px; }
+
+/* ---------------------------------------------------------------- 05 corpus */
+.chunks { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+.chunk { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.chunk .q { font: 14.5px/1.75 var(--serif); }
+.chunk .meta { font-size: 11.5px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: auto; }
+.chunk .ents { display: flex; flex-wrap: wrap; gap: 4px; }
+.ent { display: inline-block; white-space: nowrap; margin: 1px 0; font: 600 11px var(--mono); padding: 1px 7px; border-radius: 6px; background: color-mix(in srgb, var(--c, var(--e)) 14%, transparent); border: 1px solid color-mix(in srgb, var(--c, var(--e)) 45%, transparent); color: var(--ink-2); }
+/* entity types share the graph's colours */
+.ty0 { --c: var(--c1); } .ty1 { --c: var(--c2); } .ty2 { --c: var(--c3); } .ty3 { --c: var(--c4); } .ty4 { --c: var(--c5); } .ty5 { --c: var(--c6); } .ty6 { --c: var(--c7); } .ty7 { --c: var(--c8); }
+
+/* ---------------------------------------------------------------- 06 QA cards */
+.qa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.qa { perspective: 1200px; border: 0; background: none; padding: 0; text-align: left; min-height: 168px; }
+.qa-in { position: relative; width: 100%; height: 100%; min-height: 168px; transition: transform .6s var(--ease); transform-style: preserve-3d; }
+.qa.flip .qa-in { transform: rotateY(180deg); }
+.qa-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-1); padding: 15px 16px; display: flex; flex-direction: column; gap: 10px; }
+.qa-face.back { transform: rotateY(180deg); background: linear-gradient(160deg, var(--brand-soft), var(--surface) 70%); border-color: var(--brand-line); }
+.qa:hover .qa-face { box-shadow: var(--shadow-2); }
+.qa .q { font: 14.5px/1.7 var(--serif); color: var(--ink); }
+.qa .ans { font: 650 15px/1.6 var(--serif); color: var(--brand-ink); background: var(--surface); border: 1.5px solid var(--brand); border-radius: 6px; padding: 0 5px; }
+:root[data-theme="dark"] .qa .ans { color: var(--brand-2); }
+.qa .foot { margin-top: auto; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; font-size: 11.5px; color: var(--ink-3); }
+.qa .hint { margin-left: auto; display: inline-flex; gap: 4px; align-items: center; color: var(--brand); font-weight: 600; }
+.qa .hint svg { width: 14px; height: 14px; }
+
+/* ---------------------------------------------------------------- 07 tables */
+.tbl-cell { max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12.5px; }
+.tbl-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 12px 0; font-size: 13px; color: var(--ink-2); }
+.files { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+.files a { display: flex; gap: 8px; align-items: center; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); font: 12.5px var(--mono); color: var(--ink); min-width: 0; }
+.files a span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.files a:hover { border-color: var(--brand-line); text-decoration: none; }
+.files a svg { color: var(--brand); }
+</style>
+</head>
+<body data-page="outputs">
+<header id="top"></header>
+<main id="main"></main>
+<footer id="foot"></footer>
+<!--__DATA__-->
+<!--__KIT__-->
+<script>
+"use strict";
+const { T, esc, icon, fmt, DATA, $, $$, json, annotate, kindTag, reviewTag, kindLabel, kindColor, fieldLink, summary, clip, av, count, short } = K;
+const X = DATA.derived, C = X.counts, RECS = DATA.records, W = DATA.workflow;
+const RID = Object.fromEntries(RECS.map(r => [r.common.record_id, r]));
+const VREC = Object.fromEntries((DATA.validation_records || []).map(v => [v.record_id, v]));
+const CANDS = DATA.candidates || [];
+const STM = Object.fromEntries(X.statements.map(s => [s.record_id, s]));
+const CHUNK = {};
+for (const c of X.corpus) for (const id of c.chunk_support_ids) CHUNK[id] = CHUNK[id] || c;
+const getp = (rec, path) => { const i = path.indexOf("."); return (rec[path.slice(0, i)] || {})[path.slice(i + 1)]; };
+// The contract states rule titles in Chinese only; English glosses for the two rules quoted here.
+const RULE_EN = { R033: "a relation whose subject and object are both given should name its predicate (verbatim, label or ontology ID)", R034: "entity-marker and predicate offsets must match the text of source_quote" };
+const STEM = (X.files[0] || "").replace(/^derived\//, "").split(".")[0];
+const ANNOTATED = X.corpus.filter(c => (c.entities || []).length);
+
+const recLink = id => RID[id] ? `<a href="#" data-rec="${esc(id)}" title="${esc(id)}">${esc(kindLabel(RID[id].common.record_kind))}: ${esc(clip(summary(RID[id]), 64))}</a>` : `<span class="mono">${esc(id)}</span>`;
+const stmSpans = st => ["subject", "predicate", "object"].filter(k => (st.anchors || {})[k]).map(k => ({ start: st.anchors[k][0], end: st.anchors[k][1], cls: "sp-" + k,
+  title: k === "predicate" ? `predicate · ${st.predicate}` : `${k} · ${st[k + "_type"] || T("未定类型", "untyped")} · ${st[k]}` }));
+// entity types in the order the graph colours them
+const TYPES = [...new Set(X.graph.nodes.filter(n => n.kind === "entity").map(n => n.type || "entity"))];
+const tyClass = t => `ty${Math.max(0, TYPES.indexOf(t || "entity")) % 8}`;
+const entSpans = c => (c.entities || []).map(e => ({ start: e.start, end: e.end, cls: `sp-entity ${tyClass(e.entity_type)}`, title: `${e.entity_type || "entity"}${e.source_field ? " · " + e.source_field : ""}` }));
+// predicate status, from the most to the least settled
+const STATUS = [
+  ["ontology", "对齐到关系本体", "aligned to a relation ontology", "var(--brand)"],
+  ["reviewed", "由复核人选定代码", "code chosen by a reviewer", "var(--ok)"],
+  ["lexicon", "提示词与两端实体类型恰好匹配一个代码", "cue words and the entity types of both ends match exactly one code", "var(--c1)"],
+  ["verbatim", "只有原文措辞；不经解释就没有合适的代码", "only the words of the paper; no code fits without interpretation", "var(--gold)"],
+  ["unlabelled", "有主语和宾语，没有谓词", "subject and object without any predicate", "var(--clay)"],
+];
+const statusTag = k => { const s = STATUS.find(x => x[0] === k) || [k, k, k, "var(--ink-3)"]; return `<span class="tag" style="color:${s[3]};border-color:color-mix(in srgb, ${s[3]} 40%, transparent)" title="${esc(T(s[1], s[2]))}">${esc(k)}</span>`; };
+function openRecord(id) {
+  const r = RID[id] || (W && (W.records || []).find(x => x.common.record_id === id));
+  if (!r) return;
+  const inDemo = !!RID[id];
+  K.recordDrawer(r, { links: inDemo ? [[`demo.html#rec=${encodeURIComponent(id)}`, T("在抽取演示中追踪它", "Trace it in the walk-through")]]
+    : [[`papers.html#paper=${encodeURIComponent(W.paper_id)}&tab=workflow&rec=${encodeURIComponent(id)}`, T("在论文看板中打开", "Open in the paper dashboard")]] });
+}
+
+// ---------------------------------------------------------------- hero: fan-out
+const MINI = {
+  statements: `<svg class="mini" viewBox="0 0 96 62">${[12, 31, 50].map((y, i) => `<circle cx="14" cy="${y}" r="5" style="fill:var(--s)"/><path d="M20 ${y}H74" style="stroke:var(--p);stroke-width:2;stroke-dasharray:${i === 1 ? "3 3" : "none"}"/><circle cx="82" cy="${y}" r="5" style="fill:var(--o)"/>`).join("")}</svg>`,
+  graph: `<svg class="mini" viewBox="0 0 96 62"><g style="stroke:var(--line-2);stroke-width:1.4">${[[20, 18, 50, 30], [50, 30, 80, 14], [50, 30, 76, 48], [20, 18, 22, 48], [22, 48, 50, 30]].map(([a, b, c, d]) => `<path d="M${a} ${b}L${c} ${d}"/>`).join("")}</g>
+    <path d="M50 30L80 14" style="stroke:var(--brand);stroke-width:2"/>${[[20, 18, "--c1"], [50, 30, "--c3"], [80, 14, "--c2"], [76, 48, "--c4"], [22, 48, "--c7"]].map(([x, y, c]) => `<circle cx="${x}" cy="${y}" r="6" style="fill:var(${c});stroke:var(--surface);stroke-width:2"/>`).join("")}</svg>`,
+  workflow: `<svg class="mini" viewBox="0 0 96 62">${[[4, 8, "--ink-3"], [28, 8, "--c7"], [28, 34, "--c7"], [52, 20, "--c5"], [76, 8, "--c2"], [76, 34, "--brand"]].map(([x, y, c]) => `<rect x="${x}" y="${y}" width="16" height="18" rx="3" style="fill:var(--surface);stroke:var(${c});stroke-width:2"/>`).join("")}
+    <g style="fill:none;stroke:var(--line-2);stroke-width:1.4"><path d="M20 17H28"/><path d="M44 17C48 17 48 29 52 29"/><path d="M44 43C48 43 48 29 52 29"/><path d="M68 29C72 29 72 17 76 17"/><path d="M68 29C72 29 72 43 76 43"/></g></svg>`,
+  corpus: `<svg class="mini" viewBox="0 0 96 62">${[8, 22, 36, 50].map((y, i) => `<rect x="4" y="${y}" width="${[86, 78, 88, 52][i]}" height="5" rx="2.5" style="fill:var(--line)"/>`).join("")}
+    <rect x="4" y="6" width="22" height="9" rx="3" style="fill:color-mix(in srgb, var(--e) 35%, transparent)"/><rect x="46" y="20" width="28" height="9" rx="3" style="fill:color-mix(in srgb, var(--e) 35%, transparent)"/><rect x="18" y="34" width="24" height="9" rx="3" style="fill:color-mix(in srgb, var(--e) 35%, transparent)"/></svg>`,
+  qa: `<svg class="mini" viewBox="0 0 96 62"><rect x="4" y="10" width="88" height="5" rx="2.5" style="fill:var(--line)"/><rect x="4" y="24" width="20" height="5" rx="2.5" style="fill:var(--line)"/>
+    <rect x="28" y="20" width="34" height="13" rx="3" style="fill:var(--brand-soft);stroke:var(--brand);stroke-width:1.5"/><rect x="66" y="24" width="26" height="5" rx="2.5" style="fill:var(--line)"/>
+    <rect x="4" y="38" width="60" height="5" rx="2.5" style="fill:var(--line)"/><text x="45" y="30.5" text-anchor="middle" style="font:700 9px var(--mono);fill:var(--brand)">?</text></svg>`,
+  tables: `<svg class="mini" viewBox="0 0 96 62"><rect x="4" y="4" width="88" height="54" rx="5" style="fill:var(--surface);stroke:var(--line-2);stroke-width:1.4"/><rect x="4" y="4" width="88" height="12" rx="5" style="fill:var(--surface-3)"/>
+    <g style="stroke:var(--line-2);stroke-width:1">${[16, 30, 44].map(y => `<path d="M4 ${y}H92"/>`).join("")}${[34, 64].map(x => `<path d="M${x} 4V58"/>`).join("")}</g></svg>`,
+};
+function outputsList() {
+  const rows = Object.values(X.tables).reduce((n, t) => n + t.total, 0);
+  return [
+    { id: "statements", icon: "link", t: T("陈述", "Statements"), n: C.statements, u: T("条", "statements"), s: T("主语 · 谓语 · 宾语，锚定在引文里", "subject · predicate · object, anchored in the quote"), f: "tables/statements.csv" },
+    { id: "graph", icon: "graph", t: T("知识图谱", "Knowledge graph"), n: C.graph_nodes, u: T("个节点", "nodes"), s: T(`${C.graph_edges} 条边 · ${fmt(C.triples)} 个三元组`, `${C.graph_edges} edges · ${fmt(C.triples)} triples`), f: "graph.json · triples.jsonl" },
+    { id: "workflow", icon: "flow", t: T("研究流程", "Research workflow"), n: C.workflow_nodes, u: T("个节点", "nodes"), s: T("背景 → 问题 → 假设 → 实验 → 结论", "background → question → hypothesis → experiment → conclusion"), f: "workflow.json" },
+    { id: "corpus", icon: "quote", t: T("证据语料", "Evidence corpus"), n: C.corpus_chunks, u: T("段", "chunks"), s: T(`其中 ${ANNOTATED.length} 段带实体位置`, `${ANNOTATED.length} with entity offsets`), f: "corpus.jsonl" },
+    { id: "qa", icon: "sparkle", t: T("问答种子", "QA seeds"), n: C.qa_seeds, u: T("条", "items"), s: T("完形填空，答案是原文片段", "cloze items; the answer is a span of the quote"), f: "qa.jsonl" },
+    { id: "tables", icon: "table", t: T("关系表", "Relational tables"), n: Object.keys(X.tables).length, u: T("张", "tables"), s: T(`共 ${rows} 行，CSV`, `${rows} rows of CSV`), f: "tables/*.csv" },
+  ];
+}
+function fanHTML() {
+  const show = RECS.filter(r => r.common.record_kind !== "asset_manifest").slice(0, 6);
+  return `<div class="fan reveal" id="fan"><svg class="fan-beams" id="fan-beams" aria-hidden="true"></svg>
+    <div class="card recs" id="fan-src"><h3>${icon("layers")} ${T(`${RECS.length} 条记录`, `${RECS.length} records`)}<span class="mono">${esc(STEM)}.jsonl</span></h3>
+      ${show.map(r => `<div class="rr"><i style="background:${kindColor(r.common.record_kind)}"></i><span>${esc(summary(r))}</span></div>`).join("")}
+      <div class="rr more">+ ${RECS.length - show.length} ${T("条", "more")}</div>
+      <div class="hooks-row"><small>${T("记录里的钩子", "Hooks in the records")}</small>
+        <span class="tag" style="color:var(--s)">subject</span><span class="tag" style="color:var(--p)">predicate</span><span class="tag" style="color:var(--o)">object</span>
+        <span class="tag">entity_links</span><span class="tag">*_record_ids</span><span class="tag">source_span</span></div></div>
+    <div class="outs">${outputsList().map(o => `<a class="card lift out" href="#${o.id}" data-out="${o.id}">${MINI[o.id]}<span class="t">${icon(o.icon)}${esc(o.t)}<span class="f">${esc(o.f)}</span></span>
+      <span class="s">${esc(o.s)}</span><span class="n">${fmt(o.n)}<small>${esc(o.u)}</small></span></a>`).join("")}</div></div>`;
+}
+function drawFan() {
+  const fan = $("#fan"), svg = $("#fan-beams"), src = $("#fan-src");
+  if (!fan || getComputedStyle(svg).display === "none") return;
+  const box = fan.getBoundingClientRect(), s = src.getBoundingClientRect(), outs = $$(".out", fan);
+  const x0 = s.right - box.left, colors = ["var(--brand)", "var(--c1)", "var(--c7)", "var(--gold)", "var(--c3)", "var(--c2)"];
+  svg.innerHTML = outs.map((o, i) => {
+    const r = o.getBoundingClientRect(), y0 = s.top - box.top + s.height * (0.22 + 0.56 * i / Math.max(1, outs.length - 1)), x1 = r.left - box.left, y1 = r.top - box.top + r.height / 2, mx = (x0 + x1) / 2;
+    return `<path d="M${x0} ${y0}C${mx} ${y0} ${mx} ${y1} ${x1 - 4} ${y1}" style="stroke:${colors[i % colors.length]};animation-delay:${-i * .18}s"/><circle cx="${x0}" cy="${y0}" r="3.5" style="stroke:${colors[i % colors.length]}"/><circle cx="${x1 - 4}" cy="${y1}" r="3.5" style="stroke:${colors[i % colors.length]}"/>`;
+  }).join("");
+}
+
+// ---------------------------------------------------------------- 01 hooks
+const HOOKS = [
+  ["主语 · 谓语 · 宾语", "Subject · predicate · object", ["transform.subject_mention", "transform.predicate_mention", "transform.object_mention"], ["agent，照抄引文", "the agent, verbatim from the quote"], [["statements", "陈述", "statements"], ["graph", "图谱的边", "graph edges"], ["qa", "问答", "QA"]]],
+  ["实体标记", "Entity markers", ["transform.entity_links"], ["管线：类型取自列出该提及的字段，偏移在引文中，角色在陈述中", "the pipeline: type from the field that lists the mention, offsets in the quote, role in the statement"], [["graph", "图谱节点", "graph nodes"], ["corpus", "语料标注", "corpus annotation"], ["qa", "答案片段", "answer spans"]]],
+  ["谓词锚点", "Predicate anchor", ["transform.predicate_start_offset", "transform.predicate_end_offset"], ["管线", "the pipeline"], [["corpus", "语料标注", "corpus annotation"], ["tables", "关系抽取数据", "relation-extraction data"]]],
+  ["规范谓词", "Normalized predicate", ["transform.predicate_code", "transform.predicate_label", "transform.predicate_id"], ["词表（管线）→ 复核人 → 本体对齐", "lexicon (pipeline) → reviewer → ontology alignment"], [["graph", "图谱边的类型", "graph edge type"]]],
+  ["两端类型与对齐", "Typed, aligned ends", ["transform.subject_type", "transform.object_type", "transform.subject_id", "transform.object_id"], ["复核人与实体对齐（课题一）", "reviewers and entity alignment (Topic 1)"], [["graph", "图谱节点身份", "graph node identity"]]],
+  ["限定与局限", "Hedge and limits", ["agent.claim_qualifier_text", "agent.stated_limitations"], ["agent，照抄", "the agent, verbatim"], [["statements", "所有下游：带限定的陈述不是结论", "every consumer: a hedged statement is not a finding"]]],
+  ["记录关联", "Record links", ["agent.evidence_record_ids", "skills.method_record_ids"], ["管线，由候选的 ref 关联解析", "the pipeline, from candidate links"], [["graph", "记录间的边", "edges between records"], ["workflow", "研究流程", "research workflow"]]],
+  ["证据定位", "Evidence", ["common.source_id", "common.source_page", "common.source_quote", "common.source_span"], ["管线与 agent", "the pipeline and the agent"], [["tables", "每一行派生数据的出处", "provenance of every derived row"]]],
+];
+let hookRec = null;
+function hookValue(r, paths) {
+  const vals = paths.map(p => [p, getp(r, p)]).filter(([, v]) => v !== undefined && v !== null && !(Array.isArray(v) && !v.length));
+  if (!vals.length) return `<span class="val none">${T("这条记录没有（留空，不猜测）", "not in this record (left empty, never guessed)")}</span>`;
+  return vals.map(([p, v]) => {
+    if (p === "transform.entity_links") return `<span class="val">${v.length} × </span>${v.map(e => `<span class="ent ${tyClass(e.entity_type)}">${esc(e.mention)} · ${esc(e.entity_type || "entity")}${e.relation_role ? " · " + esc(e.relation_role) : ""}</span>`).join(" ")}`;
+    if (p.endsWith("_record_ids")) return `${fieldLink(p, p.split(".")[1])} → ${v.map(recLink).join(" · ")}`;
+    if (p === "common.source_quote") return "";
+    return `${fieldLink(p, p.split(".")[1])} = <span class="val">${esc(clip(short(v), 90))}</span>`;
+  }).filter(Boolean).join("<br>");
+}
+function hooksHTML() {
+  const ids = X.statements.map(s => s.record_id);
+  hookRec = hookRec && ids.includes(hookRec) ? hookRec : ids[0];
+  if (!hookRec) return `<p class="muted">${T("示例记录没有陈述关系。", "The example records state no relation.")}</p>`;
+  const r = RID[hookRec], st = STM[hookRec], ch = CHUNK[hookRec];
+  const spans = [...stmSpans(st), ...(ch && ch.chunk_text === r.common.source_quote ? entSpans(ch) : [])];
+  const v = VREC[hookRec] || {}, cand = v.candidate_index != null ? CANDS[v.candidate_index] : null;
+  const rel = Object.values(DATA.relation_roles || {});
+  const wrote = cand ? Object.fromEntries(Object.entries(cand.fields || {}).filter(([k]) => rel.includes(k))) : null;
+  const mark = new Set(Object.keys(r.transform || {}).map(k => "transform." + k).filter(p => !rel.includes(p)));
+  return `<div class="tabs" role="tablist" style="margin-bottom:14px;display:inline-flex">${ids.map((id, i) => `<button type="button" role="tab" data-hook="${esc(id)}" aria-selected="${id === hookRec}">${T(`陈述 ${i + 1}`, `Statement ${i + 1}`)} <span class="n">p.${esc(RID[id].common.source_page)}</span></button>`).join("")}</div>
+    <div class="hook-quote">${annotate(r.common.source_quote, spans)}</div>
+    <div class="legend hook-legend"><span><span class="sp sp-subject">${T("主语", "subject")}</span></span><span><span class="sp sp-predicate">${T("谓语", "predicate")}</span></span><span><span class="sp sp-object">${T("宾语", "object")}</span></span><span><span class="sp sp-entity">${T("实体标记", "entity marker")}</span></span>
+      <span class="muted">${T("全部位置由管线在引文中计算", "every position computed by the pipeline in the quote")}</span></div>
+    <div class="table-wrap" style="margin-top:16px"><table class="tbl hooks cards"><thead><tr><th>${T("钩子", "Hook")}</th><th>${T("这条记录里的值", "In this record")}</th><th>${T("谁来填", "Filled by")}</th><th>${T("谁来读", "Read by")}</th></tr></thead><tbody>
+      ${HOOKS.map(([zh, en, paths, by, reads]) => `<tr><td>${esc(T(zh, en))}</td><td data-l="${T("这条记录里的值", "In this record")}">${hookValue(r, paths)}</td><td class="small dim" data-l="${T("谁来填", "Filled by")}">${esc(T(...by))}</td>
+        <td data-l="${T("谁来读", "Read by")}"><div class="reads">${reads.map(([id, rz, re]) => `<a class="tag" href="#${id}">${esc(T(rz, re))}</a>`).join("")}</div></td></tr>`).join("")}
+      <tr><td>${T("限定条件", "Qualifiers")}</td><td colspan="2" class="small" data-l="${T("这条记录里的值", "In this record")}">${T(`契约中键角色为 <a href="fields.html#role=condition">condition</a> 或 <a href="fields.html#role=context_key">context_key</a> 的 ${DATA.hook_condition_fields} 个字段（环境、群体、处理……）随陈述一起带出，作为它的限定条件。`,
+        `The ${DATA.hook_condition_fields} fields whose key role is <a href="fields.html#role=condition">condition</a> or <a href="fields.html#role=context_key">context_key</a> (environment, population, treatment…) travel with the statement as its qualifiers.`)}</td>
+        <td data-l="${T("谁来读", "Read by")}"><div class="reads"><a class="tag" href="#statements">${T("陈述限定", "statement qualifiers")}</a></div></td></tr>
+    </tbody></table></div>
+    ${wrote ? `<div class="grid g2" style="margin-top:16px;align-items:start">
+      <div class="card"><div class="card-head"><span>${T("Agent 写的：三段原文", "What the agent wrote: three verbatim strings")}</span><span class="muted small mono">candidates[${v.candidate_index}]</span></div><pre class="json">${json(wrote, { wrap: true })}</pre></div>
+      <div class="card"><div class="card-head"><span>${T("记录携带的：管线补上的位置、类型与代码", "What the record carries: positions, types and code added by the pipeline")}</span><span class="muted small mono">transform</span></div><pre class="json">${json({ transform: r.transform }, { mark, wrap: true })}</pre></div>
+    </div>` : ""}`;
+}
+
+// ---------------------------------------------------------------- 02 statements
+function statementCard(st) {
+  const quals = Object.entries(st.qualifiers || {}).map(([k, v]) => `<span class="tag" title="qualifier · ${esc(k)}">${esc(k.split(".").pop())} = ${esc(short(v))}</span>`).join(" ");
+  return `<div class="card stm reveal"><div class="q">${annotate(st.source_quote || "", stmSpans(st))}</div>
+    <div class="spo"><span class="node-pill" style="--c:var(--s)" title="${esc(st.subject)}">${esc(st.subject_mention)}${st.subject_type ? ` <small class="muted">${esc(st.subject_type)}</small>` : ""}</span>
+      <span class="edge-pill">${esc(st.predicate.replace(/^bdc:/, ""))}</span>
+      <span class="node-pill" style="--c:var(--o)" title="${esc(st.object)}">${esc(st.object_mention)}${st.object_type ? ` <small class="muted">${esc(st.object_type)}</small>` : ""}</span></div>
+    ${st.hedge ? `<div class="hedge">${icon("alert")} <b>${T("带限定", "Hedged")}</b> · <i>${esc(st.hedge)}</i> — ${T("这不是一条确定的发现", "this statement is not a finding")}</div>` : ""}
+    ${quals ? `<div class="meta">${T("限定条件", "qualifiers")} ${quals}</div>` : ""}
+    <div class="meta">${statusTag(st.predicate_status)}<span>p.${esc(st.source_page ?? "?")}</span><span class="mono">${esc(st.statement_id)}</span>${recLink(st.record_id)}</div></div>`;
+}
+function ladderHTML() {
+  return `<ol class="ladder">${STATUS.map(([k, zh, en, c], i) => { const n = count(X.statements, s => s.predicate_status === k);
+    return `<li class="${n ? "" : "zero"}" style="--lc:${c}"><span class="lv">${STATUS.length - i}</span><div><b>${esc(k)}</b><span>${esc(T(zh, en))}</span></div><span class="cnt">${n || "·"}</span></li>`; }).join("")}</ol>
+    <p class="xs muted" style="margin-top:10px">${T("一条陈述保留它的谓词已经达到的每一级；用哪一级由下游自己决定。", "A statement keeps every level its predicate has reached; each consumer picks its own threshold.")}</p>`;
+}
+
+// ---------------------------------------------------------------- 03 graph
+const GS = { kinds: new Set(["statement", "mention", "link"]) };
+const KIND_LABEL = { statement: ["陈述", "statement"], mention: ["提及", "mention"], link: ["记录关联", "record link"], provenance: ["出处", "provenance"] };
+function renderGraph() {
+  const g = K.forceGraph($("#g-box"), X.graph, { kinds: GS.kinds, onRecord: openRecord, height: 560 });
+  $("#g-legend").innerHTML = `${g.types.map(t => `<span><i class="dotc" style="background:${g.color(t)}"></i>${esc(t)}</span>`).join("")}
+    <span><i class="sq"></i>${T("记录（点击打开）", "record (click to open)")}</span><span><i class="dotc" style="background:var(--deep);box-shadow:0 0 0 2px var(--gold)"></i>${T("来源", "source")}</span>
+    <span class="muted">${T(`显示 ${g.shown.nodes} 个节点、${g.shown.edges} 条边 · 可拖动`, `${g.shown.nodes} nodes, ${g.shown.edges} edges shown · drag to rearrange`)}</span>`;
+}
+
+// ---------------------------------------------------------------- 04 workflow
+function workflowNode(id) {
+  const n = W.workflow.nodes.find(x => x.id === id); if (!n) return;
+  const r = W.records.find(x => x.common.record_id === id);
+  const label = x => { const m = W.workflow.nodes.find(y => y.id === x); return m ? `${esc(K.stageLabel(m.stage))}: ${esc(clip(m.label, 60))}` : esc(x); };
+  const out = W.workflow.edges.filter(e => e.s === id), inn = W.workflow.edges.filter(e => e.o === id);
+  const et = t => (K.EDGE_TYPES[t] ? T(K.EDGE_TYPES[t][0], K.EDGE_TYPES[t][1]) : t);
+  const note = `<div class="stack" style="margin-bottom:14px"><div class="row"><span class="tag brand">${esc(K.stageLabel(n.stage))}</span>${(n.flags || []).map(f => `<span class="tag amber" title="${esc((W.workflow.flag_help || {})[f] || "")}">${icon("alert")}${esc(K.FLAG_LABEL[f] ? T(...K.FLAG_LABEL[f]) : f)}</span>`).join("")}</div>
+    ${out.length ? `<div class="small">${out.map(e => `${icon("arrow")} ${esc(et(e.type))} → ${label(e.o)}`).join("<br>")}</div>` : ""}
+    ${inn.length ? `<div class="small dim">${inn.map(e => `${icon("back")} ${label(e.s)} — ${esc(et(e.type))}`).join("<br>")}</div>` : ""}</div>`;
+  if (r) K.recordDrawer(r, { note, links: [[`papers.html#paper=${encodeURIComponent(W.paper_id)}&tab=workflow&rec=${encodeURIComponent(id)}`, T("在论文看板中打开", "Open in the paper dashboard")]] });
+}
+function workflowHTML() {
+  if (!W) return `<p class="muted">${T("没有陈述研究流程的示例。", "No example states a research workflow.")}</p>`;
+  const w = W.workflow;
+  return `<div class="wf-head"><span class="tag brand">${icon("file")}${esc(W.file_name)}</span><span class="dim small"><i>${esc(W.title)}</i></span><span class="spacer"></span>
+      ${Object.entries(w.flags || {}).map(([f, n]) => `<span class="tag amber" title="${esc((w.flag_help || {})[f] || "")}">${icon("alert")}${n} × ${esc(K.FLAG_LABEL[f] ? T(...K.FLAG_LABEL[f]) : f)}</span>`).join("")}
+      <a class="btn sm" href="papers.html#paper=${encodeURIComponent(W.paper_id)}&tab=workflow">${T("在论文看板中打开", "Open in the paper dashboard")} ${icon("arrow")}</a></div>
+    <div class="card pad" id="wf-box"></div>
+    ${(w.hypotheses || []).length ? `<div class="hyp">${w.hypotheses.map(h => `<div class="card pad"><span class="wf-stage" style="--st:var(--c5)">${T("假设", "Hypothesis")}</span><b>${esc(h.label)}</b>
+      <div class="small dim">${(h.tested_by || []).length ? T(`由 ${h.tested_by.length} 项实验检验`, `tested by ${h.tested_by.length} experiment(s)`) : `<span style="color:var(--amber)">${icon("alert")} ${T("没有实验检验它", "no experiment tests it")}</span>`}
+        ${(h.addresses || []).length ? ` · ${T("回应一个科学问题或目标", "addresses a question or objective")}` : ""}</div></div>`).join("")}</div>` : ""}
+    <p class="xs muted" style="margin-top:12px">${esc(w.basis || "")}</p>`;
+}
+
+// ---------------------------------------------------------------- 05 corpus · 06 QA · 07 tables
+let showPlain = false, tableTab = null;
+function chunkHTML(ch) {
+  return `<div class="card chunk"><div class="q">${annotate(ch.chunk_text, entSpans(ch))}</div>
+    ${(ch.entities || []).length ? `<div class="ents">${ch.entities.map(e => `<span class="ent ${tyClass(e.entity_type)}" title="${esc(e.source_field || "")}">${esc(e.entity_type || "entity")} · ${e.start}–${e.end}</span>`).join("")}</div>` : ""}
+    <div class="meta"><span>p.${esc(ch.chunk_page ?? "?")}${ch.chunk_section ? " · " + esc(ch.chunk_section) : ""}</span><span>${ch.chunk_support_ids.map(recLink).join(" · ")}</span>
+      ${(ch.statement_ids || []).length ? `<span>${T(`${ch.statement_ids.length} 条陈述`, `${ch.statement_ids.length} statement(s)`)}</span>` : ""}<span class="mono">${esc(ch.leakage_group_id || "")}</span></div></div>`;
+}
+function corpusHTML() {
+  const list = showPlain ? X.corpus : ANNOTATED;
+  return `<div class="controls" style="margin-bottom:14px"><button type="button" class="chip" id="plain-btn" aria-pressed="${showPlain}">${T("也显示没有实体位置的段落", "Include chunks without entity offsets")} <span class="n">${X.corpus.length - ANNOTATED.length}</span></button></div>
+    <div class="chunks">${list.map(chunkHTML).join("")}</div>`;
+}
+function qaHTML() {
+  return `<div class="qa-grid">${X.qa.map((q, i) => {
+    const front = esc(q.qa_seed_question).replace("____", '<span class="blank">____</span>');
+    const back = esc(q.qa_seed_question).replace("____", `<span class="ans">${esc(q.qa_seed_answer)}</span>`);
+    const meta = `<span class="tag ${q.qa_slot === "value" ? "gold" : "brand"}">${esc(q.qa_slot)}</span><span class="mono">${esc(String(q.answer_type).split(".").pop())}</span>`;
+    return `<button type="button" class="qa reveal" data-qa="${i}" aria-pressed="false"><div class="qa-in">
+      <div class="qa-face"><span class="q">${front}</span><span class="foot">${meta}<span class="hint">${icon("eye")}${T("看答案", "Answer")}</span></span></div>
+      <div class="qa-face back"><span class="q">${back}</span><span class="foot">${meta}<span>${T("出处", "cites")} ${q.qa_support_ids.length} ${T("条记录", "record(s)")}</span><span class="mono">${esc(q.qa_difficulty)}</span></span></div></div></button>`;
+  }).join("")}</div>`;
+}
+function tablesHTML() {
+  const names = Object.keys(X.tables);
+  tableTab = tableTab && names.includes(tableTab) ? tableTab : names[0];
+  const t = X.tables[tableTab], file = X.files.find(f => f.endsWith(`/${tableTab}.csv`));
+  return `<div class="utabs" role="tablist">${names.map(n => `<button type="button" role="tab" data-table="${esc(n)}" aria-selected="${n === tableTab}">${esc(n)} <span class="n">${X.tables[n].total}</span></button>`).join("")}</div>
+    <div class="tbl-meta"><span class="mono">${esc(tableTab)}.csv</span><span>${T(`${t.total} 行 · ${t.columns.length} 列`, `${t.total} rows · ${t.columns.length} columns`)}</span>${t.total > t.rows.length ? `<span class="muted">${T(`显示前 ${t.rows.length} 行`, `first ${t.rows.length} shown`)}</span>` : ""}
+      <span class="spacer"></span>${file ? `<a class="btn sm" href="${esc(file)}">${icon("download")} CSV</a>` : ""}</div>
+    <div class="table-wrap" style="max-height:440px"><table class="tbl compact"><thead><tr>${t.columns.map(c => `<th class="mono">${esc(c)}</th>`).join("")}</tr></thead><tbody>
+      ${t.rows.map(r => `<tr>${t.columns.map(c => r[c] === undefined || r[c] === null ? "<td></td>" : `<td class="tbl-cell" title="${esc(short(r[c]))}">${esc(clip(short(r[c]), 140))}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+
+// ---------------------------------------------------------------- page
+function render() {
+  const rules = DATA.rules || [];
+  $("#main").innerHTML = `
+  <section class="page-hero wrap">
+    <span class="eyebrow">${T("下游派生 · bdc derive", "Outputs · bdc derive")}</span>
+    <h1>${T("抽取一次，<em>派生出所有下游数据</em>", "Extract once, <em>derive everything downstream</em>")}</h1>
+    <p class="lead">${T("记录不只是抽取结果的容器。它把主语、谓语、宾语、实体位置、记录之间的关联和证据定位都写成了字段，也就是“钩子”。<code>bdc derive</code> 只读这些字段，不再回头读原文，就能派生出下面每一种数据；记录里没有的钩子，派生结果里就没有那一行，从不猜测。",
+      "A record is more than a container for what was extracted. It states subject, predicate and object, entity positions, links to other records and the evidence locator as fields — the hooks. <code>bdc derive</code> reads only those fields, never the text again, to build every output below; where a record has no hook, the output has no row. Nothing is guessed.")}</p>
+    <div class="hero-meta"><span class="tag brand">${icon("play")}${T("数据来自", "data from")} <a href="demo.html">${T("抽取演示", "the walk-through")}</a></span><span class="tag mono">derive_format ${esc(X.derive_format)}</span><span class="tag">${T("确定性：同样的记录总是得到同样的输出", "deterministic: the same records always give the same output")}</span></div>
+    ${fanHTML()}
+  </section>
+
+  <section class="section wrap" id="hooks">
+    <div class="section-head"><span class="no">01</span><h2>${T("钩子：记录自己说清楚了什么", "Hooks: what a record states for itself")}</h2>
+      <p>${T("模型只照抄原文，管线负责计算：偏移、实体类型、关系角色和谓词代码，都是记录和引文的确定性函数。选一条陈述，看它的每个钩子取了什么值、喂给了谁。",
+        "The model copies, the pipeline computes: offsets, entity types, relation roles and the predicate code are deterministic functions of the record and its quote. Pick a statement to see what each hook holds and what reads it.")}</p></div>
+    <div id="hooks-box">${hooksHTML()}</div>
+    ${rules.length ? `<div class="callout brand" style="margin-top:16px">${icon("shield")}<div>${T("两条警告规则让钩子保持诚实：", "Two warning rules keep the hooks honest: ")}${rules.map(r => `<a href="contract.html#rule=${esc(r.id)}" class="mono">${esc(r.id)}</a> ${esc(T(r.title_zh, RULE_EN[r.id] || r.title_zh))}`).join(T("；", "; "))}</div></div>` : ""}
+  </section>
+
+  <section class="section wrap" id="statements">
+    <div class="section-head"><span class="no">02</span><h2>${T("陈述：显式的主语、谓语、宾语", "Statements: explicit subject, predicate, object")}</h2>
+      <p>${T("每条陈述是 statements.csv 的一行。颜色标出它在引文中的锚点；谓词按确定程度分级，右边是这批记录达到的级别。",
+        "Each statement is one row of statements.csv. Colours mark its anchors in the quote; predicates are graded by how settled they are, and the ladder on the right shows where these records stand.")}</p></div>
+    <div class="grid g21"><div class="stack">${X.statements.map(statementCard).join("")}</div><div class="card pad reveal"><h3 class="sub" style="margin-top:0">predicate_status</h3>${ladderHTML()}</div></div>
+  </section>
+
+  <section class="section wrap" id="graph">
+    <div class="section-head"><span class="no">03</span><h2>${T("知识图谱", "Knowledge graph")}</h2>
+      <p>${T("graph.json：实体按类型与提及归并，记录和来源也是节点。陈述边带谓词状态、限定与 hedge；提及边带偏移；关联边带论证要素。对齐 ID 只是节点属性：要不要合并实体，是下游的融合决定。",
+        "graph.json: entities are keyed by type and mention; records and sources are nodes too. Statement edges carry predicate status, qualifiers and hedge; mention edges carry offsets; link edges carry their argument element. An aligned ID is only a node property: merging entities is a fusion decision left downstream.")}</p></div>
+    <div class="g-controls" role="group" aria-label="${T("边的种类", "Edge kinds")}"><span class="lbl">${T("显示的边", "Edges")}</span>${[...new Set(X.graph.edges.map(e => e.kind))].map(k => `<button type="button" class="chip" data-kind="${esc(k)}" aria-pressed="${GS.kinds.has(k)}">${esc(KIND_LABEL[k] ? T(...KIND_LABEL[k]) : k)} <span class="n">${count(X.graph.edges, e => e.kind === k)}</span></button>`).join("")}</div>
+    <div class="graph-box" id="g-box"></div>
+    <div class="legend g-legend" id="g-legend"></div>
+    <details class="fold"><summary>${T(`三元组：每种指向实体或记录的谓词各取一例（共 ${fmt(C.triples)} 个）`, `Triples: one per predicate that points at an entity or a record (of ${fmt(C.triples)})`)}</summary><div class="fold-body">
+      <div class="table-wrap"><table class="tbl compact"><thead><tr><th>${T("主语", "Subject")}</th><th>${T("谓词", "Predicate")}</th><th>${T("宾语", "Object")}</th></tr></thead><tbody>
+        ${X.entity_triples.map(t => `<tr><td class="small">${t.s.startsWith("rec:") ? recLink(t.s.slice(4)) : `<span class="mono">${esc(t.s)}</span>`}</td><td class="mono small">${esc(t.p)}</td>
+          <td class="small">${String(t.o).startsWith("rec:") ? recLink(String(t.o).slice(4)) : `<span class="mono">${esc(t.o)}</span>`}</td></tr>`).join("")}</tbody></table></div></div></details>
+  </section>
+
+  <section class="section wrap" id="workflow">
+    <div class="section-head"><span class="no">04</span><h2>${T("研究流程：从问题到结论的路线", "Research workflow: the route from question to conclusion")}</h2>
+      <p>${T(`记录之间“回应、检验、方法、依据、前置”五种关联连起来，就是论文的研究流程。上面那篇示例的流程比较简单（${C.workflow_nodes} 个节点、${C.workflow_edges} 条边），这里展示另一篇完整陈述研究流程的合成论文，用的是语义核验之后的记录。点任意节点查看记录。`,
+        `Link records by the five relations — addresses, tests, method, rests on, prerequisite — and the paper's research workflow appears. The walk-through paper has a simple one (${C.workflow_nodes} nodes, ${C.workflow_edges} edges); shown here is another synthetic paper that states its workflow in full, from its records after semantic verification. Click any node to open its record.`)}</p></div>
+    ${workflowHTML()}
+  </section>
+
+  <section class="section wrap" id="corpus">
+    <div class="section-head"><span class="no">05</span><h2>${T("证据语料：已经标注好的引文", "Evidence corpus: quotes that come annotated")}</h2>
+      <p>${T("corpus.jsonl：每段不同的引文一条，带它支撑的记录、实体位置、陈述 ID 和泄漏组（一篇论文一组，保证同一篇论文不会同时出现在训练集和测试集）。",
+        "corpus.jsonl: one chunk per distinct quote, with the records it supports, entity offsets, statement IDs and a leakage group (one per paper, so a paper never straddles a train/test split).")}</p></div>
+    <div id="corpus-box">${corpusHTML()}</div>
+  </section>
+
+  <section class="section wrap" id="qa">
+    <div class="section-head"><span class="no">06</span><h2>${T("问答种子：自带出处的完形填空", "QA seeds: cloze items that cite their records")}</h2>
+      <p>${T("qa.jsonl：遮住引文中一个有锚点的答案。答案总是引文的一个片段，支撑记录总被引用，所以不看论文也能核对每一题。点卡片看答案。自然语言问句、多跳题和无答案题在下游生成。",
+        "qa.jsonl: the quote with one anchored answer masked. The answer is always a span of the quote and the supporting records are always cited, so every item can be checked without the paper. Click a card for its answer. Natural-language, multi-hop and unanswerable items are generated downstream.")}</p></div>
+    <div class="controls" style="margin-bottom:14px"><button type="button" class="chip" id="qa-all" aria-pressed="false">${icon("eye")} ${T("全部翻开", "Reveal all")}</button></div>
+    ${qaHTML()}
+  </section>
+
+  <section class="section wrap" id="tables">
+    <div class="section-head"><span class="no">07</span><h2>${T("关系表", "Relational tables")}</h2>
+      <p>${T("每个字段按它的键角色落到对应的表里。名称数组和 ID 数组从不按位置配对；明确的配对来自实体标记。", "Every field lands in the table its key role names. Name and ID arrays are never paired by position; explicit pairs come from the entity markers.")}
+        <a href="contract.html#roles">${T("键角色是什么", "What key roles are")} →</a></p></div>
+    <div id="tables-box">${tablesHTML()}</div>
+  </section>
+
+  <section class="section wrap" id="files">
+    <div class="section-head"><span class="no">08</span><h2>${T("文件，以及留给下游的部分", "The files, and what stays downstream")}</h2>
+      <p>${T(`构建本站时运行 <code>bdc derive examples/output/${esc(STEM)}.jsonl --out derived/</code> 写出（derive format ${esc(X.derive_format)}）。`, `Written by <code>bdc derive examples/output/${esc(STEM)}.jsonl --out derived/</code> when this site was built (derive format ${esc(X.derive_format)}).`)}</p></div>
+    <div class="files">${X.files.map(f => { const n = f.replace(/^derived\//, ""); return `<a href="${esc(f)}" title="${esc(n)}">${icon("file")}<span>${esc(n.slice(STEM.length + 1))}</span></a>`; }).join("")}</div>
+    <h3 class="sub">${icon("clock")} ${T("不在记录里、留给下游的步骤", "Steps that are not in the record and stay downstream")}</h3>
+    <div class="table-wrap"><table class="tbl cards"><thead><tr><th>${T("步骤", "Step")}</th><th>${T("为什么不在记录里", "Why it is not in the record")}</th><th>${T("落在哪些字段", "Where it lands")}</th></tr></thead><tbody>
+      <tr><td>${T("自然语言、多跳和无答案的问答", "Natural-language, multi-hop and unanswerable QA")}</td><td class="small" data-l="${T("为什么不在记录里", "Why it is not in the record")}">${T("属于生成", "generation")} ${av("G")}</td><td class="small" data-l="${T("落在哪些字段", "Where it lands")}">${["transform.qa_seed_question", "transform.qa_difficulty", "transform.qa_unanswerable_reason"].map(p => fieldLink(p)).join(" ")}</td></tr>
+      <tr><td>${T("实体对齐到本体和数据库", "Entity alignment to ontologies and databases")}</td><td class="small" data-l="${T("为什么不在记录里", "Why it is not in the record")}">${T("课题一的融合工作，需要外部来源", "Topic 1 fusion; needs external sources")}</td><td class="small" data-l="${T("落在哪些字段", "Where it lands")}">${["transform.subject_id", "transform.object_id", "transform.entity_alignment_status"].map(p => fieldLink(p)).join(" ")}</td></tr>
+      <tr><td>${T("复核过的谓词、实体类型、极性", "Reviewed predicate, entity types, polarity")}</td><td class="small" data-l="${T("为什么不在记录里", "Why it is not in the record")}">${T("需要人工判断", "human judgment")} ${av("I")}</td><td class="small" data-l="${T("落在哪些字段", "Where it lands")}">${["transform.predicate_label", "transform.subject_type", "transform.relation_polarity"].map(p => fieldLink(p)).join(" ")}</td></tr>
+      <tr><td>${T("训练 / 验证 / 测试划分", "Train / validation / test split")}</td><td class="small" data-l="${T("为什么不在记录里", "Why it is not in the record")}">${T("属于数据集的决定", "a dataset decision")}</td><td class="small" data-l="${T("落在哪些字段", "Where it lands")}">${["transform.corpus_split", "transform.leakage_group_id"].map(p => fieldLink(p)).join(" ")}</td></tr>
+    </tbody></table></div>
+  </section>`;
+
+  // wiring (#main outlives a language switch, so its listener is added once)
+  if (!render.wired) { render.wired = true; $("#main").addEventListener("click", e => {
+    const a = e.target.closest("[data-rec]"); if (a) { e.preventDefault(); openRecord(a.dataset.rec); return; }
+    const h = e.target.closest("[data-hook]"); if (h) { hookRec = h.dataset.hook; $("#hooks-box").innerHTML = hooksHTML(); return; }
+    const t = e.target.closest("[data-table]"); if (t) { tableTab = t.dataset.table; $("#tables-box").innerHTML = tablesHTML(); return; }
+    const q = e.target.closest(".qa"); if (q) { const on = !q.classList.contains("flip"); q.classList.toggle("flip", on); q.setAttribute("aria-pressed", on); return; }
+    if (e.target.closest("#plain-btn")) { showPlain = !showPlain; $("#corpus-box").innerHTML = corpusHTML(); return; }
+    if (e.target.closest("#qa-all")) { const b = $("#qa-all"), on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); $$(".qa").forEach(x => { x.classList.toggle("flip", on); x.setAttribute("aria-pressed", on); }); }
+  }); }
+  $$(".chip[data-kind]").forEach(b => b.addEventListener("click", () => {
+    const k = b.dataset.kind; GS.kinds.has(k) ? GS.kinds.delete(k) : GS.kinds.add(k);
+    if (!GS.kinds.size) GS.kinds.add(k);
+    $$(".chip[data-kind]").forEach(x => x.setAttribute("aria-pressed", GS.kinds.has(x.dataset.kind)));
+    renderGraph();
+  }));
+  renderGraph();
+  if (W) K.workflow($("#wf-box"), W.workflow, { onNode: workflowNode });
+  requestAnimationFrame(drawFan);
+  if ("ResizeObserver" in window) new ResizeObserver(() => drawFan()).observe($("#fan"));
+  const h = location.hash.slice(1);
+  if (h && document.getElementById(h)) requestAnimationFrame(() => document.getElementById(h).scrollIntoView());
+}
+K.mount({ title: () => T("下游派生 · pdf2jsonl", "Outputs · pdf2jsonl"), render });
+</script>
+</body>
+</html>
