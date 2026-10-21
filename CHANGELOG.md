@@ -12,6 +12,58 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and versions
 
 Each heading `## [X.Y.Z] - YYYY-MM-DD` provides the release date that `bdc release` records.
 
+## [3.6.0] - 2026-10-19
+
+The contract states relations as subject–predicate–object, but said nothing about *what the predicate asserts*.
+`predicate_label` is an open list of Chinese relation names, so a record could not be read to tell whether an edge
+is causal or merely correlational, and the two fields that do draw the line (`agent.causal_direction`,
+`agent.association_vs_causation`) are availability `I`, unstaked values (AMB-024) and invisible to the extraction
+model. Only a causal relation can directly guide an experiment; an association written as a flat conclusion
+silently authorises one it does not support. This release records the nature of a relation as data, in three
+layers that do not substitute for one another.
+
+### Added
+- **`predicate_label` values carry `nature`** (AMB-042): `causal` / `associational` / `structural` / `descriptive` /
+  `unknown`. The nature belongs to the predicate, not to the evidence: an `associational` predicate can sit at
+  functional-validation evidence and still be associational. Repository-proposed, like `cues` (AMB-038).
+- **`vocabularies/relation_nature.yaml`** (warning, closed) and **`relation_assertion_mode.yaml`** (warning,
+  closed, `stated` / `hedged` / `unclear`).
+- **`transform.relation_nature`** (N): derived at compile time from the predicate vocabulary
+  (`contract["relation_natures"]`), never judged by the extraction model.
+- **`transform.relation_assertion_mode`** (D): how the source words the relation, so a `may`-hedged claim is not
+  mistaken for an assertion. The verbatim predicate is `transform.predicate_mention` (AMB-038).
+- **Rules R036, R037** (warning, inferred): an associational predicate asserted flat with no relation evidence
+  (neither `transform.relation_evidence_type` nor `agent.supporting_evidence`) is flagged; a causal predicate
+  without `transform.relation_evidence_type` is flagged.
+- Skill fill rule **`relation_nature_from_predicate`**, wired as a `pdf_extraction` normalizer so the nature comes
+  from the contract rather than from a reading of the record.
+- `predicate_label` code **`cross_omics_regulates`** (`跨组学-调控`, merged v2 appendix A-5), `nature: causal`.
+- Ambiguity **AMB-042**; narrative in `docs/relation_semantics.md`.
+
+### Changed
+- `schemas/meta/vocabulary.meta.schema.json` accepts a per-value `nature` and the `merged_v2` origin.
+- **`bdc derive` carries the nature and the wording.** A derived statement (and the matching triples and graph
+  edges) now includes `relation_nature` and `relation_assertion_mode`, so the causal/associational line the
+  contract draws is visible in the derived views, not only in the record. When a record has no reviewed
+  `predicate_label`, the nature falls back to the `nature` of the code `predicate_code` matched — the same
+  deterministic judgement, never a second reading. `derive_format` is **4**.
+- **The paper dashboard gains a 关系 tab** (`site/dashboard.template.html`): every statement is listed as
+  subject – predicate – object with its 因果 / 相关 / 结构 / 描述 / 未知 label and a filter by nature, so a reader
+  can separate the relations that can guide an experiment from those that only co-vary.
+- `predicate_label` cues extended so verbatim predicates of a real paper (`was correlated with`,
+  `decreased the …`, `regulated by`, `overlapped with`, `involved in`) resolve to a code; new codes
+  `trait_correlated_with_trait`, `qtl_overlaps_qtl`, `locus_decreases_trait`, `locus_increases_trait`,
+  `locus_regulated_by_gene`, `gene_involved_in_process`. The new codes name the subject and object the paper
+  actually states: `locus_regulated_by_gene` carries the locus as subject and the gene as object, because
+  "the QTLs … are likely regulated by a single gene" says nothing about which gene regulates which trait.
+  A code's declared `subject_types` / `object_types` filter only ends that have a type — an end no entity field
+  lists carries none, and is not evidence against the code (`relations.predicate_code`). `variety_derived_from`
+  now also accepts a `population` / `parent` subject and a `population` object.
+- **Every long tab pages.** Only `抽取记录` used to paginate; 关系 / 研究流程 / 语义校验 / 校验与审计 / 运行历史
+  rendered every row and the page grew without bound. They now share one pager (`buildPager` / `pageList`, page
+  numbers plus previous/next) and each renderer clears its panel first, so changing page replaces rows instead of
+  appending to them.
+
 ## [3.5.1] - 2026-10-13
 
 A trial extraction of two papers showed that the verbatim value-presence check dominated the review queue: of

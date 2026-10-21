@@ -143,6 +143,14 @@ normalizers:
     predicate_start: transform.predicate_start_offset
     predicate_end: transform.predicate_end_offset
     predicate_code: transform.predicate_code
+- rule: relation_nature_from_predicate
+  # The predicate label is curated (availability I) and deliberately not offered to the model, so this pass stays
+  # silent for fresh extraction output; it upgrades an already-reviewed record by deriving the nature from the
+  # contract instead of leaving the causal/associational judgement to whoever wrote the predicate label (AMB-042).
+  inputs:
+    predicate: transform.predicate_label
+  outputs:
+    nature: transform.relation_nature
 generated_fields:
   common.extraction_confidence:
     rule: backend_confidence

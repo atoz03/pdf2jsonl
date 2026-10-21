@@ -4,11 +4,11 @@
   "created_at": "2026-09-21T14:13:20Z",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.5.1",
+    "schema_version": "3.6.0",
     "release_status": "released",
-    "requested": "3.5.1",
-    "release_sha256": "a3028b47d0048e6bb62275d477c0c8a320446f6ab38be6dcc8a04c35b3de2483",
-    "source_digest": "408c30db4eb53e975c892c753d481fb988d6baf2f61d4bf9ecc3fec96d2cc928"
+    "requested": "3.6.0",
+    "release_sha256": "6631b46839828fd390aadf38bbb6d3e18e1b1838f853b73a8f7c52780957c840",
+    "source_digest": "cd1990104bd181ed793a7d44327ecdddc2d70210cb6c8a315485b703aa4ccdbd"
   },
   "verifier": {
     "method": "model",
@@ -88,12 +88,12 @@
   "unknown_task_ids": [],
   "input": {
     "file": "synthetic_rice_heat.jsonl",
-    "sha256": "c18d30c056ff90c2a55ba3158821aa2293a7228c50bc0dd3f1f58faa2383c829",
+    "sha256": "71bd2ca35ac8e7cd03e81589be52cc141b2aec62ba0ec0736a3121ca7f55c2bd",
     "verdicts_file": "synthetic_rice_heat.verify.verdicts.json",
-    "verdicts_sha256": "c2a6c40e1f186042efa77f48d05ee5914d57d6dcf91cb7137e2eeb8468fcd073"
+    "verdicts_sha256": "60287b1a808ffc46dda2c1a259049a99bfc252cc4f89e3d9449464a232621629"
   },
   "output": {
     "file": "synthetic_rice_heat.verified.jsonl",
-    "sha256": "bf0acffd4183dab845798e4211cd86bc34fad6a8d939fed4c8995b7158b7a604"
+    "sha256": "8955ac191358aa6dbb27ed97f6a337d171ef94895ba946bcf5778dec69ea310d"
   }
 }

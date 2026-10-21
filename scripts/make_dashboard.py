@@ -34,6 +34,7 @@ if str(ROOT) not in sys.path:
 
 from breeding_contract.api import load_profile, resolve_schema  # noqa: E402
 from breeding_contract.derive import Deriver, counts as derive_counts  # noqa: E402
+from breeding_contract.paths import repo_root  # noqa: E402
 from breeding_contract.util import load_yaml, sha256_file  # noqa: E402
 from scripts import site_shell  # noqa: E402
 
@@ -424,14 +425,19 @@ def build_data(root: Path = ROOT, scan=None):
     reviewed = [r for r in verified if r['counts']['model_verified'] or r['counts']['expert_approved']]
     value_flagged = sum(r['counts'].get('value_records', 0) for r in latest_runs)
     try:
-        current = resolve_schema('latest', root)
-        classification = load_yaml(root / 'docs/field_classification.yaml')
+        # `root` is the scan scope, which may be a workspace holding the repository rather than the
+        # repository itself; the contract is always read from where the code lives.
+        repo = repo_root(root)
+        current = resolve_schema('latest', repo)
+        classification = load_yaml(repo / 'docs/field_classification.yaml')
         fields = {f['path']: {'definition': f['definition_zh'], 'type': f['type'], 'availability': f['availability'],
                              'tags': [classification['tags'][t]['label_zh'] for t in classification['fields'].get(f['path'], [])]}
                   for f in current.fields}
         version = current.version
-    except Exception:
+    except Exception as exc:
         fields, version = {}, ''
+        diagnostics.append({'path': 'docs/field_classification.yaml',
+                            'message': f'字段说明不可用（{exc.__class__.__name__}）：看板不会为字段标注含义'})
     return {'dashboard_format': 1, 'generated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             'version': version, 'papers': items, 'fields': fields, 'diagnostics': diagnostics,
             'summary': {'papers': len(items), 'processed': len(latest_runs), 'runs': sum(len(p['runs']) for p in items),

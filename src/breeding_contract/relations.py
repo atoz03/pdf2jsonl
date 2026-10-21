@@ -150,6 +150,13 @@ def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_t
     match, gives None: the verbatim predicate stays the only statement of the relation. So does a negation, in
     the mention or in ``context`` (the quote between the two ends, see ``relation_context``): the codes name
     positive relations, and "was not associated with" must not become one. Polarity is a reviewer's call.
+
+    A declared type list is a filter only over ends that have a type. An end whose mention no entity field
+    lists carries no type — the pipeline types a mention by the field that holds it, and a paper states many
+    ends only in passing ("a single gene", a trait abbreviation defined in a table). Such an end is not
+    evidence against the code: a wrong subject must be excluded because its type is known to differ, not
+    because it is unknown. So an untyped end passes the filter, and only a typed end that misses the list
+    rejects the code.
     """
     if not isinstance(mention, str) or not mention.strip() or negated(mention, context):
         return None
@@ -159,9 +166,9 @@ def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_t
         cues = v.get("cues")
         if not cues:
             continue
-        if v.get("subject_types") and not set(v["subject_types"]) & set(subject_types):
+        if subject_types and v.get("subject_types") and not set(v["subject_types"]) & set(subject_types):
             continue
-        if v.get("object_types") and not set(v["object_types"]) & set(object_types):
+        if object_types and v.get("object_types") and not set(v["object_types"]) & set(object_types):
             continue
         best = max((len(c) for c in cues if _cue_in(c, text)), default=0)
         if best:

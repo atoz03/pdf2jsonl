@@ -282,6 +282,23 @@ def _relation_anchors(ctx: RecordContext, params: dict) -> dict:
     return out
 
 
+@rule("relation_nature_from_predicate", kind="normalizer")
+def _relation_nature_from_predicate(ctx: RecordContext, params: dict) -> dict:
+    """Derive the semantic nature (causal / associational / …) of a relation from the contract, not from the
+    extraction model: the `predicate_label` vocabulary carries `nature` per code and the compiled contract exposes
+    it as `contract["relation_natures"]` (AMB-042). Literal lookup only: an unknown or missing predicate code
+    yields nothing, so the field stays absent rather than guessing "unknown".
+
+    params = {"inputs": {predicate}, "outputs": {nature}} -> {path: value}."""
+    inputs, outputs = params["inputs"], params["outputs"]
+    code = ctx.value(inputs.get("predicate"))
+    out_path = outputs.get("nature")
+    if not out_path or not isinstance(code, str) or not code.strip():
+        return {}
+    nature = (ctx.run.rc.contract.get("relation_natures") or {}).get(code)
+    return {out_path: nature} if nature else {}
+
+
 # ------------------------------------------------------------------ system records
 @rule("input_asset_manifest", kind="record")
 def _asset_manifest(ctx: RecordContext, params: dict):

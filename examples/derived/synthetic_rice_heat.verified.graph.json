@@ -874,7 +874,8 @@
       "record_id": "rec_2d21f963dafe36ae2335bd207c74a610",
       "statement_id": "stm_eff24b9aeeae505e5ad37b62",
       "predicate_status": "lexicon",
-      "predicate_mention": "interacted with"
+      "predicate_mention": "interacted with",
+      "relation_nature": "causal"
     },
     {
       "s": "ent:gene/htr1",

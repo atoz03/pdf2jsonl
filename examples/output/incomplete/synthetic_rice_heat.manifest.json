@@ -4,11 +4,11 @@
   "created_at": "2026-09-21T13:13:20Z",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.5.1",
+    "schema_version": "3.6.0",
     "release_status": "released",
-    "requested": "3.5.1",
-    "release_sha256": "a3028b47d0048e6bb62275d477c0c8a320446f6ab38be6dcc8a04c35b3de2483",
-    "source_digest": "408c30db4eb53e975c892c753d481fb988d6baf2f61d4bf9ecc3fec96d2cc928"
+    "requested": "3.6.0",
+    "release_sha256": "6631b46839828fd390aadf38bbb6d3e18e1b1838f853b73a8f7c52780957c840",
+    "source_digest": "cd1990104bd181ed793a7d44327ecdddc2d70210cb6c8a315485b703aa4ccdbd"
   },
   "profile": {
     "name": "pdf_extraction",
@@ -34,6 +34,7 @@
       "profile_name",
       "qc_rule_set_version",
       "relation_anchors",
+      "relation_nature_from_predicate",
       "resolved_schema_name",
       "resolved_schema_version",
       "run_id",
@@ -42,7 +43,7 @@
       "validation_outcome",
       "warning_codes"
     ],
-    "field_count": 231
+    "field_count": 233
   },
   "input": {
     "file_name": "synthetic_rice_heat.pdf",
@@ -68,8 +69,8 @@
   },
   "options": {},
   "environment": {
-    "python": "3.10.12",
-    "platform": "Linux-6.8.0-94-generic-x86_64-with-glibc2.35",
+    "python": "3.13.9",
+    "platform": "Linux-3.10.0-1062.el7.x86_64-x86_64-with-glibc2.28",
     "packages": {
       "jsonschema": "4.26.0",
       "PyYAML": "6.0.3",
@@ -85,7 +86,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_rice_heat.jsonl",
-      "sha256": "b880301e916f8fa801ddc39657904a74e3a817533e99e1c1476e4f0862de0578"
+      "sha256": "0bc2ac2916ade58fb5e20bd48095a3310edc656794abe2b4f7f968dd725ac5e7"
     },
     "errors": {
       "file": "synthetic_rice_heat.errors.jsonl",
@@ -93,7 +94,7 @@
     },
     "validation": {
       "file": "synthetic_rice_heat.validation.json",
-      "sha256": "ef47cb3231a556713524bb99575e14ad4688e633c4951f3feed0e84c3f940001"
+      "sha256": "ae71b86cdc63a610fb07c523a07926d87ceb5df3fbae212d946164a1d2efa856"
     }
   },
   "source_parts": {

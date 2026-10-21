@@ -132,6 +132,12 @@ def check_catalog(src: Sources) -> list[Finding]:
             err(f"vocabulary {name}: duplicate codes")
         if voc.get("enforcement") == "error" and voc.get("code_status") == "proposed":
             err(f"vocabulary {name}: proposed codes cannot be enforced as error")
+        # A predicate code must state what the relation asserts, so transform.relation_nature never has to
+        # guess "unknown" for a code a reviewer chose (AMB-042). Only predicate_label carries `nature`.
+        if name == "predicate_label":
+            missing = [v["code"] for v in voc.get("values", []) if not v.get("nature")]
+            if missing:
+                err(f"vocabulary predicate_label: codes without nature: {', '.join(missing)}")
     for name, prof in src.profiles.items():
         for a in prof.get("ambiguities") or []:
             if a not in amb:

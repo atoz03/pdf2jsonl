@@ -38,7 +38,7 @@ latest release and the checked-in examples, and deployed from `main`.
 | [Outputs](https://atoz03.github.io/pdf2jsonl/outputs.html) | Statements, knowledge graph, research workflow, annotated corpus, QA seeds and tables derived from the same records |
 | [Papers](https://atoz03.github.io/pdf2jsonl/papers.html) | Paper dashboard: the PDF, the records of each run, their evidence on the page, verification, review issues, downloads |
 | [Importers](https://atoz03.github.io/pdf2jsonl/importers.html) | The legacy, omics and merged importers: mapping coverage, example runs, issue registers |
-| [Fields](https://atoz03.github.io/pdf2jsonl/fields.html) | All **412 fields**: meaning, type, JSON example, key role, functions, multi-select tags, origin |
+| [Fields](https://atoz03.github.io/pdf2jsonl/fields.html) | All **414 fields**: meaning, type, JSON example, key role, functions, multi-select tags, origin |
 | [Contract](https://atoz03.github.io/pdf2jsonl/contract.html) | Record kinds, profiles, vocabularies, rules, the ambiguity register and the release history; records from every source (curated, pdf2jsonl, the three importers) side by side |
 
 Preview locally with `make site` and open `_site/index.html`. `make dashboard` also writes an untracked
@@ -69,6 +69,17 @@ and its role in the relation. No consumer parses the text a second time:
 
 Where a record has no hook, the derived output has no row: nothing is guessed. Design notes:
 [`docs/downstream.md`](docs/downstream.md).
+
+3.6.0 records the semantic nature of a relation; both additions are provisional:
+
+- **Every predicate code carries a nature**: `causal` / `associational` / `structural` / `descriptive`, mapped at
+  compile time to `transform.relation_nature` (N, derived from the contract, never judged by the model), while
+  `transform.relation_assertion_mode` (D) keeps the source's own wording. Only a causal relation can directly
+  guide an experiment, so R036 / R037 flag a flat association with no evidence and a causal relation with no
+  evidence type. See [`docs/relation_semantics.md`](docs/relation_semantics.md).
+- **The derived views and the dashboard carry it**: `bdc derive` statements, triples and graph edges include
+  `relation_nature` and `relation_assertion_mode` (`derive_format` = 4), and the paper dashboard gained a 关系 tab
+  that lists every statement with its nature and filters by it.
 
 Three things were added in 3.5.0 for the agent that plans research (Topic 2); all are provisional:
 
@@ -114,10 +125,10 @@ languages and downloads the SVG. Run `make diagram` to regenerate both README im
 | `examples/` | Two synthetic papers (one in two files), curated records, pipeline output (also for the paper without its supplement), a verification pass, derived views, importer output, invalid cases |
 | `tests/` | pytest suite (catalog fidelity, releases, validation, pipeline, Skill sync, importers, bundles, functions, evidence chain, downstream hooks, workflow, verification, source parts, site) |
 
-## 🔬 Contract at a glance (3.5.0)
+## 🔬 Contract at a glance (3.6.0)
 
-- 412 fields in five groups: `common` 179, `agent` 62, `skills` 53, `transform` 50, `omics` 68.
-  The 259 v3.0.0 fields are `verified` and verbatim; the 153 fields added since are `provisional`.
+- 414 fields in five groups: `common` 179, `agent` 62, `skills` 53, `transform` 52, `omics` 68.
+  The 259 v3.0.0 fields are `verified` and verbatim; the 155 fields added since are `provisional`.
 - **Multi-select functional tags**: Research Content 1, Research Content 2, future iteration, and general-purpose fields.
 - Every key states **what it does** (`key_role`, 25 roles with their projection into graph, tables, triples and
   QA/corpora) and **which function it serves** (`serves`): Topic 2 agent, Topic 3 skills, derivation into
@@ -131,8 +142,8 @@ languages and downloads the SVG. Run `make diagram` to regenerate both README im
 - Every record carries `common.schema_name` and `common.schema_version`, a stable `common.record_id`
   (`rec_` + 32 hex), provenance (`source_id`, `source_locator`, page and verbatim quote for paper evidence),
   and a `review_status`.
-- 35 cross-field rules (20 errors, 15 warnings): explicit source statements are errors, inferred ones are warnings only.
-- 41 ambiguities are registered in the catalog (`AMB-001` … `AMB-041`) instead of being silently decided.
+- 37 cross-field rules (20 errors, 17 warnings): explicit source statements are errors, inferred ones are warnings only.
+- 42 ambiguities are registered in the catalog (`AMB-001` … `AMB-042`) instead of being silently decided.
 - `review_status` is a ladder: `pending_review` → `auto_validated` (deterministic checks) → `model_verified`
   (an independent verifier) → `expert_approved` / `rejected` (a person).
 
@@ -181,7 +192,7 @@ from breeding_contract import resolve_schema, load_profile, load_field_catalog, 
 
 rc = resolve_schema("latest")                  # or "3.0.0", or "dev" (unreleased working tree)
 profile = load_profile("pdf_extraction", "latest")
-catalog = load_field_catalog("3.5.0")
+catalog = load_field_catalog("3.6.0")
 result = validate_record(record)               # validates against the version the record declares
 result.valid, [i.to_dict() for i in result.errors]
 ```

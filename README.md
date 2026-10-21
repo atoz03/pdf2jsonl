@@ -37,7 +37,7 @@
 | [下游派生](https://atoz03.github.io/pdf2jsonl/outputs.html) | 同一批记录派生出的关系语句、知识图谱、研究流程、带标注的语料、问答种子和关系表 |
 | [论文看板](https://atoz03.github.io/pdf2jsonl/papers.html) | 按论文查看 PDF、每次运行的记录、原文证据、研究流程、语义校验与复核问题；校验提示按“取值核验 / 填写规则 / 记录链接 / 来源完整性”分组并可逐条筛选，结果可下载 |
 | [存量导入](https://atoz03.github.io/pdf2jsonl/importers.html) | legacy、omics、merged 三种已有格式的导入器：映射覆盖、示例运行、问题登记 |
-| [字段目录](https://atoz03.github.io/pdf2jsonl/fields.html) | **412 个字段**：含义、类型、JSON 示意、键角色、服务功能、功能分类标签（可多选）和来源 |
+| [字段目录](https://atoz03.github.io/pdf2jsonl/fields.html) | **414 个字段**：含义、类型、JSON 示意、键角色、服务功能、功能分类标签（可多选）和来源 |
 | [规范](https://atoz03.github.io/pdf2jsonl/contract.html) | 记录类型、画像、受控词表、填写规则、歧义登记和版本历史；各来源（人工整理、pdf2jsonl、三种导入）的记录并排对照 |
 
 本地预览执行 `make site`，然后打开 `_site/index.html`。`make dashboard` 另外生成一个不入库的
@@ -64,6 +64,16 @@
 - **人工与下游再补充**：审核后的谓词、实体对齐、自然语言问答，各有对应字段，不与抽取结果混写。
 
 记录没有的钩子，派生结果里就没有对应的行，不做猜测。设计说明见 [`docs/downstream.md`](docs/downstream.md)。
+
+3.6.0 记录关系的语义性质，均为拟定（provisional）：
+
+- **每条关系谓词带上性质**：`predicate_label` 词表的每个代码声明 `nature`（causal／associational／
+  structural／descriptive），编译期映射为 `transform.relation_nature`（N，由契约派生，不交给模型判断）；
+  来源自己的措辞另由 `transform.relation_assertion_mode`（D）记录。只有因果关系能直接指导实验，R036／R037
+  在「相关性被平铺陈述却没有证据」或「因果关系没有说明证据类型」时提示。见
+  [`docs/relation_semantics.md`](docs/relation_semantics.md)。
+- **派生视图与看板沿用这层性质**：`bdc derive` 的 statements、三元组与属性图边都带 `relation_nature` 与
+  `relation_assertion_mode`（`derive_format` = 4）；论文看板新增「关系」页签，逐条列出主谓宾并可按性质筛选。
 
 3.5.0 面向课题二的科研智能体新增三项能力，均为拟定（provisional）：
 
@@ -105,10 +115,10 @@
 | `examples/` | 两篇合成论文（其一含补充材料）、整理后的记录、管线输出（含缺少补充材料时的输出）、一次语义复核、派生视图、导入输出及无效数据示例 |
 | `tests/` | pytest 测试：规范一致性、版本、校验、管线、Skill 同步、导入、文档包、功能、证据链、下游钩子、研究流程、语义复核、来源组成部分及站点 |
 
-## 🔬 规范概览（3.5.0）
+## 🔬 规范概览（3.6.0）
 
-- 共 412 个字段，分为五组：`common` 179、`agent` 62、`skills` 53、`transform` 50、`omics` 68。
-  v3.0.0 的 259 个字段标记为 `verified`，定义逐字保留；其后新增的 153 个字段标记为 `provisional`。
+- 共 414 个字段，分为五组：`common` 179、`agent` 62、`skills` 53、`transform` 52、`omics` 68。
+  v3.0.0 的 259 个字段标记为 `verified`，定义逐字保留；其后新增的 155 个字段标记为 `provisional`。
 - **功能分类支持多选**：研究内容1、研究内容2、迭代优化、通用字段。
 - 每个字段说明**键角色**（`key_role`，共 25 类）和**服务功能**（`serves`）：课题二科学智能体、课题三技能、
   知识图谱／关系库／问答／语料／三元组派生，以及课题一规范迭代。课题二、三的字段还标注所属卡片，
@@ -120,8 +130,8 @@
 - **缺失信息直接省略**，不写 `null`、空字符串、空数组或空对象。
 - 每条记录包含 `common.schema_name`、`common.schema_version`、稳定的 `common.record_id`（`rec_` 加 32 位十六进制字符）、
   来源信息（`source_id`、`source_locator`；论文证据还需页码和原文引文）以及 `review_status`。
-- 共 35 条跨字段规则：20 条错误级别、15 条警告级别。来源明确陈述的要求按错误处理，推断出的要求仅作警告。
-- 41 项歧义记录在字段目录中（`AMB-001` 至 `AMB-041`），避免隐式决定未明确的含义。
+- 共 37 条跨字段规则：20 条错误级别、17 条警告级别。来源明确陈述的要求按错误处理，推断出的要求仅作警告。
+- 42 项歧义记录在字段目录中（`AMB-001` 至 `AMB-042`），避免隐式决定未明确的含义。
 - `review_status` 分级递进：`pending_review` → `auto_validated`（确定性检查通过）→ `model_verified`
   （独立复核通过）→ `expert_approved`／`rejected`（人工决定）。
 
@@ -168,7 +178,7 @@ from breeding_contract import resolve_schema, load_profile, load_field_catalog, 
 
 rc = resolve_schema("latest")                  # 也可指定 "3.0.0" 或 "dev"（未发布的工作目录）
 profile = load_profile("pdf_extraction", "latest")
-catalog = load_field_catalog("3.5.0")
+catalog = load_field_catalog("3.6.0")
 result = validate_record(record)               # 按记录声明的版本校验
 result.valid, [i.to_dict() for i in result.errors]
 ```

@@ -10,110 +10,178 @@ origin: [legacy_v1]
 source:
   ref: sources/legacy_v1/breeding_jsonl_spec.md#L429
   quote_zh: A-5 relation_type（本体关系，可扩展）
-notes_zh: 'A-5 仅三项给出英文代码，其余代码由仓库拟定（code_status: proposed）。关联关系不得标为控制关系。cues 为谓词原文中的线索词，subject_types / object_types 为主宾语的实体类型（由实体提及字段名确定，缺省表示不限）；三者仅用于由 predicate_mention 确定性生成 predicate_code，均为仓库拟定（AMB-038）。'
-ambiguities: [AMB-038]
+notes_zh: 'A-5 仅三项给出英文代码，其余代码由仓库拟定（code_status: proposed）。关联关系不得标为控制关系。cues 为谓词原文中的线索词，subject_types / object_types 为主宾语的实体类型（由实体提及字段名确定，缺省表示不限）；三者仅用于由 predicate_mention 确定性生成 predicate_code，均为仓库拟定（AMB-038）。nature 为关系**本身**的语义性质（causal / associational / structural / descriptive / unknown），与证据强弱无关，由契约编译期映射为 transform.relation_nature 并供 R036/R037 比较，为仓库拟定（AMB-042）。'
+ambiguities: [AMB-038, AMB-042]
 values:
 - code: genotype_controls_trait
   label_zh: 基因-控制-性状
   cues: [controls, controlled, 控制]
   subject_types: [gene]
   object_types: [trait]
+  nature: causal
 - code: gene_associated_with_trait
   label_zh: 基因-关联-性状
   code_status: proposed
   cues: [associated with, association with, 关联, 相关]
   subject_types: [gene]
   object_types: [trait]
+  nature: associational
 - code: gene_interacts_with_gene
   label_zh: 基因-互作-基因
   code_status: proposed
   cues: [interacts with, interacted with, interaction with, 互作]
   subject_types: [gene]
   object_types: [gene]
+  nature: causal
 - code: qtl_associated_with_trait
   label_zh: QTL-关联-性状
   code_status: proposed
   cues: [associated with, association with, 关联, 相关]
   subject_types: [qtl]
   object_types: [trait]
+  nature: associational
 - code: marker_linked_to_qtl
   label_zh: 标记-连锁-QTL
   code_status: proposed
   cues: [linked to, linked with, flanking, 连锁]
   subject_types: [marker]
   object_types: [qtl]
+  nature: associational
 - code: marker_located_at_locus
   label_zh: 标记-定位-位点
   code_status: proposed
   cues: [located at, located on, mapped to, 定位于, 位于]
   subject_types: [marker]
+  nature: structural
 - code: germplasm_carries_allele
   label_zh: 种质-携带-基因
   cues: [carries, carrying, carried, harbors, 携带]
   subject_types: [germplasm, variety]
   object_types: [gene]
+  nature: structural
 - code: variety_derived_from
   label_zh: 品种-源于-亲本
   cues: [derived from, developed from, 来源于, 源于, 选育自]
-  subject_types: [variety, germplasm]
-  object_types: [parent, variety, germplasm]
+  subject_types: [variety, germplasm, parent, population]
+  object_types: [parent, variety, germplasm, population]
+  nature: structural
 - code: germplasm_member_of_population
   label_zh: 种质-组成-群体
   code_status: proposed
   cues: [member of, belongs to, 属于]
   subject_types: [germplasm]
   object_types: [population]
+  nature: structural
 - code: environment_affects_trait
   label_zh: 环境-影响-性状
   code_status: proposed
   cues: [affects, affected, 影响]
   object_types: [trait]
+  nature: causal
 - code: environment_regulates_expression
   label_zh: 环境-调节-基因表达
   code_status: proposed
+  nature: causal
 - code: gene_expressed_in_tissue
   label_zh: 基因-表达于-组织
   code_status: proposed
   cues: [expressed in, 表达于]
   subject_types: [gene]
+  nature: descriptive
 - code: gene_located_in_region
   label_zh: 基因-定位于-区段
   code_status: proposed
   cues: [located in, located on, 定位于, 位于]
   subject_types: [gene]
+  nature: structural
 - code: trait_component_of_trait
   label_zh: 性状-构成-上位性状
   code_status: proposed
   cues: [component of, 构成]
   subject_types: [trait]
   object_types: [trait]
+  nature: structural
 - code: variety_adapted_to_environment
   label_zh: 品种-适应于-环境/区域
   code_status: proposed
   cues: [adapted to, 适应于]
   subject_types: [variety]
+  nature: descriptive
 - code: material_resistant_to_disease
   label_zh: 材料-抗-病害
   code_status: proposed
   cues: [resistant to, resistance to, 抗性]
   subject_types: [germplasm, variety]
+  nature: descriptive
 - code: gene_mediates_resistance
   label_zh: 基因-介导-抗病性
   code_status: proposed
   cues: [mediates, confers, 介导]
   subject_types: [gene]
+  nature: causal
 - code: method_based_on_population
   label_zh: 方法-基于-群体
   code_status: proposed
+  nature: descriptive
 - code: analysis_produces_conclusion
   label_zh: 分析-产出-结论
   code_status: proposed
+  nature: descriptive
 - code: conclusion_supports_hypothesis
   label_zh: 结论-支持-假设
   code_status: proposed
+  nature: structural
 - code: material_registered_in_database
   label_zh: 材料-登记于-数据库
   code_status: proposed
+  nature: descriptive
 - code: synonym_of
   label_zh: 同义-实体
   code_status: proposed
+  nature: descriptive
+- code: cross_omics_regulates
+  label_zh: 跨组学-调控
+  code_status: proposed
+  origin: [merged_v2]
+  nature: causal
+- code: trait_correlated_with_trait
+  label_zh: 性状-相关-性状
+  code_status: proposed
+  cues: [correlated with, correlates with, correlation with, correlated to, 正相关, 负相关]
+  subject_types: [trait]
+  object_types: [trait]
+  nature: associational
+- code: qtl_overlaps_qtl
+  label_zh: QTL-重叠-QTL
+  code_status: proposed
+  cues: [overlapped with, overlaps with, overlapping, 重叠]
+  subject_types: [qtl]
+  object_types: [qtl]
+  nature: associational
+- code: locus_decreases_trait
+  label_zh: 位点-降低-性状
+  code_status: proposed
+  cues: [decreased the, decreases the, decrease the, reduced the, 降低]
+  subject_types: [qtl, gene, feature, marker]
+  object_types: [trait]
+  nature: causal
+- code: locus_increases_trait
+  label_zh: 位点-提高-性状
+  code_status: proposed
+  cues: [increased the, increases the, increase the, enhanced the, 提高]
+  subject_types: [qtl, gene, feature, marker]
+  object_types: [trait]
+  nature: causal
+- code: locus_regulated_by_gene
+  label_zh: 位点-受基因调控
+  code_status: proposed
+  cues: [regulated by, regulates, 调控, 调节]
+  subject_types: [qtl, gene, feature]
+  object_types: [gene, feature]
+  nature: causal
+- code: gene_involved_in_process
+  label_zh: 基因-参与-过程
+  code_status: proposed
+  cues: [involved in, 参与]
+  subject_types: [gene, feature, marker_genes]
+  nature: causal

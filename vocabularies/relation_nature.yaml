@@ -1,0 +1,35 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: relation_nature
+title_zh: 关系的语义性质
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 3.6.0
+origin: [repository]
+source:
+  ref: docs/relation_semantics.md
+  quote_zh: 抽取阶段须明确区分知识间的因果关系与相关性；只有因果关系才能直接指导实验
+notes_zh: '代码由仓库拟定。性质描述关系**本身**断言了什么，与证据强弱无关：关联谓词可以在功能验证级别上仍然只是相关，因果谓词也可能只有统计证据。判定依据是 predicate_label 词表的值属性 nature，由契约编译期映射得到（contract["relation_natures"]），不由抽取模型判断。'
+ambiguities: [AMB-042]
+values:
+- code: causal
+  label_zh: 因果
+  description_zh: 断言一方对另一方的作用或决定；可以据此设计干预实验
+  code_status: proposed
+- code: associational
+  label_zh: 相关
+  description_zh: 只断言共变或统计映射，不含机制；升级为因果需要额外证据
+  code_status: proposed
+- code: structural
+  label_zh: 结构
+  description_zh: 断言构成、部分-整体或层级关系，不含作用方向
+  code_status: proposed
+- code: descriptive
+  label_zh: 描述
+  description_zh: 命名、同义、登记等描述性关系，不含作用或共变
+  code_status: proposed
+- code: unknown
+  label_zh: 未知
+  description_zh: 谓词未给出或无法归入以上性质
+  code_status: proposed

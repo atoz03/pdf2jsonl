@@ -87,16 +87,25 @@ A statement keeps every level it has reached, and `bdc derive` reports the highe
 | --- | --- | --- |
 | `ontology` | `transform.predicate_id` | alignment to a relation ontology |
 | `reviewed` | `bdc:<transform.predicate_label>` | a reviewer chose the code |
-| `lexicon` | `bdc:<transform.predicate_code>` | cue words + entity types of both ends match exactly one code of vocabulary `predicate_label` |
+| `lexicon` | `bdc:<transform.predicate_code>` | a cue of exactly one code occurs in the predicate, and neither end's type contradicts the code |
 | `verbatim` | `bdc:stated_relation`, with `predicate_mention` | only the words of the paper |
 | `unlabelled` | `bdc:unlabelled_relation` | subject and object without any predicate (flagged by R033) |
 
 A consumer chooses its own threshold, e.g. load `reviewed` and above into the published graph and keep
 `lexicon` and `verbatim` as candidates. The lexicon lives in `vocabularies/predicate_label.yaml` (`cues`,
 `subject_types`, `object_types`). It is deliberately narrow: "was associated with" between a QTL and a trait is
-coded, "increased" between an allele and a trait is not, because no code fits without interpretation. The codes
-name positive relations only. Whether a statement is negative is recorded by a reviewer in
-`transform.relation_polarity`; until then the negation is in `predicate_mention`, in the words of the paper.
+coded, "increased" between an allele and a trait is not, because no code fits without interpretation. A cue
+therefore names the words the relation is *stated* with, not the bare verb: "decreased the chalkiness" is coded,
+"decreased" alone is not. The codes name positive relations only. Whether a statement is negative is recorded by
+a reviewer in `transform.relation_polarity`; until then the negation is in `predicate_mention`, in the words of
+the paper.
+
+The ladder says how far a predicate has been resolved, not what it asserts. Whether the relation is causal or
+merely associational is a third axis, recorded separately (AMB-042): `transform.relation_nature` derives from the
+`nature` of the code, and `transform.relation_assertion_mode` (D) keeps the source's own wording. Only a causal
+relation can directly guide an experiment, so R036 flags an associational relation stated flat with no evidence
+and R037 flags a causal one with no evidence type. See [relation semantics](relation_semantics.md); a consumer
+that filters edges by the ladder should filter by nature as well, or it will promote association to causation.
 
 ## What `bdc derive` builds
 

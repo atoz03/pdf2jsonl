@@ -1,7 +1,7 @@
 {
   "index_format": 1,
   "contract": "breeding-literature-record",
-  "latest": "3.5.1",
+  "latest": "3.6.0",
   "releases": [
     {
       "version": "3.0.0",
@@ -44,6 +44,12 @@
       "released_on": "2026-10-13",
       "status": "active",
       "release_sha256": "a3028b47d0048e6bb62275d477c0c8a320446f6ab38be6dcc8a04c35b3de2483"
+    },
+    {
+      "version": "3.6.0",
+      "released_on": "2026-10-19",
+      "status": "active",
+      "release_sha256": "6631b46839828fd390aadf38bbb6d3e18e1b1838f853b73a8f7c52780957c840"
     }
   ]
 }
