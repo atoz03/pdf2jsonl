@@ -38,8 +38,12 @@ Records are the hub between the ways in and the ways out (`docs/downstream.md`):
 ```
 
 The GitHub Pages site shows all of it in one place and is built by `scripts/make_site.py` from the latest
-release and the checked-in examples: the contract browser (`index.html`), the paper dashboard (`papers.html`),
-the pipeline diagram (`pipeline.html`) and the derived files of the example paper (`derived/`).
+release and the checked-in examples. Its eight pages — `index.html` (overview), `pipeline.html`, `demo.html`
+(walk-through of the example paper), `outputs.html` (derived outputs), `papers.html` (paper dashboard),
+`importers.html`, `fields.html` and `contract.html` — are templates under `site/pages/` that share one shell under
+`site/kit/` (header, footer, theme, language and the drawing helpers), assembled with their data by
+`scripts/site_shell.py`. `make dashboard` renders the same paper page from local run directories into an
+untracked `dashboard.html`. The derived files of the example paper sit under `derived/`.
 
 `resolve_schema("dev")` compiles the working tree on the fly and stamps the version `<VERSION>-dev.<digest8>`
 with status `unreleased`, so development output can never claim to be a release.
@@ -67,7 +71,7 @@ with status `unreleased`, so development output can never claim to be a release.
 | Source completeness | Skill `completeness.py` | References of the main text to supplementary items and parts, compared with the files supplied (`source_parts` in the report) |
 | Runtime schemas | `schemas/runtime/`, `runtime_schemas.py` | Formats of manifests, validation reports, error records, bundles, migration reports, verification reports |
 | Skill | `skills/pdf2jsonl/` | Workflow (`SKILL.md`), brief template (`prompts/`), runtime (`scripts/pdf2jsonl_skill/`) |
-| Site | `scripts/make_site.py`, `scripts/make_dashboard.py`, `site/` | The Pages site: contract browser, paper dashboard, pipeline diagram, downstream outputs, importers |
+| Site | `scripts/make_site.py`, `scripts/make_dashboard.py`, `scripts/site_shell.py`, `site/pages/`, `site/kit/` | The Pages site: overview, pipeline, walk-through, downstream outputs, paper dashboard, importers, field catalog, contract reference |
 
 ## The pdf2jsonl pipeline
 

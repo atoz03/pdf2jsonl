@@ -110,8 +110,11 @@ def test_embedded_json_cannot_close_script_and_custom_location_has_correct_base(
     path,_=dashboard.build(tmp_path,out=tmp_path/'nested/dashboard.html')
     text=path.read_text()
     assert hostile not in text
-    payload=re.search(r'<script id="dashboard-data" type="application/json">(.*?)</script>',text,re.S).group(1)
-    assert json.loads(payload)==data
+    payload=json.loads(re.search(r'<script id="site-data" type="application/json">(.*?)</script>',text,re.S).group(1))
+    assert payload['title']==hostile
+    # the local page links into the repository: no site pages beside it, only the repository's own documents
+    assert payload['shell']['mode']=='local' and payload['shell']['self']=='nested/dashboard.html'
+    assert all((Path(dashboard.ROOT)/href).is_file() for _,_,href in payload['shell']['links'])
     assert '<base href="../">' in text
     assert dashboard._url(tmp_path,tmp_path/'javascript:evil.pdf')=='./javascript%3Aevil.pdf'
 
@@ -209,7 +212,7 @@ def test_example_run_carries_warning_groups_and_the_page_offers_a_filter(root):
     run = paper['runs'][0]
     assert run['warning_summary']['groups']['rule']['count'] >= 1
     assert run['warning_summary']['groups']['rule']['by_code'].get('RULE_R018')
-    template = (root / 'site/dashboard.template.html').read_text(encoding='utf-8')
+    template = (root / 'site/pages/papers.html').read_text(encoding='utf-8')
     assert '校验提示' in template  # the record filter the page renders when a run has warnings
     assert dashboard.WARNING_FAMILIES[0][1] == '取值核验'  # the value family label the page shows
 

@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>管线 · pdf2jsonl</title>
+<meta name="description" content="The pdf2jsonl pipeline stage by stage: who does each step (people, a model, deterministic code), what it checks, the files it writes, and what each gate caught in the example run.">
+<!--__HEAD__-->
+<style>
+/* ---------------------------------------------------------------- hero: the example run as a ribbon of numbers */
+.ribbon { display: flex; margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
+.rb { flex: 1 1 0; min-width: 0; padding: 15px 14px 14px 20px; position: relative; color: inherit; transition: background .15s; }
+.rb + .rb { border-left: 1px solid var(--line); }
+.rb + .rb::before { content: ""; position: absolute; left: -7px; top: 50%; width: 12px; height: 12px; background: var(--surface); border-top: 1px solid var(--line); border-right: 1px solid var(--line); transform: translateY(-50%) rotate(45deg); z-index: 1; transition: background .15s; }
+a.rb:hover { background: var(--surface-2); text-decoration: none; }
+.rb .who { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--lc); }
+.rb .who svg { width: 13px; height: 13px; }
+.rb .v { display: block; font-size: 30px; font-weight: 760; letter-spacing: -.03em; line-height: 1.15; margin-top: 4px; color: var(--tone, var(--ink)); font-variant-numeric: tabular-nums; }
+.rb .k { display: block; font-size: 12.5px; color: var(--ink-2); line-height: 1.4; margin-top: 2px; }
+@media (max-width: 960px) {
+  .ribbon { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rb + .rb::before { display: none; }
+  .rb { border-top: 1px solid var(--line); } .rb:nth-child(-n+2) { border-top: 0; }
+  .rb + .rb { border-left: 0; } .rb:nth-child(even) { border-left: 1px solid var(--line); }
+  .rb:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+
+/* ---------------------------------------------------------------- 01 the stage map: lanes say who does a stage */
+.map-card { padding: 16px 20px 20px; }
+.map-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 4px; }
+.map-head .legend { font-size: 12.5px; }
+.ln { display: inline-block; width: 22px; height: 0; border-top: 2px solid var(--brand); vertical-align: 4px; margin-right: 6px; }
+.ln.dash { border-top-style: dashed; border-color: var(--clay); }
+.map { position: relative; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); column-gap: 20px; row-gap: 8px; padding: 38px 0 4px 44px; }
+.lane { grid-column: 1 / -1; position: relative; margin-left: -44px; min-height: 116px; border-radius: 14px; background: color-mix(in srgb, var(--lc) 6%, transparent); border: 1px solid color-mix(in srgb, var(--lc) 16%, transparent); }
+.lane .ll { position: absolute; left: 0; top: 0; bottom: 0; width: 38px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: var(--lc); }
+.lane .ll span { writing-mode: vertical-rl; font-size: 12px; font-weight: 700; letter-spacing: .12em; white-space: nowrap; }
+.lane .ll svg { width: 16px; height: 16px; }
+.pn { position: relative; z-index: 2; align-self: center; margin: 14px 0; display: flex; flex-direction: column; gap: 2px; min-width: 0; text-align: left; padding: 11px 11px 10px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-1); color: var(--ink); transition: transform .2s var(--ease), box-shadow .2s, border-color .2s; }
+.pn::before { content: ""; position: absolute; left: 12px; right: 12px; top: -1px; height: 3px; border-radius: 0 0 3px 3px; background: var(--lc); }
+.pn:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: color-mix(in srgb, var(--lc) 45%, var(--line)); }
+.pn[aria-pressed="true"] { border-color: var(--lc); box-shadow: 0 0 0 3px color-mix(in srgb, var(--lc) 24%, transparent), var(--shadow-2); }
+.pn.lit { animation: lit 1.15s var(--ease); }
+@keyframes lit { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--lc) 60%, transparent), var(--shadow-2); transform: translateY(-2px); } 100% { box-shadow: 0 0 0 14px transparent, var(--shadow-1); transform: none; } }
+.pn-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; color: var(--lc); }
+.pn-no { font: 700 11px var(--mono); letter-spacing: .04em; }
+.pn-top svg { width: 15px; height: 15px; }
+.pn-body { display: flex; flex-direction: column; min-width: 0; }
+.pn-t { font-size: 13.5px; font-weight: 700; line-height: 1.3; margin-top: 2px; }
+.pn-lane { display: none; font-size: 11.5px; color: var(--lc); font-weight: 600; }
+.pn-m { font-size: 11.5px; color: var(--ink-3); line-height: 1.3; margin-top: 3px; }
+.pn-m em { font: normal 760 18px var(--sans); color: var(--ink); letter-spacing: -.02em; margin-right: 3px; font-variant-numeric: tabular-nums; }
+.pn-m .x { display: inline-block; margin-left: 4px; color: var(--clay); font-weight: 700; }
+.pn.in { background: var(--surface-2); border-style: dashed; }
+.pn.in .pn-no { color: var(--ink-3); text-transform: uppercase; letter-spacing: .1em; font-size: 10px; }
+.pn.bar { flex-direction: row; align-items: center; gap: 14px; flex-wrap: wrap; }
+.pn.bar .pn-top { flex-direction: column; align-items: flex-start; }
+.pn.bar .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.pn.bar .chips span { font: 600 11.5px var(--mono); padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--lc) 10%, transparent); color: var(--lc); }
+.pn.bar .pn-m { margin: 0 0 0 auto; }
+.wires { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
+.wire { fill: none; stroke: color-mix(in srgb, var(--wc) 32%, var(--line-2)); stroke-width: 1.8; }
+.wire.flow { stroke: var(--wc); stroke-dasharray: 4 8; opacity: .55; animation: dash 1.2s linear infinite; transition: opacity .3s, stroke-width .3s; }
+.wire.loop { stroke-dasharray: 6 5; stroke: color-mix(in srgb, var(--clay) 70%, transparent); }
+.wire.flow.on { opacity: 1; stroke-width: 2.6; }
+.spark { fill: var(--wc); }
+.wlabel { position: absolute; z-index: 3; transform: translate(-50%, -50%); font-size: 11.5px; font-weight: 650; color: var(--clay); background: var(--surface); border: 1px solid var(--clay-line); border-radius: 999px; padding: 1px 10px; white-space: nowrap; pointer-events: none; }
+.loop-note { display: none; }
+@media (max-width: 900px) {
+  .map { display: flex; flex-direction: column; gap: 10px; padding: 4px 0 0 26px; }
+  .map::before { content: ""; position: absolute; left: 8px; top: 18px; bottom: 18px; width: 2px; background: repeating-linear-gradient(180deg, var(--brand-line) 0 6px, transparent 6px 11px); }
+  .lane, .wires, .wlabel { display: none; }
+  .pn, .pn.bar { margin: 0; align-self: stretch; flex-direction: row; align-items: center; gap: 12px; flex-wrap: nowrap; order: var(--o); }
+  .pn::after { content: ""; position: absolute; left: -24px; top: 50%; width: 10px; height: 10px; border-radius: 50%; background: var(--surface); border: 2px solid var(--lc); transform: translateY(-50%); }
+  .pn::before { left: -1px; right: auto; top: 12px; bottom: 12px; width: 3px; height: auto; border-radius: 0 3px 3px 0; }
+  .pn-top, .pn.bar .pn-top { flex-direction: column; align-items: center; width: 30px; flex: none; gap: 3px; }
+  .pn-body { flex: 1; }
+  .pn-lane { display: block; }
+  .pn-m, .pn.bar .pn-m { margin: 0 0 0 auto; text-align: right; max-width: 42%; }
+  .pn.bar .chips { display: none; }
+  .loop-note { display: flex; align-items: center; gap: 8px; order: 99; margin: 4px 0 0 -26px; font-size: 13px; color: var(--clay); font-weight: 600; }
+}
+
+/* the detail of the selected stage */
+.detail { margin-top: 18px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); overflow: hidden; scroll-margin-top: calc(var(--header-h) + 16px); }
+.dt-main { padding: 22px 26px 24px; animation: fade-up .35s var(--ease); }
+.dt-side { padding: 22px 24px; background: var(--surface-2); border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 18px; animation: fade-up .45s var(--ease); min-width: 0; }
+.dt-kick { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.dt-no { font: 700 12px var(--mono); color: var(--gold); letter-spacing: .06em; }
+.lane-tag { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 650; color: var(--lc); background: color-mix(in srgb, var(--lc) 11%, transparent); border: 1px solid color-mix(in srgb, var(--lc) 26%, transparent); }
+.lane-tag svg { width: 14px; height: 14px; }
+.dt-main h3 { font-size: 25px; font-weight: 740; letter-spacing: -.02em; margin: 10px 0 10px; }
+.dt-lead { color: var(--ink-2); line-height: 1.8; margin: 0; }
+.dt-lead code, .dt-does code { font: 12.5px var(--mono); background: var(--surface-3); padding: 1px 5px; border-radius: 5px; }
+.dt-does { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 9px; }
+.dt-does li { display: grid; grid-template-columns: 20px 1fr; gap: 8px; font-size: 13.5px; line-height: 1.6; }
+.dt-does li svg { color: var(--lc); width: 16px; height: 16px; margin-top: 2px; }
+.dt-ex { margin-top: 18px; }
+.dt-ex h5, .dt-side h5 { margin: 0 0 8px; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.dt-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.dt-tile { background: var(--surface); border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px; }
+.dt-tile b { display: block; font-size: 23px; font-weight: 760; letter-spacing: -.02em; line-height: 1.15; color: var(--tc, var(--ink)); font-variant-numeric: tabular-nums; }
+.dt-tile span { font-size: 12px; color: var(--ink-3); line-height: 1.35; display: block; margin-top: 2px; }
+.files { display: flex; flex-wrap: wrap; gap: 6px; }
+.file { display: inline-flex; align-items: center; gap: 5px; font: 12px var(--mono); padding: 3px 9px; border-radius: 7px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); max-width: 100%; overflow-wrap: anywhere; }
+.file.out { border-color: var(--brand-line); color: var(--brand-ink); background: var(--brand-soft); }
+:root[data-theme="dark"] .file.out { color: var(--brand-2); }
+.file svg { width: 13px; height: 13px; }
+.io { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: baseline; }
+.io > span { font-size: 12px; color: var(--ink-3); font-weight: 600; white-space: nowrap; }
+.dt-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.dt-side .term { font-size: 12.5px; }
+.dt-nav { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; padding: 11px 16px; border-top: 1px solid var(--line); }
+.dots { display: flex; gap: 6px; flex: 1; justify-content: center; flex-wrap: wrap; }
+.dots button { width: 9px; height: 9px; padding: 0; border-radius: 99px; border: 0; background: color-mix(in srgb, var(--lc) 35%, var(--line-2)); transition: width .25s var(--ease), background .2s; }
+.dots button[aria-current="true"] { background: var(--lc); width: 24px; }
+@media (max-width: 900px) { .detail { grid-template-columns: 1fr; } .dt-side { border-left: 0; border-top: 1px solid var(--line); } .dt-main { padding: 18px 18px 20px; } .dt-side { padding: 18px; } }
+
+/* repairs and the rejection, inside the detail */
+.fixes { display: grid; gap: 6px; }
+.fx { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 2px 10px; align-items: baseline; padding: 7px 10px; border-radius: 9px; background: var(--surface-2); border: 1px solid var(--line); font-size: 12.5px; }
+.fx .c { font: 650 11.5px var(--mono); color: var(--gold); }
+.fx .a { color: var(--ink-2); }
+.fx .a code { font: 12px var(--mono); color: var(--ink); }
+.fx .ft { grid-column: 2; font: 12px var(--mono); overflow-wrap: anywhere; }
+.fx .from { color: var(--clay); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--clay) 55%, transparent); }
+.fx .to { color: var(--ok); font-weight: 650; }
+.kinds { display: flex; flex-wrap: wrap; gap: 6px; }
+.kinds .tag b { font-variant-numeric: tabular-nums; margin-left: 2px; }
+
+/* ---------------------------------------------------------------- 02 gates: one square per candidate */
+.gates { padding: 8px 0; }
+.gate { display: grid; grid-template-columns: 210px auto minmax(0, 1fr); gap: 6px 22px; align-items: center; padding: 12px 22px; }
+.gate + .gate { border-top: 1px dashed var(--line); }
+.g-name { display: flex; align-items: center; gap: 10px; }
+.g-name .ic { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: color-mix(in srgb, var(--lc) 12%, transparent); color: var(--lc); flex: none; }
+.g-name b { display: block; font-size: 14px; }
+.g-name small { display: block; font-size: 11.5px; color: var(--lc); font-weight: 600; }
+.units { display: flex; gap: 5px; flex-wrap: wrap; }
+.u { width: 24px; height: 24px; border-radius: 6px; display: grid; place-items: center; background: color-mix(in srgb, var(--brand) 18%, var(--surface)); border: 1px solid color-mix(in srgb, var(--brand) 30%, transparent); color: #fff; cursor: pointer; transition: transform .15s; padding: 0; }
+.u:hover { transform: scale(1.18); z-index: 1; }
+.u svg { width: 13px; height: 13px; stroke-width: 2.6; }
+.u.model { background: color-mix(in srgb, var(--c7) 22%, var(--surface)); border-color: color-mix(in srgb, var(--c7) 38%, transparent); }
+.u.fix { background: var(--gold); border-color: var(--gold); }
+.u.bad { background: var(--clay); border-color: var(--clay); }
+.u.ok { background: var(--brand); border-color: var(--brand); }
+.u.warn { background: var(--amber-soft); border: 1.5px solid var(--amber); color: var(--amber); }
+.u.sys { background: var(--surface); border: 2px solid var(--brand); color: var(--brand); font: 800 11px var(--mono); }
+.u.gone { background: transparent; border: 1.5px dashed var(--line-2); cursor: default; }
+.u.gone:hover { transform: none; }
+.u.none { visibility: hidden; }
+:root[data-theme="dark"] .u.fix, :root[data-theme="dark"] .u.bad, :root[data-theme="dark"] .u.ok { color: #0d1412; }
+.g-note { font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+.g-note b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.gates-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; padding: 12px 22px; border-top: 1px solid var(--line); background: var(--surface-2); border-radius: 0 0 var(--radius) var(--radius); }
+.gates-foot .legend .u { width: 14px; height: 14px; display: inline-block; vertical-align: -2px; margin-right: 5px; cursor: default; border-radius: 4px; }
+.gates-foot .legend .u:hover { transform: none; }
+@media (max-width: 1000px) { .gate { grid-template-columns: 1fr; gap: 10px; } }
+@media (max-width: 520px) { .u { width: 14px; height: 14px; border-radius: 4px; } .u svg { width: 10px; height: 10px; } .u.sys { font-size: 8px; } .units { gap: 3px; } .gate { padding: 12px 14px; } }
+.after .card { padding: 18px 20px; }
+.after h3 { font-size: 15.5px; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.after h3 svg { color: var(--lc); }
+.after .sub { font-size: 12.5px; color: var(--ink-3); margin-bottom: 14px; }
+.big2 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.big2 b { font-size: 30px; font-weight: 760; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.big2 span { color: var(--ink-2); font-size: 13px; }
+.flag { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: var(--info-soft); font-size: 12.5px; line-height: 1.55; }
+.flag b { font: 700 12px var(--mono); color: var(--info); }
+.urow { display: grid; grid-template-columns: 52px 1fr; gap: 8px; align-items: center; margin-top: 8px; font-size: 12px; color: var(--ink-3); }
+.urow .units { gap: 2px; }
+.urow .u { width: 10px; height: 10px; border-radius: 2px; border-width: 1px; cursor: default; }
+.urow .u:hover { transform: none; }
+.vbar { display: flex; gap: 2px; height: 12px; margin: 16px 0 8px; }
+.vbar i { display: block; border-radius: 2px; }
+.vbar i:first-child { border-radius: 6px 2px 2px 6px; } .vbar i:last-child { border-radius: 2px 6px 6px 2px; }
+.vleg { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-2); }
+.vleg i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; }
+.vleg b { font-variant-numeric: tabular-nums; }
+.after .go { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 13px; font-weight: 600; }
+
+/* ---------------------------------------------------------------- 03 poster, 04 commands */
+.poster { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); overflow: hidden; }
+.poster .shot { display: block; max-height: 460px; overflow: hidden; position: relative; background: #f6f4ec; border-right: 1px solid var(--line); }
+.poster .shot img { display: block; width: 100%; height: auto; transition: transform .6s var(--ease); }
+.poster .shot:hover img { transform: scale(1.02); }
+.poster .shot::after { content: ""; position: absolute; inset: auto 0 0; height: 90px; background: linear-gradient(transparent, rgba(246, 244, 236, .96)); }
+.poster .txt { padding: 24px 26px; display: flex; flex-direction: column; gap: 12px; }
+.poster .txt h3 { font-size: 19px; }
+.poster .txt p { color: var(--ink-2); line-height: 1.7; margin: 0; }
+.poster .txt .row { margin-top: auto; }
+@media (max-width: 900px) { .poster { grid-template-columns: 1fr; } .poster .shot { border-right: 0; border-bottom: 1px solid var(--line); max-height: 320px; } }
+.cmd h3 { font-size: 15.5px; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.cmd h3 svg { color: var(--lc); }
+.cmd p { color: var(--ink-2); font-size: 13px; margin: 0 0 12px; line-height: 1.6; }
+.cmd .term { font-size: 12.5px; }
+@media (prefers-reduced-motion: reduce) { .wire.flow { animation: none; } .pn.lit { animation: none; } }
+</style>
+</head>
+<body data-page="pipeline">
+<header id="top"></header>
+<main id="main"></main>
+<footer id="foot"></footer>
+<!--__DATA__-->
+<!--__KIT__-->
+<script>
+"use strict";
+const { T, esc, icon, fmt, DATA, $, $$, term, kindLabel } = K;
+const R = DATA.run, X = DATA.derived, P = DATA.papers, S = DATA.stats, G = DATA.gates, V = G.verification, IMPS = DATA.importers;
+const VER = (DATA.site || {}).version || "";
+const LEAVES = IMPS.reduce((n, m) => n + m.leaves, 0), IMP_RECS = IMPS.reduce((n, m) => n + m.records, 0);
+const SCRIPT = "skills/pdf2jsonl/scripts/pdf2jsonl";
+
+// ---------------------------------------------------------------- who does what: one lane each
+const LANES = {
+  human: { row: 1, c: "var(--gold)", icon: "user", zh: "人", en: "People", dzh: "写规范 · 做复核", den: "writes the contract · reviews" },
+  model: { row: 2, c: "var(--c7)", icon: "sparkle", zh: "模型", en: "Model", dzh: "只抄写与核对", den: "copies and cross-checks" },
+  code: { row: 3, c: "var(--brand)", icon: "cpu", zh: "管线代码", en: "Pipeline", dzh: "确定性 · 可重跑", den: "deterministic · re-runnable" },
+  import: { row: 4, c: "var(--info)", icon: "import", zh: "存量导入", en: "Importers", dzh: "已有格式进入同一契约", den: "existing formats, same contract" },
+};
+const laneName = k => T(LANES[k].zh, LANES[k].en);
+
+// ---------------------------------------------------------------- the stages, with what the example run shows of each
+const NODES = [
+  { id: "contract", lane: "human", col: 1, kind: "in", icon: "book", zh: "数据契约", en: "The contract",
+    m: [S.fields, `个字段 · v${VER}`, `fields · v${VER}`],
+    lead: ["一切从人写的数据契约开始：字段目录、受控词表、抽取画像和跨字段规则。<code>bdc release</code> 把它们冻结成带哈希的版本；每次运行锁定一个版本，每条记录写明自己遵守的版本。",
+      "Everything starts from a contract that people write: the field catalog, controlled vocabularies, extraction profiles and cross-field rules. <code>bdc release</code> freezes them into a hashed release; every run pins one release, and every record names the release it follows."],
+    does: [["每个字段写明定义、类型、可获得性，以及它服务的功能", "Every field states its definition, type, availability and the functions it serves"],
+      ["画像决定一次抽取要哪些字段、由谁来填", "A profile decides which fields an extraction asks for, and who fills them"],
+      ["旧版本永久保留：按旧版本写的记录仍按旧版本校验", "Old releases are kept for good: records written under one are still validated against it"]],
+    tiles: [[S.fields, "个字段", "fields"], [S.rules, "条跨字段规则", "cross-field rules"], [S.vocabularies, "个受控词表", "vocabularies"], [S.releases, "个冻结版本", "frozen releases", "gold"]],
+    reads: ["field_catalog/field_catalog.yaml", "vocabularies/", "profiles/"], writes: [`releases/${VER}/`],
+    cmd: ["bdc check", "bdc release"],
+    links: [["fields.html", "字段目录", "Field catalog", "table"], ["contract.html", "规范总览", "The contract", "book"], ["contract.html#releases", "版本历史", "Releases", "clock"]] },
+  { id: "pdf", lane: "code", col: 1, kind: "in", icon: "file", zh: "论文 PDF", en: "The paper",
+    m: [R.pages, "页 · 示例论文", "pages · example"],
+    lead: ["输入是一篇论文的 PDF，以及同一篇论文的补充材料。每个文件的 SHA-256 记进清单；扫描件需要外部 OCR 给出文本层，管线本身不做 OCR。",
+      "The input is a paper's PDF together with the paper's supplementary files. Each file's SHA-256 goes into the manifest; a scan needs a text layer from an external OCR, since the pipeline does no OCR itself."],
+    does: [["补充材料用 <code>--supplement</code> 作为同一来源的部分给出，证据注明出自哪一部分", "Supplements are given with <code>--supplement</code> as parts of the same source, and evidence names the part it comes from"],
+      ["正文引用了却没有提供的补充材料，报告为来源不完整", "Supplementary items the main text cites but that were not given are reported as an incomplete source"],
+      ["示例论文都是合成的，可以随仓库公开", "The example papers are synthetic, so they ship with the repository"]],
+    tiles: [[R.pages, "页", "pages"], [P.papers, "篇论文在看板中", "papers in the dashboard"]],
+    files: ["papers/paper.pdf", "paper.supplement.pdf", "paper.pages.jsonl"],
+    links: [["demo.html#pages", "示例论文的三页", "The example's three pages", "file"], ["papers.html", "论文看板", "Paper dashboard", "library"]] },
+  { id: "prepare", lane: "code", col: 2, no: 1, icon: "layers", zh: "准备", en: "Prepare",
+    m: [R.fields, "个字段写进简报", "fields in the brief"],
+    lead: ["管线先解析版本和画像，把 PDF 逐页转成文本，再写出抽取简报：哪些字段能直接从原文读出、它们的定义和填写规则，以及候选文件必须满足的 JSON 模式。<code>request.json</code> 锁定这次使用的版本。",
+      "The pipeline resolves the release and the profile, turns the PDF into text page by page and writes the extraction brief: which fields can be read straight off the page, their definitions and filling rules, and the JSON schema the candidates must satisfy. <code>request.json</code> pins the release used."],
+    does: [["<code>latest</code> 解析为确切的版本号，写进每条记录", "<code>latest</code> resolves to an exact release, written into every record"],
+      ["用 pypdf 逐页取文本，或读入给定的文本层", "Text is taken page by page with pypdf, or read from a given text layer"],
+      ["简报由规范生成，不是手写的，只对这个版本有效", "The brief is generated from the contract, not hand-written, and is valid for this release only"]],
+    tiles: [[R.pages, "页文本", "pages of text"], [R.fields, "个画像字段", "profile fields"], [R.fill_rules, "条填写规则", "filling rules"]],
+    reads: ["paper.pdf", `releases/${VER}/`], writes: ["brief.md", "pages.txt", "candidate.schema.json", "request.json"],
+    cmd: [`${SCRIPT} prepare \\\n    papers/paper.pdf --out-dir out/paper`],
+    links: [["demo.html#inputs", "示例的简报与清单", "The example's brief and manifest", "file"], ["contract.html#profiles", "画像", "Profiles", "layers"]] },
+  { id: "extract", lane: "model", col: 3, no: 2, icon: "sparkle", zh: "抽取候选", en: "Extract",
+    m: [R.candidates, "个候选", "candidates"],
+    lead: ["模型（或配置好的后端）读完简报和每一页，为每个事实写一个候选：记录类型、它从原文读到的值，以及一段逐字引文和页码。它不计算 ID，不做标准化，也不判断对错——这些都留给管线。",
+      "The model (or a configured backend) reads the brief and every page and writes one candidate per fact: a record kind, the values it read, and a verbatim quote with its page. It computes no IDs, normalizes nothing and judges nothing: all of that is left to the pipeline."],
+    does: [["照原文抄写，保留作者的限定词和局限", "Copy what the text says, keeping the authors' hedges and limitations"],
+      ["论文自己连起来的陈述，用 <code>ref</code> 和 <code>links</code> 连起来", "Connect the statements the paper itself connects, with <code>ref</code> and <code>links</code>"],
+      ["关系写成主语、原文谓词和宾语，不挑关系代码", "State a relation as subject, verbatim predicate and object, without choosing a relation code"]],
+    tiles: [[R.candidates, "个候选", "candidates"], [R.links, "条 ref 关联", "ref links"]],
+    reads: ["brief.md", "pages.txt", "candidate.schema.json"], writes: ["candidates.json"],
+    cmd: () => [T("# 智能体模式：你的智能体就是模型，按 brief.md 写出", "# agent mode: your agent is the model and, following brief.md, writes"), "#   out/paper/paper.work/candidates.json", T("# 或者交给一个后端（module:callable）一步跑完：", "# or hand it to a backend (module:callable) in one go:"), `${SCRIPT} run papers/paper.pdf \\\n    --backend my_pkg:extract --out-dir out/paper`],
+    ex: () => { const by = {}; G.candidates.forEach(k => { k = String(k || "").toLowerCase(); by[k] = (by[k] || 0) + 1; });
+      return `<h5>${T("示例中的候选类型", "Candidate kinds in the example")}</h5><div class="kinds">${Object.entries(by).sort((a, b) => b[1] - a[1]).map(([k, n]) => K.kindTag(k).replace(/<\/span>$/, ` <b>${n}</b></span>`)).join("")}</div>`; },
+    links: [["demo.html#journey", "跟着一个候选走完全程", "Follow one candidate all the way", "play"], ["demo.html#run", "这次运行去了哪里", "Where the run went", "flow"]] },
+  { id: "check", lane: "code", col: 4, no: 3, icon: "wrench", zh: "检查与修复", en: "Check & repair",
+    m: [R.repairs, "处修复", "repairs"], m2: R.rejected,
+    lead: ["不改变含义的结构问题当场修复，并逐条记账：类型、词表标签、记录类型的写法、空值，以及本该由管线计算的键。接着核验证据：每段引文必须在它标注的那一页（±1）里找到，找不到的候选连同原因写进错误文件——绝不悄悄改掉。",
+      "Structural problems that do not change the meaning are repaired on the spot and logged one by one: types, vocabulary labels, how a record kind is spelled, empty values, and keys the pipeline computes itself. Then the evidence is checked: every quote must be found on the page it names (±1). A candidate whose quote cannot be found goes to the errors file with the reason; it is never quietly fixed."],
+    does: [["页码差一页时更正，并留下一条警告", "A page that is off by one is corrected, and a warning is left"],
+      ["完全相同的候选只保留一个，指向它的关联转到保留的那个", "Identical candidates are kept once, and links to a duplicate move to the kept one"],
+      ["修复只改形式，从不补造内容", "Repairs change the form only; they never invent content"]],
+    tiles: [[R.repairs, "处修复", "repairs", "gold"], [R.rejected, "条被拒", "rejected", "clay"], [R.candidates - R.rejected, "个候选通过", "candidates pass", "ok"]],
+    reads: ["candidates.json", "pages.txt"], writes: ["paper.errors.jsonl", "paper.validation.json"],
+    ex: () => repairsHTML(),
+    links: [["demo.html#repairs", "示例中的每一处修复", "Every repair in the example", "wrench"],
+      ...G.rejected.filter(e => e.candidate_index != null).slice(0, 1).map(e => [`demo.html#cand=${e.candidate_index}`, "看被拒的那个候选", "The rejected candidate", "x"])] },
+  { id: "assemble", lane: "code", col: 5, no: 4, icon: "link", zh: "组装与关联", en: "Assemble & link",
+    m: [R.links, "条记录关联", "record links"],
+    lead: [`管线把候选组装成记录：计算稳定的 ID 和来源定位（页码、引文、字符区间），按 ${R.fill_rules} 条填写规则补上由管线负责的字段；原始值原样保留，标准化的值另存。引文里的实体被锚定，候选之间的 ref 换成记录 ID。描述输入文件本身的系统记录也在这一步生成。`,
+      `The pipeline assembles candidates into records: it computes stable IDs and source locators (page, quote, character span) and fills the fields it owns by ${R.fill_rules} filling rules; raw values stay as written and normalized ones are stored beside them. Entities in the quote are anchored, and references between candidates become record IDs. The system record that describes the input file is made here too.`],
+    does: [["ID 由内容决定：同样的输入重跑，每个 ID 都不变", "IDs follow the content: re-run the same input and every ID stays the same"],
+      ["关系代码由管线从原文谓词推出，不由模型挑选", "Relation codes are derived by the pipeline from the verbatim predicate, not picked by the model"],
+      ["指向被拒候选的关联被丢弃并标记，从不猜测", "A link to a rejected candidate is dropped and flagged, never guessed"]],
+    tiles: [[R.links, "条记录关联", "record links"], [R.statements, "条陈述", "statements"], [R.system, "条系统记录", "system record"], [R.fill_rules, "条填写规则", "filling rules"]],
+    reads: ["candidates.json", "pages.txt", "profiles/pdf_extraction.yaml"],
+    links: [["demo.html#chain", "示例的证据链", "The example's evidence chain", "link"], ["contract.html#trace", "证据链要素", "Evidence-chain elements", "rule"], ["outputs.html#statements", "派生的陈述", "Derived statements", "quote"]] },
+  { id: "validate", lane: "code", col: 6, no: 5, icon: "shield", zh: "校验并写出", en: "Validate & write",
+    m: [R.records, "条记录", "records"],
+    lead: ["每条记录按锁定版本的 JSON 模式、跨字段规则和词表校验，再在整批记录上跑数据集级规则和证据链审计。带警告的记录降为待复核。最后写出记录、校验报告、错误文件和清单（版本、哈希、运行环境）：同样的输入逐字节重现同样的输出。",
+      "Each record is validated against the pinned release's JSON schema, cross-field rules and vocabularies; dataset-level rules and the evidence-chain audit then run over the whole set. Records with warnings drop to pending review. Finally the records, the validation report, the errors file and the manifest (versions, hashes, environment) are written: the same input reproduces the same output byte for byte."],
+    does: [[`${S.rules} 条跨字段规则，其中 ${S.rules_error} 条是错误级`, `${S.rules} cross-field rules, ${S.rules_error} of them at error level`],
+      ["证据链审计只报告结构与连通性，不评判结论对错", "The evidence-chain audit reports structure and connectivity, not whether a conclusion is right"],
+      ["存量导入的记录也在这里按同一契约校验", "Imported records are validated here too, against the same contract"]],
+    tiles: [[R.records, "条记录", "records"], [R.auto_validated, "条自动通过", "auto-validated", "ok"], [R.pending, "条待复核", "pending review", "amber"], [S.rules, "条规则", "rules"]],
+    writes: ["paper.jsonl", "paper.validation.json", "paper.errors.jsonl", "paper.manifest.json", "paper.bundle.json"],
+    cmd: [`${SCRIPT} finalize \\\n    out/paper/paper.work --bundle`, "bdc validate out/paper/paper.jsonl"],
+    links: [["contract.html#rules", "全部规则", "All rules", "rule"], ["demo.html#run", "这次运行去了哪里", "Where the run went", "flow"], [`papers.html#paper=${encodeURIComponent(G.paper_id)}`, "在论文看板中打开", "Open in the paper dashboard", "library"]] },
+  { id: "verify", lane: "model", col: 7, no: 6, icon: "eye", zh: "语义校验", en: "Semantic check",
+    m: [V.counts.tasks, "项核对", "checks"],
+    lead: ["结构正确不等于说得对。另一个模型——不是抽取用的那个——逐条核对记录和关联是否真被引文支持：支持、不支持，或不确定。<code>bdc verify apply</code> 把被支持的记录升为 model_verified，其余降为待复核；验证者若就是抽取模型，什么也不升级。",
+      "Structurally valid is not the same as right. A second model, not the one that extracted, checks every record and link against its quote: supported, not supported, or uncertain. <code>bdc verify apply</code> promotes supported records to model_verified and demotes the rest to pending review; a verifier that is the extraction model promotes nothing."],
+    does: [["还会指出相互矛盾的记录，以及原文写了却没有记录的事实", "It also points out records that contradict each other, and facts the text states that have no record"],
+      ["判定写进新文件的复核字段，抽取出的记录文件不被改写", "Verdicts go into the review fields of a new file; the extracted records are not rewritten"],
+      ["专家复核过的记录不再被改动", "Records an expert has reviewed are left alone"]],
+    tiles: [[V.counts.tasks, "项核对任务", "verification tasks"], [V.counts.promoted, "条升为 model_verified", "promoted to model_verified", "ok"], [V.counts.demoted, "条降为待复核", "demoted to pending", "amber"], [V.conflicts + V.omissions, "处矛盾或遗漏", "conflicts or omissions", "clay"]],
+    reads: ["paper.jsonl", "paper.manifest.json"], writes: ["paper.verify.tasks.json", "paper.verified.jsonl", "paper.verification.json"],
+    ex: () => `<h5>${T(`示例：${V.paper}（另一篇合成论文）`, `Example: ${V.paper} (another synthetic paper)`)}</h5>${verdictHTML()}`,
+    cmd: () => ["bdc verify tasks out/paper/paper.jsonl --out out/paper", T("# 另一个模型读任务，写出 paper.verify.verdicts.json", "# a second model reads the tasks and writes paper.verify.verdicts.json"), "bdc verify apply out/paper/paper.jsonl \\\n    out/paper/paper.verify.verdicts.json --out out/paper \\\n    --manifest out/paper/paper.manifest.json"],
+    links: [[`papers.html#paper=${encodeURIComponent(V.paper_id)}&tab=verify`, "示例的校验结论", "The example's findings", "eye"]] },
+  { id: "derive", lane: "code", col: 8, no: 7, icon: "graph", zh: "下游派生", en: "Derive",
+    m: [X.triples, "个三元组", "triples"],
+    lead: ["<code>bdc derive</code> 从同一批记录直接派生关系表、陈述、知识图谱三元组、属性图、研究流程、证据语料和问答种子。每个派生物都带着记录 ID，能回到原文的那一页、那一句。",
+      "<code>bdc derive</code> builds relational tables, statements, knowledge-graph triples, a property graph, the research workflow, an evidence corpus and QA seeds straight from the same records. Every derived item carries its record IDs back to the page and the sentence."],
+    does: [["关系表可以直接导入关系数据库", "The tables load straight into a relational database"],
+      ["图谱的每条边都带着它的证据记录", "Every edge of the graph carries its evidence records"],
+      ["问答种子引用支撑它的记录，用来检验下游模型", "QA seeds cite the records that support them, for testing downstream models"]],
+    tiles: [[DATA.tables, "张关系表", "tables"], [X.triples, "个三元组", "triples"], [X.graph_nodes, "个图节点", "graph nodes"], [X.corpus_chunks, "段语料", "corpus chunks"], [X.qa_seeds, "个问答种子", "QA seeds"], [X.workflow_nodes, "个流程节点", "workflow nodes"]],
+    reads: ["paper.jsonl"], writes: ["tables/*.csv", "triples.jsonl", "graph.json", "workflow.json", "corpus.jsonl", "qa.jsonl"],
+    cmd: ["bdc derive out/paper/paper.jsonl --out out/paper/derived"],
+    links: [["outputs.html#graph", "知识图谱", "Knowledge graph", "graph"], ["outputs.html#workflow", "研究流程", "Research workflow", "flow"], ["outputs.html#corpus", "语料", "Corpus", "quote"], ["outputs.html#qa", "问答种子", "QA seeds", "sparkle"], ["outputs.html#tables", "关系表", "Tables", "table"]] },
+  { id: "review", lane: "human", col: 9, no: 8, icon: "library", zh: "人工复核", en: "Review",
+    m: [P.pending, "条待复核", "pending review"],
+    lead: ["论文看板把每篇论文、每次运行放在一处：记录、它在原文中的引文位置、语义校验的结论、被拒的候选和警告。复核者处理待复核的记录；发现的问题回到规范——一条新规则、一个词表项、一条登记的歧义——或者促成一次重跑。",
+      "The paper dashboard puts every paper and every run in one place: the records, where each quote sits on the page, the verification findings, the rejected candidates and the warnings. A reviewer settles the pending records; what they find goes back into the contract (a new rule, a vocabulary entry, a recorded ambiguity) or leads to a rerun."],
+    does: [["每条记录都能在原文那一页高亮出它的引文", "Every record can show its quote highlighted on its page"],
+      ["复核状态写进记录本身，下游可以按它过滤", "The review status lives in the record itself, so downstream users can filter on it"],
+      ["复核中发现的问题登记为规范的歧义，或者变成新规则", "Problems found in review are recorded as ambiguities of the contract, or become new rules"]],
+    tiles: [[P.papers, "篇论文", "papers"], [P.runs, "次运行", "runs"], [P.records, "条记录", "records"], [P.pending, "条待复核", "pending review", "amber"]],
+    cmd: ["make dashboard"],
+    links: [["papers.html", "论文看板", "Paper dashboard", "library"], ["contract.html#ambiguities", "登记的歧义", "Recorded ambiguities", "alert"]] },
+  { id: "existing", lane: "import", col: 1, kind: "in", icon: "import", zh: "已有数据", en: "Existing data", alias: "importers",
+    m: [IMPS.length, "种存档格式", "archived formats"] },
+  { id: "importers", lane: "import", col: 2, span: 4, kind: "bar", icon: "import", zh: "存量导入", en: "Importers",
+    m: [LEAVES, "个来源叶子逐一映射", "source leaves, each mapped"],
+    lead: ["已有格式的数据不另起一套模式。<code>bdc migrate</code> 按一份覆盖每个来源叶子的映射，把文档拆成原子记录，按显式 ID 关联样本、测定与资产，再按同一契约校验。映射不了的写进残留文件：没有任何静默丢弃，也不为凑必填字段编造值。",
+      "Data in an existing format does not get a schema of its own. <code>bdc migrate</code> follows a mapping that covers every source leaf, splits documents into atomic records, joins samples, assays and assets by explicit IDs, and validates against the same contract. What cannot be mapped goes to a residue file: nothing is dropped silently, and nothing is invented to fill a required field."],
+    does: [["映射漏掉任何一个来源叶子，<code>bdc check</code> 就失败", "<code>bdc check</code> fails if a mapping misses any source leaf"],
+      ["导入的记录一律从待复核开始", "Imported records always start as pending review"],
+      ["迁移报告记下来源文件与映射的哈希", "The migration report records the hashes of the source file and the mapping"]],
+    tiles: [[IMPS.length, "个导入器", "importers"], [LEAVES, "个来源叶子", "source leaves"], [IMP_RECS, "条示例记录", "example records", "ok"]],
+    reads: ["sources/…", "mappings/*.yaml"], writes: ["*.migrated.jsonl", "*.migrated.errors.jsonl", "*.residue.json", "*.migration.json"],
+    cmd: ["bdc migrate merged \\\n    sources/merged_v2/breeding_jsonl_example_v2.json \\\n    --page-offset 2220 --out out/merged"],
+    links: [["importers.html", "三个导入器", "The three importers", "import"]] },
+];
+const BY = Object.fromEntries(NODES.map(n => [n.id, n]));
+const ORDER = ["contract", "pdf", "prepare", "extract", "check", "assemble", "validate", "verify", "derive", "review", "importers"];
+const FLOW = ["contract", "pdf", "prepare", "extract", "check", "assemble", "existing", "importers", "validate", "verify", "derive", "review"];
+const EDGES = [
+  ["contract", "prepare", "rd", "var(--gold)"], ["pdf", "prepare", "h"], ["prepare", "extract", "up", "var(--c7)"], ["extract", "check", "down"],
+  ["check", "assemble", "h"], ["assemble", "validate", "h"], ["existing", "importers", "h", "var(--info)"], ["importers", "validate", "ru", "var(--info)"],
+  ["validate", "verify", "up", "var(--c7)"], ["verify", "derive", "down"], ["derive", "review", "ru", "var(--gold)"], ["review", "contract", "loop", "var(--clay)"],
+];
+// the tour: what lights up, step by step
+const TOUR = [
+  { n: ["contract"], e: [] }, { n: ["pdf", "prepare"], e: ["contract>prepare", "pdf>prepare"] }, { n: ["extract"], e: ["prepare>extract"] },
+  { n: ["check"], e: ["extract>check"] }, { n: ["assemble", "importers"], e: ["check>assemble", "existing>importers"] },
+  { n: ["validate"], e: ["assemble>validate", "importers>validate"] }, { n: ["verify"], e: ["validate>verify"] }, { n: ["derive"], e: ["verify>derive"] },
+  { n: ["review"], e: ["derive>review"] }, { n: ["contract"], e: ["review>contract"] },
+];
+let sel = BY[K.hash().stage] ? (BY[K.hash().stage].alias || K.hash().stage) : "extract";
+const tour = { on: !K.reduced(), i: 1, t: 0, visible: false };
+
+// ---------------------------------------------------------------- the map
+function nodeHTML(n) {
+  const L = LANES[n.lane], [v, mzh, men] = n.m;
+  const no = n.no ? String(n.no).padStart(2, "0") : n.kind === "bar" ? T("并行入口", "side entry") : T("输入", "input");
+  const val = typeof v === "number" ? `<em data-count="${v}">0</em>` : `<em>${esc(v)}</em>`;
+  return `<button type="button" class="pn${n.kind ? " " + n.kind : ""}" data-node="${n.id}" aria-pressed="false"
+      style="grid-row:${L.row};grid-column:${n.col}${n.span ? " / span " + n.span : ""};--lc:${L.c};--o:${FLOW.indexOf(n.id)}">
+    <span class="pn-top"><span class="pn-no">${no}</span>${icon(n.icon)}</span>
+    <span class="pn-body"><b class="pn-t">${esc(T(n.zh, n.en))}</b><span class="pn-lane">${esc(laneName(n.lane))}</span></span>
+    ${n.kind === "bar" ? `<span class="chips">${IMPS.map(m => `<span>${esc(m.command)}</span>`).join("")}</span>` : ""}
+    <span class="pn-m">${val}${esc(T(mzh, men))}${n.m2 ? `<span class="x">· ${n.m2} ${T("被拒", "rejected")}</span>` : ""}</span>
+  </button>`;
+}
+function mapHTML() {
+  return `<div class="map" id="map">
+    ${Object.entries(LANES).map(([k, L]) => `<div class="lane" style="grid-row:${L.row};--lc:${L.c}" title="${esc(T(L.dzh, L.den))}"><div class="ll">${icon(L.icon)}<span>${esc(T(L.zh, L.en))}</span></div></div>`).join("")}
+    <svg class="wires" id="wires" aria-hidden="true"></svg>
+    ${FLOW.map(id => nodeHTML(BY[id])).join("")}
+    <div class="loop-note">${icon("back")}${T("复核的发现回到规范，或促成一次重跑", "What review finds goes back into the contract, or leads to a rerun")}</div>
+  </div>`;
+}
+
+// a polyline with rounded corners
+function rounded(pts, r = 11) {
+  let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], [x2, y2] = pts[i + 1];
+    const d1 = Math.hypot(x1 - x0, y1 - y0), d2 = Math.hypot(x2 - x1, y2 - y1);
+    if (d1 < .5 || d2 < .5) continue;
+    const rr = Math.min(r, d1 / 2, d2 / 2);
+    d += ` L${(x1 - (x1 - x0) / d1 * rr).toFixed(1)} ${(y1 - (y1 - y0) / d1 * rr).toFixed(1)} Q${x1.toFixed(1)} ${y1.toFixed(1)} ${(x1 + (x2 - x1) / d2 * rr).toFixed(1)} ${(y1 + (y2 - y1) / d2 * rr).toFixed(1)}`;
+  }
+  const [xn, yn] = pts[pts.length - 1];
+  return d + ` L${xn.toFixed(1)} ${yn.toFixed(1)}`;
+}
+function drawWires() {
+  const map = $("#map"), svg = $("#wires");
+  if (!map || !svg) return;
+  map.querySelectorAll(".wlabel").forEach(e => e.remove());
+  if (getComputedStyle(map).display !== "grid") { svg.innerHTML = ""; return; }
+  const box = map.getBoundingClientRect();
+  const R = id => { const b = map.querySelector(`[data-node="${id}"]`).getBoundingClientRect();
+    return { l: b.left - box.left, r: b.right - box.left, t: b.top - box.top, b: b.bottom - box.top, cx: b.left - box.left + b.width / 2, cy: b.top - box.top + b.height / 2 }; };
+  const A = 4, off = 9, colors = {};
+  const paths = EDGES.map(([s, o, kind, c = "var(--brand)"]) => {
+    const a = R(s), b = R(o);
+    let pts;
+    if (kind === "h") pts = Math.abs(a.cy - b.cy) < 2 ? [[a.r, a.cy], [b.l - A, a.cy]] : [[a.r, a.cy], [(a.r + b.l) / 2, a.cy], [(a.r + b.l) / 2, b.cy], [b.l - A, b.cy]];
+    else if (kind === "up") pts = [[a.r, a.cy], [b.cx - off, a.cy], [b.cx - off, b.b + A]];
+    else if (kind === "down") pts = [[a.cx + off, a.b], [a.cx + off, b.cy], [b.l - A, b.cy]];
+    else if (kind === "ru") pts = [[a.r, a.cy], [b.cx, a.cy], [b.cx, b.b + A]];
+    else if (kind === "rd") pts = [[a.r, a.cy], [b.cx, a.cy], [b.cx, b.t - A]];
+    else { const y = 15; pts = [[a.cx, a.t], [a.cx, y], [b.cx, y], [b.cx, b.t - A]];
+      const lab = document.createElement("span"); lab.className = "wlabel"; lab.style.left = `${(a.cx + b.cx) / 2}px`; lab.style.top = `${y}px`;
+      lab.textContent = T("复核的发现 → 修订规范，或重跑", "What review finds → revise the contract, or rerun"); map.append(lab); }
+    const key = c.replace(/\W/g, ""); colors[key] = c;
+    return { k: `${s}>${o}`, d: rounded(pts), c, key, loop: kind === "loop" };
+  });
+  svg.innerHTML = `<defs>${Object.entries(colors).map(([k, c]) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0.8 L9 5 L0 9.2 z" style="fill:${c}"/></marker>`).join("")}</defs>`
+    + paths.map(p => `<g data-edge="${p.k}" style="--wc:${p.c}"><path class="wire${p.loop ? " loop" : ""}" d="${p.d}" marker-end="url(#ah-${p.key})"/>${p.loop ? "" : `<path class="wire flow" d="${p.d}"/>`}</g>`).join("");
+}
+
+// ---------------------------------------------------------------- the tour
+function spark(edgeKey) {
+  const g = $(`#wires [data-edge="${edgeKey}"]`); if (!g) return;
+  const d = g.querySelector("path").getAttribute("d"), ns = "http://www.w3.org/2000/svg";
+  const c = document.createElementNS(ns, "circle"); c.setAttribute("r", "4.5"); c.setAttribute("class", "spark");
+  const a = document.createElementNS(ns, "animateMotion"); a.setAttribute("dur", "0.85s"); a.setAttribute("fill", "freeze"); a.setAttribute("begin", "indefinite"); a.setAttribute("path", d);
+  c.append(a); g.append(c);
+  try { a.beginElement(); } catch { /* no SMIL: the lit wire still shows the step */ }
+  g.querySelector(".flow")?.classList.add("on");
+  setTimeout(() => { c.remove(); g.querySelector(".flow")?.classList.remove("on"); }, 1100);
+}
+function step() {
+  clearTimeout(tour.t);
+  if (!tour.on || !tour.visible || document.hidden || !$("#map")) return;
+  const s = TOUR[tour.i];
+  s.e.forEach(spark);
+  setTimeout(() => s.n.forEach(id => { const el = $(`[data-node="${id}"]`); if (el) { el.classList.remove("lit"); void el.offsetWidth; el.classList.add("lit"); } }), s.e.length ? 650 : 0);
+  tour.i = tour.i + 1 >= TOUR.length ? 1 : tour.i + 1;
+  tour.t = setTimeout(step, 1250);
+}
+function setTour(on) {
+  tour.on = on;
+  const b = $("#tour-btn"); if (b) b.innerHTML = `${icon(on ? "pause" : "play")}${on ? T("暂停演示", "Pause tour") : T("播放演示", "Play tour")}`;
+  if (on) step(); else clearTimeout(tour.t);
+}
+
+// ---------------------------------------------------------------- the detail of one stage
+function tile([v, zh, en, tone]) {
+  const tc = { ok: "var(--ok)", amber: "var(--amber)", clay: "var(--clay)", gold: "var(--gold)" }[tone] || "";
+  return `<div class="dt-tile"${tc ? ` style="--tc:${tc}"` : ""}><b data-count="${v}">${fmt(v)}</b><span>${esc(T(zh, en))}</span></div>`;
+}
+const fileChip = (name, out) => `<span class="file${out ? " out" : ""}">${icon("file")}${esc(name)}</span>`;
+const ACTION = { coerced_type: ["类型转换", "type coerced"], mapped_vocabulary_label: ["词表标签换成代码", "vocabulary label mapped"], normalized_record_kind: ["记录类型规范化", "record kind normalized"],
+  dropped_empty_value: ["丢弃空值", "empty value dropped"], dropped_field: ["丢弃管线计算的键", "pipeline-computed key dropped"] };
+function repairsHTML() {
+  const v = x => typeof x === "string" ? JSON.stringify(x) : JSON.stringify(x);
+  const rows = G.repairs.map(r => { const ci = (/\[(\d+)\]/.exec(r.where || "") || [])[1];
+    const what = ACTION[r.action] ? T(...ACTION[r.action]) : r.action;
+    return `<div class="fx"><span class="c">${ci != null ? `#${ci}` : esc(r.where)}</span><span class="a">${esc(what)}${r.key ? ` · <code>${esc(r.key)}</code>` : ""}</span>
+      ${"from" in r ? `<span class="ft"><span class="from">${esc(v(r.from))}</span> → <span class="to">${esc(v(r.to))}</span></span>` : r.reason ? `<span class="ft muted">${esc(r.reason)}</span>` : ""}</div>`; }).join("");
+  const rej = G.rejected.map(e => `<div class="callout err" style="margin-top:10px">${icon("x")}<div><b>${T(`候选 #${e.candidate_index} 被拒`, `Candidate #${e.candidate_index} rejected`)}</b> · <span class="mono xs">${esc(e.code)}</span><br>
+      <span class="small">${esc(e.message)}</span> <a class="small" href="demo.html#cand=${e.candidate_index}">${T("在演示中查看 →", "See it in the walk-through →")}</a></div></div>`).join("");
+  return `<h5>${T(`示例中的 ${G.repairs.length} 处修复`, `The ${G.repairs.length} repairs in the example`)}</h5><div class="fixes">${rows}</div>${rej}`;
+}
+function verdictHTML() {
+  const b = V.counts.by_verdict, tot = V.counts.verdicts || 1;
+  const parts = [["supported", "支持", "supported", "var(--ok)"], ["uncertain", "不确定", "uncertain", "var(--amber)"], ["not_supported", "不支持", "not supported", "var(--clay)"]].filter(p => b[p[0]]);
+  const before = V.counts.review_status_before, after = V.counts.review_status_after;
+  const units = (o, map) => Object.entries(o).map(([s, n]) => Array.from({ length: n }, () => `<i class="u ${map[s] || ""}" title="${esc(s)}"></i>`).join("")).join("");
+  return `<div class="vbar" role="img" aria-label="${esc(parts.map(p => `${b[p[0]]} ${p[2]}`).join(", "))}">${parts.map(p => `<i style="flex:${b[p[0]] / tot};background:${p[3]}" title="${b[p[0]]} ${esc(T(p[1], p[2]))}"></i>`).join("")}</div>
+    <div class="vleg">${parts.map(p => `<span><i style="background:${p[3]}"></i>${esc(T(p[1], p[2]))} <b>${b[p[0]]}</b></span>`).join("")}<span class="muted">${T(`共 ${tot} 项判定`, `${tot} verdicts`)}</span></div>
+    <div class="urow"><span>${T("校验前", "Before")}</span><span class="units">${units(before, { auto_validated: "", pending_review: "warn" })}</span></div>
+    <div class="urow"><span>${T("校验后", "After")}</span><span class="units">${units(after, { model_verified: "ok", pending_review: "warn" })}</span></div>
+    <div class="vleg" style="margin-top:8px"><span><i style="background:color-mix(in srgb, var(--brand) 18%, var(--surface));border:1px solid var(--brand-line)"></i>auto_validated</span><span><i style="background:var(--brand)"></i>model_verified</span><span><i style="background:var(--amber)"></i>pending_review</span></div>`;
+}
+function detailHTML(n) {
+  const L = LANES[n.lane], i = ORDER.indexOf(n.id);
+  const kick = n.no ? `${String(n.no).padStart(2, "0")} / 08` : n.kind === "bar" ? T("并行入口", "Side entry") : T("输入", "Input");
+  const io = (n.reads || n.writes || n.files) ? `<div><h5>${T("文件", "Files")}</h5><div class="io">
+      ${n.files ? `<span>${T("输入", "in")}</span><div class="files">${n.files.map(f => fileChip(f)).join("")}</div>` : ""}
+      ${n.reads ? `<span>${T("读", "reads")}</span><div class="files">${n.reads.map(f => fileChip(f)).join("")}</div>` : ""}
+      ${n.writes ? `<span>${T("写", "writes")}</span><div class="files">${n.writes.map(f => fileChip(f, true)).join("")}</div>` : ""}</div></div>` : "";
+  return `<div class="dt-main" style="--lc:${L.c}">
+      <div class="dt-kick"><span class="dt-no">${esc(kick)}</span><span class="lane-tag">${icon(L.icon)}${esc(laneName(n.lane))} · ${esc(T(L.dzh, L.den))}</span></div>
+      <h3>${esc(T(n.zh, n.en))}</h3>
+      <p class="dt-lead">${T(...n.lead)}</p>
+      <ul class="dt-does">${n.does.map(d => `<li>${icon("check")}<span>${T(...d)}</span></li>`).join("")}</ul>
+      ${n.ex ? `<div class="dt-ex">${n.ex()}</div>` : ""}
+    </div>
+    <aside class="dt-side">
+      <div><h5>${n.kind === "in" && n.id === "contract" ? T(`当前版本 v${VER}`, `Release v${VER}`) : n.id === "verify" ? T(`示例运行 · ${V.paper}`, `Example run · ${V.paper}`) : n.id === "review" ? T("论文看板", "Paper dashboard") : n.id === "importers" ? T("三个示例导入", "The three example imports") : T("示例运行", "The example run")}</h5>
+        <div class="dt-tiles">${n.tiles.map(tile).join("")}</div></div>
+      ${io}
+      ${n.cmd ? `<div><h5>${T("命令", "Command")}</h5>${term(typeof n.cmd === "function" ? n.cmd() : n.cmd)}</div>` : ""}
+      <div><h5>${T("去看看", "See it")}</h5><div class="dt-links">${n.links.map(([h, zh, en, ic]) => `<a class="btn sm" href="${esc(h)}">${icon(ic)}${esc(T(zh, en))}</a>`).join("")}</div></div>
+    </aside>
+    <div class="dt-nav" style="--lc:${L.c}">
+      <button type="button" class="btn sm ghost" data-step="-1" ${i <= 0 ? "disabled" : ""}>${icon("back")}${T("上一步", "Previous")}</button>
+      <div class="dots">${ORDER.map(id => `<button type="button" data-sel="${id}" style="--lc:${LANES[BY[id].lane].c}" aria-label="${esc(T(BY[id].zh, BY[id].en))}"${id === n.id ? ' aria-current="true"' : ""}></button>`).join("")}</div>
+      <button type="button" class="btn sm ghost" data-step="1" ${i >= ORDER.length - 1 ? "disabled" : ""}>${T("下一步", "Next")}${icon("arrow")}</button>
+    </div>`;
+}
+function select(id, { scroll = false, hash = true } = {}) {
+  const n = BY[id]; if (!n) return;
+  sel = n.alias || id;
+  $$("[data-node]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.node === sel || BY[b.dataset.node].alias === sel)));
+  const box = $("#detail");
+  box.innerHTML = detailHTML(BY[sel]);
+  K.observe();
+  if (hash) K.setHash({ stage: sel });
+  if (scroll) box.scrollIntoView({ behavior: K.reduced() ? "auto" : "smooth", block: "nearest" });
+}
+
+// ---------------------------------------------------------------- 02 gates: every candidate of the example run, one square each
+function gatesHTML() {
+  const NC = G.candidates.length;
+  const rep = {}, rej = {}, rec = {};
+  G.repairs.forEach(r => { const m = /candidates\[(\d+)\]/.exec(r.where || ""); if (m) (rep[m[1]] ||= []).push(r); });
+  G.rejected.forEach(e => { if (e.candidate_index != null) rej[e.candidate_index] = e; });
+  G.records.forEach(r => { if (r.ci != null) rec[r.ci] = r; });
+  const sys = G.records.filter(r => r.ci == null);
+  const slots = [...Array.from({ length: NC }, (_, i) => ({ i, kind: String(G.candidates[i] || "").toLowerCase() })), ...sys.map((r, j) => ({ sys: j, kind: r.kind }))];
+  const late = e => e && e.stage !== "evidence" && e.stage !== "candidate";
+  const cell = (s, row) => {
+    if (s.sys != null) {
+      if (row === "cand" || row === "repair" || row === "evidence") return `<i class="u none"></i>`;
+      const r = sys[s.sys];
+      if (row === "assemble") return `<button type="button" class="u sys" data-u="s${s.sys}" data-row="${row}">S</button>`;
+      return `<button type="button" class="u ${r.status === "pending_review" ? "warn" : "ok"}" data-u="s${s.sys}" data-row="${row}">${icon(r.status === "pending_review" ? "alert" : "check")}</button>`;
+    }
+    const e = rej[s.i], r = rec[s.i];
+    const gone = (row === "assemble" || row === "validate") && e && !late(e) || row === "validate" && !r && !e;
+    if (gone) return `<i class="u gone" title="${esc(T(`候选 #${s.i} 已被拒`, `candidate #${s.i} was rejected`))}"></i>`;
+    let cls = "", ic = "";
+    if (row === "cand") cls = "model";
+    else if (row === "repair") { if (rep[s.i]) { cls = "fix"; ic = "wrench"; } }
+    else if (row === "evidence") { if (e && !late(e)) { cls = "bad"; ic = "x"; } }
+    else if (row === "validate") { if (e) { cls = "bad"; ic = "x"; } else if (r.status === "pending_review") { cls = "warn"; ic = "alert"; } else { cls = "ok"; ic = "check"; } }
+    return `<button type="button" class="u ${cls}" data-u="${s.i}" data-row="${row}">${ic ? icon(ic) : ""}</button>`;
+  };
+  const nRep = Object.keys(rep).length, nRej = G.rejected.length;
+  const warned = G.records.filter(r => r.status === "pending_review");
+  const ROWS = [
+    ["cand", "model", "sparkle", "候选", "Candidates", "模型写出", "written by the model",
+      T(`<b>${NC}</b> 个候选，每个带一段逐字引文和页码。`, `<b>${NC}</b> candidates, each with a verbatim quote and its page.`)],
+    ["repair", "code", "wrench", "结构修复", "Structural repair", "管线代码", "pipeline code",
+      T(`<b>${G.repairs.length}</b> 处修复落在 <b>${nRep}</b> 个候选上：只改形式，不改含义，逐条记账。`, `<b>${G.repairs.length}</b> repairs on <b>${nRep}</b> candidates: form only, never meaning, each one logged.`)],
+    ["evidence", "code", "quote", "证据核验", "Evidence check", "管线代码", "pipeline code",
+      T(`<b>${nRej}</b> 个候选的引文在标注的页上找不到，连同原因写进 errors.jsonl。`, `<b>${nRej}</b> candidate's quote cannot be found on its page; it goes to errors.jsonl with the reason.`)],
+    ["assemble", "code", "link", "组装与关联", "Assemble & link", "管线代码", "pipeline code",
+      T(`<b>${NC - nRej}</b> 条记录，外加 <b>${sys.length}</b> 条描述输入文件的系统记录（S）；<b>${R.links}</b> 条关联全部解析。`, `<b>${NC - nRej}</b> records, plus <b>${sys.length}</b> system record (S) that describes the input file; all <b>${R.links}</b> links resolve.`)],
+    ["validate", "code", "shield", "契约校验", "Contract validation", "管线代码", "pipeline code",
+      T(`<b>${R.auto_validated}</b> 条自动通过；<b>${warned.length}</b> 条带警告，降为待复核：${[...new Set(warned.flatMap(r => r.warnings))].map(c => `<span class="mono xs">${esc(c)}</span>`).join("、")}。`,
+        `<b>${R.auto_validated}</b> pass automatically; <b>${warned.length}</b> carry a warning and drop to pending review: ${[...new Set(warned.flatMap(r => r.warnings))].map(c => `<span class="mono xs">${esc(c)}</span>`).join(", ")}.`)],
+  ];
+  return `<div class="card gates reveal" id="gates-chart">
+    ${ROWS.map(([row, lane, ic, zh, en, wzh, wen, note]) => `<div class="gate" style="--lc:${LANES[lane].c}">
+      <div class="g-name"><span class="ic">${icon(ic)}</span><span><b>${esc(T(zh, en))}</b><small>${esc(T(wzh, wen))}</small></span></div>
+      <div class="units">${slots.map(s => cell(s, row)).join("")}</div>
+      <div class="g-note">${note}</div></div>`).join("")}
+    <div class="gates-foot"><span class="legend">
+      <span><i class="u model"></i>${T("候选", "candidate")}</span><span><i class="u"></i>${T("通过", "passed")}</span><span><i class="u fix"></i>${T("修复过", "repaired")}</span>
+      <span><i class="u bad"></i>${T("被拒", "rejected")}</span><span><i class="u ok"></i>${T("自动通过", "auto-validated")}</span><span><i class="u warn"></i>${T("待复核", "pending review")}</span><span><i class="u gone"></i>${T("已移出", "gone")}</span></span>
+      <span class="xs muted">${T("悬停看详情 · 点击在演示页打开", "Hover for details · click to open it in the walk-through")}</span></div>
+  </div>`;
+}
+function unitInfo(u, row) {
+  if (u.startsWith("s")) { const r = G.records.filter(x => x.ci == null)[+u.slice(1)];
+    return { href: `demo.html#rec=${encodeURIComponent(r.id)}`, html: `<b>${T("系统记录", "System record")} · ${esc(kindLabel(r.kind))}</b>${T("描述输入文件本身，不来自候选", "Describes the input file itself; not from a candidate")}
+      <div class="m"><span>${esc(r.status || "")}</span>${r.warnings.map(w => `<span>${esc(w)}</span>`).join("")}</div>` }; }
+  const i = +u, e = G.rejected.find(x => x.candidate_index === i), r = G.records.find(x => x.ci === i);
+  const reps = G.repairs.filter(x => (x.where || "") === `candidates[${i}]`);
+  let body = "";
+  if (row === "cand") body = T("模型写出的候选", "A candidate written by the model");
+  else if (row === "repair") body = reps.length ? reps.map(x => `${esc(ACTION[x.action] ? T(...ACTION[x.action]) : x.action)}${x.key ? ` <span class="mono">${esc(x.key)}</span>` : ""}${"from" in x ? `: ${esc(JSON.stringify(x.from))} → ${esc(JSON.stringify(x.to))}` : ""}`).join("<br>") : T("不需要修复", "No repair needed");
+  else if (row === "evidence") body = e ? `${esc(e.code)}<br>${esc(e.message)}` : T("引文在标注的页上找到了", "The quote was found on its page");
+  else if (row === "assemble") body = r ? T("组装成一条记录", "Assembled into a record") : "";
+  else body = e ? `${esc(e.code)}` : r.status === "pending_review" ? `${T("待复核", "Pending review")}: ${r.warnings.map(esc).join(", ")}` : T("自动通过", "Auto-validated");
+  return { href: e ? `demo.html#cand=${i}` : r ? `demo.html#rec=${encodeURIComponent(r.id)}` : null,
+    html: `<b>${T(`候选 #${i}`, `Candidate #${i}`)} · ${esc(kindLabel(r ? r.kind : String(G.candidates[i] || "").toLowerCase()))}</b>${body}${r ? `<div class="m"><span>${esc(r.id)}</span></div>` : ""}` };
+}
+function afterHTML() {
+  const flags = Object.entries(G.flags || {});
+  return `<div class="grid g3 after">
+    <div class="card reveal" style="--lc:var(--brand)"><h3>${icon("rule")}${T("证据链审计", "Evidence-chain audit")}</h3><div class="sub">${T("管线代码 · 同一次运行", "Pipeline code · the same run")}</div>
+      <div class="big2"><b>${G.links.total || 0}</b><span>${T(`条关联，${G.links.unresolved || 0} 条未解析`, `links, ${G.links.unresolved || 0} unresolved`)}</span></div>
+      ${flags.map(([k, n]) => `<div class="flag"><b>${esc(K.auditFlag(k))} × ${n}</b> <span class="mono xs muted">${esc(k)}</span><br>${esc(K.AUDIT_FLAG[k] ? K.auditFlag(k, true) : G.flag_help[k] || k)}</div>`).join("")}
+      <p class="xs muted" style="margin:10px 0 0">${T("审计只报告结构和连通性，不判断结论对错；标记不会让记录被拒。", "The audit reports structure and connectivity, not whether a conclusion is right; a flag never rejects a record.")}</p>
+      <a class="go" href="demo.html#chain">${T("看证据链", "See the evidence chain")} ${icon("arrow")}</a></div>
+    <div class="card reveal" style="--lc:var(--c7)"><h3>${icon("eye")}${T("语义校验", "Semantic check")}</h3><div class="sub">${T(`另一个模型 · 示例 ${V.paper}`, `A second model · example ${V.paper}`)}</div>
+      <div class="big2"><b>${V.counts.tasks}</b><span>${T(`项核对：${V.counts.by_kind.record || 0} 条记录、${V.counts.by_kind.link || 0} 条关联`, `checks: ${V.counts.by_kind.record || 0} records, ${V.counts.by_kind.link || 0} links`)}</span></div>
+      ${verdictHTML()}
+      <a class="go" href="papers.html#paper=${encodeURIComponent(V.paper_id)}&tab=verify">${T("在论文看板中看结论", "See the findings in the dashboard")} ${icon("arrow")}</a></div>
+    <div class="card reveal" style="--lc:var(--gold)"><h3>${icon("user")}${T("人工复核", "Human review")}</h3><div class="sub">${T("论文看板 · 全部论文", "Paper dashboard · every paper")}</div>
+      <div class="big2"><b>${P.pending}</b><span>${T(`条记录等待复核，共 ${P.records} 条、${P.papers} 篇论文`, `records wait for review, of ${P.records} in ${P.papers} papers`)}</span></div>
+      <div class="vbar" role="img" aria-label="${P.pending} / ${P.records}"><i style="flex:${P.records - P.pending};background:var(--brand)"></i><i style="flex:${P.pending};background:var(--amber)"></i></div>
+      <div class="vleg"><span><i style="background:var(--brand)"></i>${T("已通过或已校验", "passed or verified")} <b>${P.records - P.pending}</b></span><span><i style="background:var(--amber)"></i>${T("待复核", "pending review")} <b>${P.pending}</b></span></div>
+      <p class="xs muted" style="margin:12px 0 0">${T("复核状态写在每条记录里；下游可以只取已校验的记录。", "The review status is written into every record, so downstream users can take only verified ones.")}</p>
+      <a class="go" href="papers.html">${T("打开论文看板", "Open the paper dashboard")} ${icon("arrow")}</a></div>
+  </div>`;
+}
+
+// ---------------------------------------------------------------- page
+function render() {
+  const lane = k => `<span class="who" style="--lc:${LANES[k].c}">${icon(LANES[k].icon)}${esc(laneName(k))}</span>`;
+  const rb = (id, k, v, zh, en, tone) => `<a class="rb" href="#stage=${id}" data-sel="${id}"${tone ? ` style="--tone:${tone}"` : ""}>${lane(k)}<span class="v" data-count="${v}">0</span><span class="k">${esc(T(zh, en))}</span></a>`;
+  const svgFile = K.lang === "en" ? "assets/pipeline.en.svg" : "assets/pipeline.svg";
+  $("#main").innerHTML = `
+  <section class="page-hero wrap">
+    <span class="eyebrow">${T("管线 · 从 PDF 到可复用的记录", "Pipeline · from a PDF to reusable records")}</span>
+    <h1>${T("模型只抄写，<em>其余每一步都可检查</em>", "The model only copies; <em>every other step can be checked</em>")}</h1>
+    <p class="lead">${T("一篇论文经过八个阶段，变成经过校验、能回查到原文的记录，再派生出图谱、语料和关系表。只有两个阶段用到模型：抽取候选，以及由另一个模型做的语义校验。其余都是确定性的代码，同样的输入得到逐字节相同的输出。人负责写规范和最后的复核。",
+      "A paper passes through eight stages to become validated records that trace back to the text, and from them a graph, a corpus and tables. Only two stages use a model: extracting candidates, and the semantic check by a second model. The rest is deterministic code, so the same input gives byte-identical output. People write the contract and do the final review.")}</p>
+    <div class="ribbon reveal" aria-label="${T("示例运行的数字", "The example run in numbers")}">
+      ${rb("pdf", "code", R.pages, "页 PDF 进入管线", "PDF pages in")}
+      ${rb("extract", "model", R.candidates, "个候选，带逐字引文", "candidates with verbatim quotes")}
+      ${rb("check", "code", R.repairs, "处结构修复，逐条记账", "structural repairs, each logged", "var(--gold)")}
+      ${rb("check", "code", R.rejected, "个候选被拒，附原因", "candidate rejected, with the reason", "var(--clay)")}
+      ${rb("validate", "code", R.records, `条记录，含 ${R.system} 条系统记录`, `records, ${R.system} of them a system record`, "var(--brand)")}
+      ${rb("review", "human", R.pending, "条待人工复核", "wait for human review", "var(--amber)")}
+      ${rb("derive", "code", X.triples, "个图谱三元组", "knowledge-graph triples")}
+    </div>
+  </section>
+
+  <section class="section wrap" id="stages">
+    <div class="section-head"><span class="no">01</span><h2>${T("八个阶段，三类执行者", "Eight stages, three kinds of actor")}</h2>
+      <p>${T("每个方块是一个阶段，它所在的泳道说明由谁来做。点一个阶段，下面会显示它做什么、示例运行里的数字、读写的文件和命令。", "Each box is a stage, and its lane says who does it. Click a stage to see what it does, its numbers in the example run, the files it reads and writes, and the command.")}</p></div>
+    <div class="card map-card reveal">
+      <div class="map-head"><span class="legend"><span><i class="ln"></i>${T("数据流", "data flow")}</span><span><i class="ln dash"></i>${T("反馈：修订或重跑", "feedback: revise or rerun")}</span><span class="muted">${T("数字来自仓库内的合成示例论文", "Numbers from the synthetic example paper in the repository")}</span></span>
+        ${K.reduced() ? "" : `<button type="button" class="btn sm" id="tour-btn"></button>`}</div>
+      ${mapHTML()}
+    </div>
+    <div class="card detail" id="detail" aria-live="polite"></div>
+  </section>
+
+  <section class="section wrap" id="gates">
+    <div class="section-head"><span class="no">02</span><h2>${T("一条记录要过的关口", "The gates a record passes")}</h2>
+      <p>${T(`示例论文的 ${G.candidates.length} 个候选逐个走过每道关口，一个方块就是一个候选：修复过的、被拒的、带警告的都看得见。之后还有证据链审计、另一个模型的语义校验和人工复核。`,
+        `The ${G.candidates.length} candidates of the example paper go through every gate, one square per candidate: what was repaired, rejected or warned about is all visible. After them come the evidence-chain audit, the semantic check by a second model, and human review.`)}</p></div>
+    ${gatesHTML()}
+    <h3 class="sub">${icon("shield")}${T("结构之后：审计、语义校验与人工复核", "After the structure: audit, semantic check and human review")}</h3>
+    ${afterHTML()}
+  </section>
+
+  <section class="section wrap" id="poster">
+    <div class="section-head"><span class="no">03</span><h2>${T("一页总览图", "The one-page diagram")}</h2>
+      <p>${T("同一条管线的静态总览，放进幻灯片和文档都合适。", "The same pipeline as a static overview, ready for slides and documents.")}</p></div>
+    <div class="card poster reveal">
+      <a class="shot" href="${svgFile}" target="_blank" rel="noopener" aria-label="${T("打开总览图", "Open the diagram")}"><img src="${svgFile}" alt="${T("pdf2jsonl 数据管线总览图", "Overview diagram of the pdf2jsonl data pipeline")}"></a>
+      <div class="txt"><h3>${T("从论文到可追溯的原子数据", "From papers to traceable atomic data")}</h3>
+        <p>${T("共享的规范与版本、PDF 抽取的九个步骤、存量数据导入、拒绝与复核的反馈回路，以及四类下游产物，都在一张 SVG 里。", "The shared contract and its releases, the nine steps of PDF extraction, the importers, the loop of rejections and review, and the four kinds of downstream output, in one SVG.")}</p>
+        <p class="xs muted">${T("源文件 docs/diagrams/pipeline.html；改动后用 make diagram 重新导出中英文两版。", "Source: docs/diagrams/pipeline.html; make diagram re-exports both the Chinese and the English version.")}</p>
+        <div class="row"><a class="btn primary sm" href="${svgFile}" target="_blank" rel="noopener">${icon("external")}${T("打开大图", "Open full size")}</a>
+          <a class="btn sm" href="${svgFile}" download>${icon("download")}${T("下载 SVG", "Download SVG")}</a>
+          <a class="btn sm ghost" href="${K.lang === "en" ? "assets/pipeline.svg" : "assets/pipeline.en.svg"}" target="_blank" rel="noopener">${K.lang === "en" ? "中文版" : "English"}</a></div></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="run">
+    <div class="section-head"><span class="no">04</span><h2>${T("自己跑一遍", "Run it yourself")}</h2>
+      <p>${T("在仓库根目录执行。bdc 随 pip install -e . 一起安装；out/ 下的运行目录不入库，make dashboard 把它们放进本地论文看板。", "Run these from the repository root. bdc comes with pip install -e .; run directories under out/ are not committed, and make dashboard puts them into a local paper dashboard.")}</p></div>
+    <div class="grid g2">
+      <div class="card pad cmd reveal" style="--lc:var(--c7)"><h3>${icon("sparkle")}${T("抽取一篇论文（智能体模式）", "Extract a paper (agent mode)")}</h3>
+        <p>${T("准备之后，由你的智能体读简报写候选；再收尾一次，管线完成其余所有步骤。", "After prepare, your agent reads the brief and writes the candidates; finalize then does every other step.")}</p>
+        ${term([`${SCRIPT} prepare \\\n    papers/paper.pdf --out-dir out/paper`, T("# 智能体写出 paper.work/candidates.json", "# the agent writes paper.work/candidates.json"), `${SCRIPT} finalize \\\n    out/paper/paper.work --bundle`])}</div>
+      <div class="card pad cmd reveal" style="--lc:var(--c7)"><h3>${icon("eye")}${T("语义校验", "Semantic check")}</h3>
+        <p>${T("任务交给另一个模型；带上清单，可以确认验证者不是抽取模型本身。", "The tasks go to a second model; with the manifest, apply can tell whether the verifier is the extraction model itself.")}</p>
+        ${term(["bdc verify tasks out/paper/paper.jsonl --out out/paper", T("# 另一个模型写出 paper.verify.verdicts.json", "# a second model writes paper.verify.verdicts.json"), "bdc verify apply out/paper/paper.jsonl \\\n    out/paper/paper.verify.verdicts.json --out out/paper \\\n    --manifest out/paper/paper.manifest.json"])}</div>
+      <div class="card pad cmd reveal" style="--lc:var(--brand)"><h3>${icon("graph")}${T("派生与查看", "Derive and look")}</h3>
+        <p>${T("从记录派生所有下游产物，再把仓库里的论文和运行汇总成本地看板。", "Derive every downstream output from the records, then gather the papers and runs of the repository into a local dashboard.")}</p>
+        ${term(["bdc derive out/paper/paper.verified.jsonl \\\n    --out out/paper/derived", "make dashboard"])}</div>
+      <div class="card pad cmd reveal" style="--lc:var(--info)"><h3>${icon("import")}${T("导入已有数据", "Import existing data")}</h3>
+        <p>${T("三种存档格式各有一个导入器；bdc check 确认每份映射覆盖了全部来源叶子。", "Each of the three archived formats has an importer; bdc check confirms every mapping covers all source leaves.")}</p>
+        ${term(["bdc migrate merged \\\n    sources/merged_v2/breeding_jsonl_example_v2.json \\\n    --page-offset 2220 --out out/merged", "bdc check"])}</div>
+    </div>
+  </section>`;
+
+  select(sel, { hash: false });
+  setTour(tour.on);
+  requestAnimationFrame(drawWires);
+  if (!render.wired) {
+    render.wired = true;
+    const main = $("#main"), tip = document.createElement("div");
+    tip.className = "tip"; tip.setAttribute("role", "tooltip"); document.body.append(tip);
+    main.addEventListener("click", e => {
+      const n = e.target.closest("[data-node]");
+      if (n) { setTour(false); select(n.dataset.node, { scroll: matchMedia("(max-width: 900px)").matches }); return; }
+      const s = e.target.closest("[data-sel]");
+      if (s) { e.preventDefault(); select(s.dataset.sel, { scroll: !s.closest(".dots") }); if (!s.closest(".dots")) $("#stages").scrollIntoView({ behavior: K.reduced() ? "auto" : "smooth" }); return; }
+      const st = e.target.closest("[data-step]");
+      if (st) { const i = ORDER.indexOf(sel) + +st.dataset.step; if (ORDER[i]) select(ORDER[i]); return; }
+      if (e.target.closest("#tour-btn")) { setTour(!tour.on); return; }
+      const u = e.target.closest("button[data-u]");
+      if (u) { const info = unitInfo(u.dataset.u, u.dataset.row); if (info.href) location.href = info.href; }
+    });
+    main.addEventListener("pointerover", e => {
+      const u = e.target.closest("button[data-u]"); if (!u) return;
+      tip.innerHTML = unitInfo(u.dataset.u, u.dataset.row).html; tip.classList.add("show");
+      const b = u.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+      tip.style.left = `${Math.max(8, Math.min(innerWidth - w - 8, b.left + b.width / 2 - w / 2))}px`;
+      tip.style.top = `${b.top - h - 10 < 8 ? b.bottom + 10 : b.top - h - 10}px`;
+    });
+    main.addEventListener("pointerout", e => { if (e.target.closest("button[data-u]")) tip.classList.remove("show"); });
+    addEventListener("scroll", () => tip.classList.remove("show"), { passive: true });
+    new ResizeObserver(() => drawWires()).observe(main);
+    document.fonts?.ready.then(drawWires);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) step(); });
+    if ("IntersectionObserver" in window) tour.io = new IntersectionObserver(es => es.forEach(x => { tour.visible = x.isIntersecting; if (tour.visible) step(); else clearTimeout(tour.t); }), { threshold: .25 });
+    else tour.visible = true;
+    document.addEventListener("keydown", e => {
+      if (e.target.closest("input, textarea, select") || !$("#detail")) return;
+      const r = $("#stages").getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+      const i = ORDER.indexOf(sel) + (e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0);
+      if (i !== ORDER.indexOf(sel) && ORDER[i]) { setTour(false); select(ORDER[i]); }
+    });
+  }
+  if (tour.io) { tour.io.disconnect(); tour.io.observe($(".map-card")); }
+  if (K.hash().stage) requestAnimationFrame(() => $("#stages").scrollIntoView());
+}
+K.mount({ title: () => T("管线 · pdf2jsonl", "Pipeline · pdf2jsonl"), render });
+</script>
+</body>
+</html>

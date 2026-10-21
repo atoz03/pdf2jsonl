@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pdf2jsonl · 育种论文，长成可追溯的数据</title>
+<meta name="description" content="pdf2jsonl turns breeding papers into atomic, evidence-anchored JSONL records under a versioned data contract, and derives a knowledge graph, a research workflow, a corpus, QA seeds and tables from the same records.">
+<!--__HEAD__-->
+<style>
+/* ---------------------------------------------------------------- hero */
+.hero { position: relative; overflow: hidden; padding-block: 64px 30px; }
+.hero::before { content: ""; position: absolute; inset: 0; background:
+  radial-gradient(900px 420px at 12% -10%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 70%),
+  radial-gradient(900px 520px at 100% 10%, color-mix(in srgb, var(--brand) 14%, transparent), transparent 70%); pointer-events: none; }
+.hero::after { content: ""; position: absolute; inset: auto 0 0 0; height: 220px; background: repeating-linear-gradient(100deg, transparent 0 22px, color-mix(in srgb, var(--brand) 5%, transparent) 22px 23px); mask-image: linear-gradient(transparent, #000); -webkit-mask-image: linear-gradient(transparent, #000); pointer-events: none; }
+.hero .wrap { position: relative; z-index: 1; }
+.hero-copy { max-width: 880px; }
+.hero h1 { font-size: clamp(34px, 5.4vw, 62px); font-weight: 790; letter-spacing: -.035em; line-height: 1.08; margin: 16px 0 18px; }
+.hero h1 .grad { background: linear-gradient(100deg, var(--brand) 10%, var(--gold) 95%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero .lead { font-size: 18px; max-width: 760px; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.hero-actions .btn { padding: 12px 20px; font-size: 15px; border-radius: 12px; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 26px; color: var(--ink-2); font-size: 14px; }
+.facts b { color: var(--ink); font-size: 17px; margin-right: 4px; letter-spacing: -.01em; }
+
+/* ---------------------------------------------------------------- the stage */
+.stage { position: relative; margin-top: 46px; display: grid; grid-template-columns: 1fr 1.08fr .98fr; gap: 54px; align-items: start; padding: 28px; border-radius: 28px; background: color-mix(in srgb, var(--surface) 70%, transparent); border: 1px solid var(--line); box-shadow: var(--shadow-3); backdrop-filter: blur(6px); }
+.beams { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.beam { fill: none; stroke: var(--brand); stroke-width: 2; stroke-dasharray: 5 7; opacity: 0; transition: opacity .5s; animation: dash 1s linear infinite; }
+.beam.gold { stroke: var(--gold); }
+.spark { fill: var(--gold); opacity: 0; transition: opacity .4s; filter: drop-shadow(0 0 4px var(--gold)); }
+.stage.s3 .beam.b0, .stage.s3 .spark.b0 { opacity: 1; }
+.stage.s5 .beam.bo, .stage.s5 .spark.bo { opacity: 1; }
+.pane { position: relative; z-index: 1; min-width: 0; }
+.pane-label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+.pane-label .n { width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font: 700 11px var(--mono); background: var(--gold-soft); color: var(--gold); border: 1px solid var(--gold-line); }
+
+.paper { background: #fffdf8; color: #22231f; border-radius: 6px 18px 6px 6px; padding: 22px 22px 18px; box-shadow: 0 1px 0 #e9e3d1, 0 18px 40px -22px rgba(30, 30, 20, .5); position: relative; font-family: var(--serif); border: 1px solid #ece6d4; }
+:root[data-theme="dark"] .paper { background: #f3efe3; }
+.paper::after { content: ""; position: absolute; top: 0; right: 0; width: 26px; height: 26px; background: linear-gradient(225deg, var(--bg) 50%, #e8e1cc 50%); border-radius: 0 0 0 6px; }
+.paper h4 { font-size: 14.5px; line-height: 1.35; font-weight: 700; margin-bottom: 4px; padding-right: 18px; }
+.paper .au { font-size: 11.5px; color: #75705f; }
+.paper .note { font: 9.5px var(--mono); color: #a39b83; margin: 6px 0 10px; letter-spacing: .02em; }
+.paper h5 { font: 700 11px var(--sans); text-transform: uppercase; letter-spacing: .1em; color: #5d6b55; margin: 10px 0 4px; }
+.paper p { font-size: 13.2px; line-height: 1.72; color: #3b3c35; }
+.paper p.faded { color: #9b968a; -webkit-mask-image: linear-gradient(#000 30%, transparent); mask-image: linear-gradient(#000 30%, transparent); max-height: 64px; overflow: hidden; }
+.hl { background: linear-gradient(#fbe39a, #fbe39a) no-repeat 0 0 / 0% 100%; box-decoration-break: clone; -webkit-box-decoration-break: clone; transition: background-size 1.1s cubic-bezier(.6, .1, .3, 1); border-radius: 3px; padding: 1px 0; }
+.stage.s1 .hl { background-size: 100% 100%; }
+.hl .u { transition: box-shadow .5s, color .5s; box-shadow: inset 0 0 0 transparent; }
+.stage.s2 .hl .u-s { box-shadow: inset 0 -2.5px 0 #2a78d6; color: #1a4f94; }
+.stage.s2 .hl .u-p { box-shadow: inset 0 -2.5px 0 #d9692e; color: #8f3d12; transition-delay: .25s; }
+.stage.s2 .hl .u-o { box-shadow: inset 0 -2.5px 0 #14936a; color: #0c5f43; transition-delay: .5s; }
+
+.rec { background: #0f1c18; border: 1px solid #22392f; border-radius: 16px; box-shadow: 0 24px 50px -24px rgba(5, 20, 15, .7); overflow: hidden; color: #cfe0d6; }
+.rec-top { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid #1f342b; font: 600 11.5px var(--mono); color: #7f9d90; }
+.rec-top i { width: 9px; height: 9px; border-radius: 50%; background: #2f4a3f; }
+.rec-top i:nth-child(1) { background: #e0b154; } .rec-top i:nth-child(2) { background: #5fae86; }
+.rec-top span { margin-left: 6px; }
+.rec pre { margin: 0; padding: 14px 16px 10px; font: 12px/1.75 var(--mono); white-space: pre; overflow: hidden; }
+.rec .ln { display: block; opacity: 0; transform: translateX(-6px); transition: opacity .35s, transform .35s; }
+.stage.s3 .rec .ln { opacity: 1; transform: none; }
+.rec .k { color: #9fb6ff; } .rec .str { color: #a6e3b8; } .rec .num { color: #f2b27a; } .rec .g { color: #6f8c80; }
+.rec .vs { color: #8fc3ff; } .rec .vp { color: #ffb48a; } .rec .vo { color: #7fe0b7; }
+.verified { display: flex; align-items: center; gap: 8px; margin: 0 14px 14px; padding: 8px 12px; border-radius: 10px; background: #143326; color: #9be3bd; font: 600 12.5px var(--sans); opacity: 0; transform: translateY(6px) scale(.97); transition: opacity .4s, transform .4s var(--ease); }
+.verified svg { width: 16px; height: 16px; }
+.stage.s4 .verified { opacity: 1; transform: none; }
+
+.outs { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.out { display: block; color: inherit; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 13px 13px; transition: border-color .4s, box-shadow .4s, transform .4s var(--ease), opacity .4s; opacity: .55; }
+.out:hover { text-decoration: none; }
+.stage.s5 .out { opacity: 1; }
+.out.lit { border-color: var(--brand-line); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 12%, transparent), var(--shadow-2); transform: translateY(-2px); }
+.out h6 { margin: 0 0 6px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; gap: 6px; color: var(--ink); }
+.out h6 svg { width: 15px; height: 15px; color: var(--brand); }
+.out h6 .c { margin-left: auto; font: 600 11px var(--mono); color: var(--ink-3); }
+.out .mini { font-size: 12px; line-height: 1.55; color: var(--ink-2); }
+.out .clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mg { width: 100%; height: 50px; display: block; }
+.mg .ed { stroke: var(--brand); stroke-width: 1.8; fill: none; stroke-dasharray: 130; stroke-dashoffset: 130; transition: stroke-dashoffset 1s; }
+.out.lit .mg .ed, .stage.s6 .mg .ed { stroke-dashoffset: 0; }
+.mg text { font: 600 9.5px var(--sans); fill: var(--ink); }
+.mg .el { font: 600 8.5px var(--mono); fill: var(--brand-ink); }
+:root[data-theme="dark"] .mg .el { fill: var(--brand-2); }
+.mini .sp { padding: 0; }
+.qa-a { display: inline-flex; margin-left: 4px; vertical-align: 1px; font: 700 11.5px var(--mono); padding: 2px 9px; border-radius: 999px; background: var(--brand); color: #fff; opacity: 0; transform: scale(.6); transition: opacity .3s, transform .4s cubic-bezier(.3, 1.6, .5, 1); }
+:root[data-theme="dark"] .qa-a { color: #06140f; }
+.stage.s6 .qa-a { opacity: 1; transform: none; }
+.mini table { width: 100%; border-collapse: collapse; font: 10.5px var(--mono); }
+.mini th { text-align: left; color: var(--ink-3); font-weight: 600; padding: 2px 4px; border-bottom: 1px solid var(--line); }
+.mini td { padding: 3px 4px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+.stage-cap { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; margin-top: 14px; color: var(--ink-3); font-size: 13px; }
+.stage-ctl { display: inline-flex; gap: 6px; }
+@media (max-width: 1080px) {
+  .stage { grid-template-columns: 1fr; gap: 46px; padding: 18px; }
+  .rec pre { white-space: pre-wrap; word-break: break-word; }
+}
+
+/* ---------------------------------------------------------------- principles */
+.prin { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 960px) { .prin { grid-template-columns: 1fr; } }
+.prin .card { padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+.prin .no { font: 800 40px/1 var(--sans); letter-spacing: -.04em; background: linear-gradient(160deg, var(--brand), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.prin h3 { font-size: 19px; }
+.prin p { color: var(--ink-2); font-size: 14.5px; }
+.demo-snip { margin-top: auto; border-radius: 12px; background: var(--surface-2); border: 1px dashed var(--line-2); padding: 12px 14px; font-size: 13px; }
+.caught { position: relative; }
+.caught q { font-family: var(--serif); display: block; text-decoration: line-through; text-decoration-color: var(--clay); text-decoration-thickness: 2px; color: var(--ink-2); quotes: "“" "”"; }
+.stamp { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 3px 10px; border: 2px solid var(--clay); color: var(--clay); border-radius: 7px; font-weight: 800; font-size: 12px; letter-spacing: .04em; transform: rotate(-3deg); background: var(--clay-soft); }
+.stamp svg { width: 14px; height: 14px; }
+
+/* ---------------------------------------------------------------- numbers band */
+.band { background: linear-gradient(135deg, var(--deep), var(--deep-2)); color: var(--deep-ink); position: relative; overflow: hidden; }
+.band::before { content: ""; position: absolute; inset: 0; background: radial-gradient(600px 300px at 85% 0%, color-mix(in srgb, var(--gold) 22%, transparent), transparent 70%), repeating-linear-gradient(100deg, transparent 0 26px, rgba(255, 255, 255, .025) 26px 27px); }
+.band .wrap { position: relative; padding-block: 54px; }
+.band h2 { font-size: 26px; letter-spacing: -.02em; }
+.band p.sub { color: var(--deep-ink-2); margin-top: 6px; max-width: 760px; }
+.nums { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; margin-top: 30px; background: rgba(255, 255, 255, .08); border-radius: 18px; overflow: hidden; border: 1px solid rgba(255, 255, 255, .08); }
+.nums a { background: color-mix(in srgb, var(--deep) 88%, #000); color: inherit; padding: 22px 20px; display: block; transition: background .2s; }
+.nums a:hover { background: color-mix(in srgb, var(--deep-2) 90%, #fff); text-decoration: none; }
+.nums b { display: block; font-size: 40px; font-weight: 780; letter-spacing: -.04em; line-height: 1.05; color: #fff; }
+.nums span { display: block; font-size: 13.5px; color: var(--deep-ink-2); margin-top: 6px; }
+.nums small { display: block; font-size: 12px; color: #e8c574; margin-top: 2px; }
+@media (max-width: 980px) { .nums { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 560px) { .nums { grid-template-columns: repeat(2, 1fr); } .nums b { font-size: 32px; } }
+
+/* ---------------------------------------------------------------- functions */
+.fns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 960px) { .fns { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .fns { grid-template-columns: 1fr; } }
+.fn { padding: 18px 18px 16px; }
+.fn .t { font-weight: 700; font-size: 15px; }
+.fn .e { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; min-height: 36px; }
+.fn .meter { height: 8px; border-radius: 4px; background: var(--surface-3); overflow: hidden; margin: 14px 0 8px; }
+.fn .meter i { display: block; height: 100%; width: 0; border-radius: 4px; background: linear-gradient(90deg, var(--brand), color-mix(in srgb, var(--brand) 60%, var(--gold))); transition: width 1.2s var(--ease); }
+.fn.in .meter i { width: var(--w); }
+.fn .v { font-size: 13px; color: var(--ink-2); }
+.fn .v b { font-size: 20px; color: var(--ink); margin-right: 4px; }
+
+/* ---------------------------------------------------------------- explore bento */
+.bento { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+.bento > a { grid-column: span 2; padding: 22px; display: flex; flex-direction: column; gap: 8px; min-height: 230px; position: relative; overflow: hidden; }
+.bento > a.wide { grid-column: span 3; }
+.bento .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); border: 1px solid var(--brand-line); }
+.bento .ic svg { width: 20px; height: 20px; }
+.bento h3 { font-size: 18px; margin-top: 4px; }
+.bento p { color: var(--ink-2); font-size: 14px; }
+.bento .metric { margin-top: auto; padding-top: 12px; font-size: 13px; color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.bento .metric b { color: var(--ink); }
+.bento .metric svg { color: var(--brand); transition: transform .25s var(--ease); }
+.bento > a:hover .metric svg { transform: translateX(4px); }
+.viz { margin-top: 6px; }
+.stackbar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; gap: 2px; }
+.stackbar i { display: block; height: 100%; }
+.viz .legend { margin-top: 8px; font-size: 11.5px; gap: 4px 12px; }
+.snake { width: 100%; height: 54px; }
+.snake path { fill: none; stroke: var(--line-2); stroke-width: 2; }
+.snake circle { fill: var(--surface); stroke: var(--brand); stroke-width: 2; }
+.snake circle.g { stroke: var(--gold); }
+.mbar { display: grid; grid-template-columns: 60px 1fr 34px; gap: 8px; align-items: center; font-size: 12px; color: var(--ink-2); margin-top: 6px; }
+.mbar .track { height: 8px; border-radius: 4px; background: var(--surface-3); overflow: hidden; }
+.mbar .track i { display: block; height: 100%; border-radius: 4px; background: var(--brand); }
+@media (max-width: 1000px) { .bento > a, .bento > a.wide { grid-column: span 3; } }
+@media (max-width: 640px) { .bento { grid-template-columns: 1fr; } .bento > a, .bento > a.wide { grid-column: auto; min-height: 0; } }
+
+.start { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 28px; align-items: center; }
+@media (max-width: 900px) { .start { grid-template-columns: 1fr; } }
+.start ul { margin: 14px 0 0; padding: 0; list-style: none; }
+.start li { display: flex; gap: 10px; margin: 10px 0; color: var(--ink-2); }
+.start li svg { color: var(--brand); margin-top: 3px; }
+</style>
+</head>
+<body data-page="index">
+<header id="top"></header>
+<main id="main"></main>
+<footer id="foot"></footer>
+<!--__DATA__-->
+<!--__KIT__-->
+<script>
+"use strict";
+const { T, esc, icon, fmt, DATA } = K;
+const H = DATA.hero, ST = H.statement, R = DATA.run, X = DATA.derived, S = DATA.stats;
+let timers = [], playing = true, visible = true, stageSeen = null;
+
+function paperHTML() {
+  const q = ST.source_quote, a = ST.anchors || {};
+  const piece = (k, cls) => a[k] ? [a[k][0], a[k][1], cls] : null;
+  const spans = [piece("subject", "u u-s"), piece("predicate", "u u-p"), piece("object", "u u-o")].filter(Boolean).sort((x, y) => x[0] - y[0]);
+  let quote = "", at = 0;
+  for (const [s, e, cls] of spans) { quote += esc(q.slice(at, s)) + `<span class="${cls}">${esc(q.slice(s, e))}</span>`; at = e; }
+  quote += esc(q.slice(at));
+  const blocks = H.blocks.map((b, i) => {
+    const k = b.text.indexOf(q);
+    const body = k >= 0 ? esc(b.text.slice(0, k)) + `<span class="hl">${quote}</span>` + esc(b.text.slice(k + q.length)) : esc(b.text);
+    return `<h5>${esc(b.h)}</h5><p${k < 0 && i > 0 ? ' class="faded"' : ""}>${body}</p>`;
+  }).join("");
+  return `<article class="paper" aria-label="${T("示例论文第 1 页", "Page 1 of the example paper")}"><h4>${esc(H.head[0] || H.title)}</h4><div class="au">${esc(H.head[1] || "")}</div>
+    <div class="note">${esc(H.head[2] || "")}</div>${blocks}</article>`;
+}
+function recordHTML() {
+  const r = H.record, s = v => `<span class="str">${esc(JSON.stringify(v))}</span>`;
+  const lines = [
+    `<span class="g">{</span><span class="k">"common"</span>: <span class="g">{</span>`,
+    `  <span class="k">"record_kind"</span>: ${s(r.common.record_kind)},`,
+    `  <span class="k">"source_page"</span>: <span class="num">${r.common.source_page}</span>,`,
+    `  <span class="k">"source_quote"</span>: ${s(K.clip(r.common.source_quote, 22))},`,
+    `  <span class="k">"review_status"</span>: ${s(r.common.review_status)}<span class="g">},</span>`,
+    ...(r.agent.pve_percent != null ? [`<span class="k">"agent"</span>: <span class="g">{</span><span class="k">"pve_percent"</span>: <span class="num">${r.agent.pve_percent}</span><span class="g">},</span>`] : []),
+    `<span class="k">"transform"</span>: <span class="g">{</span>`,
+    `  <span class="k">"subject_mention"</span>: <span class="vs">${esc(JSON.stringify(r.transform.subject_mention))}</span>,`,
+    `  <span class="k">"predicate_code"</span>:`,
+    `    <span class="vp">${esc(JSON.stringify(r.transform.predicate_code))}</span>,`,
+    `  <span class="k">"object_mention"</span>: <span class="vo">${esc(JSON.stringify(r.transform.object_mention))}</span><span class="g">}}</span>`,
+  ];
+  return `<div class="rec"><div class="rec-top"><i></i><i></i><i></i><span>${esc(DATA.site.version ? "synthetic_rice_qtl.jsonl" : "")}</span></div>
+    <pre>${lines.map((l, i) => `<span class="ln" style="transition-delay:${(i * 0.13).toFixed(2)}s">${l}</span>`).join("")}</pre>
+    <div class="verified">${icon("check")}${T(`引文已在第 ${H.page} 页逐字找到 · 结构校验通过`, `Quote found verbatim on page ${H.page} · validated`)}</div></div>`;
+}
+function outsHTML() {
+  const q = H.qa, ch = H.chunk;
+  const cloze = esc(K.clip(q.qa_seed_question, 64)).replace("____", '<span class="blank">____</span>');
+  const corpus = ch ? K.annotate(K.clip(ch.chunk_text, 999), (ch.entities || []).map(e => ({ start: e.start, end: e.end, cls: "sp-entity" }))) : "";
+  return `<div class="outs">
+    <a class="out" data-o="0" href="outputs.html#graph"><h6>${icon("graph")}${T("知识图谱", "Knowledge graph")}<span class="c">${fmt(X.graph_nodes)} ${T("节点", "nodes")}</span></h6>
+      <svg class="mg" viewBox="0 0 300 50" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><path class="ed" d="M44 26 Q150 -2 252 26" marker-end="url(#hm)"/>
+        <defs><marker id="hm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--brand)"/></marker></defs>
+        <line x1="44" y1="28" x2="150" y2="42" stroke="var(--line-2)"/><line x1="252" y1="28" x2="150" y2="42" stroke="var(--line-2)"/>
+        <circle cx="36" cy="26" r="8" fill="var(--s)"/><circle cx="262" cy="26" r="8" fill="var(--o)"/><rect x="144" y="37" width="11" height="11" rx="3" fill="var(--surface)" stroke="var(--c1)" stroke-width="2"/>
+        <text x="36" y="47" text-anchor="middle">${esc(ST.subject_mention)}</text><text x="262" y="47" text-anchor="middle">${esc(K.clip(ST.object_mention, 16))}</text><text class="el" x="150" y="9" text-anchor="middle">${esc(ST.predicate.replace(/^bdc:/, ""))}</text></svg></a>
+    <a class="out" data-o="1" href="outputs.html#corpus"><h6>${icon("quote")}${T("标注语料", "Corpus")}<span class="c">${fmt(X.corpus_chunks)} ${T("块", "chunks")}</span></h6><div class="mini clamp">${corpus}</div></a>
+    <a class="out" data-o="2" href="outputs.html#qa"><h6>${icon("sparkle")}${T("问答种子", "QA seeds")}<span class="c">${fmt(X.qa_seeds)}</span></h6><div class="mini">${cloze}<span class="qa-a">${esc(q.qa_seed_answer)}</span></div></a>
+    <a class="out" data-o="3" href="outputs.html#tables"><h6>${icon("table")}${T("关系表", "Tables")}<span class="c">statements.csv</span></h6><div class="mini"><table><thead><tr><th>subject</th><th>predicate</th><th>object</th></tr></thead>
+      <tbody><tr><td>${esc(ST.subject_mention)}</td><td>${esc(ST.predicate.replace(/^bdc:/, ""))}</td><td>${esc(ST.object_mention)}</td></tr></tbody></table></div></a>
+  </div>`;
+}
+
+// ---------------------------------------------------------------- beams between the panes, recomputed on resize
+function drawBeams() {
+  const st = document.getElementById("stage"); if (!st) return;
+  const svg = st.querySelector(".beams"), box = st.getBoundingClientRect();
+  const r = el => { const b = el.getBoundingClientRect(); return { l: b.left - box.left, r: b.right - box.left, t: b.top - box.top, b: b.bottom - box.top, cx: b.left - box.left + b.width / 2, cy: b.top - box.top + b.height / 2 }; };
+  const paper = r(st.querySelector(".paper")), rec = r(st.querySelector(".rec")), outs = [...st.querySelectorAll(".out")].map(r);
+  const stacked = rec.t > paper.b;
+  const curve = (a, b) => stacked
+    ? `M${a.cx} ${a.b + 4} C${a.cx} ${(a.b + b.t) / 2} ${b.cx} ${(a.b + b.t) / 2} ${b.cx} ${b.t - 4}`
+    : `M${a.r + 4} ${a.cy} C${(a.r + b.l) / 2} ${a.cy} ${(a.r + b.l) / 2} ${b.cy} ${b.l - 6} ${b.cy}`;
+  const paths = [["b0", curve(paper, rec)]];
+  if (stacked) { const all = outs.reduce((m, o) => ({ l: Math.min(m.l, o.l), r: Math.max(m.r, o.r), t: Math.min(m.t, o.t) }), { l: 1e9, r: -1e9, t: 1e9 });
+    paths.push(["bo", curve(rec, { cx: (all.l + all.r) / 2, t: all.t })]); }
+  else outs.forEach(o => paths.push(["bo", curve(rec, o)]));
+  svg.innerHTML = paths.map(([cls, d], i) => `<path id="beam${i}" class="beam ${cls}${i ? " gold" : ""}" d="${d}"/>`).join("") +
+    (K.reduced() ? "" : paths.map(([cls], i) => `<circle class="spark ${cls}" r="3.5"><animateMotion dur="${1.4 + i * 0.12}s" repeatCount="indefinite" begin="${i * 0.2}s"><mpath href="#beam${i}"/></animateMotion></circle>`).join(""));
+}
+
+// ---------------------------------------------------------------- the loop: highlight → anchor → record → verified → outputs → answer
+function play() {
+  const st = document.getElementById("stage"); if (!st) return;
+  timers.forEach(clearTimeout); timers = [];
+  const outs = [...st.querySelectorAll(".out")];
+  if (K.reduced()) { st.classList.add("s1", "s2", "s3", "s4", "s5", "s6"); return; }
+  const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+  st.classList.remove("s1", "s2", "s3", "s4", "s5", "s6"); outs.forEach(o => o.classList.remove("lit"));
+  at(500, () => st.classList.add("s1"));
+  at(1700, () => st.classList.add("s2"));
+  at(2700, () => st.classList.add("s3"));
+  at(4500, () => st.classList.add("s4"));
+  at(5300, () => st.classList.add("s5"));
+  outs.forEach((o, i) => { at(5600 + i * 420, () => o.classList.add("lit")); at(7600 + i * 160, () => o.classList.remove("lit")); });
+  at(6900, () => st.classList.add("s6"));
+  at(12500, () => { if (playing && visible) play(); });
+}
+function setPlaying(on) {
+  playing = on;
+  const b = document.getElementById("play-btn");
+  if (b) b.innerHTML = `${icon(on ? "pause" : "play")}${on ? T("暂停", "Pause") : T("播放", "Play")}`;
+  if (on) play(); else timers.forEach(clearTimeout);
+}
+
+function render() {
+  const fnHTML = Object.entries(DATA.functions).map(([k, f]) => `<a class="card fn lift reveal" href="fields.html#fn=${encodeURIComponent(k)}" style="--w:${(100 * f.fields / S.fields).toFixed(1)}%">
+      <div class="t">${esc(f.label_zh)}</div><div class="e">${esc(f.label_en || "")}</div>
+      <div class="meter"><i></i></div><div class="v"><b>${f.fields}</b>${T("个字段服务于它", "fields serve it")}</div></a>`).join("");
+  const groups = Object.entries(S.groups), gcol = ["var(--c1)", "var(--c2)", "var(--c3)", "var(--c4)", "var(--c7)"];
+  const imps = DATA.importers;
+  const maxLeaves = Math.max(...imps.map(i => i.leaves));
+  document.getElementById("main").innerHTML = `
+  <section class="hero"><div class="wrap">
+    <div class="hero-copy">
+      <span class="eyebrow">${T("育种文献 · 数据契约 · 证据优先", "Breeding literature · data contract · evidence first")}</span>
+      <h1>${T(`育种论文，<br><span class="grad">长成可追溯的数据</span>`, `Breeding papers,<br><span class="grad">grown into traceable data</span>`)}</h1>
+      <p class="lead">${T(`pdf2jsonl 把一篇论文抽取成<b>原子化的 JSONL 记录</b>：一条事实一行，带着页码和逐字引文，按版本化的数据契约校验。同一批记录直接派生知识图谱、研究流程、语料、问答种子与关系表，下游不必再读一遍原文。`,
+        `pdf2jsonl extracts a paper into <b>atomic JSONL records</b>: one fact per line, each with its page and verbatim quote, validated against a versioned data contract. The same records become a knowledge graph, a research workflow, a corpus, QA seeds and tables, without reading the paper again.`)}</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="demo.html">${icon("play")}${T("看一篇论文如何变成数据", "See a paper become data")}</a>
+        <a class="btn" href="pipeline.html">${icon("flow")}${T("管线全景", "The pipeline")}</a>
+        <a class="btn ghost" href="papers.html">${icon("library")}${T("论文看板", "Paper dashboard")}</a>
+      </div>
+      <div class="facts"><span><b>${fmt(S.fields)}</b>${T("个字段", "fields")}</span><span><b>${fmt(S.rules)}</b>${T("条跨字段规则", "cross-field rules")}</span><span><b>${fmt(S.releases)}</b>${T("个冻结版本", "frozen releases")}</span><span><b>${fmt(S.importers)}</b>${T("个存量导入器", "importers")}</span></div>
+    </div>
+    <div class="stage" id="stage" aria-label="${T("动画：一句原文变成一条记录，再派生出图谱、语料、问答和关系表", "Animation: one sentence becomes a record, then a graph, a corpus item, a QA seed and a table row")}">
+      <svg class="beams" aria-hidden="true"></svg>
+      <div class="pane"><div class="pane-label"><span class="n">1</span>${T(`论文 PDF · 第 ${H.page} 页`, `Paper PDF · page ${H.page}`)}</div>${paperHTML()}</div>
+      <div class="pane"><div class="pane-label"><span class="n">2</span>${T("一条记录 · JSONL 中的一行", "One record · one JSONL line")}</div>${recordHTML()}</div>
+      <div class="pane"><div class="pane-label"><span class="n">3</span>${T("下游派生 · 不再读原文", "Derived · no second reading")}</div>${outsHTML()}</div>
+    </div>
+    <div class="stage-cap"><span>${T(`真实数据：仓库内合成示例论文 <code>${esc("synthetic_rice_qtl.pdf")}</code> 的抽取结果与 <code>bdc derive</code> 的输出。`, `Real data: the extraction of the synthetic example paper <code>synthetic_rice_qtl.pdf</code> in the repository and what <code>bdc derive</code> built from it.`)}</span>
+      <span class="stage-ctl"><button class="btn sm" type="button" id="play-btn"></button><a class="btn sm" href="demo.html">${T("逐步看完整演示", "Full walk-through")} ${icon("arrow")}</a></span></div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="section-head plain reveal"><span class="eyebrow">${T("三条原则", "Three rules")}</span><h2 style="margin-top:8px">${T("模型只抄写，管线来核验，记录供复用", "The model copies, the pipeline checks, the records are reused")}</h2></div>
+    <div class="prin">
+      <div class="card reveal"><span class="no">01</span><h3>${T("只抄写原文", "Copy, never compose")}</h3>
+        <p>${T("模型只填写可直接从原文获得（D）的字段，每条候选附上页码与逐字引文；标准化、人工判断和后续生成的字段不交给模型。", "The model fills only directly extractable (D) fields, each candidate with a page and a verbatim quote. Normalized, judged and generated fields are never handed to the model.")}</p>
+        <div class="demo-snip"><b>${fmt(R.candidates)}</b> ${T("条候选", "candidates")} → <b>${fmt(R.fields)}</b> ${T("个画像字段，", "profile fields, ")}<b>${fmt(R.fill_rules)}</b> ${T("条确定性填充规则", "deterministic fill rules")}</div></div>
+      <div class="card reveal"><span class="no">02</span><h3>${T("逐条核验，不做修补", "Check every quote")}</h3>
+        <p>${T("管线在解析出的 PDF 文本里查找每一句引文。找不到就拒绝，写进错误文件，而不是猜一个“差不多”的出处。", "The pipeline looks up every quote in the parsed PDF text. A quote it cannot find is rejected into the errors file, never patched with a guess.")}</p>
+        ${H.rejected ? `<div class="demo-snip caught"><q>${esc(H.rejected.candidate.evidence.quote)}</q>
+          <span class="stamp">${icon("x")}${T(`第 ${H.rejected.detail.stated_page} 页（±1）找不到`, `not on page ${H.rejected.detail.stated_page} (±1)`)}</span>
+          <div class="xs muted" style="margin-top:8px">${T("示例中故意编造的候选，被拒绝；引用它的链接也被丢弃并标记。", "A deliberately fabricated candidate in the example: rejected, and the link to it dropped and flagged.")}</div></div>` : ""}</div>
+      <div class="card reveal"><span class="no">03</span><h3>${T("一次抽取，多处复用", "Extract once, reuse everywhere")}</h3>
+        <p>${T("记录自带下游需要的钩子：主语—谓词—宾语、实体在引文中的偏移、记录之间的链接。派生只读字段，不再解析文本。", "Records carry the hooks consumers need: subject–predicate–object, entity offsets in the quote, links between records. Derivation reads fields, never text.")}</p>
+        <div class="demo-snip"><b>${fmt(X.triples)}</b> ${T("条三元组", "triples")} · <b>${fmt(X.corpus_chunks)}</b> ${T("个语料块", "chunks")} · <b>${fmt(X.qa_seeds)}</b> ${T("条问答种子", "QA seeds")} · <b>${fmt(X.workflow_nodes || 0)}</b> ${T("个流程节点", "workflow nodes")}</div></div>
+    </div>
+  </div></section>
+
+  <section class="band"><div class="wrap">
+    <h2 class="reveal">${T("一份契约，约束每一条记录", "One contract governs every record")}</h2>
+    <p class="sub reveal">${T(`字段、词表、画像与规则由 <code style="background:transparent;border-color:rgba(255,255,255,.18);color:inherit">field_catalog.yaml</code> 编译并冻结为不可变版本；记录声明自己遵循的版本，旧记录永远按旧版本校验。`, `Fields, vocabularies, profiles and rules are compiled from <code style="background:transparent;border-color:rgba(255,255,255,.18);color:inherit">field_catalog.yaml</code> and frozen as immutable releases; every record names its release and is validated against it.`)}</p>
+    <div class="nums">
+      <a href="fields.html"><b data-count="${S.fields}">0</b><span>${T("字段", "fields")}</span><small>${T(`${S.verified} 个已验证`, `${S.verified} verified`)}</small></a>
+      <a href="contract.html#kinds"><b data-count="${S.record_kinds}">0</b><span>${T("记录类型", "record kinds")}</span><small>${T("一行一个事实", "one fact per line")}</small></a>
+      <a href="contract.html#rules"><b data-count="${S.rules}">0</b><span>${T("跨字段规则", "cross-field rules")}</span><small>${T(`${S.rules_error} 条错误级`, `${S.rules_error} error-level`)}</small></a>
+      <a href="contract.html#vocab"><b data-count="${S.vocabularies}">0</b><span>${T("受控词表", "vocabularies")}</span><small>${T("含单位换算", "plus unit conversion")}</small></a>
+      <a href="contract.html#roles"><b data-count="${S.key_roles}">0</b><span>${T("键角色", "key roles")}</span><small>${T("每个键说明用途", "every key states its job")}</small></a>
+      <a href="contract.html#releases"><b data-count="${S.releases}">0</b><span>${T("冻结版本", "releases")}</span><small>v${esc(DATA.site.version)} ${T("为最新", "is latest")}</small></a>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="section-head plain reveal"><span class="eyebrow">${T("记录为谁服务", "Who the records serve")}</span><h2 style="margin-top:8px">${T("每个字段都写明它服务的功能", "Every field states the functions it serves")}</h2>
+      <p>${T("一个字段可以同时服务多个功能。点击查看对应字段。", "A field can serve several functions. Click to list the fields.")}</p></div>
+    <div class="fns">${fnHTML}</div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="section-head plain reveal"><span class="eyebrow">${T("探索站点", "Explore")}</span><h2 style="margin-top:8px">${T("从故事到细节，每一页都连在一起", "From the story to the details, every page linked")}</h2></div>
+    <div class="bento">
+      <a class="card lift wide reveal" href="demo.html"><span class="ic">${icon("play")}</span><h3>${T("抽取演示", "Walk-through")}</h3><p>${T("跟着一篇合成论文走完全程：候选怎样被修复、被拒绝，记录怎样带着证据链写出。", "Follow a synthetic paper all the way: how candidates are repaired or rejected and records written with their evidence chain.")}</p>
+        <div class="metric"><span><b>${R.candidates}</b> ${T("候选", "candidates")} → <b>${R.records}</b> ${T("记录", "records")} · <b>${R.rejected}</b> ${T("拒绝", "rejected")} · <b>${R.repairs}</b> ${T("修复", "repairs")}</span>${icon("arrow")}</div></a>
+      <a class="card lift wide reveal" href="outputs.html"><span class="ic">${icon("graph")}</span><h3>${T("下游派生", "Downstream outputs")}</h3><p>${T("可拖拽的知识图谱、论文的研究流程、带实体偏移的语料、完形问答种子和关系表。", "A draggable knowledge graph, the paper's research workflow, a corpus with entity offsets, cloze QA seeds and tables.")}</p>
+        <div class="metric"><span><b>${X.graph_nodes}</b> ${T("节点", "nodes")} · <b>${X.graph_edges}</b> ${T("边", "edges")} · <b>${X.statements}</b> ${T("关系语句", "statements")}</span>${icon("arrow")}</div></a>
+      <a class="card lift reveal" href="pipeline.html"><span class="ic">${icon("flow")}</span><h3>${T("管线全景", "Pipeline")}</h3><p>${T("九个抽取步骤、导入支线与复核回路。", "Nine extraction stages, the import branch, the review loop.")}</p>
+        <div class="viz"><svg class="snake" viewBox="0 0 260 54" aria-hidden="true"><path d="M10 14H250M250 14C262 14 262 40 250 40H10"/>${[10, 70, 130, 190, 250].map((x, i) => `<circle cx="${x}" cy="14" r="5"${i > 2 ? ' class="g"' : ""}/>`).join("")}${[190, 130, 70, 10].map(x => `<circle cx="${x}" cy="40" r="5" class="g"/>`).join("")}</svg></div>
+        <div class="metric"><span>${T("PDF → 记录 → 派生", "PDF → records → outputs")}</span>${icon("arrow")}</div></a>
+      <a class="card lift reveal" href="papers.html"><span class="ic">${icon("library")}</span><h3>${T("论文看板", "Paper dashboard")}</h3><p>${T("每篇论文、每次运行、每条证据与语义校验。", "Every paper, run, quote and verification.")}</p>
+        <div class="metric"><span><b>${DATA.papers.papers}</b> ${T("篇论文", "papers")} · <b>${DATA.papers.runs}</b> ${T("次运行", "runs")} · <b>${DATA.papers.records}</b> ${T("条记录", "records")}</span>${icon("arrow")}</div></a>
+      <a class="card lift reveal" href="importers.html"><span class="ic">${icon("import")}</span><h3>${T("存量导入", "Importers")}</h3><p>${T("已有数据逐叶映射进同一契约。", "Existing data mapped leaf by leaf.")}</p>
+        <div class="viz">${imps.map(i => `<div class="mbar"><span class="mono">${esc(i.command)}</span><span class="track"><i style="width:${(100 * i.leaves / maxLeaves).toFixed(1)}%"></i></span><span class="num">${i.leaves}</span></div>`).join("")}</div>
+        <div class="metric"><span>${T("映射叶节点", "mapped leaves")}</span>${icon("arrow")}</div></a>
+      <a class="card lift wide reveal" href="fields.html"><span class="ic">${icon("table")}</span><h3>${T("字段目录", "Field catalog")}</h3><p>${T(`${S.fields} 个字段的定义、JSON 示例、键角色、服务功能与来源，按五个分组组织。`, `${S.fields} fields with definition, JSON example, key role, functions and origin, in five groups.`)}</p>
+        <div class="viz"><div class="stackbar">${groups.map(([g, n], i) => `<i style="flex:${n};background:${gcol[i % gcol.length]}" title="${esc(g)} ${n}"></i>`).join("")}</div>
+          <div class="legend">${groups.map(([g, n], i) => `<span><i class="swatch" style="background:${gcol[i % gcol.length]}"></i><span class="mono">${esc(g)}</span> ${n}</span>`).join("")}</div></div>
+        <div class="metric"><span>${T("搜索、筛选、查看示例", "Search, filter, see examples")}</span>${icon("arrow")}</div></a>
+      <a class="card lift wide reveal" href="contract.html"><span class="ic">${icon("book")}</span><h3>${T("规范参考", "Contract reference")}</h3><p>${T("功能与键角色矩阵、可获得性代码、记录类型与示例、词表、规则、歧义登记与版本历史。", "The role × function matrix, availability codes, record kinds with examples, vocabularies, rules, the ambiguity register and the release history.")}</p>
+        <div class="metric"><span><b>${S.rules}</b> ${T("规则", "rules")} · <b>${S.ambiguities}</b> ${T("项歧义登记", "ambiguities")} · <b>${S.profiles}</b> ${T("个画像", "profiles")}</span>${icon("arrow")}</div></a>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap start">
+    <div class="reveal"><span class="eyebrow">${T("快速开始", "Quick start")}</span><h2 style="margin-top:8px;font-size:26px">${T("用一篇论文跑起来", "Run it on a paper")}</h2>
+      <ul>
+        <li>${icon("check")}<span>${T("第一次运行准备抽取任务（brief.md、pages.txt、候选 Schema），退出码 3。", "The first run prepares the task (brief.md, pages.txt, candidate schema) and exits with code 3.")}</span></li>
+        <li>${icon("check")}<span>${T("智能体按任务说明写出 candidates.json，再运行同一命令完成核验、组装与校验。", "The agent writes candidates.json from the brief; the same command then checks, assembles and validates.")}</span></li>
+        <li>${icon("check")}<span>${T("bdc derive 从记录派生图谱、语料、问答、研究流程与关系表。", "bdc derive builds the graph, corpus, QA, workflow and tables from the records.")}</span></li>
+      </ul></div>
+    <div class="reveal">${K.term(["# " + T("安装并检查契约", "install and check the contract"), "pip install -e '.[dev]' && make check",
+      "# " + T("抽取：准备 → 智能体写候选 → 完成", "extract: prepare → agent writes candidates → finalize"),
+      "skills/pdf2jsonl/scripts/pdf2jsonl paper.pdf --profile pdf_extraction --out-dir out/",
+      "# " + T("派生下游视图", "derive the downstream views"), "bdc derive out/paper.jsonl --out out/derived"])}</div>
+  </div></section>`;
+  setPlaying(playing);
+  requestAnimationFrame(drawBeams);
+  document.getElementById("play-btn").addEventListener("click", () => setPlaying(!playing));
+  // the loop runs only while the stage is on screen
+  stageSeen?.disconnect();
+  if ("IntersectionObserver" in window) {
+    stageSeen = new IntersectionObserver(es => es.forEach(e => {
+      const was = visible; visible = e.isIntersecting && !document.hidden;
+      if (visible && !was && playing) play(); if (!visible) timers.forEach(clearTimeout);
+    }));
+    stageSeen.observe(document.getElementById("stage"));
+  }
+}
+
+K.mount({ title: () => T("pdf2jsonl · 育种论文，长成可追溯的数据", "pdf2jsonl · breeding papers, grown into traceable data"), render });
+addEventListener("resize", () => requestAnimationFrame(drawBeams));
+document.addEventListener("visibilitychange", () => { visible = !document.hidden; if (visible && playing) play(); else timers.forEach(clearTimeout); });
+</script>
+</body>
+</html>
