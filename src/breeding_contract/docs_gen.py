@@ -327,6 +327,9 @@ def vocabularies_md(contract: dict) -> str:
         out.append("| 代码 | 中文标签 | 说明 |\n|---|---|---|\n")
         for v in voc["values"]:
             extra = []
+            if v.get("status") == "deprecated":
+                extra.append("**已弃用**" + (f"，改用 {v['replaced_by']}" if v.get("replaced_by") else "")
+                             + (f"（{v['deprecated_in']}）" if v.get("deprecated_in") else ""))
             if v.get("grain") is not None and "grain" in v:
                 extra.append(f"粒度 {v['grain']}")
             if v.get("aliases"):
@@ -344,11 +347,13 @@ def vocabularies_md(contract: dict) -> str:
 
 def rules_md(contract: dict) -> str:
     out = [BANNER, f"# 跨字段规则 — {contract['name']} {contract['version']}\n\n",
-           "`basis`：explicit 来源明确陈述；definitional 由定义直接推出；inferred 据字段分组推断（一律 warning）。\n\n",
-           "| ID | 类型 | 级别 | 依据 | 规则 | 来源 |\n|---|---|---|---|---|---|\n"]
+           "`basis`：explicit 来源明确陈述；definitional 由定义直接推出；inferred 据字段分组推断（一律 warning）。"
+           "阻断为「否」的规则只报告、不单独把记录置为待复核（AMB-043）。\n\n",
+           "| ID | 类型 | 级别 | 依据 | 阻断 | 规则 | 来源 |\n|---|---|---|---|---|---|---|\n"]
     for r in contract["rules"]:
-        out.append(f"| {r['id']} | {r['kind']} | {r['severity']} | {r['basis']} | {_md(r['title_zh'])} | "
-                   f"{_md(r['source_zh'])} |\n")
+        blocking = "否" if r.get("blocking") is False else "是"
+        out.append(f"| {r['id']} | {r['kind']} | {r['severity']} | {r['basis']} | {blocking} | "
+                   f"{_md(r['title_zh'])} | {_md(r['source_zh'])} |\n")
     return "".join(out)
 
 

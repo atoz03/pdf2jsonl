@@ -9,7 +9,7 @@ import jsonschema
 from breeding_contract import resolve_schema, validate_record
 from breeding_contract.check import load_invalid_case
 from breeding_contract.rules import rule_to_json_schema
-from breeding_contract.util import load_yaml
+from breeding_contract.util import load_yaml, set_path
 
 from conftest import read_jsonl
 
@@ -104,7 +104,52 @@ def test_warning_vocabulary_does_not_reject(root):
     assert "VOCAB_UNKNOWN_CODE" in {i.code for i in res.warnings}
 
 
-def test_dataset_rules(root):
+def test_a_deprecated_vocabulary_code_names_its_replacement(root):
+    """qtl_overlaps_qtl is kept so old records resolve, but a record that uses it is told what to use (AMB-043)."""
+    from breeding_contract.relations import predicate_code
+
+    rc = resolve_schema("latest", root)
+    rec = copy.deepcopy(read_jsonl(root / "examples/output/synthetic_rice_qtl.jsonl")[0])
+    rec.setdefault("transform", {})["predicate_label"] = "qtl_overlaps_qtl"
+    res = rc.validator().validate(rec)
+    assert res.valid
+    dep = [i for i in res.warnings if i.code == "VOCAB_CODE_DEPRECATED"]
+    assert dep and dep[0].detail["replaced_by"] == "locus_overlaps_locus"
+    # the pipeline never produces a deprecated code: it carries no cue any more
+    voc = rc.contract["vocabularies"]["predicate_label"]
+    assert predicate_code(voc, "overlapped with", ["qtl"], ["qtl"]) == "locus_overlaps_locus"
+
+
+def test_new_grounding_rules(root):
+    """3.8.0: three warnings that tie a field to what the paper actually reports (R038–R040)."""
+    rc = resolve_schema("latest", root)
+    v = rc.validator()
+    base = copy.deepcopy(read_jsonl(root / "examples/output/synthetic_rice_qtl.jsonl")[0])
+    set_path(base, "transform.claim_strength", "causal_statistical_only")
+
+    def codes(rec):
+        return {i.code for i in v.validate(rec).warnings}
+
+    # R038: a causal claim whose only evidence is statistical should name a validation method
+    assert "RULE_R038" in codes(base)
+    with_method = copy.deepcopy(base)
+    set_path(with_method, "agent.validation_methods", ["complementation in transgenic rice"])
+    assert "RULE_R038" not in codes(with_method)
+    # R039: functional_validated without a validation record
+    status = copy.deepcopy(base)
+    set_path(status, "agent.candidate_gene_status", "functional_validated")
+    assert "RULE_R039" in codes(status)
+    set_path(status, "agent.validated_by_record_ids", ["rec_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"])
+    assert "RULE_R039" not in codes(status)
+    # R040: a review paraphrase should keep the original-study lead
+    review = copy.deepcopy(base)
+    set_path(review, "transform.evidence_origin", "review_report")
+    assert "RULE_R040" in codes(review)
+    set_path(review, "agent.reported_citation_text", "Zhang et al. (2019) Nature Genetics 51: 1044")
+    assert "RULE_R040" not in codes(review)
+
+
+
     rc = resolve_schema("latest", root)
     rec = read_jsonl(root / "examples/records/tool_spec.jsonl")[0]
     issues = rc.validator().validate_dataset([rec, json.loads(json.dumps(rec))])

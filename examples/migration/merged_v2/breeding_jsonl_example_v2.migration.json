@@ -1,26 +1,26 @@
 {
   "migration_format": 1,
-  "run_id": "mig_20260921T141320Z_0bd04c6d",
+  "run_id": "mig_20260921T141320Z_04138149",
   "created_at": "2026-09-21T14:13:20Z",
   "source": {
     "file_name": "breeding_jsonl_example_v2.json",
-    "sha256": "0bd04c6da25abef8f826e83b6cb1f2c7a863f286279bee32958bb25c6e2e346d",
+    "sha256": "04138149ce891a8429c3493216082482626273b64ef1227e0331370cd3a43ee4",
     "documents": 1,
     "schema_version": "v2.0.0"
   },
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.6.0",
+    "schema_version": "3.8.0",
     "release_status": "released",
-    "requested": "3.6.0",
-    "release_sha256": "e51608a630182e973ea0b0607b833c3bd8bc8d173be1fbb947e962ee7ac9d906",
-    "source_digest": "e3c5edb64a249ab758fdb9c5314ae6a0931b438dcc13a3bc7cfbd9d3d1058215"
+    "requested": "3.8.0",
+    "release_sha256": "779b53b57bca86b4ece948812401a352083a84a8c2284f0dfe17ee1a03096a56",
+    "source_digest": "52535de45905d2f7ce02b62ec79e3ae9c5ce75dcafd73d3e945f3f11b722c606"
   },
   "mapping": {
     "id": "merged_to_current",
-    "sha256": "5ae2467c85a3613774d8b13fd3624b47888531dea9f735fe392b8f895b7722cc"
+    "sha256": "5206ebc275b8c8c75f72b577df708cfd2e6ad51fe24ad6ef910256396b29c6c7"
   },
-  "source_schema_sha256": "45a3009e881468862a443910c225d09a891cea6b8c6d70f36b75cd93b9faadc4",
+  "source_schema_sha256": "bdde485a601ec290a1afbbb15509226604bba1d64aa7afbd878251c84ab4a738",
   "options": {
     "page_offset": 2220,
     "dataset_id": null,
@@ -1552,11 +1552,11 @@
   "outputs": {
     "records": {
       "file": "breeding_jsonl_example_v2.migrated.jsonl",
-      "sha256": "680cc1592b4da670d4efc2cb03a99ea41f43c0b31a7098a9447d8992245f64d3"
+      "sha256": "5e1c4fe48a40899c1243f5b2947780e3006b2afabc3490aec27bfc9529c08ad9"
     },
     "errors": {
       "file": "breeding_jsonl_example_v2.migrated.errors.jsonl",
-      "sha256": "0fbd131d4b276040190dcfbdd1c75272c8d6ae7aa942573144d186e46b8ae245"
+      "sha256": "4f869635f3ca23d8cfbfe66fe9ccb389c7f9e953a7c6a83871b4235a100858df"
     },
     "residue": {
       "file": "breeding_jsonl_example_v2.residue.json",

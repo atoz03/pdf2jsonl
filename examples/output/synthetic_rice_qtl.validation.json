@@ -3,11 +3,11 @@
   "run_id": "run_example",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.6.0",
+    "schema_version": "3.8.0",
     "release_status": "released",
-    "requested": "3.6.0",
-    "release_sha256": "e51608a630182e973ea0b0607b833c3bd8bc8d173be1fbb947e962ee7ac9d906",
-    "source_digest": "e3c5edb64a249ab758fdb9c5314ae6a0931b438dcc13a3bc7cfbd9d3d1058215"
+    "requested": "3.8.0",
+    "release_sha256": "779b53b57bca86b4ece948812401a352083a84a8c2284f0dfe17ee1a03096a56",
+    "source_digest": "52535de45905d2f7ce02b62ec79e3ae9c5ce75dcafd73d3e945f3f11b722c606"
   },
   "profile": "pdf_extraction",
   "input": {
@@ -20,6 +20,8 @@
     "candidates": 18,
     "records": 18,
     "rejected": 1,
+    "system_records": 1,
+    "model_records": 17,
     "by_record_kind": {
       "analysis_result": 1,
       "asset_manifest": 1,
@@ -29,12 +31,57 @@
       "phenotype_observation": 4
     },
     "by_review_status": {
-      "auto_validated": 15,
-      "pending_review": 3
+      "auto_validated": 16,
+      "pending_review": 2
     },
     "rejected_by_code": {
       "EVIDENCE_QUOTE_NOT_FOUND": 1
+    },
+    "warnings": {
+      "total": 4,
+      "blocking": 2,
+      "informational": 2,
+      "by_code": {
+        "CANDIDATE_LINK_UNRESOLVED": 1,
+        "EVIDENCE_PAGE_CORRECTED": 1,
+        "RULE_R018": 1,
+        "RULE_R037": 1
+      },
+      "by_family": {
+        "link": 1,
+        "rule": 2,
+        "value": 1
+      }
+    },
+    "relation": {
+      "statements": 3,
+      "coded": 3,
+      "ambiguous": 0,
+      "no_cue": 0,
+      "negated": 0,
+      "by_resolution": {
+        "coded": 3
+      },
+      "coverage": 1.0,
+      "by_nature": {
+        "associational": 1,
+        "causal": 1,
+        "structural": 1
+      }
     }
+  },
+  "count_definitions": {
+    "candidates": "抽取阶段提交的候选数，一个候选是一条独立陈述、观测、方法或分析结果",
+    "records": "接收的记录数 = 候选 − 拒收 + 系统记录",
+    "rejected": "被拒收的候选或记录数（从不静默丢弃）",
+    "system_records": "管线自己写的记录：每个输入文件一条 asset_manifest",
+    "model_records": "records − system_records，即来自候选的记录",
+    "by_review_status": "接收记录按 common.review_status 计数；pending_review 是 records 的子集，不是另一类记录",
+    "warnings.total": "接收记录上的 warning 条数，一条记录可以有多个",
+    "warnings.blocking": "会单独把记录置为 pending_review 的 warning 条数",
+    "warnings.informational": "只报告、不阻断的 warning 条数（规则标了 blocking: false）",
+    "relation.statements": "带关系谓词的记录数",
+    "relation.coverage": "relation.coded / relation.statements，关系谓词被词表判定的比例"
   },
   "document": {
     "values": {
@@ -63,7 +110,8 @@
           "severity": "warning",
           "path": "common.asset_uri",
           "message": "资产清单应含URI、格式、大小与SHA-256：缺少 common.asset_uri",
-          "rule_id": "R018"
+          "rule_id": "R018",
+          "blocking": false
         }
       ]
     },
@@ -173,25 +221,23 @@
             "stated_page": 2,
             "found_page": 3
           }
+        },
+        {
+          "code": "RULE_R037",
+          "severity": "warning",
+          "path": "transform.relation_evidence_type",
+          "message": "因果性质的关系宜给出关系证据类型：至少需要其一：transform.relation_evidence_type",
+          "rule_id": "R037",
+          "blocking": false
         }
-      ],
-      "notes": {
-        "relation": {
-          "predicate_code": "no_unique_cue_match"
-        }
-      }
+      ]
     },
     {
       "line": 10,
       "record_id": "rec_2948c949662fc366580763be4eb34923",
       "record_kind": "claim",
       "candidate_index": 9,
-      "warnings": [],
-      "notes": {
-        "relation": {
-          "predicate_code": "no_unique_cue_match"
-        }
-      }
+      "warnings": []
     },
     {
       "line": 11,
@@ -538,8 +584,33 @@
       }
     ],
     "referenced": {},
+    "parts": [
+      {
+        "part": "supplement",
+        "source_part": "supplement",
+        "supplied": false,
+        "files": [],
+        "page_count": 0,
+        "text_pages": 0,
+        "text_chars": 0,
+        "state": "not_referenced",
+        "state_label_zh": "未引用"
+      },
+      {
+        "part": "appendix",
+        "source_part": "appendix",
+        "supplied": false,
+        "files": [],
+        "page_count": 0,
+        "text_pages": 0,
+        "text_chars": 0,
+        "state": "not_referenced",
+        "state_label_zh": "未引用"
+      }
+    ],
     "missing": [],
     "items_not_found": [],
+    "warnings": [],
     "complete": true
   },
   "workflow_structure": {

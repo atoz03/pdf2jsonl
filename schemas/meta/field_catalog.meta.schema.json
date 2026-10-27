@@ -165,7 +165,9 @@
         },
         "since": {"$ref": "#/$defs/semver"},
         "source_zh": {"type": "string"},
-        "ambiguities": {"$ref": "#/$defs/amb_refs"}
+        "ambiguities": {"$ref": "#/$defs/amb_refs"},
+        "blocking": {"type": "boolean",
+                     "description": "false: a warning of this rule is reported but does not by itself put the record in pending_review (operator-supplied metadata, inferred review hints)"}
       }
     },
     "ambiguity": {

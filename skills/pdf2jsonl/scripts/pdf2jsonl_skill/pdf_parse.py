@@ -34,6 +34,10 @@ _CAPTION_RE = re.compile(r"^\s*((?:Table|Tab\.|Figure|Fig\.?|表|图)\s*S?\d+[A-
 
 MAIN_PART = "main"
 SUPPLEMENT_PART = "supplement"
+APPENDIX_PART = "appendix"
+# Kinds a further file can have (AMB-044). The label of the first file of a kind is the kind itself, later ones
+# carry a number: supplement, supplement_2, appendix, appendix_2.
+PART_KINDS = (SUPPLEMENT_PART, APPENDIX_PART)
 
 
 @dataclass
@@ -121,19 +125,39 @@ def _read_pages(path: Path) -> tuple[list[str], dict, str]:
     return texts, parser, media
 
 
+def split_supplement_spec(spec: str) -> tuple[str, str]:
+    """``FILE`` -> (FILE, "supplement"); ``FILE:appendix`` -> (FILE, "appendix") (AMB-044).
+
+    The suffix counts only when it names a part kind and the rest is an existing file, so a Windows drive letter
+    (``C:\\x.pdf``) and a file name that contains a colon are left alone."""
+    path, _, tail = str(spec).rpartition(":")
+    kind = tail.strip().lower()
+    if path and kind in PART_KINDS and Path(path).is_file():
+        return path, kind
+    return str(spec), SUPPLEMENT_PART
+
+
 def parse_document(path: Path | str, text_layer: Path | str | None = None,
-                   supplements: list | tuple = ()) -> ParsedDocument:
+                   supplements: list | tuple = (), supplement_kinds: list | tuple = ()) -> ParsedDocument:
     """Parse ``path``. With ``text_layer`` (a .txt / .pages.jsonl produced by OCR, MinerU, GROBID ...) the pages
     come from the text layer while the document identity (hash, size, media type) stays that of ``path``.
-    ``supplements`` are further files of the same source; they become the parts ``supplement``,
-    ``supplement_2`` ... in the given order."""
+    ``supplements`` are further files of the same source; ``supplement_kinds`` gives the kind of each one
+    (``supplement`` by default, ``appendix`` for a Chinese 附录 or an author appendix). Each kind becomes its own
+    part labels — ``supplement``, ``supplement_2`` … ``appendix``, ``appendix_2`` … — in the given order."""
+    kinds = list(supplement_kinds or ())
+    kinds += [SUPPLEMENT_PART] * (len(supplements) - len(kinds))
     doc = _parse_one(Path(path), text_layer)
-    for n, sup in enumerate(supplements, start=1):
-        part = _parse_one(Path(sup), None)
-        part.part = SUPPLEMENT_PART if n == 1 else f"{SUPPLEMENT_PART}_{n}"
-        part.part_kind = SUPPLEMENT_PART
-        if any(d.sha256 == part.sha256 for d in doc.parts()):
-            raise ValueError(f"{sup}: the same file is given twice")
+    seen = {doc.sha256}
+    counts: dict[str, int] = {}
+    for spec, kind in zip(supplements, kinds):
+        kind = kind if kind in PART_KINDS else SUPPLEMENT_PART
+        part = _parse_one(Path(spec), None)
+        if part.sha256 in seen:
+            raise ValueError(f"{spec}: the same file is given twice")
+        seen.add(part.sha256)
+        counts[kind] = counts.get(kind, 0) + 1
+        part.part = kind if counts[kind] == 1 else f"{kind}_{counts[kind]}"
+        part.part_kind = kind
         doc.supplements.append(part)
     return doc
 

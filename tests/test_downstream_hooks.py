@@ -9,7 +9,8 @@ import pytest
 from breeding_contract import resolve_schema
 from breeding_contract.derive import CLOZE_BLANK, Deriver, _number_span, counts
 from breeding_contract.ids import normalize_text
-from breeding_contract.relations import find_span, negated, predicate_code, relation_context, span_matches
+from breeding_contract.relations import find_span, negated, predicate_code, predicate_match, relation_context, \
+    span_matches
 from breeding_contract.util import del_path, get_path, set_path
 from pdf2jsonl_skill.pipeline import RunOptions, run
 
@@ -50,8 +51,20 @@ def test_predicate_code_needs_one_cue_and_matching_end_types(rc):
     assert predicate_code(voc, "was significantly associated with", ["qtl"], ["trait"]) == "qtl_associated_with_trait"
     assert predicate_code(voc, "was significantly associated with", ["gene"], ["trait"]) == "gene_associated_with_trait"
     assert predicate_code(voc, "was significantly associated with", [], ["trait"]) is None      # untyped subject
-    assert predicate_code(voc, "increased", ["qtl"], ["trait"]) is None                          # no cue: stays verbatim
+    assert predicate_code(voc, "increased", ["qtl"], ["trait"]) == "locus_increases_trait"       # inflected form
+    assert predicate_code(voc, "conferred resistance to", ["gene"], ["trait"]) == "gene_mediates_resistance"
+    assert predicate_code(voc, "co-segregated with", ["qtl"], ["trait"]) is None                 # no cue: stays verbatim
     assert predicate_code(voc, "disassociated without", ["qtl"], ["trait"]) is None              # cue inside a word
+
+
+def test_predicate_match_names_why_no_code_was_assigned(rc):
+    """AMB-043: the record says whether the vocabulary missed the predicate or two codes tied."""
+    voc = rc.contract["vocabularies"]["predicate_label"]
+    assert predicate_match(voc, "was associated with", ["qtl"], ["trait"]) == ("qtl_associated_with_trait", None)
+    assert predicate_match(voc, "was associated with", [], ["trait"]) == (None, "ambiguous")
+    assert predicate_match(voc, "co-segregated with", ["qtl"], ["trait"]) == (None, "no_cue")
+    assert predicate_match(voc, "was not associated with", ["qtl"], ["trait"]) == (None, "negated")
+    assert predicate_match(voc, "", ["qtl"], ["trait"]) == (None, None)          # no predicate to resolve
 
 
 def test_a_negated_relation_never_gets_the_positive_code(rc, tmp_path):
@@ -129,12 +142,37 @@ def test_pipeline_anchors_the_statement_in_the_quote(records):
                 assert normalize_text(q[m["start"]:m["end"]]) == normalize_text(m["mention"])
 
 
-def test_verbatim_predicate_is_kept_when_no_code_fits(records):
+def test_an_inflected_predicate_is_coded_and_the_subject_stays_untyped(records):
+    """3.7.0 (AMB-043): the bare past tense "increased" names the code, and the untyped subject is not invented."""
     rec = by_quote(records, "increased plant height by 8.6 cm")
     t = rec["transform"]
-    assert t["predicate_mention"] == "increased" and "predicate_code" not in t
+    assert t["predicate_mention"] == "increased" and t["predicate_code"] == "locus_increases_trait"
+    assert (t["relation_resolution"], t["relation_nature"]) == ("coded", "causal")
     subject = next(m for m in t["entity_links"] if m.get("relation_role") == "subject")
     assert subject["mention"] == "The allele from Parent1" and "entity_type" not in subject   # no entity field lists it
+
+
+def test_a_predicate_the_vocabulary_misses_is_kept_verbatim_and_says_so(tmp_path):
+    """AMB-043: no code, but the record carries the reason, so a review queue can tell a gap from a tie."""
+    text = "qPH9.9 co-segregated with plant height in the population.\n"
+    paper = tmp_path / "gap.txt"
+    paper.write_text(text, encoding="utf-8")
+    cand = tmp_path / "gap.candidates.json"
+    cand.write_text(json.dumps({
+        "extraction": {"method": "model", "model": "test", "backend": "agent"},
+        "document": {"common.source_title": "Gap fixture", "common.source_language": "en", "common.crop_name": "rice"},
+        "candidates": [{"record_kind": "claim", "evidence": {"page": 1, "quote": text.strip()},
+                        "fields": {"agent.finding_text": text.strip(), "common.qtl_names": ["qPH9.9"],
+                                   "common.trait_names": ["plant height"],
+                                   "transform.subject_mention": "qPH9.9",
+                                   "transform.predicate_mention": "co-segregated with",
+                                   "transform.object_mention": "plant height"}}]}), encoding="utf-8")
+    res = run(paper, RunOptions(backend="candidates", candidates_file=str(cand), out_dir=str(tmp_path / "out"),
+                                run_id="run_gap"))
+    rec = next(r for r in read_jsonl(res.outputs["records"]) if get_path(r, "transform.subject_mention", None))
+    t = rec["transform"]
+    assert "predicate_code" not in t and t["relation_resolution"] == "no_cue" and "relation_nature" not in t
+    assert t["predicate_mention"] == "co-segregated with"
 
 
 def test_records_without_a_statement_still_get_entity_markers(records):
@@ -179,13 +217,23 @@ def test_statements_report_how_far_the_predicate_was_reviewed(rc, records):
     stmts = {s["subject_mention"] + "|" + s["predicate_mention"]: s for s in d.statements(records)}
     assert {k: s["predicate_status"] for k, s in stmts.items()} == {
         "qPH7.1|was significantly associated with": "lexicon",
-        "The allele from Parent1|increased": "verbatim", "qPH7.1|co-localized with": "verbatim"}
+        "The allele from Parent1|increased": "lexicon",                    # 3.7.0: the past tense is a cue now
+        "qPH7.1|co-localized with": "lexicon"}                              # 3.7.0: overlap is structural
+    assert stmts["qPH7.1|co-localized with"]["relation_nature"] == "structural"
     coded = stmts["qPH7.1|was significantly associated with"]
     assert (coded["subject"], coded["predicate"], coded["object"]) == \
         ("ent:qtl/qph7.1", "bdc:qtl_associated_with_trait", "ent:trait/plant_height")
     assert coded["anchors"] == {"subject": [0, 6], "predicate": [54, 87], "object": [88, 100]}
     hedged = stmts["qPH7.1|co-localized with"]
-    assert hedged["predicate"] == "bdc:stated_relation" and "requires validation" in hedged["hedge"]
+    assert hedged["predicate"] == "bdc:locus_overlaps_locus" and "requires validation" in hedged["hedge"]
+
+    # A statement the vocabulary does not code keeps the verbatim words and says so (never a guessed predicate).
+    verbatim = copy.deepcopy(by_quote(records, "increased plant height by 8.6 cm"))
+    for leaf in ("predicate_code", "relation_nature", "relation_resolution"):
+        del_path(verbatim, f"transform.{leaf}")
+    bare = d.statement(verbatim)
+    assert (bare["predicate"], bare["predicate_status"]) == ("bdc:stated_relation", "verbatim")
+    assert bare["predicate_mention"] == "increased"
 
     rec = copy.deepcopy(by_quote(records, "explained 23.5%"))
     set_path(rec, "transform.predicate_label", "gene_associated_with_trait")   # the reviewer overrides the lexicon
@@ -208,7 +256,7 @@ def test_graph_is_closed_and_joins_statements_to_entities(rc, records):
     qtl = next(n for n in g["nodes"] if n["id"] == "ent:qtl/qph7.1")
     assert (qtl["kind"], qtl["type"], qtl["label"]) == ("entity", "qtl", "qPH7.1")
     assert {e["p"] for e in g["edges"] if e["kind"] == "statement" and e["s"] == qtl["id"]} == \
-        {"bdc:qtl_associated_with_trait", "bdc:stated_relation"}
+        {"bdc:qtl_associated_with_trait", "bdc:locus_overlaps_locus"}
 
 
 def test_corpus_chunks_are_annotated_sentences(rc, records):

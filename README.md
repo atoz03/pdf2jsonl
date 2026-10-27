@@ -37,7 +37,7 @@
 | [下游派生](https://atoz03.github.io/pdf2jsonl/outputs.html) | 同一批记录派生出的关系语句、知识图谱、研究流程、带标注的语料、问答种子和关系表 |
 | [论文看板](https://atoz03.github.io/pdf2jsonl/papers.html) | 按论文查看 PDF、每次运行的记录、原文证据、研究流程、语义校验与复核问题；校验提示按“取值核验 / 填写规则 / 记录链接 / 来源完整性”分组并可逐条筛选，结果可下载 |
 | [存量导入](https://atoz03.github.io/pdf2jsonl/importers.html) | legacy、omics、merged 三种已有格式的导入器：映射覆盖、示例运行、问题登记 |
-| [字段目录](https://atoz03.github.io/pdf2jsonl/fields.html) | **414 个字段**：含义、类型、JSON 示意、键角色、服务功能、功能分类标签（可多选）和来源 |
+| [字段目录](https://atoz03.github.io/pdf2jsonl/fields.html) | **421 个字段**：含义、类型、JSON 示意、键角色、服务功能、功能分类标签（可多选）和来源 |
 | [规范](https://atoz03.github.io/pdf2jsonl/contract.html) | 记录类型、画像、受控词表、填写规则、歧义登记和版本历史；各来源（人工整理、pdf2jsonl、三种导入）的记录并排对照 |
 
 本地预览执行 `make site`，然后打开 `_site/index.html`。`make dashboard` 另外生成一个不入库的
@@ -74,6 +74,50 @@
   [`docs/relation_semantics.md`](docs/relation_semantics.md)。
 - **派生视图与看板沿用这层性质**：`bdc derive` 的 statements、三元组与属性图边都带 `relation_nature` 与
   `relation_assertion_mode`（`derive_format` = 4）；论文看板新增「关系」页签，逐条列出主谓宾并可按性质筛选。
+
+3.8.0 把"结论凭什么成立"写成字段（均为拟定）：
+
+- **因果措辞不再只由动词决定**：`transform.claim_strength` 把谓词性质与关系证据类型合起来读——
+  `causal_supported`（功能验证／遗传互作／生化／定位成像／药理处理）、`causal_expression_supported`、
+  `causal_statistical_only`、`causal_unverified`；R038 在"因果措辞 + 只有统计证据"时提示补验证方法。
+  证据不会把相关升级为因果，缺证据也不会把谓词降级。
+- **四类关系的词表补齐**：新增 `qtn_associated_with_trait`、`gene_suppresses_gene` / `gene_suppressed_by_gene`
+  （主动与被动分码）、`gene_upstream_of_gene`、`trait_controlled_by_gene`、`locus_affects_trait`、
+  `locus_linked_to_locus`、`gene_absent_in_germplasm`；`locus_overlaps_locus` 补 `colocalizes with` /
+  `coincides with`。六篇真实论文的关系覆盖率从 41.7% 提到 69.4%。
+- **实体与验证状态**：`common.qtn_names` 让 QTN 与 QTL、候选基因分开；`agent.validated_by_record_ids`
+  链接论文自己报告的验证实验，`transform.validation_status` 据此给 `candidate` / `experiment_reported`，
+  关联证据与验证证据各自保留。
+- **综述转述**：`transform.evidence_origin` 标 `review_report`，`agent.reported_citation_text` 保留原文线索，
+  R040 在缺线索时提示。
+- **看板解释自己的数字**：运行页头一行"候选 → 生成 → 接收 / 拒收 / 待审"并附计算口径；论文徽章区分
+  "有待审记录"与"有结构提示"；记录带"候选／已提供验证实验""因果·仅统计定位"等徽章。
+
+3.7.0 记录「一个关系为什么没有代码」，并把材料状态写成数据（均为拟定）：
+
+- **判定结果可见**：`transform.relation_resolution`（`coded`／`ambiguous`／`no_cue`／`negated`）说明
+  `predicate_code` 为什么有值或没有值——词表没覆盖（补词表）与两码打平（补登实体提及）需要完全不同的动作；
+  `counts.relation.coverage` 是词表覆盖率的直接读数。谓词性质在没有人 `predicate_label` 时由
+  `predicate_code` 兜底，因此新抽取的记录本身就带因果／相关。见 [`docs/relation_semantics.md`](docs/relation_semantics.md)。
+- **线索词覆盖四类关系**：统计相关（`locus_correlated_with_trait`）、位置重叠／共定位
+  （`locus_overlaps_locus`，结构关系）、预测与模型比较（`model_predicts_trait`，不得升级为因果）、
+  实验干预支持的功能效应（`locus_increases_trait` 等）；动词线索词覆盖第三人称、过去式与被动式，
+  旧代码 `qtl_overlaps_qtl` 弃用并指明替代。
+- **提示分「阻断」与「只报告」**：规则可标 `blocking: false`（R018、R036、R037）。非阻断提示照常计数、
+  写进 `qc_failure_codes`，但不单独把记录降为待复核——只由操作者提供或只能人工判断的值，抽取环节无法清除。
+- **计数自解释**：`counts` 增加 `system_records`（每个输入文件一条资产清单）、`warnings`
+  （按代码／家族、阻断／非阻断）与 `relation`，报告里附 `count_definitions` 说明每个数字的算法；
+  `pending_review` 是已接收记录的子集，不是另一类记录。
+- **材料状态与附录**：`source_parts.parts[]` 给出每个部分的状态（已解析／已提供但没有文本层／已提供但未引用／
+  引用但未提供），`--supplement FILE:appendix` 让附录成为一等部分，新增 `SOURCE_PART_NOT_PARSED` 与
+  `SOURCE_PART_UNREFERENCED`。见 [`docs/downstream.md`](docs/downstream.md)。
+- **展示规则写进仓库**：`docs/presentation.md` 规定列表视图必须显示"实体＋类型""验证状态（候选／已提供
+  实验验证）""原文限定语"与"结论强度"，`bdc check` 的 `check_presentation` 会检查看板模板是否实现，
+  删掉其中一列即 CI 失败。看板记录表因此有 实体 / 验证 / 限定语 / 结论强度 四列，关系表的主宾语也带类型。
+- **回归验收可复跑**：`scripts/acceptance_report.py` 把同一批论文分别以正文、正文+补充材料输入，在
+  3.6.0 与 3.8.0 上各跑一次，逐条列出待审项与验收结论，写入
+  [`docs/acceptance_3.8.0.md`](docs/acceptance_3.8.0.md)；`tests/test_acceptance.py` 用同一矩阵做断言，
+  `make acceptance` 一键复跑（人工复核耗时一列留给复核人，脚本不计时）。
 
 3.5.0 面向课题二的科研智能体新增三项能力，均为拟定（provisional）：
 
@@ -115,10 +159,10 @@
 | `examples/` | 两篇合成论文（其一含补充材料）、整理后的记录、管线输出（含缺少补充材料时的输出）、一次语义复核、派生视图、导入输出及无效数据示例 |
 | `tests/` | pytest 测试：规范一致性、版本、校验、管线、Skill 同步、导入、文档包、功能、证据链、下游钩子、研究流程、语义复核、来源组成部分及站点 |
 
-## 🔬 规范概览（3.6.0）
+## 🔬 规范概览（3.8.0）
 
-- 共 414 个字段，分为五组：`common` 179、`agent` 62、`skills` 53、`transform` 52、`omics` 68。
-  v3.0.0 的 259 个字段标记为 `verified`，定义逐字保留；其后新增的 155 个字段标记为 `provisional`。
+- 共 421 个字段，分为五组：`common` 180、`agent` 64、`skills` 53、`transform` 56、`omics` 68。
+  v3.0.0 的 259 个字段标记为 `verified`，定义逐字保留；其后新增的 162 个字段标记为 `provisional`。
 - **功能分类支持多选**：研究内容1、研究内容2、迭代优化、通用字段。
 - 每个字段说明**键角色**（`key_role`，共 25 类）和**服务功能**（`serves`）：课题二科学智能体、课题三技能、
   知识图谱／关系库／问答／语料／三元组派生，以及课题一规范迭代。课题二、三的字段还标注所属卡片，
@@ -165,8 +209,8 @@ skills/pdf2jsonl/scripts/pdf2jsonl paper.pdf --profile pdf_extraction --schema-v
 （未被检验的假设、没有方法的结果、依赖成环）；`source_parts` 给出来源完整性（正文引用但未提供的部分）。
 其他接入方式包括 `--candidates file.json`、`--backend mock` 和 `--backend module:callable`。
 
-论文有多个文件时一次处理：加上 `--supplement paper_supplement.pdf`（可重复）。证据随之标明所在部分，
-每个文件各有一条资产记录。
+论文有多个文件时一次处理：加上 `--supplement paper_supplement.pdf`（可重复）；附录用
+`--supplement appendix.pdf:appendix` 标明，证据随之写明所在部分，每个文件各有一条资产记录。
 
 在本仓库使用 Claude Code 时，`.claude/skills/pdf2jsonl` 已链接到 `skills/pdf2jsonl`。
 用户级安装可将 `~/.claude/skills/pdf2jsonl` 软链接到同一目录。
@@ -178,7 +222,7 @@ from breeding_contract import resolve_schema, load_profile, load_field_catalog, 
 
 rc = resolve_schema("latest")                  # 也可指定 "3.0.0" 或 "dev"（未发布的工作目录）
 profile = load_profile("pdf_extraction", "latest")
-catalog = load_field_catalog("3.6.0")
+catalog = load_field_catalog("3.8.0")
 result = validate_record(record)               # 按记录声明的版本校验
 result.valid, [i.to_dict() for i in result.errors]
 ```

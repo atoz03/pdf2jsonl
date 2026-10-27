@@ -22,6 +22,7 @@ from pathlib import Path
 from . import PIPELINE_VERSION
 from .contract_link import sha256_file
 from .pipeline import PipelineError, RunOptions, default_work_dir, finalize, prepare, resolve_contract, run
+from .pdf_parse import split_supplement_spec
 
 SUBCOMMANDS = {"run", "prepare", "finalize", "resolve", "brief", "validate", "bundle"}
 AWAITING_AGENT = 3
@@ -40,9 +41,11 @@ def _run_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("input", type=Path, help="paper.pdf (or .txt / .pages.jsonl text layer)")
     _contract_args(p)
     p.add_argument("--text-layer", type=Path, help="pre-extracted pages (.pages.jsonl/.txt) for the given PDF")
-    p.add_argument("--supplement", type=Path, action="append", default=[], metavar="FILE",
+    p.add_argument("--supplement", type=str, action="append", default=[], metavar="FILE[:KIND]",
                    help="a further file of the same paper (supplementary materials, appendix); repeatable. "
-                        "Evidence from it is cited as part `supplement` (`supplement_2`, ...) with its own pages")
+                        "Add `:appendix` to label a 附录/author appendix instead of supplementary material. "
+                        "Evidence from it is cited as part `supplement`/`appendix` (`supplement_2`, ...) with its "
+                        "own pages")
     p.add_argument("--out-dir", type=Path, help="output directory (default: next to the input)")
     p.add_argument("--dataset-id")
     p.add_argument("--dataset-version")
@@ -52,10 +55,12 @@ def _run_args(p: argparse.ArgumentParser) -> None:
 
 
 def _opts(a: argparse.Namespace, **kw) -> RunOptions:
+    specs = [(split_supplement_spec(str(s))) for s in getattr(a, "supplement", None) or []]
     return RunOptions(profile=a.profile, schema_version=a.schema_version,
                       out_dir=str(a.out_dir) if getattr(a, "out_dir", None) else None,
                       text_layer=str(a.text_layer) if getattr(a, "text_layer", None) else None,
-                      supplements=[str(s) for s in getattr(a, "supplement", None) or []],
+                      supplements=[path for path, _ in specs],
+                      supplement_kinds=[kind for _, kind in specs],
                       dataset_id=getattr(a, "dataset_id", None), dataset_version=getattr(a, "dataset_version", None),
                       source_asset_id=getattr(a, "source_asset_id", None), asset_uri=getattr(a, "asset_uri", None),
                       run_id=getattr(a, "run_id", None), allow_unreleased=a.allow_unreleased,
@@ -89,7 +94,8 @@ def cmd_run(a) -> int:
             if pinned["profile"] != a.profile:
                 raise PipelineError(f"{work} was prepared for profile {pinned['profile']}, not {a.profile}")
             prepared = sorted(x["sha256"] for x in pinned["input"].get("supplements") or [])
-            if a.supplement and sorted(sha256_file(Path(x)) for x in a.supplement) != prepared:
+            given = [split_supplement_spec(str(x))[0] for x in a.supplement or []]
+            if given and sorted(sha256_file(Path(x)) for x in given) != prepared:
                 raise PipelineError(f"{work} was prepared with other supplement files: the candidates were written "
                                     "without seeing these pages. Prepare again (--work-dir for a second directory)")
             return _summary(finalize(work, _opts(a), requested_version=a.schema_version), a.fail_on_reject)

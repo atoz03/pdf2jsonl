@@ -85,6 +85,17 @@ class Validator:
                     self.warn_vocab[f["path"]] = (vname, {v["code"] for v in voc["values"]},
                                                   voc.get("applies_to", "value"))
         self.profile_fields = {f["path"] for f in profile["fields"]} if profile else None
+        # A deprecated vocabulary code stays in the vocabulary so existing records keep resolving, but a record
+        # that uses it is told what to use instead (cf. FIELD_DEPRECATED).
+        self.deprecated_codes = {}
+        for f in contract["fields"]:
+            vname = f.get("vocabulary")
+            if not vname:
+                continue
+            voc = contract["vocabularies"][vname]
+            dep = {v["code"]: v.get("replaced_by") for v in voc["values"] if v.get("status") == "deprecated"}
+            if dep:
+                self.deprecated_codes[f["path"]] = (vname, voc.get("applies_to", "value"), dep)
 
     # -------------------------------------------------------------- structural
     def _schema_issues(self, record: dict) -> list[Issue]:
@@ -140,6 +151,20 @@ class Validator:
             if unknown:
                 issues.append(Issue("VOCAB_UNKNOWN_CODE", "warning", path,
                                     f"{path} 取值 {unknown} 不在词表 {vname} 中", detail={"vocabulary": vname}))
+        for path, (vname, applies, dep) in self.deprecated_codes.items():
+            value = get_path(record, path)
+            if value is MISSING:
+                continue
+            values = list(value.values()) if applies == "values" and isinstance(value, dict) else \
+                (value if isinstance(value, list) else [value])
+            for code in values:
+                if code in dep:
+                    repl = dep[code]
+                    issues.append(Issue("VOCAB_CODE_DEPRECATED", "warning", path,
+                                        f"{path} 取值 {code} 在词表 {vname} 中已弃用"
+                                        + (f"，请改用 {repl}" if repl else ""),
+                                        detail={"vocabulary": vname, "code": code,
+                                                **({"replaced_by": repl} if repl else {})}))
         for path, _ in iter_fields(record):
             f = self.fields.get(path)
             if f and f.get("status") == "deprecated":

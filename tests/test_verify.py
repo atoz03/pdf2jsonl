@@ -98,7 +98,9 @@ def test_supported_records_are_promoted_and_nothing_else_changes(tasks, records,
     out, report = apply_verdicts(records, verdicts(tasks), rc, "ver_t", extraction_model="example-agent")
     assert report["independent_of_extractor"] is True
     assert report["counts"]["promoted"] == 19 and report["counts"]["no_tasks"] == 2
-    assert report["counts"]["review_status_after"] == {"model_verified": 19, "pending_review": 2}
+    # The two asset records have no fields to judge. Since 3.7.0 their only warning (the operator-only
+    # asset URI, R018) is non-blocking, so they are auto_validated rather than waiting for review (AMB-043).
+    assert report["counts"]["review_status_after"] == {"auto_validated": 2, "model_verified": 19}
     assert report["findings"] == []
     for before, after in zip(records, out):
         assert validate_record(after).valid
@@ -138,7 +140,9 @@ def test_a_doubted_link_is_charged_to_the_record_that_makes_it(tasks, records, b
                            wrong["task_id"]: {"verdict": "not_supported", "reason": "an interaction is not an order"}})
     out, report = apply_verdicts(records, doc, rc, "ver_t")
     assert status(out, by_ref["m_ko"])["qc_failure_codes"] == ["VERIFY_UNCERTAIN"]
-    assert status(out, by_ref["c_up"])["qc_failure_codes"] == ["VERIFY_LINK_NOT_SUPPORTED"]
+    # 3.8.0: the claim's predicate now resolves to gene_upstream_of_gene (causal), which adds the informational
+    # R037 hint; the verdict is still charged to the record that makes the link
+    assert status(out, by_ref["c_up"])["qc_failure_codes"] == ["RULE_R037", "VERIFY_LINK_NOT_SUPPORTED"]
     assert status(out, by_ref["a_map"])["review_status"] == "model_verified"   # the target is not blamed
     assert status(out, by_ref["r_luc"])["review_status"] == "model_verified"
     assert {f["target_record_id"] for f in report["findings"]} == \
@@ -273,7 +277,8 @@ def test_cli_and_checked_in_example(root, tmp_path):
     assert (tmp_path / "synthetic_rice_heat.verified.jsonl").read_bytes() == \
         (review / "synthetic_rice_heat.verified.jsonl").read_bytes()
     verified = read_jsonl(review / "synthetic_rice_heat.verified.jsonl")
-    assert {r["common"]["review_status"] for r in verified} == {"model_verified", "pending_review"}
+    # ... and the two asset records, whose only warning is the operator-only asset URI, stay auto_validated (3.7.0)
+    assert {r["common"]["review_status"] for r in verified} == {"model_verified", "pending_review", "auto_validated"}
 
 
 def test_review_status_ladder_is_in_the_vocabulary(rc):

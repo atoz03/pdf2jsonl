@@ -1,0 +1,21 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: validation_status
+title_zh: 结论的验证状态
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 3.8.0
+origin: [repository]
+source:
+  ref: docs/review.md
+  quote_zh: 没有分子实验验证的结果应保留候选状态；论文提供实验验证时保留验证方法与材料
+notes_zh: '代码由仓库拟定（AMB-045）。本词表只回答"这条结论后面有没有论文自己报告的验证实验"，不判断实验质量、也不替代 agent.candidate_gene_status（人工判断的证据层级）。experiment_reported 表示 agent.validated_by_record_ids 解析到了至少一条方法、观测或分析结果记录；candidate 表示没有这样的记录。关联记录与验证记录各自保留证据，验证记录不覆盖关联记录。'
+ambiguities: [AMB-045]
+values:
+- code: candidate
+  label_zh: 候选（未附验证实验）
+  description_zh: 论文没有给出可用于验证该结论的实验记录；结论保持候选状态
+- code: experiment_reported
+  label_zh: 已提供验证实验
+  description_zh: 该结论链接到论文自己报告的验证实验（方法、观测或分析结果）

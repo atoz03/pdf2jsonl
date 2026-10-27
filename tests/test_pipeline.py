@@ -82,6 +82,47 @@ def test_page_correction_forces_review(result):
             assert r["common"]["review_status"] == "pending_review"
 
 
+def test_counts_say_what_they_count(result):
+    """AMB-043: records = candidates − rejected + system records, and pending_review is a subset of records."""
+    counts = result.counts
+    assert counts["records"] == counts["candidates"] - counts["rejected"] + counts["system_records"]
+    assert counts["model_records"] + counts["system_records"] == counts["records"]
+    assert counts["by_record_kind"].get("asset_manifest", 0) == counts["system_records"]
+    assert sum(counts["by_review_status"].values()) == counts["records"]
+    w = counts["warnings"]
+    assert w["total"] == w["blocking"] + w["informational"]
+    assert w["total"] == sum(w["by_code"].values()) == sum(w["by_family"].values())
+    report = json.loads(result.outputs["validation"].read_text())
+    assert {"records", "system_records", "warnings.blocking", "relation.coverage"} <= set(report["count_definitions"])
+
+
+def test_relation_coverage_is_counted(result):
+    rel = result.counts["relation"]
+    assert (rel["statements"], rel["coded"], rel["coverage"]) == (3, 3, 1.0)
+    assert rel["by_nature"] == {"associational": 1, "causal": 1, "structural": 1}
+
+
+def test_operator_only_metadata_is_reported_but_does_not_block(result):
+    """R018 asks for an asset URI only the operator can give: it stays a notice, never a review item (AMB-043)."""
+    report = json.loads(result.outputs["validation"].read_text())
+    asset = next(r for r in report["records"] if r["record_kind"] == "asset_manifest")
+    notice = [w for w in asset["warnings"] if w["code"] == "RULE_R018"]
+    assert notice and notice[0]["blocking"] is False
+    rec = next(r for r in result.records if r["common"]["record_kind"] == "asset_manifest")
+    assert rec["common"]["review_status"] == "auto_validated"
+    assert "RULE_R018" in rec["common"]["qc_failure_codes"]
+    assert rec["common"]["missing_fields"]["common.asset_uri"] == "requires_external_source"
+
+
+def test_an_asset_uri_from_the_operator_clears_the_notice(tmp_path, epoch):
+    res = run(EXAMPLE_PDF, RunOptions(backend="candidates", candidates_file=str(EXAMPLE_CANDIDATES),
+                                      out_dir=str(tmp_path), run_id="run_uri",
+                                      asset_uri="https://example.org/paper.pdf"))
+    asset = next(r for r in res.records if r["common"]["record_kind"] == "asset_manifest")
+    assert asset["common"]["asset_uri"] == "https://example.org/paper.pdf"
+    assert "RULE_R018" not in asset["common"].get("qc_failure_codes", [])
+
+
 def test_rerun_is_deterministic(tmp_path, epoch):
     def once(d):
         opts = RunOptions(backend="candidates", candidates_file=str(EXAMPLE_CANDIDATES), out_dir=str(d),

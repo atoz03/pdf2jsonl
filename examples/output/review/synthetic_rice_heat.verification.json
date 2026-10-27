@@ -4,11 +4,11 @@
   "created_at": "2026-09-21T14:13:20Z",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.6.0",
+    "schema_version": "3.8.0",
     "release_status": "released",
-    "requested": "3.6.0",
-    "release_sha256": "e51608a630182e973ea0b0607b833c3bd8bc8d173be1fbb947e962ee7ac9d906",
-    "source_digest": "e3c5edb64a249ab758fdb9c5314ae6a0931b438dcc13a3bc7cfbd9d3d1058215"
+    "requested": "3.8.0",
+    "release_sha256": "779b53b57bca86b4ece948812401a352083a84a8c2284f0dfe17ee1a03096a56",
+    "source_digest": "52535de45905d2f7ce02b62ec79e3ae9c5ce75dcafd73d3e945f3f11b722c606"
   },
   "verifier": {
     "method": "model",
@@ -30,12 +30,12 @@
       "uncertain": 1
     },
     "review_status_before": {
-      "auto_validated": 19,
-      "pending_review": 2
+      "auto_validated": 21
     },
     "review_status_after": {
+      "auto_validated": 2,
       "model_verified": 17,
-      "pending_review": 4
+      "pending_review": 2
     },
     "promoted": 17,
     "demoted": 2,
@@ -88,12 +88,12 @@
   "unknown_task_ids": [],
   "input": {
     "file": "synthetic_rice_heat.jsonl",
-    "sha256": "71bd2ca35ac8e7cd03e81589be52cc141b2aec62ba0ec0736a3121ca7f55c2bd",
+    "sha256": "f7062917efc076b20ba73351212bdebd3390691e50312aa4be295a39ce1f7292",
     "verdicts_file": "synthetic_rice_heat.verify.verdicts.json",
-    "verdicts_sha256": "60287b1a808ffc46dda2c1a259049a99bfc252cc4f89e3d9449464a232621629"
+    "verdicts_sha256": "0f7a935ad77bbe29be6f7dce90a2849ebef2daa85ca5516664a78876254649cb"
   },
   "output": {
     "file": "synthetic_rice_heat.verified.jsonl",
-    "sha256": "8955ac191358aa6dbb27ed97f6a337d171ef94895ba946bcf5778dec69ea310d"
+    "sha256": "5f84225735ab25614dddce134c02191262901be0811d98bbc2410326c37f2e8e"
   }
 }

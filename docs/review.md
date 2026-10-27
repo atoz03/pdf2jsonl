@@ -24,10 +24,31 @@ can be trusted.
 
 | `common.review_status` | Set by | Means |
 | --- | --- | --- |
-| `pending_review` | pipeline, or verification | a check left a warning; `common.qc_failure_codes` says which |
-| `auto_validated` | pipeline | all deterministic checks passed |
+| `pending_review` | pipeline, or verification | a **blocking** check left a warning; `common.qc_failure_codes` says which |
+| `auto_validated` | pipeline | all deterministic checks passed, or the only warnings were non-blocking |
 | `model_verified` | `bdc verify apply` | an independent verifier judged every field and link of the record supported by the paper |
 | `expert_approved` / `rejected` | a reviewer | a person decided |
+
+A warning is **non-blocking** when the rule that raised it is marked `blocking: false` in the catalog
+(3.7.0, AMB-043). It is reported, counted in `counts.warnings.informational`, listed in
+`common.qc_failure_codes` and in the dashboard, but it does not by itself put the record in
+`pending_review` — because no action of the extraction could clear it. That is the case for a value only the
+operator can supply (`common.asset_uri`, R018) and for a review hint that needs a human evidence type (R036,
+R037: their `transform.relation_evidence_type` is availability `I`). Every other warning still blocks.
+
+Two more layers say how far a conclusion is grounded, and both are derived, never judged by the model:
+
+| Field | Answers | Used by |
+| --- | --- | --- |
+| `transform.claim_strength` | is a causal wording backed by intervention-level evidence, only by statistics, or by nothing? (3.8.0, AMB-046) | R038 asks for a validation method when the only evidence type is statistical mapping |
+| `transform.validation_status` | is this still a candidate, or does the paper report a validation experiment for it? (3.8.0, AMB-045) | review queue and dashboard badges; `candidate` is not a defect |
+
+Neither replaces `agent.candidate_gene_status` (availability `I`, the expert's evidence level): the derived
+status says what the paper reports, the expert field says how strong that is.
+
+`pending_review` is a subset of the accepted records, never a second bucket: a run's `counts.records` includes
+the ones waiting for review, and `counts.system_records` (one `asset_manifest` per input file) explains why a
+run can have more records than candidates. Both definitions are repeated in the report's `count_definitions`.
 
 A consumer chooses its threshold: a candidate graph may load `auto_validated`, a published one
 `model_verified` or `expert_approved` only.
@@ -47,7 +68,8 @@ A consumer chooses its threshold: a candidate graph may load `auto_validated`, a
 - **Workflow structure** (`workflow_structure`, `docs/workflow.md`): an untested hypothesis, a conclusion
   without evidence, a dependency cycle.
 - **Source completeness** (`source_parts`, `docs/downstream.md`): a record whose quote cites a figure or table
-  of a part that was not supplied is marked `SOURCE_PART_UNAVAILABLE`.
+  of a part that was not supplied is marked `SOURCE_PART_UNAVAILABLE`; if the part was supplied without a text
+  layer it is `SOURCE_PART_NOT_PARSED`, because the remedy is a text layer rather than the file.
 
 These checks are literal. A value that stands on the page passes even when it belongs to another sentence.
 
