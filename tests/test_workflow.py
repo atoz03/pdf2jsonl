@@ -17,7 +17,7 @@ from conftest import (EXAMPLE_CANDIDATES, EXAMPLE_PDF, HEAT_CANDIDATES, HEAT_PDF
 
 EDGE_FIELDS = {"evidence": "agent.evidence_record_ids", "method": "skills.method_record_ids",
                "tests": "agent.tests_record_ids", "addresses": "agent.addresses_record_ids",
-               "prerequisite": "agent.prerequisite_record_ids"}
+               "prerequisite": "agent.prerequisite_record_ids", "validated_by": "agent.validated_by_record_ids"}
 
 
 @pytest.fixture(scope="module")

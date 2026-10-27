@@ -1,12 +1,13 @@
 PY      ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 BDC     := PYTHONPATH=src $(PY) -m breeding_contract.cli
 
-.PHONY: help venv check test generate diagram site dashboard readme-art release examples sample-pdf all
+.PHONY: help venv check test acceptance generate diagram site dashboard readme-art release examples sample-pdf all
 
 help:
 	@echo "make venv       create .venv with dev dependencies (uv, else venv+pip)"
 	@echo "make check      bdc check --strict (CI gate)"
 	@echo "make test       pytest"
+	@echo "make acceptance regenerate docs/acceptance_3.8.0.md, failing when a criterion does"
 	@echo "make generate   rebuild docs/generated from the catalog"
 	@echo "make diagram    export Chinese/English pipeline SVGs from the HTML diagram"
 	@echo "make site       build the eight-page Pages site into _site/ (overview, pipeline, walk-through, outputs, papers, importers, fields, contract)"
@@ -53,3 +54,6 @@ sample-pdf:
 	$(PY) scripts/make_sample_pdf.py examples/papers/synthetic_rice_qtl.txt examples/papers/synthetic_rice_qtl.pdf
 
 all: generate check test
+
+acceptance:
+	$(PY) scripts/acceptance_report.py --check

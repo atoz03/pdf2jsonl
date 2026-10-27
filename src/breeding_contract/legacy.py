@@ -21,7 +21,7 @@ from .api import resolve_schema
 from .ids import build_locator, stable_record_id
 from .mappings import match_entry
 from .paths import repo_root
-from .util import ContractError, dumps_json, dumps_jsonl, load_yaml, parse_semver, set_path, sha256_file, utc_now
+from .util import (ContractError, dumps_json, dumps_jsonl, load_yaml, parse_semver, set_path, sha256_file, utc_now, sha256_text_file)
 
 EMPTY = (None, "", [], {})
 MIN_VERSION = (3, 1, 0)
@@ -588,7 +588,7 @@ def migrate_legacy_file(path: Path | str, out_dir: Path | str, version: str = "l
         raise ContractError(f"legacy migration targets contract >= 3.1.0 (got {rc.version})")
     mapping = load_legacy_mapping(root)
     started = utc_now()
-    run_id = "mig_" + started.strftime("%Y%m%dT%H%M%SZ") + "_" + sha256_file(path)[:8]
+    run_id = "mig_" + started.strftime("%Y%m%dT%H%M%SZ") + "_" + sha256_text_file(path)[:8]
     mig = LegacyMigrator(rc, mapping, page_offset, dataset_id, source_file_sha256, run_id)
     records, rejected, residue, candidates, notes, consumed, sources = [], [], [], {}, [], set(), {}
     lines = [ln for ln in path.read_text(encoding="utf-8").splitlines() if ln.strip()]
@@ -625,8 +625,8 @@ def migrate_legacy_file(path: Path | str, out_dir: Path | str, version: str = "l
             by_code[i["code"]] = by_code.get(i["code"], 0) + 1
     report = {
         "migration_format": 1, "run_id": run_id, "created_at": started.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "source": {"file_name": path.name, "sha256": sha256_file(path), "documents": len(lines), "schema_version": "v1.0.0"},
-        "contract": rc.identity(), "mapping": {"id": mapping["id"], "sha256": sha256_file(root / "mappings/legacy_to_current.yaml")},
+        "source": {"file_name": path.name, "sha256": sha256_text_file(path), "documents": len(lines), "schema_version": "v1.0.0"},
+        "contract": rc.identity(), "mapping": {"id": mapping["id"], "sha256": sha256_text_file(root / "mappings/legacy_to_current.yaml")},
         "options": {"page_offset": page_offset, "dataset_id": dataset_id, "source_file_sha256": source_file_sha256},
         "counts": {"records": len(records), "rejected": len(rejected), "residue_leaves": len(residue),
                    "review_candidates": len(candidates), "rejected_issue_codes": dict(sorted(by_code.items()))},

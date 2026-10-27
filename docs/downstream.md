@@ -41,6 +41,8 @@ consumer. The same record now states all of it:
    "predicate_mention": "was significantly associated with",
    "object_mention":    "plant height",
    "predicate_code":    "qtl_associated_with_trait",
+   "relation_nature":   "associational",
+   "relation_resolution": "coded",
    "predicate_start_offset": 54, "predicate_end_offset": 87,
    "entity_links": [
      {"mention": "qPH7.1",       "source_field": "common.qtl_names",   "entity_type": "qtl",
@@ -57,10 +59,16 @@ consumer. The same record now states all of it:
 | **Entity markers** | `transform.entity_links[]`: `mention`, `source_field`, `entity_type`, `start`, `end`, `relation_role` | the pipeline (N), from the entity fields and the quote | graph nodes, corpus annotation, QA answer spans |
 | **Relation anchor** | `transform.predicate_start_offset`, `transform.predicate_end_offset` | the pipeline (N) | corpus annotation, relation-extraction training data |
 | **Normalised predicate** | `transform.predicate_code` → `transform.predicate_label` → `transform.predicate_id` | lexicon (N) → reviewer (I) → ontology alignment (N) | graph edge type |
+| **Resolution** | `transform.relation_resolution` (`coded` / `ambiguous` / `no_cue` / `negated`) | the pipeline (N) | review queue, vocabulary-coverage reports (`counts.relation`) |
+| **Nature** | `transform.relation_nature` | the pipeline (N): the reviewed `predicate_label`, else the matched `predicate_code` | whether an edge may guide an intervention |
+| **Claim strength** | `transform.claim_strength` (`causal_supported` … `causal_unverified`, `associational`, `structural`, `descriptive`) | the pipeline (N): nature × `transform.relation_evidence_type` | whether a causal wording is backed by intervention-level evidence (R038) |
+| **Validation status** | `transform.validation_status` (`candidate` / `experiment_reported`) | the pipeline (N): presence of `agent.validated_by_record_ids` | review queue, "is this still a candidate?" |
+| **Evidence origin** | `transform.evidence_origin` (`review_report` for a review) and `agent.reported_citation_text` (D, the lead the review prints) | the pipeline (N) / the model (D) | keeping a paraphrase apart from a primary experiment |
+| **Cited source items** | `transform.cited_source_items` (`Fig. S2`, `Table S1` …) | the pipeline (N), literal scan of the quote | tying a record to the supplementary part, and to `source_parts` |
 | **Typed, aligned ends** | `transform.subject_type` / `object_type` (I), `subject_id` / `object_id` and `entity_links[].entity_id` (N) | reviewers and entity alignment (Topic 1) | graph node identity |
 | **Qualifiers** | fields of role `condition` and `context_key` (population, environment, year, stage, treatment …), `transform.relation_qualifiers` | the model (D) / the pipeline (N) | statement qualifiers, QA answer scope |
 | **Hedge and limits** | `agent.claim_qualifier_text`, `agent.stated_limitations` | the model (D), verbatim | every consumer: a hedged statement is not a finding |
-| **Record links** | `agent.evidence_record_ids`, `skills.method_record_ids`, `agent.tests_record_ids`, `agent.addresses_record_ids`, `agent.prerequisite_record_ids` | the pipeline (N), from candidate `links` | graph edges between records, the workflow, multi-hop QA |
+| **Record links** | `agent.evidence_record_ids`, `skills.method_record_ids`, `agent.tests_record_ids`, `agent.addresses_record_ids`, `agent.prerequisite_record_ids`, `agent.validated_by_record_ids` | the pipeline (N), from candidate `links` | graph edges between records, the workflow, multi-hop QA |
 | **Workflow role** | `agent.statement_role`, `agent.step_condition` | the model (D) | the stage of a node in the workflow (`docs/workflow.md`) |
 | **Evidence** | `common.source_id`, `source_part`, `source_page`, `source_quote`, `source_span`, `source_locator` | the pipeline (N) and the model (D) | provenance of every derived row |
 | **Stable IDs** | `common.record_id`, `common.source_id` | the pipeline (N) | joins; chunk, statement and QA IDs are hashes of these |
@@ -68,14 +76,16 @@ consumer. The same record now states all of it:
 Three rules keep the hooks honest:
 
 - **The model copies, the pipeline computes.** The model adds three verbatim strings. Offsets, entity types,
-  relation roles and the predicate code are deterministic functions of the record and the quote
+  relation roles, the predicate code and the resolution are deterministic functions of the record and the quote
   (`src/breeding_contract/relations.py`, fill rule `relation_anchors`), so re-running them never changes the
   meaning of a record.
 - **Never infer.** A mention that does not occur literally in the quote gets a marker without offsets. A
-  predicate that matches no cue, or more than one code, gets no `predicate_code`. Neither does a negated one:
-  a negation word in the predicate, or in the quote between the two ends, leaves the statement verbatim, so
-  "was not associated with" never becomes `qtl_associated_with_trait`. A record whose quote relates nothing has
-  no statement.
+  predicate that matches no cue, or more than one code, gets no `predicate_code` — and since 3.7.0 the record
+  says which of the two it was (`transform.relation_resolution`, AMB-043), so the queue can tell "the vocabulary
+  misses this verb" from "register the entity mention and the tie resolves". Neither does a negated one: a
+  negation word in the predicate, or in the quote between the two ends, leaves the statement verbatim
+  (`relation_resolution: negated`), so "was not associated with" never becomes `qtl_associated_with_trait`. A
+  record whose quote relates nothing has no statement and no resolution.
 - **Checked, not trusted.** `R034` verifies that every offset points at its mention; `R033` flags a statement
   that has both ends but no predicate.
 
@@ -171,8 +181,9 @@ some of them, and the missing part may be the one with the materials and methods
 The record carries `common.source_part` (`main_text`, `supplement`, `appendix`, `other`), and its locator and
 span start with `part=supplement;`. Each file gets its own `asset_manifest` record with its hash. Records of
 the main text keep the locators and the IDs they had before parts existed, so adding a supplement later
-changes no existing ID. The pipeline labels every further file `supplement`; the codes `appendix` and `other`
-are there for importers and reviewers.
+changes no existing ID. A further file is a supplement by default; `--supplement FILE:appendix` labels a 附录 or
+an author appendix instead, and the part labels follow the kind (`supplement`, `supplement_2` … `appendix`,
+`appendix_2` …), so `source_part: appendix` is reachable from a run (3.7.0, AMB-044).
 
 **Missing parts are detected, not guessed.** The pipeline scans the main text for references to supplementary
 items ("fig. S2", "Table S1", "supplementary materials", "appendix") and compares them with what was supplied:
@@ -181,17 +192,41 @@ items ("fig. S2", "Table S1", "supplementary materials", "appendix") and compare
 "source_parts": {
   "provided":   [{"part": "main", "source_part": "main_text", "file_name": "paper.pdf", "page_count": 2, …}],
   "referenced": {"supplement": {"mentions": 4, "pages": [2], "items": ["Fig. S1", "Fig. S2", "Fig. S3"]}},
+  "parts": [
+    {"part": "supplement", "source_part": "supplement", "supplied": false, "files": [], "page_count": 0,
+     "text_pages": 0, "text_chars": 0, "state": "referenced_not_supplied", "state_label_zh": "正文引用但未提供",
+     "referenced": {"mentions": 4, "pages": [2], "items": ["Fig. S1", "Fig. S2", "Fig. S3"]}},
+    {"part": "appendix", "source_part": "appendix", "supplied": false, "files": [], "page_count": 0,
+     "text_pages": 0, "text_chars": 0, "state": "not_referenced", "state_label_zh": "未引用"}],
   "missing":    ["supplement"],
   "items_not_found": ["Fig. S1", "Fig. S2", "Fig. S3"],
+  "warnings":   [],
   "complete":   false}
 ```
 
-This block is in the validation report; the manifest repeats `missing` and `complete`. A supplement that is
-part of the same PDF is recognised by its captions and is not reported missing. Three things follow from an
-incomplete source:
+`parts` gives every part kind the text references or the run supplies one of seven states — `supplied_parsed`,
+`supplied_no_text` (the file is here but has no text layer to search), `supplied_not_referenced` (given, never
+cited), `supplied_items_not_found` (the file is here and readable, but an item the text cites is not in it),
+`referenced_not_supplied`, `in_main_pages` (the cited items carry captions in the pages supplied: it is the same
+file) and `not_referenced` — with its files, page count and how many pages carry text. A run-level `warnings`
+entry marks a supplied part without text (`SOURCE_PART_NOT_PARSED`), one the text never cites
+(`SOURCE_PART_UNREFERENCED`) or one whose cited item was not located (`SOURCE_PART_ITEM_NOT_FOUND`); none of them
+is a per-record problem, so none of them puts a record in review. Missing parts are judged per part: supplying a
+supplement no longer hides a missing appendix, and vice versa.
+
+This block is in the validation report; the manifest repeats `missing`, `complete` and the state of each part.
+Item labels ("Fig. S2") are one pool for all further files, because a quoted label cannot be attributed to the
+supplement or to the appendix; an item is therefore reported only when no further file was supplied, or when a
+supplied file has no text. Three things follow from an incomplete source:
 
 - A record whose quote cites an item of the missing part is marked `SOURCE_PART_UNAVAILABLE` and stays
-  `pending_review`: its statement rests on data nobody has seen.
+  `pending_review`: its statement rests on data nobody has seen. If the part was supplied without a text
+  layer, the code is `SOURCE_PART_NOT_PARSED` instead — the remedy is a text layer (`--text-layer`), not the
+  file, and the reviewer should not be told to look for a file that is already there.
+- A field that a rule expects and such a record lacks is audited in `common.missing_fields` with the reason
+  `source_part_unavailable` instead of `not_located`, so "not found in the paper" and "possibly in a part we
+  do not have" stay apart.
+- Workflow flags such as a result without a method are expected, and the report says why.
 - A field that a rule expects and such a record lacks is audited in `common.missing_fields` with the reason
   `source_part_unavailable` instead of `not_located`, so "not found in the paper" and "possibly in a part we
   do not have" stay apart.

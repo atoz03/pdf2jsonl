@@ -1,0 +1,110 @@
+{
+ "extraction": {
+  "method": "model",
+  "model": "acceptance",
+  "backend": "agent"
+ },
+ "document": {
+  "common.source_title": "GmOLEO1 in soybean seed oil content",
+  "common.source_language": "en",
+  "common.crop_name": "soybean",
+  "common.source_document_type": "journal_paper"
+ },
+ "candidates": [
+  {
+   "ref": "c_corr",
+   "record_kind": "claim",
+   "fields": {
+    "agent.finding_text": "GmOLEO1 was significantly correlated with seed oil content across 12 environments.",
+    "common.gene_names": [
+     "GmOLEO1"
+    ],
+    "common.trait_names": [
+     "seed oil content"
+    ],
+    "transform.subject_mention": "GmOLEO1",
+    "transform.predicate_mention": "was significantly correlated with",
+    "transform.object_mention": "seed oil content",
+    "transform.relation_assertion_mode": "stated"
+   },
+   "evidence": {
+    "page": 1,
+    "quote": "GmOLEO1 was significantly correlated with seed oil content (r = 0.62, P < 0.01) across the 12 environments."
+   }
+  },
+  {
+   "ref": "c_over",
+   "record_kind": "claim",
+   "fields": {
+    "agent.finding_text": "Overexpression of GmOLEO1 increased seed oil content by 12.4%.",
+    "common.gene_names": [
+     "GmOLEO1"
+    ],
+    "common.trait_names": [
+     "seed oil content"
+    ],
+    "transform.subject_mention": "GmOLEO1",
+    "transform.predicate_mention": "increased",
+    "transform.object_mention": "seed oil content",
+    "transform.relation_assertion_mode": "stated"
+   },
+   "links": {
+    "validated_by": [
+     "m_comp"
+    ]
+   },
+   "evidence": {
+    "page": 1,
+    "quote": "Overexpression of GmOLEO1 increased seed oil content by 12.4% compared with the wild type."
+   }
+  },
+  {
+   "ref": "c_neg",
+   "record_kind": "claim",
+   "fields": {
+    "agent.finding_text": "GmOLEO1 was not associated with protein content.",
+    "common.gene_names": [
+     "GmOLEO1"
+    ],
+    "common.trait_names": [
+     "protein content"
+    ],
+    "transform.subject_mention": "GmOLEO1",
+    "transform.predicate_mention": "was not associated with",
+    "transform.object_mention": "protein content"
+   },
+   "evidence": {
+    "page": 1,
+    "quote": "GmOLEO1 was not associated with protein content in the same material."
+   }
+  },
+  {
+   "ref": "c_cand",
+   "record_kind": "claim",
+   "fields": {
+    "agent.finding_text": "Glyma.16G123400 lies in the qOIL-16 interval and was not validated experimentally.",
+    "common.gene_names": [
+     "Glyma.16G123400"
+    ],
+    "common.qtl_names": [
+     "qOIL-16"
+    ]
+   },
+   "evidence": {
+    "page": 1,
+    "quote": "The candidate gene Glyma.16G123400 was located within the qOIL-16 interval but was not validated experimentally."
+   }
+  },
+  {
+   "ref": "m_comp",
+   "record_kind": "method",
+   "fields": {
+    "skills.method_name": "complementation of the gmoleo1 mutant with a 3.2-kb GmOLEO1 genomic fragment"
+   },
+   "evidence": {
+    "page": 1,
+    "quote": "Complementation of the gmoleo1 mutant with a 3.2-kb GmOLEO1 genomic fragment restored the seed oil content phenotype."
+   }
+  }
+ ]
+}

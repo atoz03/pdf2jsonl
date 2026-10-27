@@ -1,0 +1,21 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: evidence_origin
+title_zh: 证据来源（原始研究 / 综述转述）
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 3.8.0
+origin: [repository]
+source:
+  ref: docs/downstream.md
+  quote_zh: 综述也能产生抽取结果，但需要明确区分综述转述与原始研究证据
+notes_zh: '代码由仓库拟定（AMB-047）。由 common.source_document_type 派生：review → review_report，其余（期刊论文、学位论文等）→ primary_study。review_report 表示这句话是综述对他人研究的转述，不是该文献自己完成的实验；原始文献线索写在 agent.reported_citation_text（逐字），没有线索时 R040 提示补。本字段只记录文献类型，不判断转述是否忠实。'
+ambiguities: [AMB-047]
+values:
+- code: primary_study
+  label_zh: 原始研究
+  description_zh: 该文献自己完成的研究（期刊论文、学位论文、实验报告等）
+- code: review_report
+  label_zh: 综述转述
+  description_zh: 综述对他人研究的转述；实验不是该文献完成的，原始文献线索见 agent.reported_citation_text

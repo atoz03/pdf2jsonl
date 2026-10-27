@@ -82,6 +82,10 @@
         },
         "detail": {
           "type": "object"
+        },
+        "blocking": {
+          "type": "boolean",
+          "description": "false: reported and counted, but does not by itself put the record in pending_review (catalog rule with blocking: false, AMB-043)"
         }
       }
     },

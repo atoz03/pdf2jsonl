@@ -75,7 +75,8 @@ def _read_json(path, notes):
 WARNING_FAMILIES = (
     ('value', '取值核验', '原文没有逐字写出的字段取值（事实类字段）',
      ('VALUE_', 'DOCUMENT_VALUE_', 'EVIDENCE_PAGE_CORRECTED', 'EVIDENCE_TABLE_NOT_ON_PAGE', 'EVIDENCE_CELL_KEY_NOT_ON_PAGE')),
-    ('rule', '填写规则', '契约的跨字段规则（R001..R035）没有通过', ('RULE_',)),
+    ('rule', '填写规则', '契约的跨字段规则没有通过；标了 blocking: false 的规则只报告、不把记录降为待复核',
+     ('RULE_', 'VOCAB_CODE_')),
     ('link', '记录链接', '记录引用的其他记录或链接没有解析到', ('CANDIDATE_LINK_', 'UNRESOLVED_LINK', 'LINK_')),
     ('source', '来源完整性', '本次运行缺少论文的某个部分', ('SOURCE_PART_',)),
     ('integrity', '输出完整性', '运行产物自身的问题：文件缺失或哈希不一致', ('OUTPUT_INTEGRITY',)),
@@ -94,10 +95,10 @@ def _warning_family(code):
 
 def _summarize_warnings(rows):
     """Group the record warnings of one run, and the rule codes they name, for the page and its filters."""
-    groups = {key: {'label': label, 'description': description, 'count': 0,
+    groups = {key: {'label': label, 'description': description, 'count': 0, 'informational': 0,
                     'by_code': Counter(), 'by_field': Counter(), 'records': set()}
               for key, label, description, _ in WARNING_FAMILIES}
-    groups['other'] = {'label': '其他提示', 'description': '', 'count': 0,
+    groups['other'] = {'label': '其他提示', 'description': '', 'count': 0, 'informational': 0,
                        'by_code': Counter(), 'by_field': Counter(), 'records': set()}
     rule_help, rule_severity, value_records = {}, {}, set()
     for row in rows:
@@ -107,6 +108,8 @@ def _summarize_warnings(rows):
             family = _warning_family(code)
             group = groups[family]
             group['count'] += 1
+            if issue.get('blocking') is False:
+                group['informational'] += 1
             group['by_code'][code] += 1
             if issue.get('path'):
                 group['by_field'][issue['path']] += 1
@@ -318,12 +321,47 @@ def _run(root, path, manifest, contract_cache):
                        'workflow_flags': sum((workflow.get('flags') or {}).values()),
                        'value_flags': warning_summary['groups']['value']['count'],
                        'value_records': warning_summary['groups']['value']['records'],
+                       'informational': sum(g['informational'] for g in warning_summary['groups'].values()),
+                       'system_records': (validation.get('counts') or {}).get('system_records'),
+                       'relation_coverage': ((validation.get('counts') or {}).get('relation') or {}).get('coverage'),
                        'model_verified': review.get('model_verified', 0),
                        'expert_approved': review.get('expert_approved', 0),
                        'by_kind': dict(by_kind), 'by_review': dict(review)},
             'manifest': manifest, 'validation': validation, 'bundle': bundle, 'derived': derived,
             'raw_outputs': raw_outputs,
             'urls': urls, 'notes': notes, 'integrity_ok': not notes}
+
+
+def part_signature(run):
+    """The set of source parts a run was given: the key of "same input, more files" (AMB-044)."""
+    parts = sorted((s.get('part') or '') for s in ((run.get('manifest') or {}).get('input') or {}).get('supplements') or []
+                   if isinstance(s, dict))
+    return tuple(parts)
+
+
+def compare_runs(current, previous):
+    """What changed between two runs of one paper: records added/removed, warning codes lost/gained, review counts.
+
+    Warning codes are read from each record's ``qc_failure_codes`` (a set per record), so "lost" means a code no
+    record carried any more. This is a display of two existing runs; no record is changed."""
+    def snapshot(run):
+        rows = {}
+        for rec in run.get('records') or []:
+            common = rec.get('common') or {}
+            rows[common.get('record_id')] = set(common.get('qc_failure_codes') or [])
+        codes = Counter(code for cs in rows.values() for code in cs)
+        review = Counter((rec.get('common') or {}).get('review_status', 'unknown') for rec in run.get('records') or [])
+        return rows, codes, review
+
+    before_rows, before_codes, before_review = snapshot(previous)
+    after_rows, after_codes, _ = snapshot(current)
+    return {'run_id': previous.get('run_id'), 'created_at': previous.get('created_at'), 'path': previous.get('path'),
+            'parts_before': list(part_signature(previous)), 'parts_after': list(part_signature(current)),
+            'records': {'added': len(set(after_rows) - set(before_rows)),
+                        'removed': len(set(before_rows) - set(after_rows))},
+            'warnings': {'lost': dict((before_codes - after_codes).most_common()),
+                         'gained': dict((after_codes - before_codes).most_common())},
+            'review_before': dict(before_review), 'review_after': dict(current.get('counts', {}).get('by_review', {}))}
 
 
 def build_data(root: Path = ROOT, scan=None):
@@ -406,6 +444,13 @@ def build_data(root: Path = ROOT, scan=None):
         del papers[part_key]
     for paper in papers.values():
         paper['runs'].sort(key=lambda r: (r['created_at'], r['path']), reverse=True)
+        # Materials arrive later: compare a run with the next older run of the same paper that had a different
+        # set of parts, so the page can show what adding the file changed (AMB-044).
+        for n, run in enumerate(paper['runs']):
+            for older in paper['runs'][n + 1:]:
+                if part_signature(older) != part_signature(run):
+                    run['compare'] = compare_runs(run, older)
+                    break
         if paper['runs']:
             latest = paper['runs'][0]
             metadata = next((r.get('common') for r in latest['records'] if isinstance(r.get('common'), dict)), {})
@@ -416,7 +461,11 @@ def build_data(root: Path = ROOT, scan=None):
             paper['year'] = metadata.get('source_year')
             paper['crop'] = metadata.get('crop_name') or ''
             counts = latest['counts']
-            paper['status'] = 'problem' if not latest['integrity_ok'] else ('review' if counts['rejected'] or counts['pending'] or counts['audit_flags'] else 'complete')
+            # Three different things used to collapse into one badge: a rejected record, a record waiting for
+            # review, and a structural hint. The badge follows what the reader can act on (AMB-044/AMB-046).
+            paper['status'] = 'problem' if not latest['integrity_ok'] else \
+                ('review' if counts['rejected'] or counts['pending'] else
+                 'hints' if counts['audit_flags'] or counts.get('workflow_flags') else 'complete')
         else:
             paper['status'] = 'prepared' if paper['tasks'] else 'unprocessed'
     items = sorted(papers.values(), key=lambda p: ((p['runs'][0]['created_at'] if p['runs'] else ''), p['title']), reverse=True)
@@ -477,7 +526,8 @@ def build(root: Path = ROOT, out: Path | None = None, scan=None, site: dict | No
         page = {**data, 'site': site}
     else:
         base = quote(os.path.relpath(root.resolve(), destination.parent.resolve()), safe='/') + '/'
-        self_href = quote(os.path.relpath(destination.resolve(), root.resolve()), safe='/')
+        # POSIX separators on every platform: the page links back to its own file.
+        self_href = quote(os.path.relpath(destination.resolve(), root.resolve()).replace(os.sep, '/'), safe='/')
         page = {**data, 'site': {'version': data.get('version', '')},
                 'shell': {'mode': 'local', 'self': self_href, 'links': [list(x) for x in LOCAL_LINKS]}}
     destination.write_text(site_shell.render('papers', page, base=base), encoding='utf-8')

@@ -20,8 +20,7 @@ from .ids import build_locator, build_span, stable_record_id
 from .legacy import EMPTY, LegacyMigrator, _concrete, _item_id, _leaves, _norm
 from .mappings import match_entry
 from .paths import repo_root
-from .util import (ContractError, dumps_json, dumps_jsonl, load_json, load_yaml,
-                   parse_semver, sha256_file, utc_now)
+from .util import (ContractError, dumps_json, dumps_jsonl, load_json, load_yaml, parse_semver, sha256_file, utc_now, sha256_text_file)
 
 OBSERVATION_KINDS = {"phenotype": "phenotype_observation", "environment": "environment_observation",
                      "genotype": "genotype_observation", "omics_feature": "observation"}
@@ -262,7 +261,7 @@ def migrate_merged_file(path, out_dir, version='latest', page_offset=None, datas
     source_schema_path = root / mapping['source']['file']
     source_validator = Draft202012Validator(load_json(source_schema_path))
     started = utc_now()
-    run_id = 'mig_' + started.strftime('%Y%m%dT%H%M%SZ') + '_' + sha256_file(path)[:8]
+    run_id = 'mig_' + started.strftime('%Y%m%dT%H%M%SZ') + '_' + sha256_text_file(path)[:8]
     migrator = MergedMigrator(rc, mapping, page_offset, dataset_id, source_file_sha256, run_id)
     docs = _read_inputs(path)
     parents = {}
@@ -330,9 +329,9 @@ def migrate_merged_file(path, out_dir, version='latest', page_offset=None, datas
     outs['residue'].write_text(dumps_json({'residue_format':1,'source':path.name,'unconsumed':residue,'review_candidates':reviews}),encoding='utf-8')
     counts={'records':len(records),'rejected':len(rejected),'residue_leaves':len(residue),'review_candidates':len(reviews)}
     report={'migration_format':1,'run_id':run_id,'created_at':started.strftime('%Y-%m-%dT%H:%M:%SZ'),
-            'source':{'file_name':path.name,'sha256':sha256_file(path),'documents':len(docs),'schema_version':'v2.0.0'},
-            'contract':rc.identity(),'mapping':{'id':mapping['id'],'sha256':sha256_file(mapping_path)},
-            'source_schema_sha256':sha256_file(source_schema_path),
+            'source':{'file_name':path.name,'sha256':sha256_text_file(path),'documents':len(docs),'schema_version':'v2.0.0'},
+            'contract':rc.identity(),'mapping':{'id':mapping['id'],'sha256':sha256_text_file(mapping_path)},
+            'source_schema_sha256':sha256_text_file(source_schema_path),
             'options':{'page_offset':page_offset,'dataset_id':dataset_id,'source_file_sha256':source_file_sha256},
             'counts':counts,'notes':sorted(set(notes)),'consumed_paths':consumed,
             'record_sources':{r['common']['record_id']:sources[r['common']['record_id']] for r in records},

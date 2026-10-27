@@ -38,7 +38,7 @@ latest release and the checked-in examples, and deployed from `main`.
 | [Outputs](https://atoz03.github.io/pdf2jsonl/outputs.html) | Statements, knowledge graph, research workflow, annotated corpus, QA seeds and tables derived from the same records |
 | [Papers](https://atoz03.github.io/pdf2jsonl/papers.html) | Paper dashboard: the PDF, the records of each run, their evidence on the page, verification, review issues, downloads |
 | [Importers](https://atoz03.github.io/pdf2jsonl/importers.html) | The legacy, omics and merged importers: mapping coverage, example runs, issue registers |
-| [Fields](https://atoz03.github.io/pdf2jsonl/fields.html) | All **414 fields**: meaning, type, JSON example, key role, functions, multi-select tags, origin |
+| [Fields](https://atoz03.github.io/pdf2jsonl/fields.html) | All **421 fields**: meaning, type, JSON example, key role, functions, multi-select tags, origin |
 | [Contract](https://atoz03.github.io/pdf2jsonl/contract.html) | Record kinds, profiles, vocabularies, rules, the ambiguity register and the release history; records from every source (curated, pdf2jsonl, the three importers) side by side |
 
 Preview locally with `make site` and open `_site/index.html`. `make dashboard` also writes an untracked
@@ -80,6 +80,60 @@ Where a record has no hook, the derived output has no row: nothing is guessed. D
 - **The derived views and the dashboard carry it**: `bdc derive` statements, triples and graph edges include
   `relation_nature` and `relation_assertion_mode` (`derive_format` = 4), and the paper dashboard gained a 关系 tab
   that lists every statement with its nature and filters by it.
+
+3.8.0 makes "what makes a conclusion hold" a field (provisional):
+
+- **A causal wording is no longer decided by the verb alone**: `transform.claim_strength` reads the predicate's
+  nature together with the relation evidence type — `causal_supported` (functional validation, genetic
+  interaction, biochemical assay, localization imaging, pharmacological perturbation),
+  `causal_expression_supported`, `causal_statistical_only`, `causal_unverified`; R038 asks for a validation
+  method when a causal claim has statistical evidence only. Evidence never upgrades an association, and missing
+  evidence never downgrades the wording.
+- **The four relation classes the trial needed**: `qtn_associated_with_trait`, `gene_suppresses_gene` /
+  `gene_suppressed_by_gene` (active and passive kept apart), `gene_upstream_of_gene`,
+  `trait_controlled_by_gene`, `locus_affects_trait`, `locus_linked_to_locus`, `gene_absent_in_germplasm`, and
+  `colocalizes with` / `coincides with` for overlap. On the six trial papers relation coverage rose from 41.7%
+  to 69.4%.
+- **Entities and validation state**: `common.qtn_names` keeps QTN apart from QTL and candidate genes;
+  `agent.validated_by_record_ids` links the validation experiment the paper reports and
+  `transform.validation_status` turns that into `candidate` / `experiment_reported`, with association and
+  validation evidence kept side by side.
+- **Review paraphrase**: `transform.evidence_origin` marks `review_report`, `agent.reported_citation_text`
+  keeps the lead the review prints, and R040 asks for it.
+- **The dashboard explains its own numbers**: the run header shows 候选 → 生成 → 接收 / 拒收 / 待审 with the
+  definitions, and the paper badge separates pending records from structural hints.
+- **The display contract lives in the repository**: `docs/presentation.md` requires every list view to show the
+  entity beside its type, the validation status as its own column, the author's qualifier verbatim and the claim
+  strength; `bdc check` enforces it through `check_presentation`, so deleting one of those columns fails CI. The
+  dashboard's record table therefore has 实体 / 验证 / 限定语 / 结论强度 columns, and the relations table types
+  both ends.
+- **The regression is re-runnable**: `scripts/acceptance_report.py` runs the same papers with the main text and
+  with the supplements, on 3.6.0 and 3.8.0, and writes every review-queue item and verdict to
+  [`docs/acceptance_3.8.0.md`](docs/acceptance_3.8.0.md); `tests/test_acceptance.py` asserts the same matrix and
+  `make acceptance` re-runs it (the human review-time column is left to the reviewer, the script does not time).
+
+3.7.0 records *why* a relation has no code, and writes the state of a source part as data (both provisional):
+
+- **The resolution is visible**: `transform.relation_resolution` (`coded` / `ambiguous` / `no_cue` / `negated`)
+  says why `predicate_code` has a value or not — a vocabulary gap (fix the vocabulary) and a tie between two
+  codes (register the entity mention) need different actions; `counts.relation.coverage` is the coverage read-out.
+  The nature is derived from `predicate_code` when no human `predicate_label` exists, so a fresh record carries
+  causal / associational itself. See [`docs/relation_semantics.md`](docs/relation_semantics.md).
+- **The cue lexicon covers four classes**: statistical correlation (`locus_correlated_with_trait`), interval
+  overlap and co-localisation (`locus_overlaps_locus`, structural), prediction and model comparison
+  (`model_predicts_trait`, never causal) and functional effects backed by intervention (`locus_increases_trait`
+  …); verb cues include the third person, the past tense and the passive, and the old `qtl_overlaps_qtl` is
+  deprecated with a replacement.
+- **Warnings are blocking or informational**: a rule may set `blocking: false` (R018, R036, R037). Such a warning
+  is counted, written to `qc_failure_codes` and shown, but does not by itself put the record in `pending_review`
+  — a value only the operator can supply, or one only a human can judge, cannot be cleared by the extraction.
+- **The counts say what they count**: `counts.system_records` (one asset manifest per input file), `counts.warnings`
+  (by code, by family, blocking versus informational) and `counts.relation`, with `count_definitions` in the
+  report; `pending_review` is a subset of the accepted records, not another bucket.
+- **Part states and the appendix**: `source_parts.parts[]` gives the state of every part (parsed, supplied
+  without a text layer, supplied but never cited, cited but not supplied), `--supplement FILE:appendix` makes the
+  appendix a part of its own, and the new `SOURCE_PART_NOT_PARSED` / `SOURCE_PART_UNREFERENCED` keep the two
+  "we cannot read it" cases apart. See [`docs/downstream.md`](docs/downstream.md).
 
 Three things were added in 3.5.0 for the agent that plans research (Topic 2); all are provisional:
 
@@ -125,10 +179,10 @@ languages and downloads the SVG. Run `make diagram` to regenerate both README im
 | `examples/` | Two synthetic papers (one in two files), curated records, pipeline output (also for the paper without its supplement), a verification pass, derived views, importer output, invalid cases |
 | `tests/` | pytest suite (catalog fidelity, releases, validation, pipeline, Skill sync, importers, bundles, functions, evidence chain, downstream hooks, workflow, verification, source parts, site) |
 
-## 🔬 Contract at a glance (3.6.0)
+## 🔬 Contract at a glance (3.8.0)
 
-- 414 fields in five groups: `common` 179, `agent` 62, `skills` 53, `transform` 52, `omics` 68.
-  The 259 v3.0.0 fields are `verified` and verbatim; the 155 fields added since are `provisional`.
+- 421 fields in five groups: `common` 180, `agent` 64, `skills` 53, `transform` 56, `omics` 68.
+  The 259 v3.0.0 fields are `verified` and verbatim; the 162 fields added since are `provisional`.
 - **Multi-select functional tags**: Research Content 1, Research Content 2, future iteration, and general-purpose fields.
 - Every key states **what it does** (`key_role`, 25 roles with their projection into graph, tables, triples and
   QA/corpora) and **which function it serves** (`serves`): Topic 2 agent, Topic 3 skills, derivation into
@@ -179,8 +233,9 @@ written as records), `paper.manifest.json` (contract identity, input hash, backe
 cites but that were not supplied). Other backends: `--candidates file.json`, `--backend mock`,
 `--backend module:callable`.
 
-A paper in several files is one run: add `--supplement paper_supplement.pdf` (repeatable). Evidence then names
-its part, and each file gets its own asset record.
+A paper in several files is one run: add `--supplement paper_supplement.pdf` (repeatable); an appendix is
+labelled with `--supplement appendix.pdf:appendix`. Evidence then names its part, and each file gets its own
+asset record.
 
 To make the Skill available to Claude Code in this repository, `.claude/skills/pdf2jsonl` links to
 `skills/pdf2jsonl`; for a user-level install, symlink `~/.claude/skills/pdf2jsonl` to the same directory.
@@ -192,7 +247,7 @@ from breeding_contract import resolve_schema, load_profile, load_field_catalog, 
 
 rc = resolve_schema("latest")                  # or "3.0.0", or "dev" (unreleased working tree)
 profile = load_profile("pdf_extraction", "latest")
-catalog = load_field_catalog("3.6.0")
+catalog = load_field_catalog("3.8.0")
 result = validate_record(record)               # validates against the version the record declares
 result.valid, [i.to_dict() for i in result.errors]
 ```

@@ -25,9 +25,10 @@ Launcher: `scripts/pdf2jsonl` in this skill directory. It works through a symlin
    `candidate.schema.json` and `request.json`. The request pins the resolved version.
    For scanned PDFs, pass an OCR/MinerU text layer with `--text-layer paper.pages.jsonl`.
    When the paper comes in several files (supplementary materials, an appendix), give every further file with
-   `--supplement FILE` in the same command. They are parts of one source: `pages.txt` then marks the pages of
-   each part, and evidence from a supplement names its part as the brief describes. Never run a supplement as
-   a paper of its own, and never cite a part that was not given.
+   `--supplement FILE` in the same command; label an appendix (附录, author appendix) as
+   `--supplement FILE:appendix` so its records carry `source_part: appendix`. They are parts of one source:
+   `pages.txt` then marks the pages of each part, and evidence from a supplement names its part as the brief
+   describes. Never run a supplement as a paper of its own, and never cite a part that was not given.
 3. **Extract.** Read `brief.md` completely, then `pages.txt`, page by page. Write
    `out/paper.work/candidates.json` exactly as the brief and `candidate.schema.json` describe. Long papers can
    be done in page batches that are appended to the same `candidates` array.
@@ -44,6 +45,11 @@ Launcher: `scripts/pdf2jsonl` in this skill directory. It works through a symlin
    experiment to the hypothesis it was run to test, a statement to the question it answers, a step to the
    earlier step whose output it uses. Record a hypothesis only when the authors state one. Order of
    presentation is not a dependency.
+   When the paper reports an experiment that validates a conclusion (complementation, transgenics, gene
+   editing, expression, enzyme assay, interaction), link it from the conclusion with `links.validated_by`; the
+   record then reads `experiment_reported` instead of `candidate`, and the association record keeps its own
+   evidence. For a review, put the original-study lead the text prints into the field the brief lists for it —
+   a review's paraphrase is marked `review_report` and must not look like its own experiment.
 4. **Finalize.** Run the same command as in step 2 again (or `scripts/pdf2jsonl finalize out/paper.work`).
    The pipeline then:
    - verifies every quote against the PDF text;
@@ -72,14 +78,24 @@ Launcher: `scripts/pdf2jsonl` in this skill directory. It works through a symlin
      `pages.txt`.
    - `SOURCE_PART_UNAVAILABLE` and `source_parts.missing`: the text cites a part of the paper that was not
      supplied. Do not fill anything in for it. Tell the user which part is missing; when they provide it, run
-     again with `--supplement`.
+     again with `--supplement` (or `--supplement FILE:appendix` for an appendix).
+   - `SOURCE_PART_NOT_PARSED` and `source_parts.parts[]` state `supplied_no_text`: the file is there but has no
+     text layer to search. Ask for an OCR/MinerU text layer (`--text-layer` for the main text; a supplement needs
+     its own text, not a reconstruction of its content).
+   - A warning marked `blocking: false` (`R018` asset URI, `R036`/`R037` relation evidence) is informational: it
+     does not put the record in `pending_review`. Do not try to satisfy it by inventing a value.
    Never "fix" a record by inventing content.
 6. **Report** to the user:
    - the resolved contract version and profile;
-   - records accepted / rejected / pending review;
+   - records accepted / rejected / pending review, with the count definitions: `records = candidates − rejected
+     + system_records` (one asset manifest per input file), and `pending_review` is a subset of the accepted
+     records, not a second bucket (`counts.count_definitions` repeats this);
+   - the relation summary (`counts.relation`): statements, `coded` / `ambiguous` / `no_cue` / `negated`, and
+     `coverage` — and, for the non-`coded` ones, whether the fix is a vocabulary gap or an entity mention to
+     register;
    - the evidence-chain summary (statements, unresolved links, audit flags);
    - the workflow summary (stages, link types, flags such as an untested hypothesis);
-   - whether the source is complete, and which cited parts were not supplied;
+   - whether the source is complete, which cited parts were not supplied, and the state of each supplied part;
    - the output paths;
    - any ambiguity you left unresolved.
 

@@ -3,20 +3,20 @@
   "input": "synthetic_rice_heat.verified.jsonl",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.6.0",
+    "schema_version": "3.8.0",
     "release_status": "released",
-    "requested": "3.6.0",
-    "release_sha256": "e51608a630182e973ea0b0607b833c3bd8bc8d173be1fbb947e962ee7ac9d906",
-    "source_digest": "e3c5edb64a249ab758fdb9c5314ae6a0931b438dcc13a3bc7cfbd9d3d1058215"
+    "requested": "3.8.0",
+    "release_sha256": "779b53b57bca86b4ece948812401a352083a84a8c2284f0dfe17ee1a03096a56",
+    "source_digest": "52535de45905d2f7ce02b62ec79e3ae9c5ce75dcafd73d3e945f3f11b722c606"
   },
   "counts": {
     "table:records": 21,
     "table:sources": 1,
     "table:record_entities": 41,
     "table:record_links": 22,
-    "table:record_values": 12,
+    "table:record_values": 17,
     "table:statements": 4,
-    "triples": 704,
+    "triples": 711,
     "graph_nodes": 32,
     "graph_edges": 88,
     "statements": 4,
@@ -29,23 +29,23 @@
   "lineage": {
     "derived_from": {
       "file": "synthetic_rice_heat.verified.jsonl",
-      "sha256": "8955ac191358aa6dbb27ed97f6a337d171ef94895ba946bcf5778dec69ea310d",
+      "sha256": "5f84225735ab25614dddce134c02191262901be0811d98bbc2410326c37f2e8e",
       "records": 21,
       "source_ids": [
         "doi:10.0000/synthetic.2026.002"
       ]
     },
     "outputs": {
-      "synthetic_rice_heat.verified.tables/records.csv": "00fdf77c0bf6b0394a6a8442d835c413dbab0d8bf600ab90eeddef8ac38bcd29",
+      "synthetic_rice_heat.verified.tables/records.csv": "2bda2126fd2349178e362bcfbf87eb2234505ebf8efb3195b481b1b76544bdae",
       "synthetic_rice_heat.verified.tables/sources.csv": "bbe1abff25218c7ac9d6b2540aabb91ac8bf12ac9557e220ab2ea365b213e54e",
       "synthetic_rice_heat.verified.tables/record_entities.csv": "b8f8ff0b12b1620f3b2bbb185a195ae2d06c65356f867a6641920c562befb17d",
       "synthetic_rice_heat.verified.tables/record_links.csv": "4bf5636b80951d19db7a19a0275811d3c8c44051f3ea4701f206ca4c3aa3425c",
-      "synthetic_rice_heat.verified.tables/record_values.csv": "b9b5793cabb40c51c1a91e4d42e0de98154e5063cc22f07b2cb1eb8d78f73e67",
-      "synthetic_rice_heat.verified.tables/statements.csv": "752fda9355ec08a1a637b7d11581e9efcaf39ebd2ab5ebe7c1fba5aed26ee6ea",
-      "synthetic_rice_heat.verified.triples.jsonl": "0726e009092a10cbd82a564704af339b123109971f5a0af7fe3e8feaee9333b1",
-      "synthetic_rice_heat.verified.graph.json": "3b0c52b98f884b76335ccc80753e91a3b8504dfb783bc242bdb3684ca54e4f36",
-      "synthetic_rice_heat.verified.corpus.jsonl": "9c3ef45567e5d3541b96c660dbb5110fb7df5553776ae57db0837be88bfcdc0e",
-      "synthetic_rice_heat.verified.qa.jsonl": "685e4a2a15c7da90ddd07d7ad029d3624b151f13e8e4e887fe8fb76cfedfe796",
+      "synthetic_rice_heat.verified.tables/record_values.csv": "f7fafe8719602c9d6ee2c65e81f38f538641af3957aac7e7278673a449421efb",
+      "synthetic_rice_heat.verified.tables/statements.csv": "0df8076f70b658777263fc4d6975110b3ac0dfe91b978ee0092da099e2821e32",
+      "synthetic_rice_heat.verified.triples.jsonl": "0d2c12472baa3ccd60bc51d5c58a77245e8bc9b4ae342b4180917637a9dd0cec",
+      "synthetic_rice_heat.verified.graph.json": "79344d7cbe135065467595383f993a2823454695708cb50bcdc4872bc19f0ee8",
+      "synthetic_rice_heat.verified.corpus.jsonl": "9f87c296346fbf5ec5f4d21c1a085cf972d0085790b017d60afec90751af9d6e",
+      "synthetic_rice_heat.verified.qa.jsonl": "464a34fa78620f4b9d3c22833901ca69930fdc2f505ab2e66b63e9f63989541a",
       "synthetic_rice_heat.verified.workflow.json": "d9fe1820b978265bbdb0d772f6cf2cc77572fe0ed1490245c3b10101e7752dd6"
     }
   }

@@ -12,6 +12,143 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and versions
 
 Each heading `## [X.Y.Z] - YYYY-MM-DD` provides the release date that `bdc release` records.
 
+## [3.8.0] - 2026-10-27
+
+A trial of 3.7.0 on six real papers (236 records) left three gaps that the data itself exposed. The relation
+layer named the nature of a relation but never said *what makes the causal claim hold*: `causal` was still
+decided by the verb alone, and 16 of 36 statements had no code at all (41.7% coverage) because real papers say
+"suppressed", "is upstream of", "co-localizes with", "is mainly controlled by". A candidate gene and a validated
+one looked the same, QTN statements had to be filed under QTL names, and a review's paraphrase sat in the same
+table as a primary experiment. The same trial also showed that "the file is there but the table it cites is not"
+had no state of its own.
+
+This release makes each of those a field, a rule or a visible badge — and keeps the line the contract already
+draws: the pipeline never upgrades a wording into evidence.
+
+### Added
+- **`transform.claim_strength`** (N, vocabulary `claim_strength`): reads the predicate's nature together with
+  the relation evidence type — `causal_supported` (functional validation, genetic interaction, biochemical
+  assay, localization imaging, pharmacological perturbation), `causal_expression_supported`,
+  `causal_statistical_only`, `causal_unverified`, plus `associational` / `structural` / `descriptive`. A causal
+  wording is never settled by the verb alone, and never silently downgraded either (AMB-046).
+- **`common.qtn_names`** (D, entity mention, entity type `qtn`): QTN, QTL and candidate gene are three entities
+  and are recorded separately; a candidate gene is not renamed a QTN (AMB-045).
+- **`agent.validated_by_record_ids`** (N, record link, workflow edge `validated_by`) and the profile link type:
+  the records of the validation experiment the paper reports, linked from the conclusion. Association and
+  validation keep their own evidence; neither replaces the other.
+- **`transform.validation_status`** (N, vocabulary `validation_status`: `candidate` / `experiment_reported`):
+  derived from that link only, for claims, analysis results and relational records.
+- **`transform.evidence_origin`** (N, vocabulary `evidence_origin`) and **`agent.reported_citation_text`** (D):
+  a review's records are marked `review_report` and keep the original-study lead the text prints (AMB-047).
+- **`transform.cited_source_items`** (N): the supplementary figures/tables a record's own quote cites, detected
+  with the same literal rules as source completeness, so a record is tied to the part of the paper outside the
+  main text instead of leaving the item only inside prose.
+- **Rules R038–R040** (warning, inferred, non-blocking): a causal claim whose only evidence type is statistical
+  mapping should name a validation method; a gene marked `functional_validated` should carry a validation
+  record; a `review_report` record should carry its citation text.
+- **Eight `predicate_label` codes for the classes the trial hit**: `qtn_associated_with_trait`,
+  `gene_suppresses_gene`, `gene_suppressed_by_gene` (active and passive kept apart), `gene_upstream_of_gene`,
+  `trait_controlled_by_gene`, `locus_affects_trait`, `locus_linked_to_locus`, `gene_absent_in_germplasm`.
+- Ambiguities **AMB-045** (entity and validation status), **AMB-046** (nature vs evidence), **AMB-047**
+  (review paraphrase).
+
+### Changed
+- **Cues for the phrasings real papers use**: `locus_overlaps_locus` gains `colocalizes with`, `colocalize
+  with`, `coincides with`, `coincide with`; the correlation codes gain `correlation between` and
+  `correlation was observed between`; `locus_correlated_with_trait`, `locus_overlaps_locus` and
+  `model_predicts_trait` accept a `qtn` end. Direction is never guessed: an active cue is not reused for the
+  passive code (`suppressed` vs `suppressed by`), and `affects` stays with the environment code so the two do
+  not tie on an untyped subject.
+- **The paper dashboard explains its numbers**: a run's detail header shows 候选 → 生成（含系统记录）→ 接收 /
+  拒收 / 待审 with the `count_definitions`, the paper badge separates pending records from structural hints,
+  and records carry badges for validation status, claim strength and review paraphrase; a supplied part whose
+  cited items were not found gets its own state.
+- **`docs/presentation.md` is a display contract, checked by `bdc check`** (`check_presentation`): a record list
+  must show every entity mention with its type (QTN / QTL / 基因 / 标记 / 性状 …), the validation status as a
+  column of its own (候选 / 已提供验证实验), the author's qualifier verbatim, and the claim strength beside the
+  nature. The dashboard's record table now has 实体 / 验证 / 限定语 / 结论强度 columns and the relations table
+  types both ends; removing one of them fails CI, so the rule lives in the repository rather than in a habit.
+- **`pdf2jsonl` 0.6.0**: the three new fill rules, the `validated_by` link type, and the review/validation
+  guidance in the brief.
+- `source_parts` gains `supplied_items_not_found` — the file is supplied but a cited item cannot be located in
+  it — with the run-level notice `SOURCE_PART_ITEM_NOT_FOUND`, distinct from "not supplied" and "no text".
+- `docs/relation_semantics.md`, `docs/downstream.md`, `docs/review.md` and `docs/versioning.md` describe the new
+  layers; the READMEs gain the 3.8.0 section.
+
+## [3.7.0] - 2026-10-27
+
+A trial round of feedback on 3.6.0 showed three problems that no single field could fix. First, a relation the
+pipeline could not code was indistinguishable from one it would not code: "was significantly correlated with",
+"increased", "conferred / mediated" and "co-located with" all came back as 未判定 with no reason, and the reason
+itself — a vocabulary gap versus two codes of equal cue length that only the entity types could separate —
+decides whether the reviewer fixes the vocabulary or registers the entity mention. Second, the causal /
+associational nature reached only the derived views: `transform.relation_nature` is derived from the curated
+`predicate_label`, which a fresh extraction never has, so R036/R037 could not fire on extracted records at all.
+Third, nobody could reconcile the counts: one round reported 8 candidates and 13 records for five papers, and
+2624 accepted records with 450 "pending" beside them, because the records the pipeline writes itself (one asset
+manifest per input file) and the fact that `pending_review` is a subset of the accepted records were both
+invisible. The same round asked for the states of a citable part ("not supplied", "not cited", "supplied but
+not parsed") and for the appendix to be a part of its own instead of a second supplement.
+
+### Added
+- **`transform.relation_resolution`** (N, vocabulary `relation_resolution`: `coded` / `ambiguous` / `no_cue` /
+  `negated`): why a record has or has no `predicate_code`, so "未判定" becomes actionable and countable
+  (AMB-043). `ambiguous` is the case a reviewer clears by registering the entity mention, `no_cue` the case that
+  needs the vocabulary. `relations.predicate_match` returns the code and the reason; `predicate_code` keeps its
+  signature.
+- **`predicate_label` codes for the classes the trial needed** (AMB-043): `locus_correlated_with_trait`
+  (a gene/QTL/marker correlated with a trait, nature `associational`), `locus_overlaps_locus` (interval overlap
+  or co-localisation, nature `structural`), `model_predicts_trait` (prediction and model comparison, nature
+  `associational`, never causal).
+- **`--supplement FILE:appendix`** and the part labels `appendix`, `appendix_2` … (`pdf_parse.PART_KINDS`): the
+  vocabulary already carried `source_part: appendix`, but no run could produce it (AMB-044).
+- **`source_parts.parts[]`**: one entry per part kind with its state — `supplied_parsed`, `supplied_no_text`,
+  `supplied_not_referenced`, `referenced_not_supplied`, `in_main_pages`, `not_referenced` — with files, pages,
+  text pages and characters; run-level `source_parts.warnings` carry `SOURCE_PART_NOT_PARSED` and
+  `SOURCE_PART_UNREFERENCED` (AMB-044).
+- **`SOURCE_PART_NOT_PARSED`**: a record citing an item of a supplied part without a text layer gets this code
+  instead of `SOURCE_PART_UNAVAILABLE`, because the remedy is a text layer (`--text-layer`), not the file.
+- **Counts that say what they count**: `counts.system_records`, `counts.model_records`, `counts.warnings`
+  (by code and by family) and `counts.relation` (statements, resolution breakdown, `coverage`), plus the report's
+  `count_definitions`; the manifest repeats the part states (AMB-043).
+- Ambiguities **AMB-043** (relation resolution) and **AMB-044** (part states and the appendix).
+
+### Changed
+- **`transform.relation_nature` reads `predicate_code` when the record has no reviewed `predicate_label`.** The
+  nature is the same contract data either way, so a fresh extraction carries causal/associational/structural
+  instead of nothing and R036/R037 finally see extracted records (AMB-042, AMB-043); the curated label still
+  wins when it is there.
+- **A rule can be non-blocking** (`rules[].blocking`, default true): its warning is reported, counted and listed
+  in `common.qc_failure_codes`, but does not by itself put the record in `pending_review`. R018 (a missing
+  `common.asset_uri`, which only the operator can supply), R036 and R037 are marked non-blocking — every run used
+  to end with one pending asset record that no action could clear, and a rule the extraction cannot satisfy only
+  teaches reviewers to ignore the queue.
+- **`predicate_label` cues cover the inflected forms** of the verbs they name (`increased`, `increases`,
+  `conferred`, `mediated`, `harboring`, `co-localized`, …). A cue is still a literal phrase; the vocabulary notes
+  now state the rule: give the third person, the past tense and the passive where a paper may use them.
+- **`qtl_overlaps_qtl` is deprecated** (`status: deprecated`, `replaced_by: locus_overlaps_locus`,
+  `deprecated_in: 3.7.0`) and carries no cues any more: positional overlap is structural, and a code whose nature
+  says `associational` cannot be fixed in place without changing the meaning of existing records. A record that
+  still uses it gets `VOCAB_CODE_DEPRECATED` (new warning code) naming the replacement.
+- **Missing parts are judged per part** (AMB-044): a supplied supplement no longer suppresses a missing appendix.
+  Item labels remain one pool for all further files, so a quoted "Fig. S2" is reported only when no further file
+  was supplied, or when the supplied file has no text.
+- **The dashboard compares a re-run with the run before it** when the two were given different parts: records
+  added or removed, warning codes that disappeared or appeared, and the review counts on both sides — so "we added
+  the appendix and these SOURCE_PART_UNAVAILABLE warnings went away" is visible without diffing files
+  (AMB-044). The page also lists the state of every supplied part, and no longer claims that every warning
+  drops a record to review.
+- **Vocabulary values can be deprecated** (`status`, `replaced_by`, `deprecated_in` in the vocabulary format);
+  the validator warns on a deprecated code, and `bdc check` docs list it.
+- **`transform.relation_nature` no longer carries `argument_role: warrant`.** Filling the field on every
+  relational statement would otherwise satisfy the evidence-chain audit's `NO_WARRANT` flag with a derived
+  label and no statistical basis: the nature says what the predicate asserts, not what grounds it (AMB-043).
+- **`pdf2jsonl` 0.5.0**: `--supplement FILE:appendix`, part states in the report and manifest
+  (`input.supplements[].kind`, `source_parts.parts`), `relation_resolution`, blocking-aware review status and the
+  extended counts.
+- `docs/relation_semantics.md`, `docs/downstream.md`, `docs/review.md` and `docs/versioning.md` describe the new
+  fields and the count definitions; the dashboard's 填写规则 family text no longer claims rules stop at R035.
+
 ## [3.6.0] - 2026-10-19
 
 The contract states relations as subject–predicate–object, but said nothing about *what the predicate asserts*.

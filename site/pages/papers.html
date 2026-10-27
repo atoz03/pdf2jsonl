@@ -206,7 +206,8 @@ const { T, esc, icon, fmt, DATA, $, $$, clip, kindTag, kindLabel, reviewTag, sum
 const PAPERS = DATA.papers || [], SUM = DATA.summary || {}, FIELDS = DATA.fields || {};
 
 // ---------------------------------------------------------------- labels
-const STATUS = { complete: ["已完成", "Complete", "ok"], review: ["已完成 · 待复核", "Done · needs review", "amber"], problem: ["输出异常", "Output problem", "clay"],
+const STATUS = { complete: ["已完成", "Complete", "ok"], review: ["已完成 · 有待审记录", "Done · records pending review", "amber"],
+  hints: ["已完成 · 有结构提示", "Done · structural hints", ""], problem: ["输出异常", "Output problem", "clay"],
   prepared: ["等待抽取 / 完成", "Prepared, awaiting extraction", ""], unprocessed: ["待处理", "Not processed", ""] };
 const FILTERS = [["all", "全部", "All"], ["processed", "已处理", "Processed"], ["review", "有复核事项", "Needs review"], ["unprocessed", "尚未处理", "Not processed"], ["prepared", "待模型抽取", "Awaiting extraction"], ["problem", "输出异常", "Output problem"]];
 const FAM = {
@@ -261,7 +262,8 @@ const run = () => { const p = paper(); return p && (p.runs.find(r => r.id === st
 const recordFor = id => (run()?.records || []).find(r => r.common?.record_id === id);
 const warnIndex = r => r._w || (r._w = (r.warnings || []).reduce((m, w) => { if (w.record_id) (m[w.record_id] ||= []).push(w); return m; }, {}));
 const familyOf = code => Object.keys(WARN_PREFIX).find(k => WARN_PREFIX[k].some(p => String(code || "").startsWith(p))) || "other";
-const runStatus = r => !r.integrity_ok ? "problem" : r.counts.rejected || r.counts.pending || r.counts.audit_flags ? "review" : "complete";
+const runStatus = r => !r.integrity_ok ? "problem" : r.counts.rejected || r.counts.pending ? "review"
+  : (r.counts.audit_flags || r.counts.workflow_flags) ? "hints" : "complete";
 function setHash() {
   const r = run(), p = paper();
   K.setHash({ paper: st.paper, run: p && r && r.id !== p.runs[0]?.id ? r.id : "", tab: st.tab !== "records" ? st.tab : "" });
@@ -318,6 +320,21 @@ function listHTML() {
 }
 
 // ---------------------------------------------------------------- the paper
+// 3.8.0: the five numbers a paper's dashboard has to explain, with the definitions behind them (AMB-044).
+function countsStrip(r) {
+  const c = (r.validation || {}).counts; if (!c) return "";
+  const defs = (r.validation || {}).count_definitions || {};
+  const pending = (c.by_review_status || {}).pending_review || 0;
+  const generated = (c.records || 0) + (c.rejected || 0);
+  const tag = (zh, en, v, tone) => `<span class="tag ${tone || ""}">${esc(T(zh, en))} ${esc(fmt(v))}</span>`;
+  const def = k => defs[k] ? `<li><code>${esc(k)}</code> — ${esc(defs[k])}</li>` : "";
+  return `<div class="chips cstrip">${tag("候选", "candidates", c.candidates)}${tag("生成记录", "records generated", generated)}
+      ${tag("接收", "accepted", c.records)}${tag("拒收", "rejected", c.rejected, c.rejected ? "clay" : "")}${tag("待审", "pending review", pending, pending ? "amber" : "")}
+      <span class="xs muted">${T("系统记录", "system records")} ${esc(fmt(c.system_records))}</span>
+      <details class="cdefs"><summary>${T("这些数字怎么算", "how these are counted")}</summary><ul>${def("candidates")}${def("records")}${def("rejected")}${def("by_review_status")}${def("warnings.blocking")}${def("warnings.informational")}${def("relation.coverage")}</ul>
+        <p class="xs muted">${T("生成记录 = 候选 − 拒收 + 系统记录；待审是接收记录的子集，不是另一类记录。", "records generated = candidates − rejected + system records; pending review is a subset of the accepted records, not another bucket.")}</p></details></div>`;
+}
+
 function detailHTML() {
   const p = paper();
   if (!p) return `<div class="tb">${empty(PAPERS.length ? T("未找到匹配论文", "No paper matches") : T("还没有论文", "No papers yet"), T("将 PDF 放入仓库，运行 make dashboard 后即可在这里查看。", "Put a PDF into the repository and run make dashboard to see it here."), "library")}</div>`;
@@ -332,6 +349,7 @@ function detailHTML() {
       <div class="row"><span class="tag brand">${icon("file")}${T("PDF 文献", "PDF paper")}</span>${p.synthetic ? `<span class="tag gold">${T("合成测试样本", "synthetic test paper")}</span>` : ""}<span class="tag dot ${s[2]}">${esc(T(s[0], s[1]))}</span></div>
       <h2>${esc(p.title)}</h2>
       <div class="dh-meta"><span>${icon("file")}${p.page_count || "—"} ${T("页", "pages")}</span>${p.year ? `<span>${icon("clock")}${p.year}</span>` : ""}${p.crop ? `<span>${icon("leaf")}${esc(p.crop)}</span>` : ""}${p.doi ? `<span class="mono xs">DOI ${esc(p.doi)}</span>` : ""}<span class="mono xs">${esc(p.filename)}</span></div>
+      ${r ? countsStrip(r) : ""}
       <div class="dh-act">
         ${p.pdf_url ? `<a class="btn sm" href="${esc(p.pdf_url)}" target="_blank" rel="noopener">${icon("external")}${T("查看 PDF", "Open the PDF")}</a>` : `<span class="xs muted">${T("原 PDF 未收录", "The PDF is not included")}</span>`}
         ${(p.supplements || []).filter(x => x.pdf_url).map(x => `<a class="btn sm" href="${esc(x.pdf_url)}" target="_blank" rel="noopener">${icon("external")}${esc(partName(x.part))}</a>`).join("")}
@@ -375,6 +393,99 @@ function recordsBarHTML(r) {
     <input class="input" type="search" data-f="q" value="${esc(st.q)}" placeholder="${T("搜索记录内容", "Search the records")}" aria-label="${T("搜索记录内容", "Search the records")}">
     <span class="note">${T("点击记录，查看字段含义与证据", "Click a record for its fields and evidence")}</span></div>`;
 }
+// 3.8.0: what a record says about its own grounding — declared candidate vs linked validation experiment, the
+// claim strength (nature × evidence type) and whether a review is paraphrasing someone else (AMB-045..047).
+const CLAIM_BADGE = {
+  causal_supported: ["因果·有干预证据", "causal, intervention evidence", "brand"],
+  causal_expression_supported: ["因果·仅表达支持", "causal, expression support", "info"],
+  causal_statistical_only: ["因果·仅统计定位", "causal, statistical only", "gold"],
+  causal_unverified: ["因果·未给依据", "causal, no evidence type", "amber"],
+  associational: ["相关", "associational", ""], structural: ["结构", "structural", "info"], descriptive: ["描述", "descriptive", ""] };
+const ENTITY_LABEL = { gene: ["基因", "gene"], qtl: ["QTL", "QTL"], qtn: ["QTN", "QTN"], trait: ["性状", "trait"],
+  marker: ["标记", "marker"], marker_genes: ["标记基因", "marker gene"], germplasm: ["种质", "germplasm"],
+  variety: ["品种", "variety"], population: ["群体", "population"], parent: ["亲本", "parent"],
+  species: ["物种", "species"], crop: ["作物", "crop"], feature: ["特征", "feature"],
+  software: ["软件", "software"], sample: ["样本", "sample"] };
+const ENTITY_FIELDS = { qtn_names: "qtn", qtl_names: "qtl", gene_names: "gene", trait_names: "trait",
+  marker_names: "marker", marker_genes: "marker_genes", germplasm_names: "germplasm", variety_names: "variety",
+  parent_names: "parent", population_name: "population", species_name: "species" };
+const entityLabel = type => (ENTITY_LABEL[type] ? T(...ENTITY_LABEL[type]) : type);
+// Every entity mention is shown with the type the field gives it: a QTN, a QTL and a candidate gene must never
+// look alike (docs/presentation.md).
+function entityList(x) {
+  const c = x.common || {}, t = x.transform || {}, seen = new Set(), out = [];
+  const push = (mention, type) => {
+    const key = `${mention}|${type}`;
+    if (!mention || seen.has(key)) return;
+    seen.add(key);
+    out.push({ mention, type });
+  };
+  for (const m of t.entity_links || []) if (m.mention && m.entity_type) push(m.mention, m.entity_type);
+  for (const [field, type] of Object.entries(ENTITY_FIELDS)) {
+    const v = c[field];
+    for (const item of (Array.isArray(v) ? v : (v ? [v] : []))) push(String(item), type);
+  }
+  return out;
+}
+function entityCell(x) {
+  const ents = entityList(x);
+  if (!ents.length) return `<span class="muted">—</span>`;
+  const shown = ents.slice(0, 6).map(e => `<span class="tag ent"><b>${esc(e.mention)}</b> <i>${esc(entityLabel(e.type))}</i></span>`);
+  if (ents.length > 6) shown.push(`<span class="xs muted">+${ents.length - 6}</span>`);
+  return shown.join(" ");
+}
+function validationCell(x) {
+  const b = VALID_BADGE[(x.transform || {}).validation_status];
+  return b ? `<span class="tag ${b[2]}">${esc(T(b[0], b[1]))}</span>` : `<span class="muted">—</span>`;
+}
+// The authors' own hedge, verbatim, in the list — not something to find in a dialog (docs/presentation.md).
+function qualifierCell(x) {
+  const a = x.agent || {}, t = x.transform || {}, out = [];
+  if (a.claim_qualifier_text) out.push(`<span class="q">“${esc(clip(a.claim_qualifier_text, 60))}”</span>`);
+  if (t.relation_assertion_mode === "hedged") out.push(`<span class="tag amber">${esc(T("限定表述", "hedged"))}</span>`);
+  return out.length ? out.join(" ") : `<span class="muted">—</span>`;
+}
+function strengthCell(x) {
+  const b = CLAIM_BADGE[(x.transform || {}).claim_strength];
+  return b ? `<span class="tag ${b[2]}">${esc(T(b[0], b[1]))}</span>` : `<span class="muted">—</span>`;
+}
+// A statement end carries its entity type too, so "QTN / QTL / 基因" is visible in the relations table.
+function typedMention(mention, recordId) {
+  if (!mention) return "—";
+  const links = ((recordFor(recordId) || {}).transform || {}).entity_links || [];
+  const hit = links.find(m => m.mention === mention && m.entity_type);
+  return hit ? `<b>${esc(mention)}</b> <i class="ety">${esc(entityLabel(hit.entity_type))}</i>` : `<b>${esc(mention)}</b>`;
+}
+
+
+const VALID_BADGE = { candidate: ["候选", "candidate", ""], experiment_reported: ["已提供验证实验", "validation experiment linked", "brand"] };
+
+// The claim strength of the record behind a statement: nature × evidence type, never the verb alone.
+function strengthOf(s) {
+  const t = (recordFor(s.record_id) || {}).transform || {};
+  const b = CLAIM_BADGE[t.claim_strength];
+  return b ? `<span class="tag ${b[2]}">${esc(T(b[0], b[1]))}</span>` : `<span class="muted">—</span>`;
+}
+// One line above the relations table: how the causal statements are distributed over evidence levels.
+function strengthSummary(r) {
+  const stmts = statements(r);
+  if (!stmts.length) return "";
+  const counts = {};
+  for (const s of stmts) {
+    const v = ((recordFor(s.record_id) || {}).transform || {}).claim_strength;
+    if (v) counts[v] = (counts[v] || 0) + 1;
+  }
+  const keys = Object.keys(counts);
+  if (!keys.length) return "";
+  const label = k => (CLAIM_BADGE[k] ? T(CLAIM_BADGE[k][0], CLAIM_BADGE[k][1]) : k);
+  const causal = keys.filter(k => k.startsWith("causal"));
+  const total = causal.reduce((n, k) => n + counts[k], 0);
+  const detail = causal.map(k => `${label(k)} ${counts[k]}`).join(" · ");
+  const others = keys.filter(k => !k.startsWith("causal")).map(k => `${label(k)} ${counts[k]}`).join(" · ");
+  return `<p class="xs" style="margin:0 0 14px"><b>${T("结论强度", "Claim strength")}</b>：${T(`因果 ${total}`, `causal ${total}`)}${detail ? `（${detail}）` : ""}${others ? ` · ${others}` : ""}
+      <span class="muted">${T("——因果措辞按证据类型分档；未给依据不等于已证实。", "— a causal wording is graded by its evidence type; no evidence type is not a proof.")}</span></p>`;
+}
+
 function renderRecordTable() {
   const r = run(), host = $("#rec-table"); if (!host || !r) return;
   const q = st.q.trim().toLowerCase();
@@ -384,11 +495,15 @@ function renderRecordTable() {
   if (!rows.length) { host.innerHTML = empty(T("没有匹配的记录", "No matching record"), T("换一个记录类型、复核状态或搜索词。", "Try another kind, review status or search."), "search"); return; }
   const wi = warnIndex(r);
   const { rows: page, foot } = paged("rec", rows, 8);
-  host.innerHTML = `<div class="table-wrap"><table class="tbl cards rtbl"><thead><tr><th>${T("类型", "Kind")}</th><th>${T("抽取内容", "What it says")}</th><th>${T("来源", "Source")}</th><th>${T("复核状态", "Review")}</th></tr></thead><tbody>
-    ${page.map(x => { const c = x.common || {}, ws = wi[c.record_id] || [];
+  host.innerHTML = `<div class="table-wrap"><table class="tbl cards rtbl"><thead><tr><th>${T("类型", "Kind")}</th><th>${T("抽取内容", "What it says")}</th><th>${T("实体", "Entity")}</th><th>${T("验证", "Validation")}</th><th>${T("限定语", "Qualifier")}</th><th>${T("结论强度", "Claim strength")}</th><th>${T("来源", "Source")}</th><th>${T("复核状态", "Review")}</th></tr></thead><tbody>
+    ${page.map(x => { const c = x.common || {}, ws = wi[c.record_id] || [], items = (x.transform || {}).cited_source_items || [];
       return `<tr><td>${kindTag(c.record_kind)}</td>
         <td data-l="${T("抽取内容", "What it says")}"><button type="button" class="rsum" data-rec="${esc(c.record_id)}">${esc(clip(summary(x), 160))}</button><div class="rid">${esc((c.record_id || "").slice(0, 24))}…</div></td>
-        <td data-l="${T("来源", "Source")}" class="nowrap">${c.source_page != null ? `<button type="button" class="pgl" data-ev="${esc(c.record_id)}" title="${T("定位到原文", "Show it on the page")}">p.${esc(c.source_page)}</button>` : `<span class="muted">—</span>`}${c.source_part && c.source_part !== "main_text" ? ` <span class="tag gold">${esc(partName(c.source_part.replace(/_text$/, "")))}</span>` : ""}</td>
+        <td data-l="${T("实体", "Entity")}">${entityCell(x)}</td>
+        <td data-l="${T("验证", "Validation")}">${validationCell(x)}</td>
+        <td data-l="${T("限定语", "Qualifier")}">${qualifierCell(x)}</td>
+        <td data-l="${T("结论强度", "Claim strength")}">${strengthCell(x)}</td>
+        <td data-l="${T("来源", "Source")}" class="nowrap">${c.source_page != null ? `<button type="button" class="pgl" data-ev="${esc(c.record_id)}" title="${T("定位到原文", "Show it on the page")}">p.${esc(c.source_page)}</button>` : `<span class="muted">—</span>`}${c.source_part && c.source_part !== "main_text" ? ` <span class="tag gold">${esc(partName(c.source_part.replace(/_text$/, "")))}</span>` : ""}${items.length ? ` <span class="tag" title="${T("引文引用的补充图表", "supplementary items the quote cites")}">${esc(items.join(" · "))}</span>` : ""}</td>
         <td data-l="${T("复核状态", "Review")}">${reviewTag(c.review_status) || `<span class="muted">${T("未标记", "unmarked")}</span>`}${ws.length ? `<br><button type="button" class="wbtn" data-rec="${esc(c.record_id)}" title="${esc(ws[0].message || ws[0].code)}">${icon("alert")}${T(`提示 ${ws.length}`, `${ws.length} warning${ws.length > 1 ? "s" : ""}`)}</button>` : ""}</td></tr>`; }).join("")}</tbody></table></div>${foot}`;
 }
 
@@ -400,6 +515,9 @@ function relationRows(r) {
 }
 function relationsHTML(r) {
   const all = statements(r);
+  const rel = (r.validation?.counts || {}).relation || null;
+  const REASON = { ambiguous: ["多码打平", "ambiguous"], no_cue: ["无线索词", "no cue"], negated: ["原文否定", "negated"] };
+  const reasonOf = s => REASON[recordFor(s.record_id)?.transform?.relation_resolution];
   if (!all.length) return empty(T("当前运行没有关系语句", "No statements in this run"), T("关系语句来自记录里的主语 / 谓语 / 宾语钩子；没有关系钩子的运行不会产生语句。", "Statements come from the subject / predicate / object hooks of the records; a run without them has none."), "graph");
   const by = all.reduce((m, s) => (m[natureOf(s)] = (m[natureOf(s)] || 0) + 1, m), {});
   const modes = all.reduce((m, s) => (s.relation_assertion_mode && (m[s.relation_assertion_mode] = (m[s.relation_assertion_mode] || 0) + 1), m), {});
@@ -408,15 +526,19 @@ function relationsHTML(r) {
   return `<div class="tiles">${kinds.map(k => tile(by[k], T(NATURE[k][0], NATURE[k][1]), k === "unknown" ? "" : NATURE[k][3])).join("")}</div>
     <div class="vbar" role="img" aria-label="${esc(kinds.map(k => `${by[k]} ${NATURE[k][1]}`).join(", "))}">${kinds.map(k => `<i style="flex:${by[k]};background:${NATURE[k][3]}" title="${by[k]} ${esc(T(NATURE[k][0], NATURE[k][1]))}"></i>`).join("")}</div>
     <p class="xs muted" style="margin:0 0 14px">${T("关系性质取自谓词词表中每个编码的 nature，由代码确定，不由抽取模型判断；谓词没有对应编码时记为“未知”。只有因果关系能直接指导实验。", "The nature comes from the nature of each code in the predicate vocabulary, assigned by code, never by the extraction model; a predicate with no code is unknown. Only a causal relation can directly guide an experiment.")}</p>
+    ${rel ? `<p class="xs muted" style="margin:0 0 14px">${T(`谓词判定：已编码 ${rel.coded} · 多码打平 ${rel.ambiguous} · 无线索词 ${rel.no_cue} · 原文否定 ${rel.negated}；覆盖率 ${rel.coverage == null ? "—" : Math.round(rel.coverage * 100) + "%"}。“打平”补登实体提及即可消除，“无线索词”属词表缺口。`,
+      `Predicate resolution: coded ${rel.coded} · ambiguous ${rel.ambiguous} · no cue ${rel.no_cue} · negated ${rel.negated}; coverage ${rel.coverage == null ? "—" : Math.round(rel.coverage * 100) + "%"}. Register the entity mention to clear a tie; add a cue to close a vocabulary gap.`)}</p>` : ""}
+    ${strengthSummary(r)}
     <div class="bar">
       ${sel("nature", T("关系性质", "Nature"), [["all", T("全部关系性质", "Any nature")], ...kinds.map(k => [k, `${T(NATURE[k][0], NATURE[k][1])} (${by[k]})`])], st.nature)}
       ${Object.keys(modes).length ? sel("assertion", T("表述方式", "Wording"), [["all", T("全部表述方式", "Any wording")], ...Object.entries(modes).map(([k, n]) => [k, `${ASSERTION[k] ? T(...ASSERTION[k]) : k} (${n})`])], st.assertion) : ""}
       <button type="button" class="btn sm" data-relcsv>${icon("download")}${T("下载这些关系 CSV", "These statements as CSV")}</button></div>
-    ${rows.length ? `<div class="table-wrap"><table class="tbl cards"><thead><tr><th>${T("关系", "Statement")}</th><th>${T("性质", "Nature")}</th><th>${T("表述", "Wording")}</th><th>${T("证据类型", "Evidence")}</th><th>${T("来源", "Source")}</th></tr></thead><tbody>
+    ${rows.length ? `<div class="table-wrap"><table class="tbl cards"><thead><tr><th>${T("关系", "Statement")}</th><th>${T("性质", "Nature")}</th><th>${T("结论强度", "Claim strength")}</th><th>${T("表述", "Wording")}</th><th>${T("证据类型", "Evidence")}</th><th>${T("来源", "Source")}</th></tr></thead><tbody>
       ${page.map(s => { const n = NATURE[natureOf(s)];
-        return `<tr><td><button type="button" class="rsum rel" data-rec="${esc(s.record_id)}"><b>${esc(s.subject_mention || s.subject || "—")}</b><span class="rp">${esc(s.predicate_mention || s.predicate || "—")}</span><b>${esc(s.object_mention || s.object || "—")}</b></button>
-            ${s.predicate_status === "lexicon" && s.predicate ? `<div class="rid">${esc(s.predicate)}</div>` : `<div class="rid">${T("谓词未编码，保留原文", "uncoded predicate, kept verbatim")}</div>`}</td>
+        return `<tr><td><button type="button" class="rsum rel" data-rec="${esc(s.record_id)}">${typedMention(s.subject_mention || s.subject, s.record_id)}<span class="rp">${esc(s.predicate_mention || s.predicate || "—")}</span>${typedMention(s.object_mention || s.object, s.record_id)}</button>
+            ${s.predicate_status === "lexicon" && s.predicate ? `<div class="rid">${esc(s.predicate)}</div>` : `<div class="rid">${T("谓词未编码，保留原文", "uncoded predicate, kept verbatim")}${reasonOf(s) ? ` · <span class="tag">${esc(T(...reasonOf(s)))}</span>` : ""}</div>`}</td>
           <td data-l="${T("性质", "Nature")}"><span class="tag ${n[2]}">${esc(T(n[0], n[1]))}</span></td>
+          <td data-l="${T("结论强度", "Claim strength")}">${strengthOf(s)}</td>
           <td data-l="${T("表述", "Wording")}">${s.relation_assertion_mode ? esc(ASSERTION[s.relation_assertion_mode] ? T(...ASSERTION[s.relation_assertion_mode]) : s.relation_assertion_mode) : `<span class="muted">—</span>`}</td>
           <td data-l="${T("证据类型", "Evidence")}" class="mono xs">${esc(s.relation_evidence_type || "—")}</td>
           <td data-l="${T("来源", "Source")}">${s.source_page != null && recordFor(s.record_id) ? `<button type="button" class="pgl" data-ev="${esc(s.record_id)}">p.${esc(s.source_page)}</button>` : "—"}</td></tr>`; }).join("")}</tbody></table></div>${foot}`
@@ -515,17 +637,35 @@ function issuesHTML(r) {
     return empty(T("没有发现校验问题", "No issues"), T("结构校验通过；这不代表结论已经过领域专家确认。", "The structural checks pass; that does not mean an expert has confirmed the conclusions."), "check");
   const out = [];
   if (r.notes.length) out.push(sec(`${icon("alert")}${T("运行文件检查", "Run files")}`, r.notes.length, "", r.notes.map(x => issue("OUTPUT_INTEGRITY", x, { tone: "error" })).join("")));
-  if (incomplete) out.push(sec(`${icon("file")}${T("来源不完整", "Source incomplete")}`, (sp.missing || []).length, T("正文引用了未提供的来源部分。管线不会为缺失部分补造内容；补齐文件后以 --supplement 重新抽取。", "The main text cites parts of the source that were not given. The pipeline invents nothing for them; add the files and re-extract with --supplement."),
+  if (incomplete) out.push(sec(`${icon("file")}${T("来源不完整", "Source incomplete")}`, (sp.missing || []).length, T("正文引用了未提供的来源部分。管线不会为缺失部分补造内容；补齐文件后以 --supplement 重新抽取（附录加 :appendix）。", "The main text cites parts of the source that were not given. The pipeline invents nothing for them; add the files and re-extract with --supplement (use :appendix for an author appendix)."),
     (sp.missing || []).map(part => { const ref = (sp.referenced || {})[part] || {}, items = part === "supplement" ? sp.items_not_found || [] : [];
       return issue("SOURCE_PART_MISSING", T(`${partName(part)}未提供：正文第 ${(ref.pages || []).join("、")} 页共提及 ${ref.mentions || 0} 次${items.length ? `，涉及 ${items.join("、")}` : ""}`,
         `${partName(part)} not given: the main text mentions it ${ref.mentions || 0} times on page${(ref.pages || []).length > 1 ? "s" : ""} ${(ref.pages || []).join(", ")}${items.length ? `, citing ${items.join(", ")}` : ""}`), { tone: "warn" }); }).join("")));
+  // Every supplied part says which state it is in (AMB-044): parsed, no text layer, or never cited by the text.
+  const states = ((sp || {}).parts || []).filter(p => ["supplied_parsed", "supplied_no_text", "supplied_not_referenced", "supplied_items_not_found"].includes(p.state));
+  if (states.length) out.push(sec(`${icon("file")}${T("来源部分状态", "Source parts")}`, states.length, T("已提供的部分各自的状态：已解析到文本、已提供但没有文本层、正文没有引用它、或正文引用的条目没有在其中定位到。", "The state of each supplied part: parsed, supplied without a text layer, never cited, or a cited item not found in it."),
+    states.map(x => issue(x.state === "supplied_no_text" ? "SOURCE_PART_NOT_PARSED" : x.state === "supplied_not_referenced" ? "SOURCE_PART_UNREFERENCED" : x.state === "supplied_items_not_found" ? "SOURCE_PART_ITEM_NOT_FOUND" : "SOURCE_PART_OK",
+      T(`${partName(x.part)}：${x.state_label_zh || x.state}（${(x.files || []).join("、") || "—"}，${x.text_pages}/${x.page_count} 页有文本）`,
+        `${partName(x.part)}: ${x.state} (${(x.files || []).join(", ") || "—"}, ${x.text_pages}/${x.page_count} pages with text)`),
+      { tone: x.state === "supplied_parsed" ? "info" : "warn" })).join("")));
+  // Materials arrived later: what did the re-run change? (AMB-044; data from make_dashboard.compare_runs)
+  if (r.compare) {
+    const c = r.compare, lost = Object.entries(c.warnings.lost || {}), gained = Object.entries(c.warnings.gained || {});
+    const partList = parts => (parts || []).length ? parts.join("、") : T("仅正文", "main text only");
+    out.push(sec(`${icon("clock")}${T("与上一次运行对比", "Compared with the previous run")}`, lost.length + gained.length,
+      T(`上一次运行 ${c.created_at}：${partList(c.parts_before)}；本次：${partList(c.parts_after)}。补齐材料后重新抽取，记录编号保持不变，这里只显示差异。`,
+        `Previous run ${c.created_at}: ${partList(c.parts_before)}; this run: ${partList(c.parts_after)}. Records keep their IDs across the run; only the differences are listed.`),
+      `<div class="fam"><h4>${T("记录数", "Records")} <span class="tag">+${c.records.added} / −${c.records.removed}</span></h4></div>`
+      + lost.map(([code, n]) => issue(code, T(`已消失 ${n} 条`, `${n} no longer raised`), { tone: "info" })).join("")
+      + gained.map(([code, n]) => issue(code, T(`新增 ${n} 条`, `${n} new`), { tone: "warn" })).join("")));
+  }
   if (r.errors.length) out.push(sec(`${icon("x")}${T("被拒绝的候选", "Rejected candidates")}`, r.errors.length, T("候选连同拒绝原因保留在 errors.jsonl；修改候选后重新 finalize。", "Each candidate is kept in errors.jsonl with its reason; fix the candidate and finalize again."),
     pager("err", r.errors, 5, e => issue(e.code, e.message, { rid: e.record?.common?.record_id, tone: "error",
       extra: `${e.candidate?.evidence?.quote ? `<div class="q">${esc(e.candidate.evidence.quote)}</div>` : ""}<details><summary>${T("查看错误详情", "Details")}</summary><div class="code-box"><pre class="json">${K.json(e, { wrap: true, link: false })}</pre></div></details>` }))));
   if (r.warnings.length) {
     const groups = Object.entries(r.warning_summary?.groups || {}).filter(([, g]) => g.count);
-    out.push(sec(`${icon("alert")}${T("记录校验提示", "Record warnings")}`, r.warnings.length, T("警告不会拒绝记录，但会把它降为待复核。", "A warning never rejects a record, but drops it to pending review."),
-      groups.map(([k, g]) => `<div class="fam"><h4>${esc(T(...(FAM[k] || FAM.other).slice(0, 2)))} <span class="tag amber">${T(`${g.count} 条提示 · ${g.records} 条记录`, `${g.count} warnings · ${g.records} records`)}</span></h4>
+    out.push(sec(`${icon("alert")}${T("记录校验提示", "Record warnings")}`, r.warnings.length, T("警告不会拒收记录；阻断型提示会把记录降为待复核，非阻断型只记录在案（见各家族条数）。", "A warning never rejects a record. A blocking one drops it to pending review; an informational one is only recorded (see each family)."),
+      groups.map(([k, g]) => `<div class="fam"><h4>${esc(T(...(FAM[k] || FAM.other).slice(0, 2)))} <span class="tag amber">${T(`${g.count} 条提示 · ${g.records} 条记录`, `${g.count} warnings · ${g.records} records`)}</span>${g.informational ? `<span class="tag">${T(`其中 ${g.informational} 条非阻断`, `${g.informational} informational`)}</span>` : ""}</h4>
         ${(FAM[k] || FAM.other)[2] ? `<p>${esc(T(FAM[k][2], FAM[k][3]))}</p>` : ""}${k === "value" && r.presence_policy ? `<p>${esc(presenceNote(r.presence_policy))}</p>` : ""}
         <div class="codes">${Object.entries(g.by_code || {}).map(([c, n]) => `<span class="tag mono">${esc(c)} × ${n}</span>`).join("")}</div></div>`).join("")
       + pager("warn", r.warnings, 6, w => issue(w.code, w.message, { rid: w.record_id, tone: "warn", extra: w.path ? `<p class="xs">${fieldLink(w.path)}</p>` : "" }))));
@@ -544,7 +684,7 @@ function historyHTML(p, r) {
   if (!p.runs.length) return empty(T("还没有完成的运行", "No finished run yet"), T("完成抽取后，每次保存在不同输出目录的运行都会列在这里。", "After an extraction, every run saved to its own output directory is listed here."), "clock");
   return pager("hist", p.runs, 8, x => `<div class="hist${x.id === r.id ? " cur" : ""}"><div><b>${esc(runName(x))}</b> <span class="tag dot ${STATUS[runStatus(x)][2]}">${esc(T(...STATUS[runStatus(x)].slice(0, 2)))}</span>
       <div class="m">${esc(date(x.created_at))} · ${T("契约", "contract")} ${esc(x.version || "—")} · ${esc(x.profile || "—")}</div><div class="m mono">${esc(x.path)} · ${esc(x.run_id)}</div>
-      <div class="chips"><span class="tag">${x.counts.records} ${T("条记录", "records")}</span><span class="tag ${x.counts.rejected ? "clay" : ""}">${x.counts.rejected} ${T("个拒绝", "rejected")}</span><span class="tag ${x.counts.pending ? "amber" : ""}">${x.counts.pending} ${T("条待复核", "pending")}</span>${x.verification ? `<span class="tag brand">${T("已语义校验", "verified")}</span>` : ""}${x.source_parts?.complete === false ? `<span class="tag amber">${T("来源不完整", "source incomplete")}</span>` : ""}</div></div>
+      <div class="chips"><span class="tag">${x.counts.records} ${T("条记录", "records")}</span><span class="tag ${x.counts.rejected ? "clay" : ""}">${x.counts.rejected} ${T("个拒绝", "rejected")}</span><span class="tag ${x.counts.pending ? "amber" : ""}">${x.counts.pending} ${T("条待复核", "pending")}</span>${x.counts.relation_coverage != null ? `<span class="tag">${T("关系覆盖", "relation coverage")} ${Math.round(x.counts.relation_coverage * 100)}%</span>` : ""}${x.verification ? `<span class="tag brand">${T("已语义校验", "verified")}</span>` : ""}${x.source_parts?.complete === false ? `<span class="tag amber">${T("来源不完整", "source incomplete")}</span>` : ""}</div></div>
     ${x.id === r.id ? `<span class="tag brand">${T("当前运行", "Current run")}</span>` : `<button type="button" class="btn sm primary" data-run="${esc(x.id)}">${T("查看此运行", "Open this run")}</button>`}</div>`);
 }
 
@@ -636,7 +776,7 @@ function render() {
       ${kpi(T("论文", "Papers"), s.papers, T(`${s.runs} 次运行，按 PDF 内容归档`, `${n(s.runs, "run", "runs")}, grouped by PDF content`), "library")}
       ${kpi(T("已处理", "Processed"), s.processed, T("可查看原文、记录和运行报告", "with text, records and run reports"), "check")}
       ${kpi(T("有效记录", "Valid records"), s.records, T("按最新运行汇总，含资产记录", "latest runs, asset records included"), "table")}
-      ${kpi(T("待复核", "Pending review"), s.pending, T("结构校验与语义校验退回复核的记录", "sent to review by validation or verification"), "alert", "var(--amber)")}
+      ${kpi(T("待复核", "Pending review"), s.pending, T("已被接收、但有阻断型提示或语义校验退回的记录（是有效记录的子集）", "accepted records that a blocking warning or verification sent back (a subset of the valid records)"), "alert", "var(--amber)")}
       ${kpi(T("取值核验提示", "Value-check flags"), s.value_flags || 0, T(`${s.value_records || 0} 条记录；${sel}`, `${n(s.value_records || 0, "record", "records")}; ${sel}`), "search", "var(--gold)")}
       ${kpi(T("语义校验确认", "Verifier-confirmed"), confirmed, s.verified ? T(`条记录由独立校验者确认；${s.verified} 次运行已校验`, `records confirmed by an independent verifier; ${n(s.verified, "run", "runs")} verified`) : T("尚未运行 bdc verify", "bdc verify not run yet"), "eye", "var(--c7)")}
     </div>

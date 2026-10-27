@@ -91,6 +91,7 @@ system_fields:
     params:
       main: main_text
       supplement: supplement
+      appendix: appendix
   common.extraction_method:
     rule: backend_extraction_method
   common.extraction_run_id:
@@ -143,14 +144,46 @@ normalizers:
     predicate_start: transform.predicate_start_offset
     predicate_end: transform.predicate_end_offset
     predicate_code: transform.predicate_code
+    resolution: transform.relation_resolution
 - rule: relation_nature_from_predicate
-  # The predicate label is curated (availability I) and deliberately not offered to the model, so this pass stays
-  # silent for fresh extraction output; it upgrades an already-reviewed record by deriving the nature from the
-  # contract instead of leaving the causal/associational judgement to whoever wrote the predicate label (AMB-042).
+  # The predicate label is curated (availability I) and deliberately not offered to the model. A fresh extraction
+  # has none, so the pass reads the code the pipeline matched instead (same contract data, deterministic); a
+  # reviewed record keeps its label, which wins over the code (AMB-042, AMB-043).
   inputs:
     predicate: transform.predicate_label
+    code: transform.predicate_code
   outputs:
     nature: transform.relation_nature
+- rule: claim_strength_from_evidence
+  # What the predicate asserts (nature) × how strong the relation evidence is (relation_evidence_type, human
+  # judgement): a causal wording is never silently settled by the verb alone (AMB-046).
+  inputs:
+    nature: transform.relation_nature
+    evidence_type: transform.relation_evidence_type
+  outputs:
+    strength: transform.claim_strength
+- rule: validation_status_from_links
+  # "Candidate" or "the paper reports an experiment validating it": read from the validated_by link only, never
+  # from the wording of the finding (AMB-045).
+  inputs:
+    links: agent.validated_by_record_ids
+    predicate: transform.predicate_mention
+  outputs:
+    status: transform.validation_status
+- rule: evidence_origin_from_document_type
+  # A review reports someone else's experiment; the record says so instead of looking like a primary study
+  # (AMB-047).
+  inputs:
+    document_type: common.source_document_type
+  outputs:
+    origin: transform.evidence_origin
+- rule: cited_items_from_quote
+  # Which supplementary figure/table a record's own quote cites, so a record is tied to the part of the paper
+  # outside the main text (AMB-044).
+  inputs:
+    quote: common.source_quote
+  outputs:
+    items: transform.cited_source_items
 generated_fields:
   common.extraction_confidence:
     rule: backend_confidence
@@ -196,6 +229,10 @@ record_links:
     field: agent.prerequisite_record_ids
     target_kinds: [method, observation, analysis_result, phenotype_observation, environment_observation, genotype_observation]
     description_zh: 本步骤以其产出（材料、数据或结果）为输入的前置候选的 ref；原文表明前一步的产出用于本步骤时引用
+  validated_by:
+    field: agent.validated_by_record_ids
+    target_kinds: [method, observation, analysis_result, phenotype_observation, environment_observation, genotype_observation]
+    description_zh: 论文自己报告的、用于验证本结论的实验候选（互补/转基因/基因编辑、表达分析、酶活、互作等）的 ref；只在其确实是验证该结论的实验时引用，关联证据与验证证据各自保留
 evidence_policy:
   required_for_model_records: true
   verify_quote: true

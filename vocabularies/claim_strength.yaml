@@ -1,0 +1,36 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: claim_strength
+title_zh: 结论强度（谓词性质 × 证据类型）
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 3.8.0
+origin: [repository]
+source:
+  ref: docs/relation_semantics.md
+  quote_zh: 分类应结合语境、实验设计和证据来源，不能仅凭 increased 等动词判为因果
+notes_zh: '代码由仓库拟定（AMB-046）。本词表把两件本来就分开的事合起来读：谓词断言了什么（relation_nature）与支持它的证据到了哪一级（relation_evidence_type）。因果谓词分四档：证据类型属功能验证/遗传互作/生化/定位成像/药理处理 → causal_supported；表达支持 → causal_expression_supported；只有统计定位 → causal_statistical_only；没有证据类型 → causal_unverified。没有证据类型不是"因果成立"，只是"论文用了因果措辞而未说明依据"，所以不写 causal_supported，也不把谓词降级。相关、结构、描述三类原样传递。R038 只在 causal_statistical_only 时提示补验证方法。'
+ambiguities: [AMB-046]
+values:
+- code: causal_supported
+  label_zh: 因果（有干预级证据）
+  description_zh: 因果措辞，且关系证据类型为功能验证、遗传互作、生化实验、定位成像或药理处理之一
+- code: causal_expression_supported
+  label_zh: 因果（仅表达支持）
+  description_zh: 因果措辞，关系证据类型是表达支持；表达共变不等于干预验证
+- code: causal_statistical_only
+  label_zh: 因果（仅统计定位）
+  description_zh: 因果措辞，但关系证据类型只有统计定位；宜降为关联表述或补充干预实验
+- code: causal_unverified
+  label_zh: 因果（未说明依据）
+  description_zh: 因果措辞，但没有给出关系证据类型；原文的因果说法不被自动当作已证实的因果
+- code: associational
+  label_zh: 相关
+  description_zh: 谓词只断言共变或统计映射
+- code: structural
+  label_zh: 结构
+  description_zh: 谓词断言位置、构成或部分-整体关系
+- code: descriptive
+  label_zh: 描述
+  description_zh: 命名、同义、登记等描述性关系

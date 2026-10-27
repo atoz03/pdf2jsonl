@@ -27,6 +27,9 @@ class Issue:
     message: str
     rule_id: str | None = None
     detail: dict = field(default_factory=dict)
+    # A non-blocking warning is reported and counted but does not by itself put a record in pending_review:
+    # a field only the operator can supply (R018) or a review hint the extraction cannot satisfy (R036/R037).
+    blocking: bool = True
 
     def to_dict(self) -> dict:
         d = {"code": self.code, "severity": self.severity, "path": self.path, "message": self.message}
@@ -34,6 +37,8 @@ class Issue:
             d["rule_id"] = self.rule_id
         if self.detail:
             d["detail"] = self.detail
+        if not self.blocking:
+            d["blocking"] = False
         return d
 
 
@@ -72,10 +77,11 @@ def check_record_rule(rule: dict, record: dict, record_kinds: dict) -> list[Issu
     kind, rid, sev = rule["kind"], rule["id"], rule["severity"]
     code = f"RULE_{rid}"
     title = rule["title_zh"]
+    blocking = rule.get("blocking", True)
     out: list[Issue] = []
 
     def issue(path: str, msg: str, **detail: Any) -> None:
-        out.append(Issue(code, sev, path, f"{title}：{msg}", rid, detail))
+        out.append(Issue(code, sev, path, f"{title}：{msg}", rid, detail, blocking))
 
     if kind == "required_when":
         if eval_condition(rule["when"], record):
@@ -157,7 +163,8 @@ def check_dataset_rule(rule: dict, records: list[dict]) -> list[tuple[int, Issue
                 continue
             if key in seen:
                 out.append((i, Issue(code, sev, rule["fields"][0],
-                                     f"{title}：与第 {seen[key] + 1} 行重复", rule["id"])))
+                                     f"{title}：与第 {seen[key] + 1} 行重复", rule["id"],
+                                     blocking=rule.get("blocking", True))))
             else:
                 seen[key] = i
     elif rule["kind"] == "single_value_per_group":
@@ -169,7 +176,7 @@ def check_dataset_rule(rule: dict, records: list[dict]) -> list[tuple[int, Issue
             if g in groups and groups[g][0] != v:
                 out.append((i, Issue(code, sev, rule["field"],
                                      f"{title}：组 {g!r} 已在第 {groups[g][1] + 1} 行取值 {groups[g][0]!r}",
-                                     rule["id"])))
+                                     rule["id"], blocking=rule.get("blocking", True))))
             else:
                 groups.setdefault(g, (v, i))
     elif rule["kind"] == "references_resolve":
@@ -182,7 +189,8 @@ def check_dataset_rule(rule: dict, records: list[dict]) -> list[tuple[int, Issue
                 dangling = [v for v in iter_strings(value) if v not in known]
                 if dangling:
                     out.append((i, Issue(code, sev, p, f"{title}：{', '.join(dangling)} 不在本数据集的 "
-                                                       f"{rule['target']} 中", rule["id"], {"unresolved": dangling})))
+                                                       f"{rule['target']} 中", rule["id"], {"unresolved": dangling},
+                                         rule.get("blocking", True))))
     return out
 
 
