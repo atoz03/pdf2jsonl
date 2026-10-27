@@ -76,10 +76,15 @@ def test_nature_is_assigned_to_every_predicate_code(rc):
 def test_nature_is_derived_from_the_contract_not_judged(rc, statement):
     """The rule reads the compiled map: the derivation is deterministic and independent of the model."""
     rule = REGISTRY["relation_nature_from_predicate"]
-    params = {"inputs": {"predicate": "transform.predicate_label"}, "outputs": {"nature": "transform.relation_nature"}}
+    params = {"inputs": {"predicate": "transform.predicate_label", "code": "transform.predicate_code"},
+              "outputs": {"nature": "transform.relation_nature"}}
     ctx = _Ctx(rc, statement)
     del_path(ctx.record, "transform.predicate_label")
-    assert rule.fn(ctx, params) == {}                       # unreviewed: the field stays absent, nothing is guessed
+    # unreviewed: the code the pipeline matched names the same contract judgement, so the nature reaches the record
+    assert rule.fn(ctx, params) == {"transform.relation_nature": "associational"}
+    del_path(ctx.record, "transform.predicate_code")
+    del_path(ctx.record, "transform.relation_nature")
+    assert rule.fn(ctx, params) == {}                       # nothing to derive: the field stays absent
     assert not get_path(ctx.record, "transform.relation_nature", None)
     for code, nature in (("qtl_associated_with_trait", "associational"), ("genotype_controls_trait", "causal"),
                          ("synonym_of", "descriptive"), ("variety_derived_from", "structural")):
@@ -174,6 +179,94 @@ def test_derived_statement_carries_the_assertion_mode(rc, statement):
     assert Deriver(rc.contract).statement(rec)["relation_assertion_mode"] == "hedged"
 
 
+def test_claim_strength_puts_the_evidence_beside_the_wording(rc, statement):
+    """3.8.0 (AMB-046): a causal predicate is never settled by the verb alone, and never downgraded either."""
+    rule = REGISTRY["claim_strength_from_evidence"]
+    params = {"inputs": {"nature": "transform.relation_nature", "evidence_type": "transform.relation_evidence_type"},
+              "outputs": {"strength": "transform.claim_strength"}}
+    ctx = _Ctx(rc, statement)
+    set_path(ctx.record, "transform.relation_nature", "causal")
+    del_path(ctx.record, "transform.relation_evidence_type")
+    assert rule.fn(ctx, params) == {"transform.claim_strength": "causal_unverified"}
+    for evidence, expected in (("functional_validation", "causal_supported"),
+                               ("genetic_interaction", "causal_supported"),
+                               ("biochemical_assay", "causal_supported"),
+                               ("expression_support", "causal_expression_supported"),
+                               ("statistical_mapping", "causal_statistical_only")):
+        set_path(ctx.record, "transform.relation_evidence_type", evidence)
+        assert rule.fn(ctx, params) == {"transform.claim_strength": expected}, evidence
+    set_path(ctx.record, "transform.relation_nature", "associational")
+    set_path(ctx.record, "transform.relation_evidence_type", "functional_validation")
+    assert rule.fn(ctx, params) == {"transform.claim_strength": "associational"}   # evidence never upgrades
+    set_path(ctx.record, "transform.relation_nature", "unknown")
+    assert rule.fn(ctx, params) == {}
+
+
+def test_validation_status_reads_the_link_not_the_wording(rc, statement):
+    """3.8.0 (AMB-045): candidate vs experiment_reported comes from the validated_by link only."""
+    rule = REGISTRY["validation_status_from_links"]
+    params = {"inputs": {"links": "agent.validated_by_record_ids", "predicate": "transform.predicate_mention"},
+              "outputs": {"status": "transform.validation_status"}}
+
+    class Ctx(_Ctx):
+        record_kind = "claim"
+
+    ctx = Ctx(rc, statement)
+    del_path(ctx.record, "agent.validated_by_record_ids")
+    assert rule.fn(ctx, params) == {"transform.validation_status": "candidate"}
+    set_path(ctx.record, "agent.validated_by_record_ids", ["rec_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"])
+    assert rule.fn(ctx, params) == {"transform.validation_status": "experiment_reported"}
+    # a method record with no relation is not a conclusion and gets no status
+    class Method(Ctx):
+        record_kind = "method"
+    mctx = Method(rc, copy.deepcopy(statement))
+    del_path(mctx.record, "transform.predicate_mention")
+    assert rule.fn(mctx, params) == {}
+
+
+def test_evidence_origin_marks_a_review(rc, statement):
+    """3.8.0 (AMB-047): only the review case is written; the document type already travels with every record."""
+    rule = REGISTRY["evidence_origin_from_document_type"]
+    params = {"inputs": {"document_type": "common.source_document_type"},
+              "outputs": {"origin": "transform.evidence_origin"}}
+    ctx = _Ctx(rc, statement)
+    set_path(ctx.record, "common.source_document_type", "journal_paper")
+    assert rule.fn(ctx, params) == {}
+    set_path(ctx.record, "common.source_document_type", "review")
+    assert rule.fn(ctx, params) == {"transform.evidence_origin": "review_report"}
+
+
+def test_the_new_cue_classes_resolve_without_guessing_direction(rc):
+    """3.8.0 (AMB-046): the four classes the trial needed, with active/passive and overlap kept apart."""
+    from breeding_contract.relations import predicate_code
+    voc = rc.contract["vocabularies"]["predicate_label"]
+    assert predicate_code(voc, "colocalizes with", ["qtl"], ["qtn"]) == "locus_overlaps_locus"
+    assert predicate_code(voc, "coincides with", ["qtn"], ["qtl"]) == "locus_overlaps_locus"
+    assert predicate_code(voc, "has major effects on", ["gene"], ["trait"]) == "locus_affects_trait"
+    assert predicate_code(voc, "is mainly controlled by", ["trait"], ["gene"]) == "trait_controlled_by_gene"
+    assert predicate_code(voc, "is upstream of", ["gene"], ["gene"]) == "gene_upstream_of_gene"
+    assert predicate_code(voc, "was completely deleted in", ["gene"], ["variety"]) == "gene_absent_in_germplasm"
+    assert predicate_code(voc, "were tightly linked to", ["qtl"], ["gene"]) == "locus_linked_to_locus"
+    assert predicate_code(voc, "was associated with", ["qtn"], ["trait"]) == "qtn_associated_with_trait"
+    assert predicate_code(voc, "correlation was observed between", ["trait"], ["trait"]) == "trait_correlated_with_trait"
+
+
+def test_qtn_is_its_own_entity_type(rc):
+    """3.8.0 (AMB-045): QTN, QTL and candidate gene are three entities; a candidate gene is not renamed a QTN."""
+    from breeding_contract.relations import entity_type
+    fields = {f["path"]: f for f in rc.contract["fields"]}
+    assert entity_type("common.qtn_names") == "qtn"
+    assert entity_type("common.qtl_names") == "qtl"
+    assert entity_type("common.gene_names") == "gene"
+    assert fields["common.qtn_names"]["availability"] == "D" and \
+        fields["common.qtn_names"]["key_role"] == "entity_mention"
+    # the QTN can carry an association of its own, and the other locus codes accept it as an end
+    from breeding_contract.relations import predicate_code
+    voc = rc.contract["vocabularies"]["predicate_label"]
+    assert predicate_code(voc, "was associated with", ["qtn"], ["trait"]) == "qtn_associated_with_trait"
+    assert predicate_code(voc, "overlapped with", ["qtn"], ["qtl"]) == "locus_overlaps_locus"
+
+
 def test_a_predicate_keeps_its_direction(rc):
     """A cue counts only in a mention of its own voice, so no edge comes out reversed — with or without types."""
     from breeding_contract.relations import predicate_code
@@ -181,11 +274,16 @@ def test_a_predicate_keeps_its_direction(rc):
     # active: the subject acts on the object
     assert predicate_code(voc, "controlled", ["gene"], ["trait"]) == "genotype_controls_trait"
     assert predicate_code(voc, "affected", [], ["trait"]) == "environment_affects_trait"
-    # passive: "plant height was controlled by qPH7.1" has the trait as subject; no active code may take it
-    assert predicate_code(voc, "was controlled by", [], []) is None
+    # passive: "plant height was controlled by qPH7.1" has the trait as subject, so it goes to the passive code
+    # (3.8.0, AMB-046) and never to the active one; a subject typed as a gene cannot take the passive code
+    assert predicate_code(voc, "was controlled by", [], []) == "trait_controlled_by_gene"
+    assert predicate_code(voc, "was controlled by", ["trait"], ["gene"]) == "trait_controlled_by_gene"
+    assert predicate_code(voc, "was controlled by", ["gene"], ["trait"]) is None
     assert predicate_code(voc, "was affected by", ["trait"], []) is None
-    assert predicate_code(voc, "were controlled mainly by", [], []) is None
     assert predicate_code(voc, "受一个主效基因调控", ["qtl"], ["gene"]) is None
+    # suppress/suppressed by are two codes with opposite subjects; neither may serve the other
+    assert predicate_code(voc, "suppressed", ["gene"], ["gene"]) == "gene_suppresses_gene"
+    assert predicate_code(voc, "was almost completely suppressed by", ["gene"], ["gene"]) == "gene_suppressed_by_gene"
     # a "by" that only modifies the object leaves the main verb active; 被认为 (is considered) is no passive
     assert predicate_code(voc, "decreased the degree of chalkiness conferred by", [], ["trait"]) == "locus_decreases_trait"
     assert predicate_code(voc, "被认为与株高显著相关", ["qtl"], ["trait"]) == "qtl_associated_with_trait"

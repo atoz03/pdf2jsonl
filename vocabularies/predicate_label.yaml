@@ -10,8 +10,8 @@ origin: [legacy_v1]
 source:
   ref: sources/legacy_v1/breeding_jsonl_spec.md#L429
   quote_zh: A-5 relation_type（本体关系，可扩展）
-notes_zh: 'A-5 仅三项给出英文代码，其余代码由仓库拟定（code_status: proposed）。关联关系不得标为控制关系。cues 为谓词原文中的线索词，subject_types / object_types 为主宾语的实体类型（由实体提及字段名确定，缺省表示不限）；三者仅用于由 predicate_mention 确定性生成 predicate_code，均为仓库拟定（AMB-038）。nature 为关系**本身**的语义性质（causal / associational / structural / descriptive / unknown），与证据强弱无关，由契约编译期映射为 transform.relation_nature 并供 R036/R037 比较，为仓库拟定（AMB-042）。'
-ambiguities: [AMB-038, AMB-042]
+notes_zh: 'A-5 仅三项给出英文代码，其余代码由仓库拟定（code_status: proposed）。关联关系不得标为控制关系。cues 为谓词原文中的线索词，subject_types / object_types 为主宾语的实体类型（由实体提及字段名确定，缺省表示不限）；三者仅用于由 predicate_mention 确定性生成 predicate_code，均为仓库拟定（AMB-038）。nature 为关系**本身**的语义性质（causal / associational / structural / descriptive / unknown），与证据强弱无关，由契约编译期映射为 transform.relation_nature 并供 R036/R037 比较，为仓库拟定（AMB-042）。3.7.0 起（AMB-043）：线索词须覆盖第三人称、过去式与被动式（词表不自动变位）；两个代码不得只靠类型区分而共用同一组线索词，否则未登记为实体的提及会让两者打平——打平由 transform.relation_resolution 记为 ambiguous；弃用代码保留 nature 以便旧记录继续派生性质，但不再给出线索词，因此不会被新抽取命中。3.8.0 起（AMB-046）：主动与被动态分属不同代码（gene_suppresses_gene / gene_suppressed_by_gene、genotype_controls_trait / trait_controlled_by_gene），只有明确方向性的措辞才收；nature 只是谓词的断言口气，能否算因果要看 transform.claim_strength 与 R038。'
+ambiguities: [AMB-038, AMB-042, AMB-043, AMB-046]
 values:
 - code: genotype_controls_trait
   label_zh: 基因-控制-性状
@@ -22,40 +22,91 @@ values:
 - code: gene_associated_with_trait
   label_zh: 基因-关联-性状
   code_status: proposed
-  cues: [associated with, association with, 关联, 相关]
+  cues: [associated with, association with, associated to, 关联, 相关]
   subject_types: [gene]
   object_types: [trait]
   nature: associational
 - code: gene_interacts_with_gene
   label_zh: 基因-互作-基因
   code_status: proposed
-  cues: [interacts with, interacted with, interaction with, 互作]
+  cues: [interacts with, interact with, interacted with, interacting with, interaction with, interaction between,
+         physically interacts with, 互作]
   subject_types: [gene]
   object_types: [gene]
   nature: causal
+- code: gene_suppresses_gene
+  label_zh: 基因-抑制-基因
+  code_status: proposed
+  cues: [suppresses, suppress, suppressed, suppressing, represses, repress, repressed, repressing, 抑制]
+  subject_types: [gene, marker_genes]
+  object_types: [gene, marker_genes]
+  nature: causal
+  description_zh: 主动语态的抑制/阻遏（3.8.0，AMB-046）：主语是抑制者。被动形式"was suppressed by"属 gene_suppressed_by_gene，不能套用本代码的方向。
+- code: gene_suppressed_by_gene
+  label_zh: 基因-受抑制-基因
+  code_status: proposed
+  cues: [suppressed by, repressed by]
+  subject_types: [gene, marker_genes]
+  object_types: [gene, marker_genes]
+  nature: causal
+  description_zh: 被动语态：主语是被抑制的基因，宾语是抑制者（3.8.0，AMB-046）。
+- code: gene_upstream_of_gene
+  label_zh: 基因-上游于-基因
+  code_status: proposed
+  cues: [acts upstream of, is upstream of]
+  subject_types: [gene, marker_genes]
+  object_types: [gene, marker_genes]
+  nature: causal
+  description_zh: 通路中的上位关系（3.8.0，AMB-046）：只收"acts/is upstream of"，不收基因组位置的"upstream of"（那是位置描述，不是调控关系）。
 - code: qtl_associated_with_trait
   label_zh: QTL-关联-性状
   code_status: proposed
-  cues: [associated with, association with, 关联, 相关]
+  cues: [associated with, association with, associated to, 关联, 相关]
   subject_types: [qtl]
   object_types: [trait]
   nature: associational
+- code: qtn_associated_with_trait
+  label_zh: QTN-关联-性状
+  code_status: proposed
+  cues: [associated with, association with, associated to, 关联, 相关]
+  subject_types: [qtn]
+  object_types: [trait]
+  nature: associational
+  description_zh: GWAS 定位到的 QTN（显著位点/单核苷酸位点）与性状的关联（3.8.0，AMB-045）：QTN 与 QTL（连锁定位区间）、候选基因（gene）是三种实体，代码不互相替代。
+- code: locus_correlated_with_trait
+  label_zh: 位点/基因-相关-性状
+  code_status: proposed
+  cues: [correlated with, correlates with, correlation with, correlated to, significantly correlated,
+         positively correlated, negatively correlated, correlation between, correlation was observed between,
+         正相关, 负相关]
+  subject_types: [gene, qtl, qtn, marker, feature, marker_genes]
+  object_types: [trait]
+  nature: associational
+  description_zh: 统计相关（3.7.0，AMB-043）：只断言共变或显著相关，不含机制；与 trait_correlated_with_trait 的区别只在主语的实体类型，主语未登记为实体时两者打平并记为 ambiguous。
 - code: marker_linked_to_qtl
   label_zh: 标记-连锁-QTL
   code_status: proposed
-  cues: [linked to, linked with, flanking, 连锁]
-  subject_types: [marker]
+  cues: [linked to, linked with, linked, in linkage with, 连锁]
+  subject_types: [marker, marker_genes]
   object_types: [qtl]
   nature: associational
 - code: marker_located_at_locus
   label_zh: 标记-定位-位点
   code_status: proposed
-  cues: [located at, located on, mapped to, 定位于, 位于]
-  subject_types: [marker]
+  cues: [located at, located on, mapped to, mapped onto, 定位于, 位于]
+  subject_types: [marker, marker_genes]
   nature: structural
+- code: locus_linked_to_locus
+  label_zh: 位点-连锁-位点
+  code_status: proposed
+  cues: [allelic to, allelic with, tightly linked to, tightly linked with]
+  subject_types: [qtl, qtn, marker, gene, marker_genes, feature]
+  object_types: [qtl, qtn, marker, gene, marker_genes, feature]
+  nature: associational
+  description_zh: 位点/基因之间的等位或紧密连锁（3.8.0，AMB-046）：只收"allelic to/with"与"tightly linked to/with"，避免与 marker_linked_to_qtl 的泛"linked to"抢同一句。
 - code: germplasm_carries_allele
   label_zh: 种质-携带-基因
-  cues: [carries, carrying, carried, harbors, 携带]
+  cues: [carries, carry, carrying, carried, harbors, harbours, harboring, harbouring, 携带]
   subject_types: [germplasm, variety]
   object_types: [gene]
   nature: structural
@@ -75,9 +126,17 @@ values:
 - code: environment_affects_trait
   label_zh: 环境-影响-性状
   code_status: proposed
-  cues: [affects, affected, 影响]
+  cues: [affects, affect, affected, affecting, influences, influence, influenced, 影响]
   object_types: [trait]
   nature: causal
+- code: locus_affects_trait
+  label_zh: 位点/基因-影响-性状
+  code_status: proposed
+  cues: [has major effects on, has a major effect on, major effect on, has large effects on, key regulator of]
+  subject_types: [gene, qtl, qtn, marker, marker_genes]
+  object_types: [trait]
+  nature: causal
+  description_zh: 只收明确的方向性措辞（3.8.0，AMB-046）："has major effects on"、"key regulator of"。泛泛的 "affects" 留给 environment_affects_trait，避免无主语类型时两码打平。
 - code: environment_regulates_expression
   label_zh: 环境-调节-基因表达
   code_status: proposed
@@ -85,7 +144,7 @@ values:
 - code: gene_expressed_in_tissue
   label_zh: 基因-表达于-组织
   code_status: proposed
-  cues: [expressed in, 表达于]
+  cues: [expressed in, expresses in, expression in, 表达于]
   subject_types: [gene]
   nature: descriptive
 - code: gene_located_in_region
@@ -97,26 +156,26 @@ values:
 - code: trait_component_of_trait
   label_zh: 性状-构成-上位性状
   code_status: proposed
-  cues: [component of, 构成]
+  cues: [component of, components of, 构成]
   subject_types: [trait]
   object_types: [trait]
   nature: structural
 - code: variety_adapted_to_environment
   label_zh: 品种-适应于-环境/区域
   code_status: proposed
-  cues: [adapted to, 适应于]
+  cues: [adapted to, adapts to, 适应于]
   subject_types: [variety]
   nature: descriptive
 - code: material_resistant_to_disease
   label_zh: 材料-抗-病害
   code_status: proposed
-  cues: [resistant to, resistance to, 抗性]
+  cues: [resistant to, resistance to, resistant against, 抗性]
   subject_types: [germplasm, variety]
   nature: descriptive
 - code: gene_mediates_resistance
   label_zh: 基因-介导-抗病性
   code_status: proposed
-  cues: [mediates, confers, 介导]
+  cues: [mediates, mediate, mediated, mediating, confers, confer, conferred, conferring, 介导]
   subject_types: [gene]
   nature: causal
 - code: method_based_on_population
@@ -147,28 +206,52 @@ values:
 - code: trait_correlated_with_trait
   label_zh: 性状-相关-性状
   code_status: proposed
-  cues: [correlated with, correlates with, correlation with, correlated to, 正相关, 负相关]
+  cues: [correlated with, correlates with, correlation with, correlated to, significantly correlated,
+         positively correlated, negatively correlated, correlation between, correlation was observed between,
+         正相关, 负相关]
   subject_types: [trait]
   object_types: [trait]
   nature: associational
+  description_zh: 性状与性状之间的统计相关；主语是基因、QTL 或标记时用 locus_correlated_with_trait（3.7.0，AMB-043）。
 - code: qtl_overlaps_qtl
   label_zh: QTL-重叠-QTL
   code_status: proposed
-  cues: [overlapped with, overlaps with, overlapping, 重叠]
-  subject_types: [qtl]
-  object_types: [qtl]
+  status: deprecated
+  replaced_by: locus_overlaps_locus
+  deprecated_in: 3.7.0
   nature: associational
+  description_zh: 3.7.0 弃用（AMB-043）：区间重叠断言的是基因组位置的结构关系，不是统计关联；新的抽取用 locus_overlaps_locus（nature 为 structural）。代码保留，旧记录继续按它派生 nature。
+- code: locus_overlaps_locus
+  label_zh: 位点-重叠/共定位-位点
+  code_status: proposed
+  cues: [overlapped with, overlaps with, overlapping, co-located with, co-localized with, colocalized with,
+         colocalizes with, colocalize with, co-locates with, collocated with, coincides with, coincide with,
+         重叠, 共定位]
+  subject_types: [qtl, qtn, marker, feature, gene, marker_genes]
+  object_types: [qtl, qtn, marker, feature, gene, marker_genes]
+  nature: structural
+  description_zh: 位置重叠或共定位（3.7.0，AMB-043）：断言两条区间或标记落在同一区域，属结构关系，不含作用方向。3.8.0 补齐同义与屈折形式（colocalizes with、coincides with）。
+- code: model_predicts_trait
+  label_zh: 模型/特征-预测-性状
+  code_status: proposed
+  cues: [predicted, predicts, predict, predicting, prediction of, predictive of, 预测]
+  subject_types: [feature, marker_genes, gene, qtl, qtn]
+  object_types: [trait]
+  nature: associational
+  description_zh: 预测关系（3.7.0，AMB-043）：模型或特征到性状的映射，只断言统计可预测性，不含机制，也不表示模型或图像导致表型变化，不得据此升级为因果。
 - code: locus_decreases_trait
   label_zh: 位点-降低-性状
   code_status: proposed
-  cues: [decreased the, decreases the, decrease the, reduced the, 降低]
+  cues: [decreased the, decreases the, decrease the, decreased, decreases, decrease, reduced the, reduced,
+         reduces the, reduces, lowered the, 降低, 减少]
   subject_types: [qtl, gene, feature, marker]
   object_types: [trait]
   nature: causal
 - code: locus_increases_trait
   label_zh: 位点-提高-性状
   code_status: proposed
-  cues: [increased the, increases the, increase the, enhanced the, 提高]
+  cues: [increased the, increases the, increase the, increased, increases, increase, enhanced the, enhanced,
+         enhances the, raised the, 提高, 增加]
   subject_types: [qtl, gene, feature, marker]
   object_types: [trait]
   nature: causal
@@ -180,9 +263,25 @@ values:
   subject_types: [qtl, gene, feature]
   object_types: [gene, feature]
   nature: causal
+- code: trait_controlled_by_gene
+  label_zh: 性状-受基因控制
+  code_status: proposed
+  cues: [controlled by, is mainly controlled by, mainly controlled by]
+  subject_types: [trait]
+  object_types: [gene, qtl, qtn, marker_genes]
+  nature: causal
+  description_zh: 被动语态（3.8.0，AMB-046）：主语是性状、宾语是控制它的位点或基因。与 genotype_controls_trait（主动、主语是基因）成对，方向不同，不互相替代。
+- code: gene_absent_in_germplasm
+  label_zh: 基因-在种质中缺失
+  code_status: proposed
+  cues: [deleted in, is absent in, absent from, missing in]
+  subject_types: [gene]
+  object_types: [germplasm, variety]
+  nature: structural
+  description_zh: 基因或等位在某个种质中缺失/删除（3.8.0，AMB-046）：结构性事实，不是表达或功能因果。
 - code: gene_involved_in_process
   label_zh: 基因-参与-过程
   code_status: proposed
-  cues: [involved in, 参与]
+  cues: [involved in, involves, involving, participates in, participate in, contributes to, 参与]
   subject_types: [gene, feature, marker_genes]
   nature: causal

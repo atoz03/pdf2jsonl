@@ -44,6 +44,10 @@
           "description_zh": {"type": "string"},
           "grain": {"type": ["string", "null"]},
           "code_status": {"enum": ["source", "proposed", "repository", "legacy"]},
+          "status": {"enum": ["active", "deprecated"],
+                     "description": "deprecated: kept so existing records still resolve, never produced by a new run"},
+          "replaced_by": {"type": "string", "minLength": 1},
+          "deprecated_in": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
           "origin": {"type": "array", "items": {"enum": ["fields_v3", "legacy_v1", "omics_v2", "merged_v2", "repository"]}},
           "ambiguities": {"type": "array", "items": {"type": "string"}}
         }

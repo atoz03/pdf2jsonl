@@ -1,0 +1,27 @@
+# Controlled vocabulary — part of the data contract; edits require a release (see docs/versioning.md).
+vocabulary_format: 1
+name: relation_resolution
+title_zh: 关系代码的判定结果
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 3.7.0
+origin: [repository]
+source:
+  ref: docs/relation_semantics.md
+  quote_zh: 关联不得自动升级为因果；谓词与两个端点都在原文中，代码是确定性判定而不是模型的解读
+notes_zh: '代码由仓库拟定（AMB-043）。本词表说明 predicate_code 为什么有值或没有值，记录的是一句话的判定结果，不记录关系真假。coded：恰好一个代码命中；ambiguous：多个代码的线索词同样长而端点类型不足以区分（典型是主语没有被任何实体提及字段登记）；no_cue：没有任何代码的线索词命中；negated：原文否定了该关系（否定词在谓语或两端的原文之间）。没有谓语的记录不写本字段。各代码的顺序即复核优先级：先看 ambiguous（补登记实体提及即可修复），再看 no_cue（词表覆盖问题）。'
+ambiguities: [AMB-043]
+values:
+- code: coded
+  label_zh: 已判定唯一代码
+  description_zh: 恰好一个 predicate_label 代码的线索词命中，且未否定
+- code: ambiguous
+  label_zh: 多码打平
+  description_zh: 多个代码的线索词同样长，端点类型不足以区分；补登记实体提及或人工指定 predicate_label 可消除
+- code: no_cue
+  label_zh: 无线索词命中
+  description_zh: 谓词在原文中存在，但词表没有覆盖它的线索词；属词表覆盖缺口
+- code: negated
+  label_zh: 原文否定
+  description_zh: 否定词出现在谓语或两个端点之间的原文中，正关系的代码不得套用（极性由复核人判定）

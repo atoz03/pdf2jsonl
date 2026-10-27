@@ -157,15 +157,21 @@ def _cue_in(cue: str, text: str) -> bool:
     return any(not BY_AFTER.match(text, m.end()) and not PASSIVE_ZH.search(text, 0, m.start()) for m in hits)
 
 
-def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_types: list[str],
-                   context: str | None = None) -> str | None:
-    """The code of ``vocabulary`` identified by a verbatim predicate, or None.
+def predicate_match(vocabulary: dict, mention, subject_types: list[str], object_types: list[str],
+                    context: str | None = None) -> tuple[str | None, str | None]:
+    """-> (code, unresolved reason): the code of ``vocabulary`` identified by a verbatim predicate, or None plus
+    why no code was assigned (AMB-043).
 
     A code matches when one of its ``cues`` occurs in the mention and its ``subject_types`` / ``object_types``
-    (when declared) include a type of the corresponding end. The longest cue wins; a tie between codes, or no
-    match, gives None: the verbatim predicate stays the only statement of the relation. So does a negation, in
-    the mention or in ``context`` (the quote between the two ends, see ``relation_context``): the codes name
-    positive relations, and "was not associated with" must not become one. Polarity is a reviewer's call.
+    (when declared) include a type of the corresponding end. The longest cue wins; a tie between codes gives no
+    code and the reason ``ambiguous``, no match gives ``no_cue``. A negation — in the mention or in ``context``
+    (the quote between the two ends, see ``relation_context``) — gives ``negated``: the codes name positive
+    relations, and "was not associated with" must not become one. Polarity is a reviewer's call. A mention that
+    is not a string or is blank has no predicate to resolve and returns ``(None, None)``.
+
+    The reason is what ``transform.relation_resolution`` records, so a record says *why* it has no code: a cue
+    the vocabulary misses (fix the vocabulary) is not the same problem as two codes a reviewer can separate by
+    registering the entity mention (fix the record).
 
     A declared type list is a filter only over ends that have a type. An end whose mention no entity field
     lists carries no type — the pipeline types a mention by the field that holds it, and a paper states many
@@ -178,8 +184,10 @@ def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_t
     "受…调控") would read the relation backwards, and with an untyped end no type check is left to catch it. A
     passive code carries passive cues only ("regulated by"), so an active "regulates" never matches it.
     """
-    if not isinstance(mention, str) or not mention.strip() or negated(mention, context):
-        return None
+    if not isinstance(mention, str) or not mention.strip():
+        return None, None
+    if negated(mention, context):
+        return None, "negated"
     text = normalize_text(mention)
     hits: dict[str, int] = {}
     for v in vocabulary.get("values") or []:
@@ -194,7 +202,13 @@ def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_t
         if best:
             hits[v["code"]] = best
     if not hits:
-        return None
+        return None, "no_cue"
     top = max(hits.values())
     winners = [code for code, n in hits.items() if n == top]
-    return winners[0] if len(winners) == 1 else None
+    return (winners[0], None) if len(winners) == 1 else (None, "ambiguous")
+
+
+def predicate_code(vocabulary: dict, mention, subject_types: list[str], object_types: list[str],
+                   context: str | None = None) -> str | None:
+    """The code of ``vocabulary`` identified by a verbatim predicate, or None (see ``predicate_match``)."""
+    return predicate_match(vocabulary, mention, subject_types, object_types, context)[0]

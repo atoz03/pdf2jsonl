@@ -48,6 +48,7 @@ common.gene_names: ["OsDEMO1"]
 common.gene_ids: ["urn:example:gene:OsDEMO1"]
 common.marker_names: ["MarkerA", "MarkerB"]
 common.qtl_names: ["qPH1"]
+common.qtn_names: ["AX-158581934"]
 common.genome_assembly: "IRGSP-1.0"
 common.variant_ids: ["urn:example:variant:IRGSP-1.0:chr1:100001:A:G"]
 common.sequence_accessions: ["AB123456.1"]
@@ -223,6 +224,8 @@ agent.environment_stability: "qPH1 was detected in E1 and E2, but not in E3."
 agent.validation_methods: ["qRT-PCR", "complementation assay"]
 agent.claim_id: "urn:example:claim:qPH1-plant-height-E1"
 agent.evidence_record_ids: ["rec_33333333333333333333333333333333"]
+agent.validated_by_record_ids: ["rec_55555555555555555555555555555555"]
+agent.reported_citation_text: "Zhang et al. (2019) Nature Genetics 51: 1044"
 agent.external_validity_scope: "仅适用于已测试的水稻 RIL 群体和环境；其他背景尚未验证。"
 agent.effect_type: "additive effect"
 agent.contrast: "150 mM NaCl treatment versus 0 mM NaCl control"
@@ -304,7 +307,12 @@ transform.predicate_label: "qtl_associated_with_trait"
 transform.predicate_id: "urn:example:relation:qtl-associated-with-trait"
 transform.predicate_mention: "explained"
 transform.predicate_code: "qtl_associated_with_trait"
+transform.relation_resolution: "coded"
 transform.relation_nature: "associational"
+transform.claim_strength: "causal_statistical_only"
+transform.validation_status: "experiment_reported"
+transform.evidence_origin: "review_report"
+transform.cited_source_items: ["Fig. S2", "Table S1"]
 transform.predicate_start_offset: 5
 transform.predicate_end_offset: 14
 transform.object_mention: "plant height"

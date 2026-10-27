@@ -471,6 +471,37 @@ def check_mappings(root: Path) -> list[Finding]:
     return [Finding(level, "mappings", msg) for level, msg in check_all_mappings(root)]
 
 
+# The presentation contract (docs/presentation.md): a record list must show the entity type beside every
+# mention, the validation status as its own column, the author's qualifier verbatim, and the claim strength.
+# Each entry is (what the rule is called, a marker the page template must contain).
+PRESENTATION_MARKERS = (
+    ("entity column", 'T("实体", "Entity")'),
+    ("entity type labels", "const ENTITY_LABEL"),
+    ("typed relation ends", "typedMention("),
+    ("validation column", 'T("验证", "Validation")'),
+    ("qualifier column", 'T("限定语", "Qualifier")'),
+    ("claim strength column", 'T("结论强度", "Claim strength")'),
+)
+
+
+def check_presentation(root: Path) -> list[Finding]:
+    """The dashboard template keeps the presentation rules of docs/presentation.md."""
+    out: list[Finding] = []
+    doc = root / "docs/presentation.md"
+    if not doc.is_file():
+        out.append(Finding("error", "presentation", "docs/presentation.md missing: the display rules are undefined"))
+    page = root / "site/pages/papers.html"
+    if not page.is_file():
+        return out + [Finding("error", "presentation", "site/pages/papers.html missing")]
+    text = page.read_text(encoding="utf-8")
+    for label, marker in PRESENTATION_MARKERS:
+        if marker not in text:
+            out.append(Finding("error", "presentation",
+                               f"the paper dashboard no longer shows the {label}: {marker!r} is missing "
+                               "(docs/presentation.md)"))
+    return out
+
+
 def run_checks(root: Path | str | None = None, strict: bool = False, for_release: bool = False) -> list[Finding]:
     src = load_sources(root)
     findings = [Finding("error", "meta", m) for m in meta_validate(src)]
@@ -485,6 +516,7 @@ def run_checks(root: Path | str | None = None, strict: bool = False, for_release
     findings += check_semver(src)
     findings += check_skill(src.root, src)
     findings += check_mappings(src.root)
+    findings += check_presentation(src.root)
     if not for_release:
         findings += check_docs(src)
         findings += check_examples(src.root)

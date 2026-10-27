@@ -3,11 +3,11 @@
   "run_id": "run_example_heat_main_only",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.6.0",
+    "schema_version": "3.8.0",
     "release_status": "released",
-    "requested": "3.6.0",
-    "release_sha256": "e51608a630182e973ea0b0607b833c3bd8bc8d173be1fbb947e962ee7ac9d906",
-    "source_digest": "e3c5edb64a249ab758fdb9c5314ae6a0931b438dcc13a3bc7cfbd9d3d1058215"
+    "requested": "3.8.0",
+    "release_sha256": "779b53b57bca86b4ece948812401a352083a84a8c2284f0dfe17ee1a03096a56",
+    "source_digest": "52535de45905d2f7ce02b62ec79e3ae9c5ce75dcafd73d3e945f3f11b722c606"
   },
   "profile": "pdf_extraction",
   "input": {
@@ -20,6 +20,8 @@
     "candidates": 14,
     "records": 15,
     "rejected": 0,
+    "system_records": 1,
+    "model_records": 14,
     "by_record_kind": {
       "analysis_result": 1,
       "asset_manifest": 1,
@@ -28,10 +30,52 @@
       "observation": 3
     },
     "by_review_status": {
-      "auto_validated": 11,
-      "pending_review": 4
+      "auto_validated": 12,
+      "pending_review": 3
     },
-    "rejected_by_code": {}
+    "rejected_by_code": {},
+    "warnings": {
+      "total": 6,
+      "blocking": 3,
+      "informational": 3,
+      "by_code": {
+        "RULE_R018": 1,
+        "RULE_R037": 2,
+        "SOURCE_PART_UNAVAILABLE": 3
+      },
+      "by_family": {
+        "rule": 3,
+        "source": 3
+      }
+    },
+    "relation": {
+      "statements": 4,
+      "coded": 2,
+      "ambiguous": 0,
+      "no_cue": 2,
+      "negated": 0,
+      "by_resolution": {
+        "coded": 2,
+        "no_cue": 2
+      },
+      "coverage": 0.5,
+      "by_nature": {
+        "causal": 2
+      }
+    }
+  },
+  "count_definitions": {
+    "candidates": "抽取阶段提交的候选数，一个候选是一条独立陈述、观测、方法或分析结果",
+    "records": "接收的记录数 = 候选 − 拒收 + 系统记录",
+    "rejected": "被拒收的候选或记录数（从不静默丢弃）",
+    "system_records": "管线自己写的记录：每个输入文件一条 asset_manifest",
+    "model_records": "records − system_records，即来自候选的记录",
+    "by_review_status": "接收记录按 common.review_status 计数；pending_review 是 records 的子集，不是另一类记录",
+    "warnings.total": "接收记录上的 warning 条数，一条记录可以有多个",
+    "warnings.blocking": "会单独把记录置为 pending_review 的 warning 条数",
+    "warnings.informational": "只报告、不阻断的 warning 条数（规则标了 blocking: false）",
+    "relation.statements": "带关系谓词的记录数",
+    "relation.coverage": "relation.coded / relation.statements，关系谓词被词表判定的比例"
   },
   "document": {
     "values": {
@@ -60,7 +104,8 @@
           "severity": "warning",
           "path": "common.asset_uri",
           "message": "资产清单应含URI、格式、大小与SHA-256：缺少 common.asset_uri",
-          "rule_id": "R018"
+          "rule_id": "R018",
+          "blocking": false
         }
       ]
     },
@@ -138,7 +183,7 @@
       "warnings": [],
       "notes": {
         "relation": {
-          "predicate_code": "no_unique_cue_match"
+          "predicate_code": "no_cue"
         }
       }
     },
@@ -176,7 +221,7 @@
       "warnings": [],
       "notes": {
         "relation": {
-          "predicate_code": "no_unique_cue_match"
+          "predicate_code": "no_cue"
         }
       }
     },
@@ -196,6 +241,14 @@
               "Fig. S3"
             ]
           }
+        },
+        {
+          "code": "RULE_R037",
+          "severity": "warning",
+          "path": "transform.relation_evidence_type",
+          "message": "因果性质的关系宜给出关系证据类型：至少需要其一：transform.relation_evidence_type",
+          "rule_id": "R037",
+          "blocking": false
         }
       ]
     },
@@ -204,12 +257,16 @@
       "record_id": "rec_e4822d11955faccebf5bed73e5a40750",
       "record_kind": "claim",
       "candidate_index": 12,
-      "warnings": [],
-      "notes": {
-        "relation": {
-          "predicate_code": "no_unique_cue_match"
+      "warnings": [
+        {
+          "code": "RULE_R037",
+          "severity": "warning",
+          "path": "transform.relation_evidence_type",
+          "message": "因果性质的关系宜给出关系证据类型：至少需要其一：transform.relation_evidence_type",
+          "rule_id": "R037",
+          "blocking": false
         }
-      }
+      ]
     },
     {
       "line": 15,
@@ -252,8 +309,8 @@
         "chain": 0
       },
       "monitoring": {
-        "own": 1,
-        "chain": 1
+        "own": 2,
+        "chain": 2
       },
       "evaluation": {
         "own": 5,
@@ -354,12 +411,14 @@
         "elements": [
           "claim",
           "data",
+          "monitoring",
           "evaluation"
         ],
         "chain_elements": [
           "claim",
           "data",
           "warrant",
+          "monitoring",
           "evaluation"
         ],
         "links": {
@@ -394,6 +453,46 @@
         ]
       }
     },
+    "parts": [
+      {
+        "part": "supplement",
+        "source_part": "supplement",
+        "supplied": false,
+        "files": [],
+        "page_count": 0,
+        "text_pages": 0,
+        "text_chars": 0,
+        "state": "referenced_not_supplied",
+        "referenced": {
+          "mentions": 4,
+          "pages": [
+            2
+          ],
+          "items": [
+            "Fig. S1",
+            "Fig. S2",
+            "Fig. S3"
+          ]
+        },
+        "items_not_found": [
+          "Fig. S1",
+          "Fig. S2",
+          "Fig. S3"
+        ],
+        "state_label_zh": "正文引用但未提供"
+      },
+      {
+        "part": "appendix",
+        "source_part": "appendix",
+        "supplied": false,
+        "files": [],
+        "page_count": 0,
+        "text_pages": 0,
+        "text_chars": 0,
+        "state": "not_referenced",
+        "state_label_zh": "未引用"
+      }
+    ],
     "missing": [
       "supplement"
     ],
@@ -402,6 +501,7 @@
       "Fig. S2",
       "Fig. S3"
     ],
+    "warnings": [],
     "complete": false
   },
   "workflow_structure": {

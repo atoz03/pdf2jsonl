@@ -1,0 +1,11 @@
+GmOLEO1 in soybean seed oil content
+
+GmOLEO1 was significantly correlated with seed oil content (r = 0.62, P < 0.01) across the 12 environments.
+
+Overexpression of GmOLEO1 increased seed oil content by 12.4% compared with the wild type.
+
+GmOLEO1 was not associated with protein content in the same material.
+
+Complementation of the gmoleo1 mutant with a 3.2-kb GmOLEO1 genomic fragment restored the seed oil content phenotype.
+
+The candidate gene Glyma.16G123400 was located within the qOIL-16 interval but was not validated experimentally.

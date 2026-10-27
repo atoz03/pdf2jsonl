@@ -35,17 +35,83 @@ from breeding_contract.util import (MISSING, ContractError, del_path, dumps_json
 
 from .backends import load_backend  # noqa: E402
 from .brief import candidates_skeleton, render_brief  # noqa: E402
-from .completeness import source_completeness, unavailable_items  # noqa: E402
+from .completeness import PART_NOT_PARSED, source_completeness, unavailable_items, unavailable_reason  # noqa: E402
 from .evidence import EvidenceIndex  # noqa: E402
-from .fill_rules import (IMPLEMENTED_RULES, REGISTRY, SOURCE_PART_UNAVAILABLE, RecordContext,  # noqa: E402
-                         RunContext)
-from .pdf_parse import MAIN_PART, ParsedDocument, parse_document  # noqa: E402
+from .fill_rules import IMPLEMENTED_RULES, REGISTRY, RecordContext, RunContext  # noqa: E402
+from .pdf_parse import MAIN_PART, ParsedDocument, SUPPLEMENT_PART, parse_document, split_supplement_spec  # noqa: E402
 from .repair import repair_output  # noqa: E402
 
 EMPTY = (None, "", [], {})
 EVIDENCE_ROLES = ("page", "section", "quote", "table_figure", "row_key", "column_key")
 ID_ANCHOR_ROLES = ("part", "page", "table_figure", "row_key", "column_key")  # the section is not part of identity
 PART_ROLE = "part"  # provenance role of profiles that know multi-file sources (AMB-041)
+# Warning families shown by the dashboard and counted here, so the review queue reads by *what a warning is
+# about* rather than by code (docs/review.md). Keep the keys in step with scripts/make_dashboard.py.
+WARNING_FAMILIES = (
+    ("value", ("VALUE_", "DOCUMENT_VALUE_", "EVIDENCE_PAGE_CORRECTED", "EVIDENCE_TABLE_NOT_ON_PAGE",
+               "EVIDENCE_CELL_KEY_NOT_ON_PAGE")),
+    ("rule", ("RULE_", "VOCAB_CODE_DEPRECATED")),
+    ("link", ("CANDIDATE_LINK_", "UNRESOLVED_LINK", "LINK_")),
+    ("source", ("SOURCE_PART_",)),
+    ("integrity", ("OUTPUT_INTEGRITY",)),
+)
+
+
+def warning_family(code: str | None) -> str:
+    text = str(code or "")
+    return next((key for key, prefixes in WARNING_FAMILIES if text.startswith(prefixes)), "other")
+
+
+COUNT_DEFINITIONS = {
+    "candidates": "抽取阶段提交的候选数，一个候选是一条独立陈述、观测、方法或分析结果",
+    "records": "接收的记录数 = 候选 − 拒收 + 系统记录",
+    "rejected": "被拒收的候选或记录数（从不静默丢弃）",
+    "system_records": "管线自己写的记录：每个输入文件一条 asset_manifest",
+    "model_records": "records − system_records，即来自候选的记录",
+    "by_review_status": "接收记录按 common.review_status 计数；pending_review 是 records 的子集，不是另一类记录",
+    "warnings.total": "接收记录上的 warning 条数，一条记录可以有多个",
+    "warnings.blocking": "会单独把记录置为 pending_review 的 warning 条数",
+    "warnings.informational": "只报告、不阻断的 warning 条数（规则标了 blocking: false）",
+    "relation.statements": "带关系谓词的记录数",
+    "relation.coverage": "relation.coded / relation.statements，关系谓词被词表判定的比例",
+}
+
+
+def normalizer_output(profile: dict, rule: str, key: str) -> str | None:
+    """The field path a profile's normalizer writes for ``key`` (e.g. relation_anchors -> resolution)."""
+    for n in profile.get("normalizers") or []:
+        if n.get("rule") == rule:
+            return (n.get("outputs") or {}).get(key)
+    return None
+
+
+def relation_counts(records: list[dict], profile: dict) -> dict:
+    """How many records state a relation and how the predicate codes resolved (AMB-043). ``coverage`` is the
+    number a run-to-run comparison can use: it counts a relation as resolved only when one code matched."""
+    pred = ((profile.get("roles") or {}).get("semantic") or {}).get("relation_predicate")
+    if not pred:
+        return {}
+    resolution = normalizer_output(profile, "relation_anchors", "resolution")
+    nature = normalizer_output(profile, "relation_nature_from_predicate", "nature")
+    statements = [r for r in records if get_path(r, pred) is not MISSING]
+    by_resolution: dict = {}
+    if resolution:
+        for r in statements:
+            v = get_path(r, resolution, None) or "absent"
+            by_resolution[v] = by_resolution.get(v, 0) + 1
+    coded = by_resolution.get("coded", 0)
+    out = {"statements": len(statements), "coded": coded, "ambiguous": by_resolution.get("ambiguous", 0),
+           "no_cue": by_resolution.get("no_cue", 0), "negated": by_resolution.get("negated", 0),
+           "by_resolution": dict(sorted(by_resolution.items())),
+           "coverage": round(coded / len(statements), 4) if statements else None}
+    if nature:
+        by_nature: dict = {}
+        for r in records:
+            v = get_path(r, nature, None)
+            if v:
+                by_nature[v] = by_nature.get(v, 0) + 1
+        out["by_nature"] = dict(sorted(by_nature.items()))
+    return out
 
 
 class PipelineError(Exception):
@@ -61,6 +127,7 @@ class RunOptions:
     out_dir: str | None = None
     text_layer: str | None = None
     supplements: list[str] = field(default_factory=list)
+    supplement_kinds: list[str] = field(default_factory=list)  # aligned with `supplements` (AMB-044)
     dataset_id: str | None = None
     dataset_version: str | None = None
     source_asset_id: str | None = None
@@ -427,8 +494,13 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
         pre += asm.value_warnings(cand, ev["page"], ev.get(PART_ROLE) or MAIN_PART)
         cited = unavailable_items(ev.get("quote") or "", completeness) if completeness else []
         if cited:
-            pre.append(Issue(SOURCE_PART_UNAVAILABLE, "warning", asm.prov.get("quote", "evidence.quote"),
-                             f"引文引用了未提供的来源部分：{', '.join(cited)}", detail={"items": cited}))
+            code = unavailable_reason(completeness)
+            if code == PART_NOT_PARSED:
+                message = f"引文引用了没有文本层的来源部分：{', '.join(cited)}"
+            else:
+                message = f"引文引用了未提供的来源部分：{', '.join(cited)}"
+            pre.append(Issue(code, "warning", asm.prov.get("quote", "evidence.quote"), message,
+                             detail={"items": cited}))
         verified.append((i, cand, ev, span, pre))
 
     # Ordinals separate records that share kind + anchor + quote. They follow the canonical field content,
@@ -516,14 +588,32 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
     records = [r for r, _, _ in accepted]
     review_path = next((p for p, s in (profile.get("system_fields") or {}).items()
                         if s["rule"] == "validation_outcome"), None)
+    # The counts say what each number counts (AMB-043): `records` is what was accepted, and `pending_review` is
+    # a subset of it, not a second bucket. `system_records` are the records the pipeline wrote itself (one
+    # asset_manifest per input file), which is why a run can have more records than candidates.
+    system_records = sum(1 for _, ctx, ci in accepted if ci is None)
+    warning_rows = [i for _, ctx, _ in accepted for i in ctx.issues if i.severity == "warning"]
+    by_code: dict = {}
+    by_family: dict = {}
+    for issue in warning_rows:
+        by_code[issue.code] = by_code.get(issue.code, 0) + 1
+        family = warning_family(issue.code)
+        by_family[family] = by_family.get(family, 0) + 1
+    blocking = sum(1 for i in warning_rows if getattr(i, "blocking", True))
     counts = {
         "pages": sum(d.page_count for d in doc.parts()),
         "candidates": len(candidates),
         "records": len(records),
         "rejected": len(rejected),
+        "system_records": system_records,
+        "model_records": len(records) - system_records,
         "by_record_kind": {},
         "by_review_status": {},
         "rejected_by_code": {},
+        "warnings": {"total": len(warning_rows), "blocking": blocking,
+                     "informational": len(warning_rows) - blocking,
+                     "by_code": dict(sorted(by_code.items())), "by_family": dict(sorted(by_family.items()))},
+        "relation": relation_counts(records, profile),
     }
     kind_counts: dict = {}
     for _, ctx, _ in accepted:
@@ -557,6 +647,7 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
         "input": {"file_name": input_path.name, "sha256": doc.sha256},
         "valid": True,
         "counts": counts,
+        "count_definitions": COUNT_DEFINITIONS,
         "document": {"values": run_ctx.document, "issues": [i.to_dict() for i in asm.document_issues]},
         "records": [{"line": n + 1, "record_id": _record_id(r, profile), "record_kind": ctx.record_kind,
                      "candidate_index": ci,
@@ -602,10 +693,14 @@ def run(input_path: Path | str, opts: RunOptions) -> RunResult:
         manifest["input"]["candidates_sha256"] = sha256_file(Path(opts.candidates_file))
     if doc.supplements:
         manifest["input"]["supplements"] = [
-            {"part": d.part, "file_name": d.path.name, "sha256": d.sha256, "size_bytes": d.size_bytes,
-             "media_type": d.media_type, "page_count": d.page_count, "parser": d.parser} for d in doc.supplements]
+            {"part": d.part, "kind": d.part_kind, "file_name": d.path.name, "sha256": d.sha256,
+             "size_bytes": d.size_bytes, "media_type": d.media_type, "page_count": d.page_count,
+             "parser": d.parser} for d in doc.supplements]
     if completeness is not None:
-        manifest["source_parts"] = {k: completeness[k] for k in ("missing", "complete")}
+        manifest["source_parts"] = {
+            "missing": completeness["missing"], "complete": completeness["complete"],
+            "parts": [{"part": p["part"], "source_part": p["source_part"], "state": p["state"],
+                       "files": p["files"], "text_pages": p["text_pages"]} for p in completeness["parts"]]}
     paths["manifest"].write_text(dumps_json(manifest), encoding="utf-8")
     return RunResult(outputs=paths, counts=counts, manifest=manifest, records=records)
 
@@ -627,7 +722,7 @@ def _parse(input_path: Path, opts: RunOptions, profile: dict) -> ParsedDocument:
         raise PipelineError(f"profile {profile['name']} of this contract version does not support supplement "
                             "files; use a contract version whose profile declares the provenance role `part`")
     try:
-        return parse_document(input_path, opts.text_layer, opts.supplements)
+        return parse_document(input_path, opts.text_layer, opts.supplements, opts.supplement_kinds)
     except (ValueError, RuntimeError, OSError) as e:
         raise PipelineError(str(e)) from e
 
@@ -649,8 +744,9 @@ def prepare(input_path: Path | str, opts: RunOptions, work_dir: Path | str | Non
         "created_at": _iso(utc_now()),
         "input": {"path": str(input_path.resolve()), "sha256": doc.sha256,
                   **({"text_layer": str(Path(opts.text_layer).resolve())} if opts.text_layer else {}),
-                  **({"supplements": [{"part": d.part, "path": str(d.path.resolve()), "sha256": d.sha256}
-                                      for d in doc.supplements]} if doc.supplements else {})},
+                  **({"supplements": [{"part": d.part, "kind": d.part_kind, "path": str(d.path.resolve()),
+                                      "sha256": d.sha256} for d in doc.supplements]}
+                     if doc.supplements else {})},
         "contract": rc.identity(),
         "profile": profile["name"],
         "options": {**opts.cli_values(), **({"out_dir": str(Path(opts.out_dir).resolve())} if opts.out_dir else {})},
@@ -697,6 +793,7 @@ def finalize(work_dir: Path | str, overrides: RunOptions | None = None, requeste
     opts = RunOptions(profile=req["profile"], schema_version=version, backend="candidates",
                       candidates_file=str(cand_file), out_dir=o.out_dir or req["options"].get("out_dir"),
                       text_layer=req["input"].get("text_layer"), supplements=[s["path"] for s in supplements],
+                      supplement_kinds=[s.get("kind") or SUPPLEMENT_PART for s in supplements],
                       dataset_id=o.dataset_id or req["options"].get("dataset_id"),
                       dataset_version=o.dataset_version or req["options"].get("dataset_version"),
                       source_asset_id=o.source_asset_id or req["options"].get("source_asset_id"),

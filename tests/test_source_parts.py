@@ -11,8 +11,8 @@ from breeding_contract.derive import derive_file
 from breeding_contract.ids import build_locator, build_span, normalize_text
 from breeding_contract.runtime_schemas import runtime_errors
 from breeding_contract.util import sha256_file
-from pdf2jsonl_skill.completeness import cited_items, source_completeness, unavailable_items
-from pdf2jsonl_skill.pdf_parse import parse_document
+from pdf2jsonl_skill.completeness import cited_items, source_completeness, unavailable_items, unavailable_reason
+from pdf2jsonl_skill.pdf_parse import parse_document, split_supplement_spec
 from pdf2jsonl_skill.pipeline import PipelineError, RunOptions, finalize, prepare, run
 
 from conftest import (EXAMPLE_CANDIDATES, EXAMPLE_PDF, HEAT_CANDIDATES, HEAT_PDF, HEAT_SUPPLEMENT, read_jsonl,
@@ -157,14 +157,20 @@ def test_missing_supplement_is_reported(partial):
     assert parts["items_not_found"] == ["Fig. S1", "Fig. S2", "Fig. S3"]
     assert parts["referenced"]["supplement"]["pages"] == [2]
     assert [p["source_part"] for p in parts["provided"]] == ["main_text"]
-    assert partial.manifest["source_parts"] == {"missing": ["supplement"], "complete": False}
+    states = {p["part"]: p["state"] for p in parts["parts"]}
+    assert states == {"supplement": "referenced_not_supplied", "appendix": "not_referenced"}
+    assert partial.manifest["source_parts"]["missing"] == ["supplement"]
+    assert partial.manifest["source_parts"]["complete"] is False
 
 
 def test_complete_source_reports_nothing_missing(full):
     parts = json.loads(full.outputs["validation"].read_text())["source_parts"]
     assert parts["complete"] is True and parts["missing"] == [] and parts["items_not_found"] == []
     assert [p["part"] for p in parts["provided"]] == ["main", "supplement"]
-    assert full.manifest["source_parts"] == {"missing": [], "complete": True}
+    states = {p["part"]: p["state"] for p in parts["parts"]}
+    assert states == {"supplement": "supplied_parsed", "appendix": "not_referenced"}
+    assert full.manifest["source_parts"] == {"missing": [], "complete": True, "parts": full.manifest["source_parts"]["parts"]}
+    assert {p["part"]: p["state"] for p in full.manifest["source_parts"]["parts"]}["supplement"] == "supplied_parsed"
 
 
 def test_records_citing_a_missing_part_go_to_review(partial, tmp_path):
@@ -223,6 +229,70 @@ def test_appendix_reference_is_reported(tmp_path):
     paper.write_text("Methods\nPrimer sequences are listed in the Appendix.\n", encoding="utf-8")
     parts = source_completeness(parse_document(paper))
     assert parts["missing"] == ["appendix"] and parts["complete"] is False
+    assert {p["part"]: p["state"] for p in parts["parts"]}["appendix"] == "referenced_not_supplied"
+
+
+def test_a_supplied_appendix_no_longer_hides_the_missing_supplement(tmp_path):
+    """3.7.0 (AMB-044): missing parts are judged per part, not with one "we have a file" switch."""
+    paper = tmp_path / "p.txt"
+    paper.write_text("Results\nSee fig. S1 and the Appendix.\n", encoding="utf-8")
+    appendix = tmp_path / "a.txt"
+    appendix.write_text("Appendix\nPrimer sequences for the experiment.\n", encoding="utf-8")
+    parts = source_completeness(parse_document(paper, None, [appendix], ["appendix"]))
+    states = {p["part"]: p["state"] for p in parts["parts"]}
+    assert states["appendix"] == "supplied_parsed"
+    assert states["supplement"] == "referenced_not_supplied" and parts["missing"] == ["supplement"]
+    assert parts["items_not_found"] == ["Fig. S1"]
+
+
+def test_an_appendix_is_its_own_part(tmp_path):
+    doc = parse_document(HEAT_PDF, None, [HEAT_SUPPLEMENT], ["appendix"])
+    assert (doc.supplements[0].part, doc.supplements[0].part_kind) == ("appendix", "appendix")
+    assert split_supplement_spec(f"{HEAT_SUPPLEMENT}:appendix") == (str(HEAT_SUPPLEMENT), "appendix")
+    assert split_supplement_spec(f"{HEAT_SUPPLEMENT}:unknown") == (f"{HEAT_SUPPLEMENT}:unknown", "supplement")
+    # a path that is not a file keeps its suffix: only a real file plus a known kind splits
+    assert split_supplement_spec("C:/nowhere/x.pdf:appendix") == ("C:/nowhere/x.pdf:appendix", "supplement")
+
+
+def test_a_supplied_part_without_text_is_named_as_such(tmp_path):
+    """A scanned supplement cannot be searched: the record says "no text layer", not "supply the file"."""
+    paper = tmp_path / "p.txt"
+    paper.write_text("Results\nLine SL14 showed higher survival (fig. S1).\n", encoding="utf-8")
+    blank = tmp_path / "scan.txt"
+    blank.write_text(" \f ", encoding="utf-8")                 # a page with no extractable text
+    parts = source_completeness(parse_document(paper, None, [blank], ["supplement"]))
+    states = {p["part"]: p["state"] for p in parts["parts"]}
+    assert states["supplement"] == "supplied_no_text"
+    assert [w["code"] for w in parts["warnings"]] == ["SOURCE_PART_NOT_PARSED"]
+    assert unavailable_items("survival (fig. S1)", parts) == ["Fig. S1"]
+    assert unavailable_reason(parts) == "SOURCE_PART_NOT_PARSED"
+    assert parts["complete"] is True                            # the file is here; only its text is missing
+
+
+def test_a_supplied_part_whose_cited_item_is_missing_says_so(tmp_path):
+    """3.8.0 (AMB-044): "the file is here but the table it cites is not" is its own state."""
+    paper = tmp_path / "p.txt"
+    paper.write_text("Results\nMarker details are listed in Table S9; primers are in Table S1.\n", encoding="utf-8")
+    supplement = tmp_path / "s.txt"
+    supplement.write_text("Table S1 Primer sequences used in this study.\n", encoding="utf-8")
+    parts = source_completeness(parse_document(paper, None, [supplement], ["supplement"]))
+    states = {p["part"]: p["state"] for p in parts["parts"]}
+    assert states["supplement"] == "supplied_items_not_found"
+    assert parts["items_not_found"] == ["Table S9"]
+    assert [w["code"] for w in parts["warnings"]] == ["SOURCE_PART_ITEM_NOT_FOUND"]
+    assert parts["complete"] is True                     # the part is present; only an item is not located
+    assert unavailable_items("Table S9 lists the markers", parts) == []   # reported, not a per-record block
+
+
+def test_a_supplied_part_the_text_never_cites_is_reported(tmp_path):
+    paper = tmp_path / "p.txt"
+    paper.write_text("Results\nPlants were grown in a greenhouse.\n", encoding="utf-8")
+    extra = tmp_path / "extra.txt"
+    extra.write_text("Extra table\nTable S9 Marker list.\n", encoding="utf-8")
+    parts = source_completeness(parse_document(paper, None, [extra], ["supplement"]))
+    assert {p["part"]: p["state"] for p in parts["parts"]}["supplement"] == "supplied_not_referenced"
+    assert [w["code"] for w in parts["warnings"]] == ["SOURCE_PART_UNREFERENCED"]
+    assert unavailable_items("see Table S9", parts) == []       # it was supplied: nothing is unavailable
 
 
 # ------------------------------------------------------------------ agent mode and lineage

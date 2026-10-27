@@ -88,6 +88,23 @@ state the relation as one statement in the same candidate:
 - A negation is part of the predicate: copy "was not associated with", never only "associated with".
 - Do not normalize the predicate and do not choose a relation code: the pipeline anchors every mention in the
   quote and derives the code from the verbatim words. A relation the quote does not state is not a statement.
+- The predicate states what the paper claims; it does not decide how strong the claim is. Do not upgrade an
+  association into a cause in your own wording, and keep the authors' causal wording where they used it — the
+  pipeline records the claim strength from the evidence type beside the wording, never from the verb alone.
+
+## Validation and reviews
+
+- When the paper reports an experiment that validates a conclusion — complementation, transgenic or gene-edited
+  lines, expression analysis, enzyme assay, interaction assay, field test — make that experiment its own
+  candidate and link it from the conclusion with `links.validated_by`. The conclusion then reads
+  "experiment reported"; without such a link it stays a candidate. Never merge the validation evidence into the
+  association record: both keep their own evidence.
+- A candidate gene stays a candidate gene, a QTL stays a QTL and a QTN stays a QTN: each has its own entity
+  field in the list below. Do not rename one into another and do not write a candidate as if the paper had
+  validated it.
+- If the source is a review, the statements are the review's paraphrase of someone else's work: keep the lead
+  the text prints for the original study in the field listed for it, and never present a review sentence as an
+  experiment the review performed.
 
 ## Research workflow (background → question → hypothesis → experiment → result → conclusion)
 

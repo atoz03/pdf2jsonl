@@ -1,0 +1,5 @@
+Overlapping QTL for cyst nematode resistance and seed weight
+
+qSCN-1 overlapped with the QTL cluster qSCN-2 on chromosome 18.
+
+qSCN-3 colocalized with a previously reported seed weight QTL on chromosome 10.

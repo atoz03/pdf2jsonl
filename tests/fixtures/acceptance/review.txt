@@ -1,0 +1,7 @@
+Genes for seed weight and heading date: a review
+
+Zhang et al. (2019) reported that Glyma.10G206300 increases seed weight in soybean.
+
+In rice, Ghd7 is known to delay heading date under long-day conditions.
+
+Several studies have suggested that Dt1 controls stem growth habit in soybean.

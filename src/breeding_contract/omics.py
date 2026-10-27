@@ -21,8 +21,7 @@ from .ids import stable_record_id
 from .mappings import entry_targets, match_entry
 from .paths import repo_root
 from .schema_gen import field_schema
-from .util import (ContractError, canonical_json, dumps_json, dumps_jsonl, get_path, load_yaml, parse_semver, set_path,
-                   sha256_file, utc_now)
+from .util import (ContractError, canonical_json, dumps_json, dumps_jsonl, get_path, load_yaml, parse_semver, set_path, sha256_file, utc_now, sha256_text_file)
 
 EMPTY = (None, "", [], {})
 SKIP_GROUPS = {"schema_info", "controlled_vocabularies"}
@@ -152,7 +151,7 @@ def migrate_omics_file(path: Path | str, out_dir: Path | str, version: str = "la
         raise ContractError(f"omics migration targets contract >= 3.1.0 (got {rc.version})")
     mapping = load_yaml(root / "mappings/omics_to_current.yaml")
     started = utc_now()
-    run_id = "mig_" + started.strftime("%Y%m%dT%H%M%SZ") + "_" + sha256_file(path)[:8]
+    run_id = "mig_" + started.strftime("%Y%m%dT%H%M%SZ") + "_" + sha256_text_file(path)[:8]
     mig = OmicsMigrator(rc, mapping, record_kind, dataset_id, run_id)
     records, rejected, residue = [], [], []
     for n, inst in enumerate(_read_instances(path), 1):
@@ -189,9 +188,9 @@ def migrate_omics_file(path: Path | str, out_dir: Path | str, version: str = "la
                                encoding="utf-8")
     counts = {"records": len(records), "rejected": len(rejected), "residue_leaves": len(residue)}
     report = {"migration_format": 1, "run_id": run_id, "created_at": started.strftime("%Y-%m-%dT%H:%M:%SZ"),
-              "source": {"file_name": path.name, "sha256": sha256_file(path), "template_version": "2.0.0"},
+              "source": {"file_name": path.name, "sha256": sha256_text_file(path), "template_version": "2.0.0"},
               "contract": rc.identity(),
-              "mapping": {"id": mapping["id"], "sha256": sha256_file(root / "mappings/omics_to_current.yaml")},
+              "mapping": {"id": mapping["id"], "sha256": sha256_text_file(root / "mappings/omics_to_current.yaml")},
               "options": {"record_kind": record_kind, "dataset_id": dataset_id}, "counts": counts,
               "outputs": {k: {"file": p.name, "sha256": sha256_file(p)} for k, p in outs.items() if k != "report"},
               "tooling": {"breeding_contract": GENERATOR_VERSION}}

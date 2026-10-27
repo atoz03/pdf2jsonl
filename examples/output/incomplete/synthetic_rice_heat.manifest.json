@@ -4,11 +4,11 @@
   "created_at": "2026-09-21T13:13:20Z",
   "contract": {
     "schema_name": "breeding-literature-record",
-    "schema_version": "3.6.0",
+    "schema_version": "3.8.0",
     "release_status": "released",
-    "requested": "3.6.0",
-    "release_sha256": "e51608a630182e973ea0b0607b833c3bd8bc8d173be1fbb947e962ee7ac9d906",
-    "source_digest": "e3c5edb64a249ab758fdb9c5314ae6a0931b438dcc13a3bc7cfbd9d3d1058215"
+    "requested": "3.8.0",
+    "release_sha256": "779b53b57bca86b4ece948812401a352083a84a8c2284f0dfe17ee1a03096a56",
+    "source_digest": "52535de45905d2f7ce02b62ec79e3ae9c5ce75dcafd73d3e945f3f11b722c606"
   },
   "profile": {
     "name": "pdf_extraction",
@@ -19,11 +19,14 @@
       "backend_confidence",
       "backend_extraction_method",
       "candidate_record_kind",
+      "cited_items_from_quote",
+      "claim_strength_from_evidence",
       "cli_option",
       "constant",
       "document_source_id",
       "doi_uri",
       "evidence_locator",
+      "evidence_origin_from_document_type",
       "evidence_source_part",
       "evidence_span",
       "grain_from_record_kind",
@@ -41,9 +44,10 @@
       "stable_record_id",
       "unit_normalization",
       "validation_outcome",
+      "validation_status_from_links",
       "warning_codes"
     ],
-    "field_count": 233
+    "field_count": 241
   },
   "input": {
     "file_name": "synthetic_rice_heat.pdf",
@@ -59,7 +63,7 @@
   },
   "pipeline": {
     "name": "pdf2jsonl",
-    "version": "0.4.0",
+    "version": "0.6.0",
     "contract_tooling": "1.0.0"
   },
   "backend": {
@@ -69,8 +73,8 @@
   },
   "options": {},
   "environment": {
-    "python": "3.10.12",
-    "platform": "Linux-6.8.0-94-generic-x86_64-with-glibc2.35",
+    "python": "3.14.3",
+    "platform": "Windows-11",
     "packages": {
       "jsonschema": "4.26.0",
       "PyYAML": "6.0.3",
@@ -86,7 +90,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_rice_heat.jsonl",
-      "sha256": "0bc2ac2916ade58fb5e20bd48095a3310edc656794abe2b4f7f968dd725ac5e7"
+      "sha256": "bed7c20050b2874d7771dcbaf0414897efdfc4aa5db87c56caee34249d0c788f"
     },
     "errors": {
       "file": "synthetic_rice_heat.errors.jsonl",
@@ -94,13 +98,29 @@
     },
     "validation": {
       "file": "synthetic_rice_heat.validation.json",
-      "sha256": "9d0ca2d904593f42dac9f48460c5d5ad8129055bf38da20461627286dca8cab8"
+      "sha256": "56954d6e4646f8558c19eb462754c61bb27eb10f9cadd0b46999743d4119ec56"
     }
   },
   "source_parts": {
     "missing": [
       "supplement"
     ],
-    "complete": false
+    "complete": false,
+    "parts": [
+      {
+        "part": "supplement",
+        "source_part": "supplement",
+        "state": "referenced_not_supplied",
+        "files": [],
+        "text_pages": 0
+      },
+      {
+        "part": "appendix",
+        "source_part": "appendix",
+        "state": "not_referenced",
+        "files": [],
+        "text_pages": 0
+      }
+    ]
   }
 }

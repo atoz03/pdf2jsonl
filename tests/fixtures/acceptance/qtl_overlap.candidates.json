@@ -1,0 +1,52 @@
+{
+ "extraction": {
+  "method": "model",
+  "model": "acceptance",
+  "backend": "agent"
+ },
+ "document": {
+  "common.source_title": "Overlapping QTL for cyst nematode resistance and seed weight",
+  "common.source_language": "en",
+  "common.crop_name": "soybean",
+  "common.source_document_type": "journal_paper"
+ },
+ "candidates": [
+  {
+   "ref": "o_overlap",
+   "record_kind": "claim",
+   "fields": {
+    "agent.finding_text": "qSCN-1 overlapped with the QTL cluster qSCN-2 on chromosome 18.",
+    "common.qtl_names": [
+     "qSCN-1",
+     "qSCN-2"
+    ],
+    "transform.subject_mention": "qSCN-1",
+    "transform.predicate_mention": "overlapped with",
+    "transform.object_mention": "qSCN-2",
+    "transform.relation_assertion_mode": "stated"
+   },
+   "evidence": {
+    "page": 1,
+    "quote": "qSCN-1 overlapped with the QTL cluster qSCN-2 on chromosome 18."
+   }
+  },
+  {
+   "ref": "o_coloc",
+   "record_kind": "claim",
+   "fields": {
+    "agent.finding_text": "qSCN-3 colocalized with a previously reported seed weight QTL.",
+    "common.qtl_names": [
+     "qSCN-3"
+    ],
+    "transform.subject_mention": "qSCN-3",
+    "transform.predicate_mention": "colocalized with",
+    "transform.object_mention": "a previously reported seed weight QTL",
+    "transform.relation_assertion_mode": "stated"
+   },
+   "evidence": {
+    "page": 1,
+    "quote": "qSCN-3 colocalized with a previously reported seed weight QTL on chromosome 10."
+   }
+  }
+ ]
+}

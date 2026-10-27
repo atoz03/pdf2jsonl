@@ -1,0 +1,74 @@
+{
+ "extraction": {
+  "method": "model",
+  "model": "acceptance",
+  "backend": "agent"
+ },
+ "document": {
+  "common.source_title": "Genes for seed weight and heading date: a review",
+  "common.source_language": "en",
+  "common.crop_name": "soybean",
+  "common.source_document_type": "review"
+ },
+ "candidates": [
+  {
+   "ref": "r_cited",
+   "record_kind": "claim",
+   "fields": {
+    "agent.finding_text": "Zhang et al. (2019) reported that Glyma.10G206300 increases seed weight in soybean.",
+    "common.gene_names": [
+     "Glyma.10G206300"
+    ],
+    "common.trait_names": [
+     "seed weight"
+    ],
+    "agent.reported_citation_text": "Zhang et al. (2019)",
+    "transform.subject_mention": "Glyma.10G206300",
+    "transform.predicate_mention": "increases",
+    "transform.object_mention": "seed weight"
+   },
+   "evidence": {
+    "page": 1,
+    "quote": "Zhang et al. (2019) reported that Glyma.10G206300 increases seed weight in soybean."
+   }
+  },
+  {
+   "ref": "r_nocite",
+   "record_kind": "claim",
+   "fields": {
+    "agent.finding_text": "In rice, Ghd7 is known to delay heading date under long-day conditions.",
+    "common.gene_names": [
+     "Ghd7"
+    ],
+    "common.trait_names": [
+     "heading date"
+    ]
+   },
+   "evidence": {
+    "page": 1,
+    "quote": "In rice, Ghd7 is known to delay heading date under long-day conditions."
+   }
+  },
+  {
+   "ref": "r_hedged",
+   "record_kind": "claim",
+   "fields": {
+    "agent.finding_text": "Several studies have suggested that Dt1 controls stem growth habit in soybean.",
+    "common.gene_names": [
+     "Dt1"
+    ],
+    "common.trait_names": [
+     "stem growth habit"
+    ],
+    "agent.claim_qualifier_text": "suggested",
+    "transform.subject_mention": "Dt1",
+    "transform.predicate_mention": "controls",
+    "transform.object_mention": "stem growth habit"
+   },
+   "evidence": {
+    "page": 1,
+    "quote": "Several studies have suggested that Dt1 controls stem growth habit in soybean."
+   }
+  }
+ ]
+}

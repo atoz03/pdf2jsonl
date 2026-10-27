@@ -126,6 +126,13 @@
                 "type": "string",
                 "pattern": "^[a-z][a-z0-9_]*$"
               },
+              "kind": {
+                "enum": [
+                  "supplement",
+                  "appendix"
+                ],
+                "description": "part kind as given on the command line (--supplement FILE:appendix; AMB-044)"
+              },
               "file_name": {
                 "type": "string"
               },
@@ -263,7 +270,7 @@
       }
     },
     "source_parts": {
-      "description": "Parts the text refers to but that were not supplied (details in the validation report)",
+      "description": "Parts the text refers to but that were not supplied, plus the state of every part (details in the validation report; AMB-044)",
       "type": "object",
       "required": [
         "missing",
@@ -279,6 +286,49 @@
         },
         "complete": {
           "type": "boolean"
+        },
+        "parts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "part",
+              "source_part",
+              "state",
+              "files",
+              "text_pages"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "part": {
+                "type": "string"
+              },
+              "source_part": {
+                "type": "string"
+              },
+              "state": {
+                "enum": [
+                  "supplied_parsed",
+                  "supplied_no_text",
+                  "supplied_not_referenced",
+                  "supplied_items_not_found",
+                  "referenced_not_supplied",
+                  "in_main_pages",
+                  "not_referenced"
+                ]
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "text_pages": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
         }
       }
     }

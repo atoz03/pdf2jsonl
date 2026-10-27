@@ -58,9 +58,13 @@
         "candidates",
         "records",
         "rejected",
+        "system_records",
+        "model_records",
         "by_record_kind",
         "by_review_status",
-        "rejected_by_code"
+        "rejected_by_code",
+        "warnings",
+        "relation"
       ],
       "additionalProperties": false,
       "properties": {
@@ -80,6 +84,16 @@
           "type": "integer",
           "minimum": 0
         },
+        "system_records": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Records the pipeline wrote itself: one asset_manifest per input file"
+        },
+        "model_records": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "records − system_records"
+        },
         "by_record_kind": {
           "$ref": "_defs.schema.json#/$defs/count_map"
         },
@@ -88,7 +102,95 @@
         },
         "rejected_by_code": {
           "$ref": "_defs.schema.json#/$defs/count_map"
+        },
+        "warnings": {
+          "type": "object",
+          "required": [
+            "total",
+            "blocking",
+            "informational",
+            "by_code",
+            "by_family"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "blocking": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "informational": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "by_code": {
+              "$ref": "_defs.schema.json#/$defs/count_map"
+            },
+            "by_family": {
+              "$ref": "_defs.schema.json#/$defs/count_map"
+            }
+          }
+        },
+        "relation": {
+          "type": "object",
+          "description": "How many records state a relation and how the predicate codes resolved (AMB-043)",
+          "required": [
+            "statements",
+            "coded",
+            "ambiguous",
+            "no_cue",
+            "negated",
+            "by_resolution",
+            "coverage"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "statements": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "coded": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ambiguous": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "no_cue": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "negated": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "by_resolution": {
+              "$ref": "_defs.schema.json#/$defs/count_map"
+            },
+            "coverage": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "by_nature": {
+              "$ref": "_defs.schema.json#/$defs/count_map"
+            }
+          }
         }
+      }
+    },
+    "count_definitions": {
+      "type": "object",
+      "description": "What each number in `counts` counts, in words (AMB-043)",
+      "additionalProperties": {
+        "type": "string"
       }
     },
     "document": {
@@ -293,17 +395,149 @@
       }
     },
     "source_parts": {
-      "description": "Source completeness (AMB-041): the files supplied, the parts the main text refers to, and the referenced parts that were neither supplied nor found in the supplied pages. Literal detection; it never guesses what a missing part contains",
+      "description": "Source completeness (AMB-041, AMB-044): the files supplied, the parts the main text refers to, the state of each part, and the referenced parts that were neither supplied nor found in the supplied pages. Literal detection; it never guesses what a missing part contains",
       "type": "object",
       "required": [
         "provided",
         "referenced",
+        "parts",
         "missing",
         "items_not_found",
+        "warnings",
         "complete"
       ],
       "additionalProperties": false,
       "properties": {
+        "parts": {
+          "type": "array",
+          "description": "One entry per part kind the text references or the run supplies",
+          "items": {
+            "type": "object",
+            "required": [
+              "part",
+              "source_part",
+              "supplied",
+              "files",
+              "page_count",
+              "text_pages",
+              "text_chars",
+              "state",
+              "state_label_zh"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "part": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "source_part": {
+                "type": "string"
+              },
+              "supplied": {
+                "type": "boolean"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "page_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "text_pages": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "text_chars": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "state": {
+                "enum": [
+                  "supplied_parsed",
+                  "supplied_no_text",
+                  "supplied_not_referenced",
+                  "supplied_items_not_found",
+                  "referenced_not_supplied",
+                  "in_main_pages",
+                  "not_referenced"
+                ]
+              },
+              "state_label_zh": {
+                "type": "string"
+              },
+              "referenced": {
+                "type": "object",
+                "required": [
+                  "mentions",
+                  "pages"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "mentions": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "pages": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "items_not_found": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "description": "Run-level notices about a supplied part (no text layer, never cited by the main text, a cited item not found in it); they are not per-record problems",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "part",
+              "message"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "enum": [
+                  "SOURCE_PART_NOT_PARSED",
+                  "SOURCE_PART_UNREFERENCED",
+                  "SOURCE_PART_ITEM_NOT_FOUND"
+                ]
+              },
+              "part": {
+                "type": "string"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
         "provided": {
           "type": "array",
           "minItems": 1,
