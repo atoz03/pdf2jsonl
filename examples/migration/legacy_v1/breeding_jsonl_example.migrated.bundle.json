@@ -217,7 +217,7 @@
             "source_locator": "page=9;section=结果",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_MIGRATED",
@@ -292,7 +292,7 @@
             "source_locator": "page=7;section=结果",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_MIGRATED",
@@ -359,7 +359,7 @@
             "source_locator": "page=7;section=结果",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_INDIRECT_EVIDENCE",
@@ -424,7 +424,7 @@
             "source_locator": "page=9;section=结果",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_INDIRECT_EVIDENCE",
@@ -502,7 +502,7 @@
             "source_locator": "page=7",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_INDIRECT_EVIDENCE",
@@ -567,7 +567,7 @@
             "source_locator": "page=7",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_INDIRECT_EVIDENCE",
@@ -631,7 +631,7 @@
             "source_locator": "page=7",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_INDIRECT_EVIDENCE",
@@ -703,7 +703,7 @@
             "source_locator": "page=3",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_ENTITY_EVIDENCE",
@@ -771,7 +771,7 @@
             "source_locator": "page=14",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_ENTITY_EVIDENCE",
@@ -831,7 +831,7 @@
             "source_locator": "page=3",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_ENTITY_EVIDENCE",
@@ -899,7 +899,7 @@
             "source_locator": "page=3",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_ENTITY_EVIDENCE",
@@ -959,7 +959,7 @@
             "source_locator": "page=3",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_ENTITY_EVIDENCE",
@@ -1027,7 +1027,7 @@
             "source_locator": "page=3",
             "review_status": "pending_review",
             "record_version": 1,
-            "extraction_run_id": "mig_20260921T141320Z_c3757388",
+            "extraction_run_id": "mig_20260921T141320Z_bbfa7e12",
             "qc_rule_set_version": "breeding-literature-record@3.8.0+legacy-migration@1.0.0",
             "qc_failure_codes": [
               "LEGACY_ENTITY_EVIDENCE",

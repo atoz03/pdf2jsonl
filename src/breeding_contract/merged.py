@@ -20,8 +20,7 @@ from .ids import build_locator, build_span, stable_record_id
 from .legacy import EMPTY, LegacyMigrator, _concrete, _item_id, _leaves, _norm
 from .mappings import match_entry
 from .paths import repo_root
-from .util import (ContractError, dumps_json, dumps_jsonl, load_json, load_yaml,
-                   parse_semver, sha256_file, utc_now)
+from .util import (ContractError, dumps_json, dumps_jsonl, load_json, load_yaml, parse_semver, sha256_file, utc_now, sha256_text_file)
 
 OBSERVATION_KINDS = {"phenotype": "phenotype_observation", "environment": "environment_observation",
                      "genotype": "genotype_observation", "omics_feature": "observation"}
@@ -262,7 +261,7 @@ def migrate_merged_file(path, out_dir, version='latest', page_offset=None, datas
     source_schema_path = root / mapping['source']['file']
     source_validator = Draft202012Validator(load_json(source_schema_path))
     started = utc_now()
-    run_id = 'mig_' + started.strftime('%Y%m%dT%H%M%SZ') + '_' + sha256_file(path)[:8]
+    run_id = 'mig_' + started.strftime('%Y%m%dT%H%M%SZ') + '_' + sha256_text_file(path)[:8]
     migrator = MergedMigrator(rc, mapping, page_offset, dataset_id, source_file_sha256, run_id)
     docs = _read_inputs(path)
     parents = {}

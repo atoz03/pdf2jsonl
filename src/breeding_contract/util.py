@@ -137,3 +137,8 @@ def utc_now() -> _dt.datetime:
     if epoch:
         return _dt.datetime.fromtimestamp(int(epoch), tz=_dt.timezone.utc)
     return _dt.datetime.now(tz=_dt.timezone.utc).replace(microsecond=0)
+
+
+def sha256_text_file(path: Path | str) -> str:
+    """sha256 of a text file with CRLF normalised to LF, so a derived run id does not depend on the checkout."""
+    return hashlib.sha256(Path(path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()

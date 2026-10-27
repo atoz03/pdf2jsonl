@@ -1,6 +1,6 @@
 {
   "migration_format": 1,
-  "run_id": "mig_20260921T141320Z_c3757388",
+  "run_id": "mig_20260921T141320Z_bbfa7e12",
   "created_at": "2026-09-21T14:13:20Z",
   "source": {
     "file_name": "breeding_jsonl_example.jsonl",
@@ -215,11 +215,11 @@
   "outputs": {
     "records": {
       "file": "breeding_jsonl_example.migrated.jsonl",
-      "sha256": "b14e135a674440bb32226088dbea6325f1155994519576520453e03ff4ed85c0"
+      "sha256": "a523813b2ec7f009e53af5aa70dd7099fe06fbcd2e023101ba0b33969bad932e"
     },
     "errors": {
       "file": "breeding_jsonl_example.migrated.errors.jsonl",
-      "sha256": "169e41cc2bf1cf4b9baf7c2b5e2170bdae3c549d885cda53c32ead8c90318eb7"
+      "sha256": "a4acb559880c9374d9ef79d15d2cb4961bc8b1f378a8c6803be28ff715727ae2"
     },
     "residue": {
       "file": "breeding_jsonl_example.residue.json",
