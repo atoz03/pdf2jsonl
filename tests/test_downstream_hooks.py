@@ -114,6 +114,51 @@ def test_a_negated_relation_never_gets_the_positive_code(rc, tmp_path):
     assert by_status["plant height/qPH3.2"]["predicate_mention"] == "was not associated with"   # the negation survives
 
 
+def test_a_phrase_that_contains_one_entity_type_is_typed(rc, tmp_path):
+    """A subject clause that contains the QTL id is still that QTL; "controlling" is the cue "controls"."""
+    paper = tmp_path / "phrase.txt"
+    q1 = "The QTL qDTS1-2 was significantly associated with salt tolerance at the seedling stage."
+    q2 = "ZEP is a core gene controlling variation in zeaxanthin."
+    paper.write_text(q1 + "\n" + q2 + "\n", encoding="utf-8")
+    candidates = tmp_path / "phrase.candidates.json"
+    candidates.write_text(json.dumps({
+        "extraction": {"method": "model", "model": "test", "backend": "agent"},
+        "document": {"common.source_title": "Phrase fixture", "common.source_language": "en",
+                     "common.crop_name": "rice"},
+        "candidates": [
+            {"record_kind": "claim", "evidence": {"page": 1, "quote": q1},
+             "fields": {"agent.finding_text": q1, "common.qtl_names": ["qDTS1-2"],
+                        "common.trait_names": ["salt tolerance"],
+                        "transform.subject_mention": "The QTL qDTS1-2",
+                        "transform.predicate_mention": "was significantly associated with",
+                        "transform.object_mention": "salt tolerance"}},
+            {"record_kind": "claim", "evidence": {"page": 1, "quote": q2},
+             "fields": {"agent.finding_text": q2, "common.gene_names": ["ZEP"],
+                        "common.trait_names": ["zeaxanthin"],
+                        "transform.subject_mention": "ZEP",
+                        "transform.predicate_mention": "is a core gene controlling variation in",
+                        "transform.object_mention": "zeaxanthin"}},
+        ]}), encoding="utf-8")
+    opts = RunOptions(backend="candidates", candidates_file=str(candidates), out_dir=str(tmp_path / "out"),
+                      run_id="run_phrase")
+    recs = [r for r in read_jsonl(run(paper, opts).outputs["records"]) if get_path(r, "transform.predicate_code", None)]
+    coded = {r["transform"]["subject_mention"]: (r["transform"]["predicate_code"],
+                                                 r["transform"].get("relation_nature")) for r in recs}
+    assert coded["The QTL qDTS1-2"] == ("qtl_associated_with_trait", "associational")
+    assert coded["ZEP"] == ("genotype_controls_trait", "causal")
+    voc = rc.contract["vocabularies"]["predicate_label"]
+    assert predicate_code(voc, "was located within Os01g0968600", ["gene"], []) == "gene_located_in_region"
+    assert predicate_code(voc, "was controlled by qPH7.1", ["trait"], ["qtl"]) is None
+    assert predicate_code(voc, "controlled", ["qtl"], ["trait"]) == "genotype_controls_trait"
+    assert predicate_code(voc, "was controlled by", ["qtl"], ["trait"]) is None
+    assert predicate_code(voc, "related to", ["gene"], ["trait"]) == "gene_associated_with_trait"
+    assert predicate_code(voc, "related to", ["qtl"], ["trait"]) == "qtl_associated_with_trait"
+    assert predicate_code(voc, "related to", [], ["trait"]) is None
+    assert predicate_code(voc, "mapped in", ["gene"], []) == "gene_located_in_region"
+    assert predicate_code(voc, "associated with", ["marker"], ["trait"]) == "qtl_associated_with_trait"
+    assert predicate_code(voc, "associated with", ["marker"], ["gene"]) is None
+
+
 def test_a_number_is_only_matched_whole():
     assert _number_span("increased plant height by 8.6 cm", 8) is None             # not the 8 of 8.6
     assert _number_span("increased plant height by 8.6 cm", 8.6) == (26, 29)
