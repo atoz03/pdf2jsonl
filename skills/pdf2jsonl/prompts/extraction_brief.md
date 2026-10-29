@@ -84,6 +84,10 @@ state the relation as one statement in the same candidate:
 
 - All three are copied from the quote. Also list each entity in its own entity field (the QTL among the QTL
   names, the trait among the trait names), spelled exactly as in the statement, so the pipeline can type it.
+- The subject and the object are the entity strings themselves (a QTL id, a gene id, a trait name), not a
+  surrounding clause. "qDTS1-2", not "the QTL qDTS1-2 on chromosome 1". One QTL or one gene per candidate.
+- When the quote states a magnitude, copy the number and its unit into the raw value fields of that candidate
+  (15.20 and %, not a sentence). Leave the value empty when the quote has no number.
 - One candidate carries one statement. A sentence that relates several pairs becomes several candidates.
 - A negation is part of the predicate: copy "was not associated with", never only "associated with".
 - Do not normalize the predicate and do not choose a relation code: the pipeline anchors every mention in the
