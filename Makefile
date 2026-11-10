@@ -1,7 +1,7 @@
 PY      ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 BDC     := PYTHONPATH=src $(PY) -m breeding_contract.cli
 
-.PHONY: help venv check test acceptance generate diagram site dashboard readme-art release examples sample-pdf all
+.PHONY: help venv check test acceptance generate diagram site dashboard dashboard-full network-demo readme-art release examples sample-pdf all
 
 help:
 	@echo "make venv       create .venv with dev dependencies (uv, else venv+pip)"
@@ -11,7 +11,9 @@ help:
 	@echo "make generate   rebuild docs/generated from the catalog"
 	@echo "make diagram    export Chinese/English pipeline SVGs from the HTML diagram"
 	@echo "make site       build the eight-page Pages site into _site/ (overview, pipeline, walk-through, outputs, papers, importers, fields, contract)"
-	@echo "make dashboard  write an untracked dashboard.html that also covers local run directories"
+	@echo "make dashboard  write the simplified phenotype-gene-population dashboard.html"
+	@echo "make dashboard-full  write the full paper dashboard.html (all records and tabs)"
+	@echo "make network-demo  run the four-paper demo and rebuild dashboard.html"
 	@echo "make readme-art regenerate the breeding-themed README banner and icons"
 	@echo "make release    freeze VERSION as releases/<VERSION> (needs a CHANGELOG entry)"
 	@echo "make examples   regenerate examples/ (records, pipeline output, migrations)"
@@ -38,7 +40,13 @@ site:
 	PYTHONPATH=src $(PY) scripts/make_site.py --out _site
 
 dashboard:
+	$(PY) scripts/make_network_dashboard.py
+
+dashboard-full:
 	$(PY) scripts/make_dashboard.py
+
+network-demo:
+	$(PY) scripts/make_network_demo.py
 
 readme-art:
 	$(PY) scripts/make_readme_art.py

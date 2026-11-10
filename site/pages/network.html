@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>表型—基因—种群关系网 · pdf2jsonl</title>
+<meta name="description" content="A task-first view over the breeding records: only phenotype–gene–population relations, with every edge traceable to its paper, section, figure or table.">
+<style>
+/*__KIT_CSS__*/
+/* ---------------------------------------------------------------- page: network view */
+:root { --trait: #b9841a; --trait-soft: #f7ecd2; --gene: #16745f; --gene-soft: #e2efe8; --pop: #2e69a8; --pop-soft: #e4edf7; }
+body { background: var(--bg); }
+.top { position: sticky; top: 0; z-index: 40; height: var(--header-h); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
+.top .wrap { height: 100%; display: flex; align-items: center; gap: 14px; }
+.brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); text-decoration: none; }
+.brand:hover { text-decoration: none; }
+.brand .logo { width: 32px; height: 32px; }
+.brand b { display: block; font-size: 15.5px; line-height: 1.1; }
+.brand small { display: block; color: var(--ink-3); font-size: 10.5px; letter-spacing: .02em; }
+.top-nav { margin-inline: auto; display: flex; gap: 4px; align-items: center; }
+.top-nav a { color: var(--ink-2); font-size: 13.5px; font-weight: 560; padding: 7px 12px; border-radius: 999px; }
+.top-nav a:hover { color: var(--ink); background: var(--surface-3); text-decoration: none; }
+.top-nav a.active { color: var(--brand-ink); background: var(--brand-soft); }
+.top-actions { display: flex; align-items: center; gap: 8px; }
+@media (max-width: 760px) { .top-nav { display: none; } .top .wrap { justify-content: space-between; } }
+
+.page-hero { padding-block: 46px 20px; }
+.page-hero h1 { font-size: clamp(30px, 4.6vw, 46px); font-weight: 780; letter-spacing: -.035em; margin: 10px 0 10px; }
+.page-hero h1 em { font-style: normal; color: var(--brand); }
+.page-hero .lead { max-width: 760px; }
+.searchbar { margin-top: 22px; display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line-2); border-radius: 14px; padding: 10px 12px; box-shadow: var(--shadow-1); max-width: 760px; }
+.searchbar svg { color: var(--ink-3); width: 20px; height: 20px; flex: none; }
+.searchbar input { border: 0; outline: 0; background: none; width: 100%; font-size: 15.5px; min-width: 0; }
+.searchbar input::placeholder { color: var(--ink-3); }
+.searchbar .btn { flex: none; }
+.pair-chips { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+.net-meta { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px 16px; color: var(--ink-2); font-size: 13px; }
+.net-meta b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.net-meta .hidden-n { color: var(--amber); }
+
+.net-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(340px, 1fr); gap: 18px; align-items: start; margin-top: 6px; }
+@media (max-width: 1080px) { .net-grid { grid-template-columns: 1fr; } }
+.net-card { overflow: hidden; }
+.net-card .card-head { background: var(--surface-2); }
+.net-stage { padding: 6px 10px 2px; }
+.net-stage svg { display: block; width: 100%; height: auto; min-height: 520px; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 14px; font-size: 11.5px; color: var(--ink-3); padding: 8px 16px 13px; }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+.legend .ln { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--ink-3); vertical-align: 3px; margin-right: 4px; }
+.legend .ln.dashed { border-top-style: dashed; }
+
+.lane { fill: var(--surface-2); stroke: var(--line); stroke-width: 1; }
+.lane-title { font: 700 13px var(--sans); fill: var(--ink-2); letter-spacing: .02em; }
+.lane-sub { font: 400 11px var(--sans); fill: var(--ink-3); }
+.lane-empty { font: 400 12px var(--sans); fill: var(--ink-3); }
+.edge { fill: none; stroke-linecap: round; transition: opacity .15s, stroke-width .15s; cursor: pointer; }
+.edge.nature-causal { stroke: var(--brand); }
+.edge.nature-associational { stroke: var(--gold); }
+.edge.nature-structural { stroke: var(--info); }
+.edge.nature-descriptive, .edge.nature-unknown { stroke: var(--ink-3); }
+.edge.unencoded { stroke-dasharray: 5 4; }
+.edge.dim { opacity: .10; }
+.edge.sel { stroke-width: 4.2; opacity: 1; filter: drop-shadow(0 0 4px color-mix(in srgb, currentColor 35%, transparent)); }
+.edge.end { stroke-width: 3.4; }
+.edge-count { font: 700 10px var(--mono); fill: var(--ink-2); }
+.edge-count-bg { fill: var(--surface); stroke: var(--line-2); stroke-width: 1; }
+.node { cursor: pointer; }
+.node .halo { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.node.layer-trait .dot { fill: var(--trait); }
+.node.layer-gene .dot { fill: var(--gene); }
+.node.layer-population .dot { fill: var(--pop); }
+.node.layer-trait .halo { stroke: var(--trait); }
+.node.layer-gene .halo { stroke: var(--gene); }
+.node.layer-population .halo { stroke: var(--pop); }
+.node .label { font: 650 12.5px var(--sans); fill: var(--ink); }
+.node .kind { font: 500 10px var(--sans); fill: var(--ink-3); }
+.node.dim { opacity: .18; }
+.node.sel .halo { stroke-width: 2.6; }
+.node:hover .halo { stroke-width: 2.6; }
+.node:focus { outline: none; }
+.node:focus .halo { stroke-width: 3; }
+
+.ev-card { padding: 0; overflow: hidden; position: sticky; top: calc(var(--header-h) + 14px); max-height: calc(100vh - var(--header-h) - 28px); overflow-y: auto; }
+@media (max-width: 1080px) { .ev-card { position: static; max-height: none; } }
+.ev-head { padding: 17px 18px 13px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.ev-pair { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-3); flex-wrap: wrap; }
+.ev-title { margin: 8px 0 0; font-size: 17px; line-height: 1.55; font-weight: 700; }
+.ev-title .pred { color: var(--ink-3); font-weight: 500; }
+.ent { display: inline-flex; align-items: baseline; gap: 5px; white-space: normal; }
+.ent em { font-style: normal; font: 600 10.5px var(--sans); color: var(--ink-3); background: var(--surface-3); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; vertical-align: 1px; }
+.ent.layer-trait { color: var(--trait); }
+.ent.layer-gene { color: var(--gene); }
+.ent.layer-population { color: var(--pop); }
+.ev-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.ev-body { padding: 15px 18px 18px; }
+.ev-item + .ev-item { border-top: 1px dashed var(--line); margin-top: 16px; padding-top: 15px; }
+.ev-paper { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; font-size: 12.5px; color: var(--ink-2); }
+.ev-paper b { font-size: 13px; color: var(--ink); font-weight: 650; }
+.ev-paper .doi { color: var(--ink-3); font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
+blockquote.q { margin: 10px 0 8px; padding: 10px 12px; border-left: 3px solid var(--brand-line); background: var(--surface-2); border-radius: 0 9px 9px 0; font-size: 13.5px; line-height: 1.7; color: var(--ink-2); }
+blockquote.q mark { background: var(--mark); color: var(--ink); border-radius: 3px; padding: 0 1px; }
+blockquote.q mark.p { background: var(--mark-sel); }
+.locator { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.locator .tag { font-size: 11.5px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 7px; margin-top: 11px; }
+.stat { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; min-width: 0; }
+.stat .k { font-size: 10.5px; color: var(--ink-3); letter-spacing: .02em; }
+.stat .v { font-size: 12.5px; font-weight: 650; color: var(--ink); overflow-wrap: anywhere; }
+.ev-foot { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 11px; }
+.ev-empty { padding: 26px 20px; color: var(--ink-3); font-size: 13.5px; line-height: 1.8; }
+.ev-empty b { color: var(--ink-2); }
+.warn-list { margin: 9px 0 0; padding-left: 17px; font-size: 11.5px; color: var(--ink-3); line-height: 1.6; }
+.q-hl { color: var(--ink); }
+
+.rel-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 6px; line-height: 1.55; }
+.rel-line .pred { color: var(--ink-3); }
+.rtbl .rel-sub { color: var(--ink-3); font-size: 11.5px; margin-top: 2px; }
+.rtbl td { vertical-align: middle; }
+.rtbl tr { cursor: pointer; }
+.rtbl tr.sel td { background: var(--brand-soft); }
+.rtbl tr:hover td { background: var(--surface-2); }
+
+.hidden-box { margin-bottom: 18px; }
+.hidden-box > summary { cursor: pointer; padding: 13px 16px; font-weight: 650; font-size: 13.5px; }
+.hidden-box[open] > summary { border-bottom: 1px solid var(--line); }
+.hidden-body { padding: 12px 16px 15px; color: var(--ink-2); font-size: 13px; }
+.hidden-body table { width: 100%; border-collapse: collapse; }
+.hidden-body td, .hidden-body th { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.hidden-body th { color: var(--ink-3); font-weight: 600; }
+.paper-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; }
+.paper { border: 1px solid var(--line); border-radius: 11px; padding: 12px 13px; background: var(--surface); }
+.paper b { display: block; font-size: 13px; line-height: 1.45; }
+.paper .m { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.paper .links { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+.foot-note { color: var(--ink-3); font-size: 12px; line-height: 1.7; }
+
+/* ---------------------------------------------------------------- paper mode */
+.mode-tabs { display: inline-flex; gap: 4px; padding: 4px; background: var(--surface-3); border: 1px solid var(--line); border-radius: 12px; margin-top: 18px; }
+.mode-tabs button { border: 0; background: none; padding: 7px 13px; border-radius: 9px; font-size: 13.5px; font-weight: 650; color: var(--ink-2); }
+.mode-tabs button:hover { color: var(--ink); }
+.mode-tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
+.paper-workspace { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 18px; align-items: start; margin-top: 6px; }
+@media (max-width: 980px) { .paper-workspace { grid-template-columns: 1fr; } }
+.paper-list { position: sticky; top: calc(var(--header-h) + 14px); max-height: calc(100vh - var(--header-h) - 28px); overflow: auto; }
+@media (max-width: 980px) { .paper-list { position: static; max-height: none; } }
+.paper-list .card-head { background: var(--surface-2); }
+#paper-list { padding: 8px; display: grid; gap: 7px; }
+.paper-item { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px 11px; display: grid; gap: 4px; color: var(--ink); }
+.paper-item:hover { border-color: var(--line-2); background: var(--surface-2); }
+.paper-item[aria-selected="true"] { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 12%, transparent); }
+.paper-item b { font-size: 12.5px; line-height: 1.45; font-weight: 650; }
+.paper-item .m { font-size: 11px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 3px 7px; }
+.paper-item .badges { display: flex; flex-wrap: wrap; gap: 4px; }
+.paper-head { padding: 18px 20px 15px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.paper-head h2 { font-size: 21px; line-height: 1.35; margin: 0 0 7px; }
+.paper-head .meta { display: flex; flex-wrap: wrap; gap: 5px 14px; font-size: 12px; color: var(--ink-3); }
+.paper-body { padding: 16px 20px 20px; }
+.pkg { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; }
+.pkg-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
+.pkg-head b { font-size: 13px; }
+.pkg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 7px; }
+.pkg-cell { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; min-width: 0; }
+.pkg-cell .k { font-size: 10.5px; color: var(--ink-3); }
+.pkg-cell .v { font-size: 12px; font-weight: 600; margin-top: 2px; overflow-wrap: anywhere; }
+.pkg-notes { margin: 8px 0 0; padding-left: 17px; font-size: 11.5px; color: var(--ink-3); line-height: 1.65; }
+.rel-card { border: 1px solid var(--line); border-radius: 13px; background: var(--surface); margin-bottom: 14px; overflow: hidden; }
+.rel-card-head { padding: 13px 15px 11px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.rel-card-head .rel-line { font-size: 15px; }
+.rel-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.chain-wrap { padding: 12px 15px 15px; }
+.chain-step { border-left: 2px solid var(--brand-line); padding: 0 0 0 12px; margin: 0 0 10px; }
+.chain-step:last-child { margin-bottom: 0; }
+.step-k { font-size: 10.5px; font-weight: 700; color: var(--brand); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 5px; }
+.chain-node { background: var(--surface-2); border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; }
+.chain-node .chain-top { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 5px; }
+.chain-node .chain-text { font-size: 13px; font-weight: 600; line-height: 1.5; }
+.chain-node blockquote { margin: 7px 0 0; padding: 7px 9px; border-left: 2px solid var(--line-2); background: var(--surface); border-radius: 0 7px 7px 0; font-size: 12px; line-height: 1.65; color: var(--ink-2); }
+.chain-node .locator { margin-top: 6px; }
+.chain-node .stats { margin-top: 7px; }
+.chain-down { text-align: center; color: var(--brand-line); font-size: 15px; line-height: 1; margin: 2px 0 10px; }
+.chain-missing { font-size: 11.5px; color: var(--amber); background: var(--amber-soft); border: 1px solid var(--amber-line); border-radius: 8px; padding: 7px 9px; margin-top: 7px; }
+.chain-methods { display: grid; gap: 7px; margin-top: 8px; }
+.chain-method { border: 1px dashed var(--line-2); border-radius: 8px; padding: 7px 9px; background: var(--surface); }
+.chain-method .mh { display: flex; flex-wrap: wrap; gap: 4px; align-items: baseline; margin-bottom: 3px; }
+.chain-method .mt { font-size: 12px; font-weight: 650; }
+.chain-method .mq { font-size: 11.5px; color: var(--ink-3); line-height: 1.6; }
+.chain-method .locator { margin-top: 4px; }
+.paper-hidden { margin-top: 14px; }
+.paper-hidden summary { cursor: pointer; font-size: 12px; font-weight: 650; color: var(--amber); }
+.paper-hidden .body { margin-top: 7px; font-size: 11.5px; color: var(--ink-3); line-height: 1.7; }
+.empty-paper { padding: 40px 20px; }
+
+/* ---------------------------------------------------------------- human review */
+.review-box { margin-top: 18px; border: 1px solid var(--amber-line); background: var(--amber-soft); border-radius: 13px; overflow: hidden; }
+.review-head { padding: 12px 14px; border-bottom: 1px solid var(--amber-line); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.review-head b { font-size: 13px; }
+.review-head .spacer { flex: 1; }
+.reviewer-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.reviewer-bar label { font-size: 11.5px; color: var(--ink-3); display: inline-flex; align-items: center; gap: 5px; }
+.reviewer-bar input { border: 1px solid var(--line-2); background: var(--surface); border-radius: 7px; padding: 5px 8px; font-size: 12px; width: 130px; }
+.review-note { border: 1px solid var(--line-2); background: var(--surface); border-radius: 7px; padding: 5px 8px; font-size: 12px; flex: 1; min-width: 160px; }
+.review-list { padding: 10px; display: grid; gap: 8px; max-height: 760px; overflow: auto; }
+.review-item { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 11px; }
+.review-item .rmeta { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-bottom: 5px; }
+.review-item .rtext { font-size: 12.5px; font-weight: 600; line-height: 1.5; }
+.review-item blockquote { margin: 6px 0 0; padding: 6px 8px; border-left: 2px solid var(--line-2); background: var(--surface-2); border-radius: 0 6px 6px 0; font-size: 11.5px; color: var(--ink-2); line-height: 1.6; }
+.review-actions { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin-top: 8px; }
+.review-actions .btn { padding: 4px 9px; font-size: 11.5px; }
+.review-decision { margin-top: 7px; font-size: 11.5px; color: var(--ok); }
+.review-decision.rejected { color: var(--clay); }
+.review-decision.pending_review { color: var(--amber); }
+.review-empty { padding: 12px 14px; color: var(--ink-3); font-size: 12px; }
+.review-hint { padding: 8px 14px 0; color: var(--ink-3); font-size: 11.5px; line-height: 1.65; }
+.review-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 20px; }
+.review-modal[hidden] { display: none; }
+.review-backdrop { position: absolute; inset: 0; background: rgba(15, 42, 36, .48); backdrop-filter: blur(3px); }
+.review-panel { position: relative; width: min(980px, 100%); max-height: min(88vh, 900px); display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-3); }
+.review-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.review-modal-head h2 { font-size: 17px; }
+.review-modal-head .icon-btn { font-size: 22px; line-height: 1; }
+.review-modal-body { overflow: auto; padding: 12px; }
+.review-modal .review-box { margin: 0; }
+.btn.amber { background: var(--amber-soft); border-color: var(--amber-line); color: var(--amber); }
+.btn.amber:hover { background: var(--amber-soft); border-color: var(--amber); }
+body.modal-open { overflow: hidden; }
+
+
+
+@media (max-width: 640px) {
+  .page-hero { padding-block: 28px 14px; }
+  .net-stage svg { min-height: 430px; }
+  .searchbar { padding: 8px 10px; }
+  .searchbar input { font-size: 14px; }
+}
+</style>
+</head>
+<body data-page="network">
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="pdf2jsonl 关系网">
+      <svg class="logo" viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="10" fill="#0f2a24"/><path d="M12.5 30.5c3.4-6.6 5.6-13.4 6.6-22.5" stroke="#8fd0aa" stroke-width="1.8" fill="none" stroke-linecap="round"/><g fill="#e8b852"><ellipse cx="20.6" cy="8.6" rx="2.1" ry="3.6" transform="rotate(30 20.6 8.6)"/><ellipse cx="16.3" cy="12.2" rx="2.1" ry="3.6" transform="rotate(-32 16.3 12.2)"/><ellipse cx="21.6" cy="14.6" rx="2.1" ry="3.6" transform="rotate(34 21.6 14.6)"/><ellipse cx="15.7" cy="18.2" rx="2" ry="3.4" transform="rotate(-30 15.7 18.2)"/><ellipse cx="20.4" cy="20.6" rx="2" ry="3.3" transform="rotate(36 20.4 20.6)"/></g></svg>
+      <span><b>pdf2jsonl</b><small>表型—基因—种群关系网</small></span>
+    </a>
+    <nav class="top-nav" aria-label="视图">
+      <a class="active" href="#" aria-current="page">关系网</a>
+      <!--__PAPERS_LINK__-->
+    </nav>
+    <div class="top-actions">
+      <span class="ver">v<!--__VERSION__--></span>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="page-hero wrap">
+    <div class="eyebrow">研究视图 · 三元关系</div>
+    <h1>表型 <em>—</em> 基因 <em>—</em> 种群</h1>
+    <p class="lead">先按论文看删减后的三元关系与完整证据链；需要跨文比较时，再展开全库大网。QTL / QTN 归入基因层，其他关系不在本视图展开。每篇论文底部有人工复核队列。</p>
+    <div class="mode-tabs" role="tablist" aria-label="视图模式">
+      <button type="button" role="tab" data-mode="paper" aria-selected="true">逐篇查看</button>
+      <button type="button" role="tab" data-mode="network" aria-selected="false">展开全库大网</button>
+    </div>
+    <div class="searchbar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.6-4.6"/></svg>
+      <input id="q" type="search" autocomplete="off" placeholder="搜索性状、基因、QTL/QTN、种群或论文…" aria-label="搜索关系">
+      <button type="button" class="btn sm ghost" id="q-clear" hidden>清除</button>
+    </div>
+    <div class="pair-chips" id="pair-chips" role="group" aria-label="关系类型筛选"></div>
+    <div class="net-meta" id="net-meta"></div>
+  </section>
+
+  <section class="wrap paper-workspace" id="paper-view">
+    <aside class="card paper-list">
+      <div class="card-head"><span>论文 <span class="muted xs" id="paper-count"></span></span><span class="xs muted">逐篇删减</span></div>
+      <div id="paper-list"></div>
+    </aside>
+    <div id="paper-main"></div>
+  </section>
+
+  <div id="network-view" hidden>
+  <section class="wrap net-grid">
+    <div class="card net-card">
+      <div class="card-head"><span>关系网 <span class="muted xs" id="net-sub"></span></span><span class="xs muted">点击边查看证据</span></div>
+      <div class="net-stage"><svg id="net" viewBox="0 0 1200 640" role="img" aria-label="表型、基因层与种群的三层关系网"></svg></div>
+      <div class="legend">
+        <span><i style="background:var(--trait)"></i>表型</span>
+        <span><i style="background:var(--gene)"></i>基因层（含 QTL / QTN）</span>
+        <span><i style="background:var(--pop)"></i>种群</span>
+        <span><span class="ln"></span>相关</span>
+        <span><span class="ln" style="border-color:var(--brand)"></span>因果</span>
+        <span><span class="ln dashed"></span>谓语未编码（仅按原文展示）</span>
+      </div>
+    </div>
+    <aside class="card ev-card" id="ev-card" aria-live="polite"></aside>
+  </section>
+
+  <section class="wrap section">
+    <div class="section-head plain">
+      <h2>关系清单</h2>
+      <p>每条关系是一个可复核的证据单元；同一关系由多篇论文支持时合并为一行，证据逐条保留。</p>
+    </div>
+    <div class="card" style="overflow:hidden">
+      <div class="table-wrap">
+        <table class="tbl cards rtbl" id="rel-table">
+          <thead><tr><th>关系</th><th>证据</th><th>论文</th><th>置信</th><th>证据链</th><th>审核</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <details class="card hidden-box" id="hidden-box">
+      <summary id="hidden-summary">本期未展示的其他关系</summary>
+      <div class="hidden-body" id="hidden-body"></div>
+    </details>
+  </section>
+
+  <section class="wrap section">
+    <div class="section-head plain">
+      <h2>数据来源</h2>
+      <p>本视图读取每篇论文最新一次运行的记录；缺失的补充材料、待复核记录都保留在来源状态里。</p>
+    </div>
+    <div class="paper-grid" id="paper-grid"></div>
+    <p class="foot-note" style="margin-top:14px">生成时间 <span id="generated-at">—</span> · 契约版本 <span id="contract-version">—</span> · 重新生成 <code>python scripts/make_network_dashboard.py</code> · 本页由 <code>scripts/make_network_dashboard.py</code> 生成，不改变后端记录。</p>
+  </section>
+  </div>
+</main>
+
+<div id="review-modal" class="review-modal" hidden>
+  <div class="review-backdrop" data-close-review></div>
+  <div class="review-panel card" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+    <div class="review-modal-head">
+      <div><h2 id="review-modal-title">人工复核</h2><p class="xs muted" id="review-modal-sub"></p></div>
+      <button type="button" class="icon-btn" data-close-review aria-label="关闭">×</button>
+    </div>
+    <div class="review-modal-body" id="review-modal-body"></div>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#" aria-label="pdf2jsonl"><svg class="logo" viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="10" fill="#0f2a24"/><path d="M12.5 30.5c3.4-6.6 5.6-13.4 6.6-22.5" stroke="#8fd0aa" stroke-width="1.8" fill="none" stroke-linecap="round"/><g fill="#e8b852"><ellipse cx="20.6" cy="8.6" rx="2.1" ry="3.6" transform="rotate(30 20.6 8.6)"/><ellipse cx="16.3" cy="12.2" rx="2.1" ry="3.6" transform="rotate(-32 16.3 12.2)"/><ellipse cx="21.6" cy="14.6" rx="2.1" ry="3.6" transform="rotate(34 21.6 14.6)"/><ellipse cx="15.7" cy="18.2" rx="2" ry="3.4" transform="rotate(-30 15.7 18.2)"/><ellipse cx="20.4" cy="20.6" rx="2" ry="3.3" transform="rotate(36 20.4 20.6)"/></g></svg><span><b>pdf2jsonl</b><small>breeding-literature records</small></span></a>
+      <p>逐篇删减 + 全库大网；证据链从结论走到结果与实验，文章包和聚合由后端派生，不改写记录。</p>
+    </div>
+    <div><h4>关系</h4><a href="#main">关系网</a><a href="#rel-table">关系清单</a></div>
+    <div><h4>来源</h4><a href="#paper-grid">论文与运行</a><a href="#hidden-box">未展示的关系</a></div>
+    <div><h4>说明</h4><span class="muted xs">合成样例数据，仅用于演示。</span></div>
+  </div>
+</footer>
+
+<script id="network-data" type="application/json"><!--__NETWORK_DATA__--></script>
+<script>
+/*__NETWORK_JS__*/
+</script>
+</body>
+</html>

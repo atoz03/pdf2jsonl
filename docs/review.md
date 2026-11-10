@@ -174,6 +174,18 @@ Experts own what the contract marks as human judgment (availability I) and the f
 - `common.conflict_record_ids` and `common.conflict_resolution_status`, starting from the conflict candidates;
 - `expert_approved` / `rejected`.
 
+The simplified research view has a per-paper **人工复核** button that opens a review panel for every
+`pending_review` record. The reviewer chooses 通过 / 驳回 / 退回补证 (the latter two need a note); decisions stay
+in the browser until exported, then
+
+```bash
+bdc review apply out/paper.jsonl paper.review_decisions.json --out out/reviewed
+```
+
+writes `<stem>.reviewed.jsonl` and `<stem>.review.json`. It moves only `common.review_status` and
+`common.review_note`; content, evidence and `qc_failure_codes` are kept. This is the only writer of
+`expert_approved` / `rejected`; `bdc verify` never produces an expert verdict.
+
 ### Evidence strength: a rubric is needed
 
 `agent.evidence_strength` is defined as "assessed by predefined rules", and the rules do not exist yet. Until

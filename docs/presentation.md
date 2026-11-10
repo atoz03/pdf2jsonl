@@ -1,8 +1,9 @@
 # 展示规则：实体、验证状态与限定语
 
-本文件是**界面契约**：凡是从记录派生的列表（论文看板 `site/pages/papers.html`、后续任何同类视图），
-必须把下面四件事直接显示在列表行里，不能只放在详情弹窗或导出文件里。`bdc check` 会检查看板模板是否
-实现了这几条（`check_presentation`），删掉对应的列或标签会让 CI 失败。
+本文件是**界面契约**：凡是从记录派生的列表（论文看板 `site/pages/papers.html`、简化关系网
+`site/pages/network.html`、后续任何同类视图），必须把下面四件事直接显示在列表行里，不能只放在详情弹窗
+或导出文件里。`bdc check` 会检查这些模板是否实现了这几条（`check_presentation`），删掉对应的列或标签
+会让 CI 失败。
 
 ## 1. 实体必须与它的类型一起显示
 
@@ -52,5 +53,6 @@
 | 验证状态 | 记录表"验证"列（`validationCell`） | 同上 |
 | 限定语 | 记录表"限定语"列（`qualifierCell`） | 同上 |
 | 结论强度与判定 | 记录表"结论强度"列、"关系"页签的强度列与判定行 | 同上 |
+| 简化关系网 | `site/pages/network.html` + `site/pages/network.js`：`typed()`、证据卡的验证 / 限定语 / 结论强度标签 | `NETWORK_PRESENTATION_MARKERS` |
 
 改动这条规则时：先改本文件与模板，再让 `bdc check` 通过；两边必须一致。
