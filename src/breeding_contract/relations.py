@@ -107,19 +107,32 @@ def entity_markers(record: dict, contract: dict, quote, ends: dict[str, tuple[st
     for role, (path, _) in wanted.items():
         if role in matched:
             continue
-        # The statement end is often a short phrase that contains the entity ("The QTL qDTS1-2",
-        # "TaPTR gene") rather than the entity string alone. Type it when every entity mention
-        # inside that phrase has the same type. Mixed types stay untyped, so two codes cannot tie.
+        # The statement end is often the entity wrapped in a determiner or its type noun ("The QTL qDTS1-2",
+        # "TaPTR gene") rather than the entity string alone. That end is the entity, so its marker plays the role.
+        # Any other surrounding word names something else ("HTR2 precursors" is not the gene HTR2), and two
+        # contained entities are ambiguous: both keep an untyped end of their own.
         end_text = ends[role][1]
         contained = [m for m in markers if m.get("entity_type") and not m.get("relation_role")
                      and find_span(end_text, m["mention"])]
-        types = {m["entity_type"] for m in contained}
-        if contained and len(types) == 1:
-            for m in contained:
-                m["relation_role"] = role
+        if len(contained) == 1 and _wraps(end_text, contained[0]["mention"], contained[0]["entity_type"]):
+            contained[0]["relation_role"] = role
             continue
         add(path, end_text, None, role)
     return markers
+
+
+_DETERMINERS = frozenset({"the", "a", "an", "this", "that"})
+_TYPE_NOUNS = {"qtl": {"qtl", "locus"}, "gene": {"gene", "locus"}}
+
+
+def _wraps(end_text: str, mention: str, etype: str) -> bool:
+    """``end_text`` is ``mention`` plus only determiners and words naming its entity type ("the QTL qDTS1-2")."""
+    span = find_span(end_text, mention)
+    if not span:
+        return False
+    rest = normalize_text(end_text[:span[0]] + " " + end_text[span[1]:]).split()
+    allowed = _DETERMINERS | _TYPE_NOUNS.get(etype, {etype})
+    return all(w in allowed for w in rest)
 
 
 def end_types(markers: list[dict], role: str) -> list[str]:
@@ -242,10 +255,6 @@ def predicate_match(vocabulary: dict, mention, subject_types: list[str], object_
         # the trait object still have to match; a passive "was controlled by" does not.
         if v.get("code") == "genotype_controls_trait" and "qtl" in subj:
             subj.add("gene")
-        # A GWAS SNP is stored as a marker. "S06_47123508 associated with β-carotene" is the same
-        # associational statement as a QTL, and no marker-trait code exists in the vocabulary.
-        if v.get("code") == "qtl_associated_with_trait" and "marker" in subj:
-            subj.add("qtl")
         if subj and v.get("subject_types") and not set(v["subject_types"]) & subj:
             continue
         if object_types and v.get("object_types") and not set(v["object_types"]) & set(object_types):

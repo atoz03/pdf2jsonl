@@ -129,7 +129,9 @@ class Deriver:
                 etype = types.pop() if len(types) == 1 else None
             eid = eid or next((m["entity_id"] for m in mine if m.get("entity_id")), None)
             anchor = next((m for m in mine if "start" in m and "end" in m), None)
-            ends[end] = {"node": eid or _ent_iri(etype or "entity", mention), "mention": mention, "type": etype,
+            # The one entity marker playing the role names the node, so "The QTL qDTS1-2" joins qDTS1-2.
+            name = mine[0]["mention"] if len(mine) == 1 and mine[0].get("entity_type") else mention
+            ends[end] = {"node": eid or _ent_iri(etype or "entity", name), "mention": mention, "type": etype,
                          "id": eid, "span": [anchor["start"], anchor["end"]] if anchor else None}
         pid, label, code, verbatim = (self._rel(rec, k) for k in
                                       ("predicate_id", "predicate_label", "predicate_code", "predicate_mention"))
