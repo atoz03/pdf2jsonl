@@ -105,9 +105,34 @@ def entity_markers(record: dict, contract: dict, quote, ends: dict[str, tuple[st
                 matched.add(role)
             add(f["path"], x, entity_type(f["path"]), role)
     for role, (path, _) in wanted.items():
-        if role not in matched:
-            add(path, ends[role][1], None, role)
+        if role in matched:
+            continue
+        # The statement end is often the entity wrapped in a determiner or its type noun ("The QTL qDTS1-2",
+        # "TaPTR gene") rather than the entity string alone. That end is the entity, so its marker plays the role.
+        # Any other surrounding word names something else ("HTR2 precursors" is not the gene HTR2), and two
+        # contained entities are ambiguous: both keep an untyped end of their own.
+        end_text = ends[role][1]
+        contained = [m for m in markers if m.get("entity_type") and not m.get("relation_role")
+                     and find_span(end_text, m["mention"])]
+        if len(contained) == 1 and _wraps(end_text, contained[0]["mention"], contained[0]["entity_type"]):
+            contained[0]["relation_role"] = role
+            continue
+        add(path, end_text, None, role)
     return markers
+
+
+_DETERMINERS = frozenset({"the", "a", "an", "this", "that"})
+_TYPE_NOUNS = {"qtl": {"qtl", "locus"}, "gene": {"gene", "locus"}}
+
+
+def _wraps(end_text: str, mention: str, etype: str) -> bool:
+    """``end_text`` is ``mention`` plus only determiners and words naming its entity type ("the QTL qDTS1-2")."""
+    span = find_span(end_text, mention)
+    if not span:
+        return False
+    rest = normalize_text(end_text[:span[0]] + " " + end_text[span[1]:]).split()
+    allowed = _DETERMINERS | _TYPE_NOUNS.get(etype, {etype})
+    return all(w in allowed for w in rest)
 
 
 def end_types(markers: list[dict], role: str) -> list[str]:
@@ -146,13 +171,43 @@ def _passive_cue(cue: str) -> bool:
     return re.search(r"(?<![a-z0-9])by(?![a-z0-9])", cue) is not None or PASSIVE_ZH.search(cue) is not None
 
 
+def _ing(token: str) -> str | None:
+    """Present participle of a one-word English cue (controls -> controlling, mediates -> mediating)."""
+    if not token.isascii() or not token.endswith("s") or token.endswith("ss") or len(token) <= 4:
+        return None
+    base = token[:-1]
+    if base.endswith("e"):
+        return base[:-1] + "ing"
+    if len(base) >= 2 and base[-1] not in "aeiou" and base[-2] in "aeiou" and base[-1] not in "wxy":
+        return base + base[-1] + "ing"
+    return base + "ing"
+
+
+def _cue_forms(cue: str) -> list[str]:
+    """Surface forms of a vocabulary cue. Papers write "controlling" and "located within"; the cue list has
+    "controls" and "located in". Only the participle and that one location preposition are added."""
+    forms = [cue]
+    if cue == "located in":
+        forms.extend(("located within", "mapped in"))
+    if cue == "associated with":
+        forms.append("related to")
+    if " " not in cue:
+        ing = _ing(cue)
+        if ing and ing not in forms:
+            forms.append(ing)
+    return forms
+
+
 def _cue_in(cue: str, text: str) -> bool:
     """The cue occurs in the (normalized) mention in its own voice: a passive cue anywhere, an active cue at least
     once where it is not used passively."""
-    cue = normalize_text(cue)
-    pattern = f"(?<![a-z0-9]){re.escape(cue)}(?![a-z0-9])" if cue.isascii() else re.escape(cue)
+    return any(_form_in(form, text, _passive_cue(cue)) for form in _cue_forms(normalize_text(cue)))
+
+
+def _form_in(form: str, text: str, passive: bool) -> bool:
+    pattern = f"(?<![a-z0-9]){re.escape(form)}(?![a-z0-9])" if form.isascii() else re.escape(form)
     hits = list(re.finditer(pattern, text))
-    if not hits or _passive_cue(cue):
+    if not hits or passive:
         return bool(hits)
     return any(not BY_AFTER.match(text, m.end()) and not PASSIVE_ZH.search(text, 0, m.start()) for m in hits)
 
@@ -194,7 +249,13 @@ def predicate_match(vocabulary: dict, mention, subject_types: list[str], object_
         cues = v.get("cues")
         if not cues:
             continue
-        if subject_types and v.get("subject_types") and not set(v["subject_types"]) & set(subject_types):
+        subj = set(subject_types)
+        # "FLN1.1 controlled the number of flowers": the only causal "controlled" code lists gene as its
+        # subject. A QTL is the same kind of locus in these papers, so it satisfies that list. The cue and
+        # the trait object still have to match; a passive "was controlled by" does not.
+        if v.get("code") == "genotype_controls_trait" and "qtl" in subj:
+            subj.add("gene")
+        if subj and v.get("subject_types") and not set(v["subject_types"]) & subj:
             continue
         if object_types and v.get("object_types") and not set(v["object_types"]) & set(object_types):
             continue
