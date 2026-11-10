@@ -483,22 +483,42 @@ PRESENTATION_MARKERS = (
     ("claim strength column", 'T("结论强度", "Claim strength")'),
 )
 
+# The simplified research view keeps the same four rules while it shows fewer relations.  It is a list view
+# too, so it is checked rather than trusted.
+NETWORK_PRESENTATION_MARKERS = (
+    ("entity type labels", "const KIND"),
+    ("typed relation ends", "function typed("),
+    ("validation label", 'validation_status: "验证"'),
+    ("qualifier label", 'assertion_mode === "hedged"'),
+    ("claim strength label", 'claim_strength: "结论强度"'),
+)
+
 
 def check_presentation(root: Path) -> list[Finding]:
-    """The dashboard template keeps the presentation rules of docs/presentation.md."""
+    """The dashboard templates keep the presentation rules of docs/presentation.md."""
     out: list[Finding] = []
     doc = root / "docs/presentation.md"
     if not doc.is_file():
         out.append(Finding("error", "presentation", "docs/presentation.md missing: the display rules are undefined"))
-    page = root / "site/pages/papers.html"
-    if not page.is_file():
-        return out + [Finding("error", "presentation", "site/pages/papers.html missing")]
-    text = page.read_text(encoding="utf-8")
-    for label, marker in PRESENTATION_MARKERS:
-        if marker not in text:
-            out.append(Finding("error", "presentation",
-                               f"the paper dashboard no longer shows the {label}: {marker!r} is missing "
-                               "(docs/presentation.md)"))
+    pages = (("site/pages/papers.html", PRESENTATION_MARKERS),
+             ("site/pages/network.html", NETWORK_PRESENTATION_MARKERS))
+    for rel, markers in pages:
+        page = root / rel
+        if not page.is_file():
+            out.append(Finding("error", "presentation", f"{rel} missing"))
+            continue
+        text = page.read_text(encoding="utf-8")
+        if rel.endswith("network.html"):
+            script = root / "site/pages/network.js"
+            if not script.is_file():
+                out.append(Finding("error", "presentation", "site/pages/network.js missing"))
+            else:
+                text += "\n" + script.read_text(encoding="utf-8")
+        for label, marker in markers:
+            if marker not in text:
+                out.append(Finding("error", "presentation",
+                                   f"the {rel.rsplit('/', 1)[-1]} no longer shows the {label}: {marker!r} is "
+                                   "missing (docs/presentation.md)"))
     return out
 
 

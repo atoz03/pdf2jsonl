@@ -40,8 +40,17 @@
 | [字段目录](https://atoz03.github.io/pdf2jsonl/fields.html) | **421 个字段**：含义、类型、JSON 示意、键角色、服务功能、功能分类标签（可多选）和来源 |
 | [规范](https://atoz03.github.io/pdf2jsonl/contract.html) | 记录类型、画像、受控词表、填写规则、歧义登记和版本历史；各来源（人工整理、pdf2jsonl、三种导入）的记录并排对照 |
 
-本地预览执行 `make site`，然后打开 `_site/index.html`。`make dashboard` 另外生成一个不入库的
-`dashboard.html`，会把本地 `out/` 等运行目录里的论文和运行也收进来。
+本地预览执行 `make site`，然后打开 `_site/index.html`。`make dashboard` 生成**简化研究视图**：
+默认逐篇查看，每篇只保留“表型—基因—种群”三元关系、完整证据链和文章包；可切换到全库大网，
+跨文去重并显示 A/B/C 置信。其他关系只计数、不展开。完整论文看板用 `make dashboard-full`。
+`make network-demo` 会跑四篇合成论文的 demo 并重建 `dashboard.html`。
+
+研究视图的后端模块是 `src/breeding_contract/evidence_chain.py`（结论→结果→实验/方法）、
+`src/breeding_contract/article_package.py`（文章包清单）和 `src/breeding_contract/aggregate.py`
+（跨文聚类、冲突与置信）；说明见 [docs/research_view.md](docs/research_view.md)。本版工具版本为
+**1.1.0**，数据契约仍为 **3.8.0**（[发布说明](docs/release_notes_1.1.0.md)）。逐篇视图页头的
+**人工复核（N）** 按钮打开复核面板：通过 / 驳回 / 退回补证先保存在浏览器，导出后由
+`bdc review apply 记录文件 决定文件 --out 输出目录` 写回 `review_status` 和 `review_note`。
 
 ## 🧭 一次抽取，多种下游
 
@@ -156,6 +165,7 @@
 | `docs/field_examples.yaml` | 逐字段维护的示意值，用于生成和校验字段定义文档 |
 | `docs/field_classification.yaml` | 逐字段功能标签：研究内容1、研究内容2、迭代优化、通用字段，支持多选 |
 | `scripts/make_site.py` / `site/` | 站点生成器与页面模板：规范浏览、论文看板（`scripts/make_dashboard.py`）、下游派生、导入器 |
+| `scripts/make_network_dashboard.py` / `site/pages/network.html` | 简化研究视图：只展示表型—基因—种群，QTL/QTN 归入基因层，其他关系折叠计数；生成 `dashboard.html` |
 | `examples/` | 两篇合成论文（其一含补充材料）、整理后的记录、管线输出（含缺少补充材料时的输出）、一次语义复核、派生视图、导入输出及无效数据示例 |
 | `tests/` | pytest 测试：规范一致性、版本、校验、管线、Skill 同步、导入、文档包、功能、证据链、下游钩子、研究流程、语义复核、来源组成部分及站点 |
 
@@ -242,6 +252,7 @@ result.valid, [i.to_dict() for i in result.errors]
 | `bdc derive F.jsonl --out DIR` | 派生关系表（CSV）、关系语句、三元组与属性图、研究流程、带标注的语料和问答种子，并记录派生来源 |
 | `bdc audit F.jsonl [--json]` | 审计证据链的 Toulmin／Flavell 要素、引用闭合及复核标记，以及研究流程结构，不生成分数 |
 | `bdc verify tasks\|apply F.jsonl [VERDICTS] --out DIR` | 由独立复核者做语义复核：生成复核任务，再把判定结果写入复核字段 |
+| `bdc review apply F.jsonl DECISIONS --out DIR` | 应用人工/专家复核决定（通过、驳回、退回补证），只改 `review_status` / `review_note`，输出 `.reviewed.jsonl` 与 `.review.json` |
 
 ## 🌿 修改规范
 

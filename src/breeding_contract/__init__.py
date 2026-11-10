@@ -8,7 +8,7 @@ this package compiles, releases, resolves and validates it. Public API:
     load_field_catalog(version)               -> dict
     validate_record(record, version, profile) -> ValidationResult
 """
-GENERATOR_VERSION = "1.0.0"
+GENERATOR_VERSION = "1.1.0"
 
 from .api import (  # noqa: E402
     ResolvedContract,

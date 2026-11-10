@@ -196,6 +196,14 @@ def cmd_verify(args) -> int:
     return 0
 
 
+def cmd_review(args) -> int:
+    from .human_review import apply_file
+    _, rc = _records_contract(Path(args.file), args.schema_version, args.root)
+    report = apply_file(Path(args.file), Path(args.decisions), Path(args.out), rc)
+    print(dumps_json(report), end="")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="bdc", description="Breeding data contract tooling")
     ap.add_argument("--root", help="repository root (default: auto-detect / $BREEDING_CONTRACT_HOME)")
@@ -271,6 +279,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--manifest", help="apply: the extraction run's manifest; a verifier that is the extraction "
                                       "model promotes nothing")
     p.set_defaults(func=cmd_verify)
+
+    p = sub.add_parser("review", help="apply human/expert review decisions to the review status and note")
+    p.add_argument("action", choices=["apply"], help="apply a reviewer decision file")
+    p.add_argument("file", help="records (JSONL)")
+    p.add_argument("decisions", help="review decisions JSON exported by the dashboard")
+    p.add_argument("--out", required=True, help="output directory")
+    p.add_argument("--schema-version", help="contract version (default: the version the records declare)")
+    p.set_defaults(func=cmd_review)
 
     args = ap.parse_args(argv)
     try:

@@ -41,8 +41,19 @@ latest release and the checked-in examples, and deployed from `main`.
 | [Fields](https://atoz03.github.io/pdf2jsonl/fields.html) | All **421 fields**: meaning, type, JSON example, key role, functions, multi-select tags, origin |
 | [Contract](https://atoz03.github.io/pdf2jsonl/contract.html) | Record kinds, profiles, vocabularies, rules, the ambiguity register and the release history; records from every source (curated, pdf2jsonl, the three importers) side by side |
 
-Preview locally with `make site` and open `_site/index.html`. `make dashboard` also writes an untracked
-`dashboard.html` that includes papers and runs from local directories such as `out/`.
+Preview locally with `make site` and open `_site/index.html`. `make dashboard` writes the **simplified research
+view**: per-paper by default, showing only that paper's phenotype–gene–population relations, its complete
+evidence chains and its article package; switch to the full network for cross-paper deduplication and A/B/C
+confidence. Every other relation is counted but collapsed. Use `make dashboard-full` for the full paper
+dashboard. `make network-demo` runs the four-paper demo and rebuilds `dashboard.html`.
+
+The view is backed by `src/breeding_contract/evidence_chain.py` (claim → result → experiment/method),
+`src/breeding_contract/article_package.py` (article package) and `src/breeding_contract/aggregate.py`
+(cross-paper clustering, conflicts and confidence); see [docs/research_view.md](docs/research_view.md).
+This is tooling **1.1.0**; the data contract remains **3.8.0**
+([release notes](docs/release_notes_1.1.0.md)). The per-paper view also has a **人工复核 (N)** button that
+opens a review panel for every `pending_review` record: approve / reject / return for evidence are kept in
+the browser, exported as JSON, and applied with `bdc review apply RECORDS DECISIONS --out DIR`.
 
 ## 🧭 Extract once, consume many times
 
@@ -176,6 +187,7 @@ languages and downloads the SVG. Run `make diagram` to regenerate both README im
 | `docs/field_examples.yaml` | Curated illustrative values used to generate and validate the field reference |
 | `docs/field_classification.yaml` | Per-field multi-select tags: Research Content 1, Research Content 2, future iteration, and general-purpose fields |
 | `scripts/make_site.py` / `site/` | Site builder and page templates: contract browser, paper dashboard (`scripts/make_dashboard.py`), downstream outputs, importers |
+| `scripts/make_network_dashboard.py` / `site/pages/network.html` | Simplified research view: phenotype–gene–population only, QTL/QTN on the gene layer, other relations counted but collapsed; writes `dashboard.html` |
 | `examples/` | Two synthetic papers (one in two files), curated records, pipeline output (also for the paper without its supplement), a verification pass, derived views, importer output, invalid cases |
 | `tests/` | pytest suite (catalog fidelity, releases, validation, pipeline, Skill sync, importers, bundles, functions, evidence chain, downstream hooks, workflow, verification, source parts, site) |
 
@@ -267,6 +279,7 @@ result.valid, [i.to_dict() for i in result.errors]
 | `bdc derive F.jsonl --out DIR` | Function 3: relational tables (CSV), statements, triples and a property graph, the research workflow, an annotated corpus and QA seeds, with their lineage |
 | `bdc audit F.jsonl [--json]` | Evidence-chain audit (Toulmin/Flavell elements, link closure, review flags; no score) and workflow structure |
 | `bdc verify tasks\|apply F.jsonl [VERDICTS] --out DIR` | Semantic verification by an independent verifier: build the tasks, then apply its verdicts to the review fields |
+| `bdc review apply F.jsonl DECISIONS --out DIR` | Apply human/expert decisions (approve / reject / return for evidence); only `review_status` and `review_note` move; writes `.reviewed.jsonl` and `.review.json` |
 
 ## 🌿 Evolving the contract
 

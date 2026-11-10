@@ -1552,11 +1552,11 @@
   "outputs": {
     "records": {
       "file": "breeding_jsonl_example_v2.migrated.jsonl",
-      "sha256": "66f162f633c3dab3d0d6e28d036d1bff32b6e3fa4a6ceb471a382e4f17150eda"
+      "sha256": "758853cce937d45fea9c2dd6fc7be8772225778632f4a5acececad9bfeeca233"
     },
     "errors": {
       "file": "breeding_jsonl_example_v2.migrated.errors.jsonl",
-      "sha256": "dda370bc0950c89173bb3fbcfdcdafa88e3e25c596fcbe1a0c1669ab84b2d824"
+      "sha256": "266f46ad0776d02cd564ae679f84fd345b155200b96a96c5adc7ed2fd5def2db"
     },
     "residue": {
       "file": "breeding_jsonl_example_v2.residue.json",
@@ -1564,6 +1564,6 @@
     }
   },
   "tooling": {
-    "breeding_contract": "1.0.0"
+    "breeding_contract": "1.1.0"
   }
 }
