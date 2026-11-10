@@ -12,6 +12,56 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and versions
 
 Each heading `## [X.Y.Z] - YYYY-MM-DD` provides the release date that `bdc release` records.
 
+What goes in an entry: a short opening paragraph on why the release exists (the site's contract page shows it),
+then `Added` / `Changed` / `Deprecated` / `Fixed` bullets that say what a user of the records, the CLI or the
+Skill will notice. Test lists, file-by-file logs and trial write-ups belong in the long-form notes under
+[`docs/releases/`](docs/releases/README.md), linked from the entry. Changes merged since the last release sit
+under `## [Unreleased]` and move under the version heading when it is released.
+
+Tooling-only releases, which leave the contract unchanged, use `## [Tooling X.Y.Z] - YYYY-MM-DD` (the version of
+`breeding_contract.GENERATOR_VERSION`); the version of the pdf2jsonl Skill runtime (`PIPELINE_VERSION`) is named
+in the entry that changes it.
+
+## [Unreleased]
+
+Tooling only; the contract stays at 3.8.0.
+
+### Changed
+- **Relation cues match more of the wording papers use** (`relations.py`, #10). A one-word verb cue also matches
+  its present participle (`controls` → `controlling`), `associated with` also matches `related to`, and
+  `located in` also matches `located within` / `mapped in`. A QTL subject satisfies the `gene` subject of
+  `genotype_controls_trait`; the passive `was controlled by` still does not match it.
+- **A statement end that wraps one entity is that entity.** "The QTL qDTS1-2" or "TaPTR gene" is typed as the
+  entity it contains, and `bdc derive` names the graph node after the entity (`ent:qtl/qdts1-2`), not the phrase.
+  Any other surrounding word ("HTR2 precursors"), or two contained entities, leaves the end untyped. The shipped
+  examples do not change.
+- The marker → `qtl_associated_with_trait` substitution is gone: 3.8.0 keeps QTN, QTL and gene codes apart
+  (AMB-045).
+- The extraction brief asks for the entity string itself as subject and object (one QTL or gene per candidate),
+  and for a stated magnitude to be copied into the raw value fields.
+
+## [Tooling 1.1.0] - 2026-11-10
+
+A tooling and view release: the contract stays at 3.8.0 (`bdc diff 3.8.0 dev` reports no change). It adds a
+simplified research view for reading a paper's phenotype–gene–population relations with their full evidence
+chains, and a way to apply human review decisions back to the records. Full notes:
+[docs/releases/tooling-1.1.0.md](docs/releases/tooling-1.1.0.md).
+
+### Added
+- **Per-paper research view** (`make dashboard`, `scripts/make_network_dashboard.py`, `site/pages/network.html`):
+  one paper's phenotype–gene–population relations, QTL/QTN on the gene layer, every other relation counted but
+  not shown; a full-network toggle merges the same relations across papers. `make network-demo` runs a
+  four-paper demo; `--json-out` exports the view data. The previous paper dashboard is `make dashboard-full`.
+- **Evidence chains** (`breeding_contract.evidence_chain`): claim → data/result → experiment/method, with quotes
+  and locators at every node; missing links are shown, never invented.
+- **Article packages** (`breeding_contract.article_package`): main text, figures, tables, supplement,
+  data/code availability and licence, graded `complete` / `partial` / `unverified` / `not_submitted`.
+- **Cross-paper aggregation** (`breeding_contract.aggregate`): clustering, deduplication, direction conflicts and
+  deterministic A/B/C confidence with its reasons.
+- **Human review**: the per-paper 人工复核（N） panel records approve / reject / return-for-evidence decisions in
+  the browser and exports them; `bdc review apply RECORDS DECISIONS --out DIR` writes `review_status` and
+  `review_note` only. See [docs/research_view.md](docs/research_view.md).
+
 ## [3.8.0] - 2026-10-27
 
 A trial of 3.7.0 on six real papers (236 records) left three gaps that the data itself exposed. The relation
@@ -74,6 +124,10 @@ draws: the pipeline never upgrades a wording into evidence.
   it — with the run-level notice `SOURCE_PART_ITEM_NOT_FOUND`, distinct from "not supplied" and "no text".
 - `docs/relation_semantics.md`, `docs/downstream.md`, `docs/review.md` and `docs/versioning.md` describe the new
   layers; the READMEs gain the 3.8.0 section.
+
+### Notes
+- The regression acceptance report for 3.6.0 → 3.8.0 (`make acceptance`):
+  [docs/acceptance_3.8.0.md](docs/acceptance_3.8.0.md).
 
 ## [3.7.0] - 2026-10-27
 
@@ -207,6 +261,9 @@ layers that do not substitute for one another.
   运行历史 rendered every row and the page grew without bound. Each now pages through the shared pager, on a key of
   its own, so paging one list never moves another.
 
+### Notes
+- Long-form notes (in Chinese): [docs/releases/3.6.0.md](docs/releases/3.6.0.md).
+
 ## [3.5.1] - 2026-10-13
 
 A trial extraction of two papers showed that the verbatim value-presence check dominated the review queue: of
@@ -272,18 +329,9 @@ run's `value_presence_roles` so warning counts are only compared between runs th
 - The dashboard's `counts.expert_approved` counts `expert_approved` records only; it also counted `rejected`,
   which the 语义校验 card's 已提升 figure does not mean.
 
-### Docs
-- `docs/review.md` rewrites the Layer-1 Evidence paragraph (role-scoped value check, AMB-014) and documents the
-  dashboard's verification report, warning families and comparability flag. `README.md` enlarges the 论文看板 row
-  with 研究流程、语义校验 and the warning-family grouping.
-
-### Tests
-- `tests/test_pipeline.py::test_value_presence_is_checked_only_for_value_bearing_roles`,
-  `tests/test_normalize_profiles.py::test_pdf_extraction_scopes_value_presence_to_value_bearing_roles`, and eight
-  `tests/test_dashboard.py` cases (verified-run ingestion, a run without verification, warning families, the
-  presence policy, the example run's filter, verification under `review/`, and tamper detection).
-- `tests/test_normalize_profiles.py::test_value_presence_roles_cannot_be_empty`, and
-  `tests/test_source_parts.py::test_derived_views_record_their_lineage` asserts POSIX lineage paths.
+### Notes
+- Long-form notes (in Chinese), including the documentation and tests this release touched:
+  [docs/releases/3.5.1.md](docs/releases/3.5.1.md).
 
 ## [3.5.0] - 2026-10-10
 

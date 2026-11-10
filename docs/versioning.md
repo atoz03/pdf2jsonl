@@ -70,18 +70,19 @@ agent mode, `prepare` pins the resolved version in `request.json`, and `finalize
 - Moving data to a new version is a migration: re-run extraction under the new version, or transform the
   records and re-validate them. Never rewrite `schema_version` in place.
 
+## Changing the contract
+
+1. Edit `field_catalog/field_catalog.yaml` (and vocabularies/profiles). Keep source references; mark new
+   semantics `provisional` and register open questions as ambiguities.
+2. Bump `VERSION` per the rules above and add a `CHANGELOG.md` entry (what belongs in one is stated at the top of
+   the changelog).
+3. Add or update illustrative values in `docs/field_examples.yaml` and functional tags in `docs/field_classification.yaml`; contract name and version examples are generated automatically.
+4. `bdc generate && bdc release && bdc check --strict && pytest`. Generation checks that every field has an example and that examples match field schemas.
+5. The Skill needs no edit: its next run resolves `latest` and renders the brief from the new release.
+   `bdc check` fails if the Skill hard-codes field paths or versions, or if a profile needs a fill rule the
+   Skill does not implement.
+
 ## History
 
-| Version | Summary |
-| --- | --- |
-| 3.0.0 | Faithful import of the 259-field v3 baseline: rules, vocabularies, profiles `full` / `compact` / `pdf_extraction` |
-| 3.1.0 | Merge of legacy v1 and omics v2: 129 provisional fields (legacy 17, omics 111, `schema_name`), 6 vocabularies, R027–R030, `pdf_extraction_omics`, mappings |
-| 3.2.0 | Key roles and functions on every field (`key_role`, `serves`, `card`, `argument_role`); 9 provisional fields for the evidence chain, derivation and Topic 1 fusion; R031–R032; vocabulary `conflict_resolution_status`; profile `record_links` |
-| 3.3.0 | Three optional provisional sample fields from merged v2 (biological replicate, technical replicate, sampling time); merged input mapping and migration; the 397 existing field definitions remain unchanged |
-| 3.4.0 | Downstream hooks (AMB-038): `transform.predicate_mention` (D), `predicate_code` and predicate offsets (N), offsets and relation roles on `transform.entity_links`, cue lexicon on vocabulary `predicate_label`, R033–R034; `bdc derive` adds statements, a property graph and QA seeds |
-| 3.5.0 | Research workflow, verification and source parts (AMB-039 – AMB-041): 8 provisional fields (`agent.statement_role`, three workflow links, `agent.step_condition`, `common.source_part`, `common.verification_run_id`, `transform.ontology_id`), vocabularies `statement_role` and `source_part`, `review_status: model_verified`, four evidence-type codes, R035; `--supplement`, source completeness, `bdc verify`, `workflow.json` and lineage in `bdc derive` |
-| 3.6.0 | Relation semantics (AMB-042): `nature` on every `predicate_label` code, vocabularies `relation_nature` and `relation_assertion_mode`, `transform.relation_nature` (N, derived) and `transform.relation_assertion_mode` (D), R036–R037, the `relation_nature_from_predicate` fill rule; `bdc derive` statements, triples and graph edges carry the nature and the wording (`derive_format` 4), and the paper dashboard pages every long tab |
-| 3.7.0 | Relation resolution and part states (AMB-043, AMB-044): `transform.relation_resolution` (N) and vocabulary `relation_resolution`, codes `locus_correlated_with_trait` / `locus_overlaps_locus` / `model_predicts_trait`, `qtl_overlaps_qtl` deprecated, inflected cues, `relation_nature` derived from `predicate_code` too, non-blocking rules (`rules[].blocking`), deprecated vocabulary values, `counts` expanded with `count_definitions`, `source_parts.parts[]` states and `SOURCE_PART_NOT_PARSED` / `SOURCE_PART_UNREFERENCED`, `--supplement FILE:appendix`; `pdf2jsonl` 0.5.0 |
-| 3.8.0 | Entities, evidence and validation (AMB-045 – AMB-047): `common.qtn_names`, `agent.validated_by_record_ids` (link and workflow edge `validated_by`), `transform.claim_strength`, `validation_status`, `evidence_origin`, `agent.reported_citation_text`; vocabularies `claim_strength`, `validation_status`, `evidence_origin`; R038–R040; eight predicate codes (QTN association, active/passive suppression, upstream, controlled by, major effects, allelic/tight linkage, deletion) and `colocalizes`/`coincides`/`correlation between` cues; `supplied_items_not_found` and `SOURCE_PART_ITEM_NOT_FOUND`; dashboard counts strip, badge split and record badges; `pdf2jsonl` 0.6.0 |
-
-See `CHANGELOG.md` for details.
+Every release with its date, a one-line summary and links to its notes is listed in
+[`docs/releases/README.md`](releases/README.md); the curated notes are in [`CHANGELOG.md`](../CHANGELOG.md).
