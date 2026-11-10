@@ -33,7 +33,7 @@ from breeding_contract.verify import apply_file, tasks_file  # noqa: E402
 
 EPOCH = "1790000000"  # 2026-09-21T14:13:20Z
 EX = ROOT / "examples"
-PDF2JSONL = str(ROOT / "skills/pdf2jsonl/scripts/pdf2jsonl")
+SKILL_SCRIPTS = ROOT / "skills/pdf2jsonl/scripts"
 
 # The two-file paper (main text + supplement) and what a verifier model returns for its records, keyed by the
 # `ref` of the candidates (examples/papers/synthetic_rice_heat.candidates.json). The verdicts are hand-written
@@ -132,10 +132,12 @@ def curated_records(version: str) -> dict[str, dict]:
 
 def pdf2jsonl(paper: Path, candidates: Path, out: Path, version: str, run_id: str, *extra: str,
               epoch: str = EPOCH) -> None:
-    subprocess.run([PDF2JSONL, "run", str(paper), "--candidates", str(candidates), "--out-dir", str(out),
-                    "--schema-version", version, "--run-id", run_id, *extra],
-                   check=True, env={**os.environ, "BREEDING_CONTRACT_HOME": str(ROOT), "SOURCE_DATE_EPOCH": epoch},
-                   stdout=subprocess.DEVNULL)
+    # Run the Python entry point instead of the bash launcher, so the same script also works on Windows.
+    env = {**os.environ, "BREEDING_CONTRACT_HOME": str(ROOT), "SOURCE_DATE_EPOCH": epoch,
+           "PYTHONPATH": os.pathsep.join([str(ROOT / "src"), str(SKILL_SCRIPTS)])}
+    subprocess.run([sys.executable, "-m", "pdf2jsonl_skill.cli", "run", str(paper), "--candidates",
+                    str(candidates), "--out-dir", str(out), "--schema-version", version, "--run-id", run_id, *extra],
+                   check=True, env=env, stdout=subprocess.DEVNULL)
 
 
 def main_text_candidates(doc: dict) -> dict:

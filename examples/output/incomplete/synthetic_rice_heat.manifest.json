@@ -64,7 +64,7 @@
   "pipeline": {
     "name": "pdf2jsonl",
     "version": "0.6.0",
-    "contract_tooling": "1.0.0"
+    "contract_tooling": "1.1.0"
   },
   "backend": {
     "name": "candidates",

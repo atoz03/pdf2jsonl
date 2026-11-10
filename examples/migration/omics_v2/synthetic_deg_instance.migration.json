@@ -31,7 +31,7 @@
   "outputs": {
     "records": {
       "file": "synthetic_deg_instance.migrated.jsonl",
-      "sha256": "115d2124f0eb5b19e0b437554fa966b1d28a519da88364252008ab4f62d14ea4"
+      "sha256": "4172b72f41491b43a527283127efed439802aa87fa48994b1803bda95dd4b990"
     },
     "errors": {
       "file": "synthetic_deg_instance.migrated.errors.jsonl",
@@ -43,6 +43,6 @@
     }
   },
   "tooling": {
-    "breeding_contract": "1.0.0"
+    "breeding_contract": "1.1.0"
   }
 }
