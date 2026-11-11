@@ -47,3 +47,11 @@ values:
   label_zh: 工具规范
   grain: tool_unit
   description_zh: 分析结果或课题三工具说明
+- code: association
+  label_zh: 遗传关联事件
+  grain: association_unit
+  description_zh: 一个研究上下文中的遗传对象—性状关联；携带群体、环境、证据与复核状态
+- code: sequence
+  label_zh: 序列
+  grain: sequence_unit
+  description_zh: 一条引物、探针、扩增子或等位基因序列；保留名称、方向、用途与附件单元格

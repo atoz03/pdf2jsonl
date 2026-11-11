@@ -1,0 +1,28 @@
+vocabulary_format: 1
+name: source_file_status
+title_zh: 来源文件状态
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 4.0.0
+origin: [repository]
+source:
+  ref: docs/association_contract.md
+  quote_zh: 发现、下载、解析、匹配、抽取要分开记录；失败要写原因
+values:
+- code: discovered
+  label_zh: 已发现入口
+- code: downloaded
+  label_zh: 已下载
+- code: parsed
+  label_zh: 已解析
+- code: matched
+  label_zh: 已匹配到正文/表格
+- code: extracted
+  label_zh: 已抽取
+- code: failed
+  label_zh: 下载或解析失败
+- code: not_available
+  label_zh: 不可获取
+- code: not_attempted
+  label_zh: 尚未尝试

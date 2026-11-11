@@ -204,6 +204,26 @@ def cmd_review(args) -> int:
     return 0
 
 
+def cmd_aggregate_associations(args) -> int:
+    from .association_aggregate import aggregate_associations
+    records = [json.loads(line) for line in Path(args.records).read_text(encoding="utf-8").splitlines()
+               if line.strip()]
+    result = aggregate_associations(records)
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "association_aggregate.json").write_text(dumps_json(result), encoding="utf-8")
+    print(dumps_json(result["counts"]), end="")
+    return 0
+
+
+def cmd_rbl1(args) -> int:
+    from .rbl1_case import build_case
+    report = build_case(Path(args.pdf) if args.pdf else None, Path(args.primers), Path(args.out),
+                        schema_version=args.schema_version)
+    print(dumps_json(report), end="")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="bdc", description="Breeding data contract tooling")
     ap.add_argument("--root", help="repository root (default: auto-detect / $BREEDING_CONTRACT_HOME)")
@@ -287,6 +307,18 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--out", required=True, help="output directory")
     p.add_argument("--schema-version", help="contract version (default: the version the records declare)")
     p.set_defaults(func=cmd_review)
+
+    p = sub.add_parser("aggregate-associations", help="cluster 4.0.0 association records across papers")
+    p.add_argument("records", help="JSONL records containing association events")
+    p.add_argument("--out", required=True, help="output directory")
+    p.set_defaults(func=cmd_aggregate_associations)
+
+    p = sub.add_parser("rbl1", help="build the RBL1 association/sequence case from a paper PDF and primer table")
+    p.add_argument("--pdf", help="the paper PDF (optional for a CSV-only smoke test)")
+    p.add_argument("--primers", required=True, help="primer table CSV or XLSX (name / 5'-3' sequence / locator)")
+    p.add_argument("--out", required=True, help="output directory")
+    p.add_argument("--schema-version", default="4.0.0")
+    p.set_defaults(func=cmd_rbl1)
 
     args = ap.parse_args(argv)
     try:

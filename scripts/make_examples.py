@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Regenerate everything under examples/ that is derived (records, pipeline output, migrations).
 
-    PYTHONPATH=src python scripts/make_examples.py            # against the latest release
+    PYTHONPATH=src python scripts/make_examples.py            # rebuild the checked-in 3.8.0 baseline
+    BDC_EXAMPLE_SCHEMA_VERSION=4.0.0 ...                       # deliberately rebuild against another release
 
 Outputs are reproducible: SOURCE_DATE_EPOCH and fixed run IDs pin every timestamp. Manifests still record the
 local environment (python/platform/package versions), so they may differ between machines; records do not.
@@ -32,6 +33,10 @@ from breeding_contract.util import dumps_json, set_path  # noqa: E402
 from breeding_contract.verify import apply_file, tasks_file  # noqa: E402
 
 EPOCH = "1790000000"  # 2026-09-21T14:13:20Z
+# The checked-in examples are the 3.8.0 baseline used by the migration and acceptance tests.  The 4.0.0 case
+# (examples/rbl1) is generated separately.  Set BDC_EXAMPLE_SCHEMA_VERSION only when intentionally rebuilding
+# the baseline against another release.
+EXAMPLE_SCHEMA_VERSION = os.environ.get("BDC_EXAMPLE_SCHEMA_VERSION", "3.8.0")
 EX = ROOT / "examples"
 SKILL_SCRIPTS = ROOT / "skills/pdf2jsonl/scripts"
 
@@ -185,7 +190,7 @@ def example_verdicts(candidates: dict, out: Path, review: Path) -> dict:
 
 def main() -> None:
     os.environ["SOURCE_DATE_EPOCH"] = EPOCH
-    version = resolve_schema("latest", ROOT).version
+    version = EXAMPLE_SCHEMA_VERSION
 
     # 1. curated records, one file per kind
     for kind, rec in curated_records(version).items():

@@ -110,8 +110,10 @@ def test_a_deprecated_vocabulary_code_names_its_replacement(root):
 
     rc = resolve_schema("latest", root)
     rec = copy.deepcopy(read_jsonl(root / "examples/output/synthetic_rice_qtl.jsonl")[0])
+    # The checked-in example declares its own contract version; do not validate a 3.8.0 record against 4.0.0.
+    rec_rc = resolve_schema(rec["common"]["schema_version"], root)
     rec.setdefault("transform", {})["predicate_label"] = "qtl_overlaps_qtl"
-    res = rc.validator().validate(rec)
+    res = rec_rc.validator().validate(rec)
     assert res.valid
     dep = [i for i in res.warnings if i.code == "VOCAB_CODE_DEPRECATED"]
     assert dep and dep[0].detail["replaced_by"] == "locus_overlaps_locus"

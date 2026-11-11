@@ -1,0 +1,20 @@
+vocabulary_format: 1
+name: entity_alias_status
+title_zh: 实体别名审核状态
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 4.0.0
+origin: [repository]
+source:
+  ref: docs/association_contract.md
+  quote_zh: 别名先成为候选，人工确认后才能合并
+values:
+- code: candidate
+  label_zh: 候选别名
+- code: confirmed
+  label_zh: 已确认
+- code: rejected
+  label_zh: 已拒绝
+- code: not_alias
+  label_zh: 非别名

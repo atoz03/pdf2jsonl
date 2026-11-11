@@ -1,0 +1,22 @@
+vocabulary_format: 1
+name: sequence_status
+title_zh: 序列校验状态
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 4.0.0
+origin: [repository]
+source:
+  ref: docs/association_contract.md
+  quote_zh: 逐字符一致、仅空白规范化、或仍需人工确认
+values:
+- code: verbatim
+  label_zh: 原文逐字符
+- code: normalized_whitespace
+  label_zh: 仅空白/排版规范化
+- code: verified
+  label_zh: 已人工核对
+- code: ambiguous
+  label_zh: 来源有歧义
+- code: not_verified
+  label_zh: 尚未核实

@@ -1,0 +1,26 @@
+vocabulary_format: 1
+name: source_file_role
+title_zh: 来源文件角色
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 4.0.0
+origin: [repository]
+source:
+  ref: docs/association_contract.md
+  quote_zh: 正文、补充表、引物表、图/表、数据、代码要分别登记
+values:
+- code: main_text
+  label_zh: 正文
+- code: supplement
+  label_zh: 补充材料
+- code: primer_table
+  label_zh: 引物表
+- code: figure_table
+  label_zh: 图/表
+- code: data
+  label_zh: 数据
+- code: code
+  label_zh: 代码
+- code: other
+  label_zh: 其他

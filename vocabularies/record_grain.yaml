@@ -17,3 +17,7 @@ values:
   label_zh: 资产单元
 - code: tool_unit
   label_zh: 工具单元
+- code: association_unit
+  label_zh: 关联事件单元
+- code: sequence_unit
+  label_zh: 序列单元

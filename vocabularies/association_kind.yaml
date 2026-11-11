@@ -1,0 +1,39 @@
+vocabulary_format: 1
+name: association_kind
+title_zh: 关联事件类型
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 4.0.0
+origin: [repository]
+source:
+  ref: docs/association_contract.md
+  quote_zh: 一行一个研究上下文；关联类型决定需要哪些上下文和证据
+values:
+- code: linkage_mapping
+  label_zh: 连锁/图位克隆
+  description_zh: 分离群体中的连锁定位、混池测序或共分离
+- code: qtl_mapping
+  label_zh: QTL 定位
+  description_zh: 连锁图谱或区间定位得到的 QTL
+- code: gwas
+  label_zh: GWAS/关联分析
+  description_zh: 自然群体或面板的统计关联
+- code: candidate_gene
+  label_zh: 候选基因
+  description_zh: 基于位置、表达或同源性的候选基因，尚未功能验证
+- code: functional_complementation
+  label_zh: 功能互补
+  description_zh: 遗传互补或异源互补证明因果关系
+- code: genome_editing
+  label_zh: 基因编辑
+  description_zh: 编辑等位基因及其表型评价
+- code: colocalization
+  label_zh: 共定位
+  description_zh: 位点、QTL 或标记区间的重叠
+- code: expression_support
+  label_zh: 表达证据
+  description_zh: 表达量、组织或处理响应与性状关联
+- code: other
+  label_zh: 其他
+  description_zh: 不能归入以上类型，需在记录中说明

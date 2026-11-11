@@ -1,0 +1,42 @@
+vocabulary_format: 1
+name: locus_type
+title_zh: 遗传对象类型
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 4.0.0
+origin: [repository]
+source:
+  ref: docs/association_contract.md
+  quote_zh: 原始突变、编辑等位基因、候选基因、QTL、QTN 分开记录
+values:
+- code: gene
+  label_zh: 基因
+  description_zh: 有基因标识或明确基因名称的遗传对象
+- code: qtl
+  label_zh: QTL
+  description_zh: 连锁定位或区间定位的数量性状位点
+- code: qtn
+  label_zh: QTN
+  description_zh: 论文明确称为 QTN 的核苷酸位点
+- code: variant
+  label_zh: 变异
+  description_zh: 具体的插入、缺失或单核苷酸变异
+- code: allele
+  label_zh: 等位基因
+  description_zh: 原始、编辑或自然等位基因
+- code: region
+  label_zh: 区间
+  description_zh: 染色体区间或标记区间
+- code: marker
+  label_zh: 标记
+  description_zh: 分子标记、SSR、SNP 或 CAPS 标记
+- code: haplotype
+  label_zh: 单倍型
+  description_zh: 单倍型或单倍型组合
+- code: population
+  label_zh: 群体
+  description_zh: 以群体为对象的关联事件
+- code: other
+  label_zh: 其他
+  description_zh: 无法归入以上类型，需在记录中说明

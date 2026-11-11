@@ -432,3 +432,22 @@ common.technical_replicate_id: "tech-1"
 common.sampling_time: "2022-08-15T14:30:00+08:00"
 common.source_part: "supplement"
 common.verification_run_id: "ver_20261010T080000Z_1a2b3c4d"
+
+# 4.0.0 — association context, field evidence, sequences and alias candidates
+common.association_kind: "functional_complementation"
+common.locus_id: "urn:example:gene:RBL1"
+common.locus_type: "gene"
+common.sequence_record_ids: ["rec_0123456789abcdef0123456789abcdef"]
+common.primer_name: "CAPS-RBL1-F"
+common.primer_role: "pcr_forward_primer"
+common.primer_sequence: "AAAAGGCGAGACAACCATAA"
+common.primer_direction: "forward"
+common.primer_use: "CAPS marker"
+common.primer_source_locator: "Sheet1!A4:B4"
+common.primer_status: "verified"
+common.field_evidence: [{"field": "common.locus_id", "file_id": "rec_0123456789abcdef0123456789abcdef", "locator": "page=4;section=Results", "quote": "RBL1 is the causative gene", "page": 4}]
+common.source_file_role: "main_text"
+common.source_file_status: "downloaded"
+common.source_file_url: "https://escholarship.org/content/qt2321j386/qt2321j386.pdf"
+transform.entity_alias_status: "candidate"
+transform.entity_alias_of: "CoRBL1-F"
