@@ -6,6 +6,7 @@ filters the derived statements to the three layers.  No record, contract version
 
     python scripts/make_network_dashboard.py --out dashboard.html
     python scripts/make_network_dashboard.py --scan out/network_demo --scan examples/papers
+    python scripts/make_network_dashboard.py --rbl1-case out/rbl1_case_final --out dashboard.html
 
 ``--scan`` is repeatable and limits the scan to those subdirectories, which is what the demo uses to keep the
 snapshot small.  Without it the whole repository is scanned, exactly like ``make dashboard``.
@@ -76,7 +77,22 @@ def main(argv: list[str] | None = None) -> int:
                         help="only scan this subdirectory (repeatable; relative to --root)")
     parser.add_argument("--json-out", type=Path,
                         help="also write the derived per-paper/aggregate JSON (for another front end)")
+    parser.add_argument("--rbl1-case", type=Path,
+                        help="render the RBL1 association/sequence dashboard from this case directory "
+                             "(instead of scanning paper runs)")
+    parser.add_argument("--rbl1-aggregate", type=Path,
+                        help="JSONL with additional association records for the RBL1 multi-paper aggregate view")
     args = parser.parse_args(argv)
+    if args.rbl1_case:
+        from scripts.make_rbl1_dashboard import build as build_rbl1
+        destination, payload = build_rbl1(args.rbl1_case, args.out or ROOT / "dashboard.html",
+                                          args.rbl1_aggregate)
+        counts = payload["report"]["counts"]
+        agg = payload["aggregate"]["counts"]
+        print(f"{destination}: {counts['associations']} associations, {counts['sequences']} sequences, "
+              f"{counts['field_evidence']} field evidence, {agg['relations']} aggregate relations, "
+              f"{agg['conflicts']} conflicts")
+        return 0
     destination, view = build(args.root, args.out, args.scan, args.json_out)
     s = view["summary"]
     print(f"{destination}: {s['papers']} papers, {s['nodes']} nodes, {s['edges']} relations, "

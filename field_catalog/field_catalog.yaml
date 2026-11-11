@@ -754,6 +754,35 @@ types:
           enum: [subject, object]
           description: 该提及在本记录关系语句中的角色
       required: [mention, source_field]
+  array_field_evidence:
+    maturity: provisional
+    item:
+      properties:
+        field:
+          type: string
+          pattern: ^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$
+        evidence_id:
+          type: string
+          minLength: 1
+        file_id:
+          type: string
+          minLength: 1
+        locator:
+          type: string
+          minLength: 1
+        quote:
+          type: string
+          minLength: 1
+        page:
+          type: integer
+          minimum: 1
+        sheet:
+          type: string
+          minLength: 1
+        cell:
+          type: string
+          minLength: 1
+      required: [field, locator]
 fields:
 - path: common.record_id
   type: string
@@ -7256,6 +7285,252 @@ fields:
   key_role: entity_attribute
   serves: [topic2, topic3, derivation]
   source_ref: sources/omics_v2/omics_metadata_template.json#/metabolomics_specific/annotation_level
+- path: common.association_kind
+  type: string
+  availability: N
+  required: N
+  definition_zh: 关联事件类型：连锁/图位克隆、QTL 定位、GWAS、候选基因、功能互补、基因编辑、共定位等
+  data_source_zh: 研究设计、结果章节或人工判断
+  downstream_zh: 关联主表、冲突登记、知识图谱边
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: association_kind
+  key_role: entity_attribute
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.locus_id
+  type: string
+  availability: N
+  required: N
+  definition_zh: 关联事件中遗传对象的稳定ID；基因、QTL、QTN、变异或区间分开登记
+  data_source_zh: 基因/QTL/QTN标识、变异命名或人工整理的规范ID
+  downstream_zh: 关联主表、位点表、知识图谱
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  key_role: entity_id
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.locus_type
+  type: string
+  availability: N
+  required: N
+  definition_zh: 遗传对象类型：gene/QTL/QTN/variant/allele/region/marker/haplotype/population
+  data_source_zh: 原文命名与人工判断
+  downstream_zh: 关联主表、位点表
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: locus_type
+  key_role: entity_attribute
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.sequence_record_ids
+  type: array_string
+  availability: N
+  required: N
+  definition_zh: 关联事件引用的序列记录ID；引物、探针、扩增子和等位基因序列记录分开
+  data_source_zh: 序列记录主键
+  downstream_zh: 关联主表、引物序列表
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  key_role: record_link
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.primer_name
+  type: string
+  availability: D
+  required: N
+  definition_zh: 引物或探针名称原文
+  data_source_zh: 引物表或方法段
+  downstream_zh: 引物序列表
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  key_role: entity_mention
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.primer_role
+  type: string
+  availability: D
+  required: N
+  definition_zh: 序列角色：PCR/qRT 正向或反向引物、测序引物、探针、扩增子、等位基因或基因序列
+  data_source_zh: 引物表用途列或方法段
+  downstream_zh: 引物序列表
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: sequence_role
+  key_role: entity_attribute
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.primer_sequence
+  type: string
+  availability: D
+  required: N
+  definition_zh: 序列 5′→3′ 原文，保留大小写；只允许空白/排版规范化
+  data_source_zh: 引物表单元格或方法段
+  downstream_zh: 引物序列表
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  key_role: measurement
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.primer_direction
+  type: string
+  availability: D
+  required: N
+  definition_zh: 序列方向原文：forward、reverse、not_applicable 或 unknown；不自动逆互补
+  data_source_zh: 引物表方向或名称中的 F/R
+  downstream_zh: 引物序列表
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: sequence_direction
+  key_role: entity_attribute
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.primer_use
+  type: string
+  availability: D
+  required: N
+  definition_zh: 序列用途原文，如 CAPS 标记、互补构建、qRT-PCR、基因分型
+  data_source_zh: 引物表或方法段
+  downstream_zh: 引物序列表
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  key_role: method_spec
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.primer_source_locator
+  type: string
+  availability: D
+  required: N
+  definition_zh: 序列在附件中的定位，如 Sheet1!A4:B4
+  data_source_zh: XLSX/CSV 工作表与单元格
+  downstream_zh: 字段级证据表、引物序列表
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  key_role: evidence_locator
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.primer_status
+  type: string
+  availability: N
+  required: N
+  definition_zh: 序列校验状态：原文逐字符、仅空白规范化、已人工核对、有歧义或未核实
+  data_source_zh: 序列校验器或人工复核
+  downstream_zh: 引物序列表、复核队列
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: sequence_status
+  key_role: entity_attribute
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.field_evidence
+  type: array_field_evidence
+  availability: N
+  required: N
+  definition_zh: 字段级证据：字段路径、文件、页码/工作表/单元格、原文片段
+  data_source_zh: PDF 页面/段落/图注与附件单元格
+  downstream_zh: 字段级证据表、审核界面
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  key_role: evidence_locator
+  serves: [topic2, topic3, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.source_file_role
+  type: string
+  availability: N
+  required: N
+  definition_zh: 来源文件角色：正文、补充材料、引物表、图/表、数据、代码或其他
+  data_source_zh: 文件清单或运行输入
+  downstream_zh: 来源清单、文章包
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: source_file_role
+  key_role: asset
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.source_file_status
+  type: string
+  availability: N
+  required: N
+  definition_zh: 来源文件状态：已发现、已下载、已解析、已匹配、已抽取、失败、不可获取或未尝试
+  data_source_zh: 文件清单、解析器或下载器
+  downstream_zh: 来源清单、文章包、复核队列
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: source_file_status
+  key_role: asset
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: common.source_file_url
+  type: string
+  availability: N
+  required: N
+  definition_zh: 来源文件的可访问 URL 或公开存档地址；不记录临时签名链接
+  data_source_zh: 出版社页面、PubMed、机构存档或补充材料链接
+  downstream_zh: 来源清单、文章包
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  key_role: source_identity
+  serves: [topic2, derivation]
+  source_ref: docs/association_contract.md#L1
+- path: transform.entity_alias_status
+  type: string
+  availability: N
+  required: N
+  definition_zh: 实体别名审核状态：candidate、confirmed、rejected 或 not_alias；候选不自动合并
+  data_source_zh: 别名候选生成器与人工复核
+  downstream_zh: 别名审核队列、实体对齐
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  vocabulary: entity_alias_status
+  key_role: entity_alignment
+  serves: [derivation, iteration]
+  source_ref: docs/association_contract.md#L1
+- path: transform.entity_alias_of
+  type: string
+  availability: N
+  required: N
+  definition_zh: 候选别名指向的规范实体名称或 ID；只有 confirmed 才对下游生效
+  data_source_zh: 别名候选生成器与人工复核
+  downstream_zh: 别名审核队列、实体对齐
+  since: 4.0.0
+  status: active
+  maturity: provisional
+  origin: [repository]
+  key_role: entity_alignment
+  serves: [derivation, iteration]
+  source_ref: docs/association_contract.md#L1
 rules:
 - id: R001
   kind: required_when
@@ -7659,6 +7934,42 @@ rules:
   since: 3.8.0
   ambiguities: [AMB-047]
   blocking: false
+- id: R041
+  kind: required_when
+  severity: error
+  basis: explicit
+  title_zh: 关联事件须有研究、群体、位点与字段级证据
+  when:
+    field: common.record_kind
+    equals: association
+  require: [common.study_id, common.population_id, common.locus_id, common.locus_type,
+            common.association_kind, common.field_evidence, common.source_quote]
+  source_zh: 4.0.0 association 定义：一行一个研究上下文，缺上下文不进入关联主表
+  since: 4.0.0
+  ambiguities: [AMB-041]
+- id: R042
+  kind: require_any_when
+  severity: error
+  basis: explicit
+  title_zh: 关联事件须有性状名称或性状ID
+  when:
+    field: common.record_kind
+    equals: association
+  require_any: [common.trait_names, common.trait_id]
+  source_zh: 4.0.0 association 定义：没有性状无法形成可查询的遗传关联
+  since: 4.0.0
+- id: R043
+  kind: required_when
+  severity: error
+  basis: explicit
+  title_zh: 序列记录须有名称、序列、角色、方向和附件定位
+  when:
+    field: common.record_kind
+    equals: sequence
+  require: [common.primer_name, common.primer_sequence, common.primer_role,
+            common.primer_direction, common.primer_source_locator]
+  source_zh: 4.0.0 sequence 定义：序列是独立实体，必须能回到附件单元格并保留方向
+  since: 4.0.0
 ambiguities:
 - id: AMB-001
   status: decided

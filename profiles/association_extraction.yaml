@@ -1,0 +1,31 @@
+# Profile — association extraction for a paper with a primer/supplement table.
+profile_format: 1
+name: association_extraction
+extends: pdf_extraction
+title_zh: 遗传关联事件抽取
+description_zh: 在 pdf_extraction 基础上开放 association 与 sequence 记录；一行一个研究上下文，字段级证据指向 PDF 页或附件单元格。
+selection:
+  base: all_active
+  include_availability: [D, N]
+  include_groups: [common, agent, skills, transform]
+  exclude_fields: [common.source_abstract]
+model_record_kinds:
+- association
+- sequence
+- claim
+- observation
+- method
+- analysis_result
+record_links:
+  evidence:
+    field: agent.evidence_record_ids
+    target_kinds: [observation, analysis_result, method, sequence, association]
+    description_zh: 本关联或序列所依据的其他候选；必须与 field_evidence 指向同一来源位置
+  method:
+    field: skills.method_record_ids
+    target_kinds: [method]
+    description_zh: 产生该关联或序列的实验方法候选
+required_fields:
+  always: [common.schema_name]
+notes_zh: association 必须带 study/population/trait/locus；sequence 必须带 primer_name/primer_sequence/primer_source_locator。缺失项写入 missing_fields，不用推断值。
+ambiguities: [AMB-013, AMB-041]

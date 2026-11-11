@@ -12,55 +12,50 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and versions
 
 Each heading `## [X.Y.Z] - YYYY-MM-DD` provides the release date that `bdc release` records.
 
-What goes in an entry: a short opening paragraph on why the release exists (the site's contract page shows it),
-then `Added` / `Changed` / `Deprecated` / `Fixed` bullets that say what a user of the records, the CLI or the
-Skill will notice. Test lists, file-by-file logs and trial write-ups belong in the long-form notes under
-[`docs/releases/`](docs/releases/README.md), linked from the entry. Changes merged since the last release sit
-under `## [Unreleased]` and move under the version heading when it is released.
+## [4.0.0] - 2026-11-10
 
-Tooling-only releases, which leave the contract unchanged, use `## [Tooling X.Y.Z] - YYYY-MM-DD` (the version of
-`breeding_contract.GENERATOR_VERSION`); the version of the pdf2jsonl Skill runtime (`PIPELINE_VERSION`) is named
-in the entry that changes it.
-
-## [Unreleased]
-
-Tooling only; the contract stays at 3.8.0.
-
-### Changed
-- **Relation cues match more of the wording papers use** (`relations.py`, #10). A one-word verb cue also matches
-  its present participle (`controls` → `controlling`), `associated with` also matches `related to`, and
-  `located in` also matches `located within` / `mapped in`. A QTL subject satisfies the `gene` subject of
-  `genotype_controls_trait`; the passive `was controlled by` still does not match it.
-- **A statement end that wraps one entity is that entity.** "The QTL qDTS1-2" or "TaPTR gene" is typed as the
-  entity it contains, and `bdc derive` names the graph node after the entity (`ent:qtl/qdts1-2`), not the phrase.
-  Any other surrounding word ("HTR2 precursors"), or two contained entities, leaves the end untyped. The shipped
-  examples do not change.
-- The marker → `qtl_associated_with_trait` substitution is gone: 3.8.0 keeps QTN, QTL and gene codes apart
-  (AMB-045).
-- The extraction brief asks for the entity string itself as subject and object (one QTL or gene per candidate),
-  and for a stated magnitude to be copied into the raw value fields.
-
-## [Tooling 1.1.0] - 2026-11-10
-
-A tooling and view release: the contract stays at 3.8.0 (`bdc diff 3.8.0 dev` reports no change). It adds a
-simplified research view for reading a paper's phenotype–gene–population relations with their full evidence
-chains, and a way to apply human review decisions back to the records. Full notes:
-[docs/releases/tooling-1.1.0.md](docs/releases/tooling-1.1.0.md).
+This release turns the unit of extraction from a record towards an **association event with study context and
+field-level evidence**. It is driven by the RBL1 rice case: a real paper plus a primer table, where the useful
+data are not just "RBL1 — resistance", but which population, which allele, which experiment, which PDF page or
+XLSX cell, and what is missing.
 
 ### Added
-- **Per-paper research view** (`make dashboard`, `scripts/make_network_dashboard.py`, `site/pages/network.html`):
-  one paper's phenotype–gene–population relations, QTL/QTN on the gene layer, every other relation counted but
-  not shown; a full-network toggle merges the same relations across papers. `make network-demo` runs a
-  four-paper demo; `--json-out` exports the view data. The previous paper dashboard is `make dashboard-full`.
-- **Evidence chains** (`breeding_contract.evidence_chain`): claim → data/result → experiment/method, with quotes
-  and locators at every node; missing links are shown, never invented.
-- **Article packages** (`breeding_contract.article_package`): main text, figures, tables, supplement,
-  data/code availability and licence, graded `complete` / `partial` / `unverified` / `not_submitted`.
-- **Cross-paper aggregation** (`breeding_contract.aggregate`): clustering, deduplication, direction conflicts and
-  deterministic A/B/C confidence with its reasons.
-- **Human review**: the per-paper 人工复核（N） panel records approve / reject / return-for-evidence decisions in
-  the browser and exports them; `bdc review apply RECORDS DECISIONS --out DIR` writes `review_status` and
-  `review_note` only. See [docs/research_view.md](docs/research_view.md).
+
+- **record kinds** `association` (one study context: study / population / material / environment / trait / locus)
+  and `sequence` (one primer, probe, amplicon or allele sequence).
+- **fields**: `common.association_kind`, `common.locus_id`, `common.locus_type`, `common.sequence_record_ids`,
+  `common.primer_name`, `common.primer_role`, `common.primer_sequence`, `common.primer_direction`,
+  `common.primer_use`, `common.primer_source_locator`, `common.primer_status`, `common.field_evidence`,
+  `common.source_file_role`, `common.source_file_status`, `common.source_file_url`,
+  `transform.entity_alias_status`, `transform.entity_alias_of`.
+- **vocabularies**: `association_kind`, `locus_type`, `sequence_role`, `sequence_direction`, `sequence_status`,
+  `source_file_role`, `source_file_status`, `entity_alias_status`; new `missing_reason` codes
+  `source_unavailable`, `parse_failed`, `not_verified`, `ambiguous`; new record grains
+  `association_unit`, `sequence_unit`.
+- **profile** `association_extraction` for papers with a primer table and manuals/supplement attachments.
+- **association aggregation**: `bdc aggregate-associations` and `breeding_contract.association_aggregate`
+  cluster association events by trait + locus across papers, preserve every population/environment context,
+  report only explicit direction conflicts, and compute A/B/C confidence with written reasons.
+- **RBL1 dashboard**: `make dashboard-rbl1` (or `scripts/make_network_dashboard.py --rbl1-case`) renders the
+  association/sequence/field-evidence dashboard; the multi-paper aggregate is a separate global overlay with a
+  paper–trait graph and a per-trait explanation of shared terminology vs shared loci. `make rbl1-aggregate`
+  adds four explicitly synthetic papers to exercise replication, conflict and A/B/C confidence.
+- **real-paper rice stress panel**: `examples/rice_stress_panel/` + `scripts/build_rice_stress_panel.py`
+  curate 13 real rice stress/disease papers; `make dashboard-panel` renders a paper–trait graph and the
+  trait + locus aggregate.
+- **rules** R041–R043: an association must carry study/population/locus/kind/field evidence/quote and a trait;
+  a sequence must carry name, 5′→3′ text, role, direction and the attachment locator.
+- `array_field_evidence` type and `common.field_evidence`: each value can point to a PDF page/section/figure or an
+  XLSX/CSV sheet/cell, independently of the record-level quote.
+- alias candidates are explicit (`transform.entity_alias_status: candidate`) and never merged automatically.
+- **docs/association_contract.md** records the hard rules; the RBL1 case and its manual attachment manifest live
+  under `examples/rbl1/`.
+
+### Compatibility
+
+The new fields and record kinds are additive, so 3.x records remain valid under their declared 3.x contract; the
+project releases this feature set as 4.0.0 by decision, and the Skill runtime accepts both 3.x and 4.x majors.
+No existing field or code is removed. Records are still validated against the version they declare.
 
 ## [3.8.0] - 2026-10-27
 
@@ -124,10 +119,6 @@ draws: the pipeline never upgrades a wording into evidence.
   it — with the run-level notice `SOURCE_PART_ITEM_NOT_FOUND`, distinct from "not supplied" and "no text".
 - `docs/relation_semantics.md`, `docs/downstream.md`, `docs/review.md` and `docs/versioning.md` describe the new
   layers; the READMEs gain the 3.8.0 section.
-
-### Notes
-- The regression acceptance report for 3.6.0 → 3.8.0 (`make acceptance`):
-  [docs/acceptance_3.8.0.md](docs/acceptance_3.8.0.md).
 
 ## [3.7.0] - 2026-10-27
 
@@ -261,9 +252,6 @@ layers that do not substitute for one another.
   运行历史 rendered every row and the page grew without bound. Each now pages through the shared pager, on a key of
   its own, so paging one list never moves another.
 
-### Notes
-- Long-form notes (in Chinese): [docs/releases/3.6.0.md](docs/releases/3.6.0.md).
-
 ## [3.5.1] - 2026-10-13
 
 A trial extraction of two papers showed that the verbatim value-presence check dominated the review queue: of
@@ -329,9 +317,18 @@ run's `value_presence_roles` so warning counts are only compared between runs th
 - The dashboard's `counts.expert_approved` counts `expert_approved` records only; it also counted `rejected`,
   which the 语义校验 card's 已提升 figure does not mean.
 
-### Notes
-- Long-form notes (in Chinese), including the documentation and tests this release touched:
-  [docs/releases/3.5.1.md](docs/releases/3.5.1.md).
+### Docs
+- `docs/review.md` rewrites the Layer-1 Evidence paragraph (role-scoped value check, AMB-014) and documents the
+  dashboard's verification report, warning families and comparability flag. `README.md` enlarges the 论文看板 row
+  with 研究流程、语义校验 and the warning-family grouping.
+
+### Tests
+- `tests/test_pipeline.py::test_value_presence_is_checked_only_for_value_bearing_roles`,
+  `tests/test_normalize_profiles.py::test_pdf_extraction_scopes_value_presence_to_value_bearing_roles`, and eight
+  `tests/test_dashboard.py` cases (verified-run ingestion, a run without verification, warning families, the
+  presence policy, the example run's filter, verification under `review/`, and tamper detection).
+- `tests/test_normalize_profiles.py::test_value_presence_roles_cannot_be_empty`, and
+  `tests/test_source_parts.py::test_derived_views_record_their_lineage` asserts POSIX lineage paths.
 
 ## [3.5.0] - 2026-10-10
 

@@ -1,0 +1,32 @@
+vocabulary_format: 1
+name: sequence_role
+title_zh: 序列角色
+enforcement: warning
+closure: closed
+code_status: proposed
+since: 4.0.0
+origin: [repository]
+source:
+  ref: docs/association_contract.md
+  quote_zh: 区分 forward/reverse、probe、amplicon、flanking 和 allele
+values:
+- code: pcr_forward_primer
+  label_zh: PCR 正向引物
+- code: pcr_reverse_primer
+  label_zh: PCR 反向引物
+- code: qrt_forward_primer
+  label_zh: qRT-PCR 正向引物
+- code: qrt_reverse_primer
+  label_zh: qRT-PCR 反向引物
+- code: sequencing_primer
+  label_zh: 测序引物
+- code: probe
+  label_zh: 探针
+- code: amplicon
+  label_zh: 扩增子
+- code: allele
+  label_zh: 等位基因序列
+- code: gene
+  label_zh: 基因序列
+- code: other
+  label_zh: 其他

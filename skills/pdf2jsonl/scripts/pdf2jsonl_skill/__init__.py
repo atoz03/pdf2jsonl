@@ -9,4 +9,4 @@ PIPELINE_VERSION = "0.6.0"
 # Contract family and major versions this pipeline implements. Minor/patch releases of the contract are
 # consumed automatically; a new major may introduce rules the pipeline does not know (CI checks this).
 SUPPORTED_CONTRACT = "breeding-literature-record"
-SUPPORTED_MAJORS = (3,)
+SUPPORTED_MAJORS = (3, 4)

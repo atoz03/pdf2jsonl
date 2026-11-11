@@ -49,6 +49,6 @@ def test_skill_refuses_an_unsupported_major(monkeypatch, root):
     import pytest
 
     from pdf2jsonl_skill import pipeline
-    monkeypatch.setattr(pipeline, "SUPPORTED_MAJORS", (4,))
+    monkeypatch.setattr(pipeline, "SUPPORTED_MAJORS", (5,))
     with pytest.raises(pipeline.PipelineError, match="major"):
         pipeline.resolve_contract("latest", "pdf_extraction", False)
