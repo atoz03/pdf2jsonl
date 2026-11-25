@@ -27,6 +27,9 @@ pdf2jsonl = "pdf2jsonl_skill.cli:main"
 package-dir = { "breeding_contract" = "src/breeding_contract", "pdf2jsonl_skill" = "skills/pdf2jsonl/scripts/pdf2jsonl_skill", "pdf2jsonl_skill.backends" = "skills/pdf2jsonl/scripts/pdf2jsonl_skill/backends" }
 packages = ["breeding_contract", "pdf2jsonl_skill", "pdf2jsonl_skill.backends"]
 
+[tool.setuptools.package-data]
+pdf2jsonl_skill = ["paper_search.html"]
+
 [tool.setuptools.dynamic]
 version = { file = "VERSION" }
 

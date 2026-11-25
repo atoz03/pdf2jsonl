@@ -12,6 +12,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and versions
 
 Each heading `## [X.Y.Z] - YYYY-MM-DD` provides the release date that `bdc release` records.
 
+## [4.0.1] - 2026-11-25
+
+The patch release uses the 4.0.0 contract definitions and adds a paper acquisition workflow before extraction.
+
+### Added
+
+- Local paper search by keyword, title, or DOI with year filters, paginated OpenAlex results, and optional Google Scholar through SerpApi.
+- Public PDF downloads with source information, PDF validation, and deduplication against existing libraries.
+- README instructions for starting the local page, configuring sources, and passing downloaded PDFs to the extraction CLI.
+
 ## [4.0.0] - 2026-11-10
 
 This release turns the unit of extraction from a record towards an **association event with study context and
