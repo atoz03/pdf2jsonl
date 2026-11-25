@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>论文检索 · pdf2jsonl</title>
+  <style>
+    :root {
+      font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      color: #1b2b35;
+      background: #f4f7f7;
+      --muted: #53666e;
+      --line: #dce5e5;
+      --accent: #086653;
+      --accent-dark: #064c3e;
+      --focus: #289c84;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; min-width: 300px; line-height: 1.6; font-size: 14px; }
+    a { color: var(--accent); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: default; }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+    .shell { width: min(1192px, calc(100% - 60px)); margin-inline: auto; }
+    .top { color: #edf8f7; background: #142b34; border-bottom: 1px solid #23424c; }
+    .top-content { height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .brand { color: inherit; display: inline-flex; align-items: center; gap: 11px; font-size: 16px;
+      font-weight: 680; text-decoration: none; letter-spacing: .015em; }
+    .brand-mark { display: grid; place-content: center; gap: 3px; width: 28px; height: 28px;
+      background: #236756; border-radius: 7px; }
+    .brand-mark i { width: 12px; height: 2px; background: #daf5ec; border-radius: 2px; }
+    .brand-mark i:last-child { width: 8px; }
+    .connection { display: inline-flex; align-items: center; gap: 8px; color: #c6dadf; font-size: 12px; }
+    .connection::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #8ca8aa; }
+    .connection[data-state="ready"]::before { background: #76d9b3; }
+    .connection[data-state="error"]::before { background: #efbb80; }
+    main { padding: 33px 0 56px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(29px, 4vw, 41px); letter-spacing: -.035em; line-height: 1.2; }
+    .intro p { margin-top: 8px; color: var(--muted); font-size: 14px; }
+    .intro a { text-underline-offset: 3px; }
+    .panel { border: 1px solid var(--line); border-radius: 13px; background: #fff;
+      box-shadow: 0 2px 5px #173f3b05; }
+    .search-panel { margin-top: 22px; padding: 20px; }
+    .query-row { display: flex; gap: 10px; }
+    .query-wrap { flex: 1; position: relative; min-width: 0; }
+    .search-icon { position: absolute; left: 15px; top: 15px; width: 13px; height: 13px;
+      border: 2px solid #607982; border-radius: 50%; pointer-events: none; }
+    .search-icon::after { content: ""; position: absolute; top: 9px; left: 8px; width: 7px;
+      height: 2px; background: #607982; transform: rotate(46deg); transform-origin: left; }
+    #query { width: 100%; padding: 11px 13px 11px 40px; height: 46px; font-size: 15px; }
+    input:not([type="checkbox"]), select { min-width: 0; border: 1px solid #bfcfcf; border-radius: 7px;
+      color: inherit; background: #fcfefe; }
+    input::placeholder { color: #657781; opacity: 1; }
+    input[type="checkbox"] { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); flex-shrink: 0; }
+    .primary { border: 1px solid transparent; border-radius: 7px; padding: 7px 16px;
+      color: #fff; background: var(--accent); font-weight: 650; white-space: nowrap; }
+    .primary:not(:disabled):hover { background: var(--accent-dark); }
+    .primary:disabled { background: #dce7e4; color: #536861; }
+    #search-button { min-width: 84px; }
+    .filters { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-top: 13px; }
+    .field { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
+    .field input, .field select { height: 33px; padding: 3px 8px; font-size: 13px; color: #1b2b35; }
+    .field input { width: 94px; }
+    .checkbox-label { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; }
+    .filters .checkbox-label { min-height: 33px; margin-left: 4px; }
+    .examples { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 13px;
+      color: var(--muted); font-size: 12px; }
+    .example { border: 1px solid #e0e9e8; background: #f2f7f6; color: #325950; padding: 3px 9px;
+      border-radius: 5px; }
+    .example:hover { background: #e3f1ed; }
+    .source-access { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-top: 11px;
+      color: var(--muted); font-size: 12px; }
+    .source-access a { text-underline-offset: 3px; }
+    .layout { margin-top: 18px; display: grid; grid-template-columns: minmax(0, 1fr) 280px;
+      align-items: start; gap: 16px; }
+    .result-head { padding: 15px 17px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    h2 { font-size: 17px; line-height: 1.35; }
+    .subtext, .meta, .doi, .small { color: var(--muted); font-size: 12px; }
+    .result-head .subtext { margin-top: 4px; }
+    .toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .toolbar .primary { padding: 6px 12px; }
+    .list-controls { display: flex; align-items: center; padding: 7px 17px; min-height: 34px;
+      border-block: 1px solid #e7eded; background: #f7fafa; color: #425a63; }
+    .list-controls label { font-size: 12px; }
+    .list-bar { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 7px 17px; border-block: 1px solid #e7eded; background: #f7fafa; }
+    .list-bar .list-controls { padding: 0; min-height: 28px; border: 0; background: transparent; }
+    .pager { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+    .pager button { border: 1px solid #c9dad6; background: #fff; color: var(--accent);
+      padding: 3px 9px; border-radius: 5px; }
+    .pager button:hover:not(:disabled) { background: #edf7f3; }
+    .pager button:disabled { background: #edf2f2; color: #63747a; }
+    .results-list { list-style: none; margin: 0; padding: 0; }
+    .result { display: grid; grid-template-columns: 18px minmax(0, 1fr) 104px; gap: 12px;
+      padding: 14px 17px; align-items: start; }
+    .result + .result { border-top: 1px solid #e8eeee; }
+    .result > input { margin-top: 5px; }
+    .paper-title { display: inline; font-size: 15px; line-height: 1.38; color: #203d4b;
+      text-decoration: none; font-weight: 670; overflow-wrap: anywhere; }
+    .paper-title:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .meta, .doi { margin-top: 3px; overflow-wrap: anywhere; }
+    .doi { color: #526b70; }
+    .result-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; }
+    .state { display: inline-flex; border-radius: 100px; padding: 2px 8px; line-height: 19px; font-size: 11px;
+      font-weight: 650; color: #455963; background: #edf2f2; white-space: nowrap; }
+    .state[data-tone="available"], .state[data-tone="downloaded"] { color: #125b4a; background: #e0f2ea; }
+    .state[data-tone="existing"] { color: #394f76; background: #e8edf7; }
+    .state[data-tone="failed"] { color: #8a4d20; background: #f8ebdc; }
+    .row-action { font-size: 12px; line-height: 20px; color: var(--accent); background: #fff; border: 1px solid #c9dad6;
+      text-decoration: none; padding: 2px 9px; border-radius: 5px; white-space: nowrap; }
+    .row-action:not(:disabled):hover { background: #edf7f3; }
+    .row-action:disabled { opacity: .55; }
+    .receipt { margin-top: 4px; font-size: 12px; color: #516677; overflow-wrap: anywhere; }
+    .receipt[data-tone="failed"] { color: #8a4d20; }
+    .empty { border-top: 1px solid #e8eeee; padding: 30px 18px; color: var(--muted); text-align: center; }
+    .library { padding: 16px 17px; }
+    .library-top { display: flex; gap: 10px; align-items: baseline; margin-top: 9px; }
+    #library-count { font-size: 32px; font-weight: 690; color: #183b42; line-height: 1.15; font-variant-numeric: tabular-nums; }
+    .side-section { margin-top: 13px; padding-top: 12px; border-top: 1px solid #e7eded; }
+    .side-section h3 { font-size: 12px; font-weight: 650; margin-bottom: 5px; }
+    .path { display: block; color: #3f565d; background: #f3f7f6; border-radius: 5px;
+      padding: 6px 8px; font-family: "Cascadia Mono", "Microsoft YaHei", monospace;
+      font-size: 11px; overflow-wrap: anywhere; white-space: normal; }
+    .paths { padding: 0; margin: 0; list-style: none; display: grid; gap: 5px; }
+    .notice { padding: 8px 12px; border-radius: 7px; margin-top: 13px; border: 1px solid #c8e3db;
+      background: #e8f6f1; color: #235e50; font-size: 13px; }
+    .notice[data-tone="error"] { color: #83451f; background: #fcf2e7; border-color: #eed9c2; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+    @media (max-width: 830px) {
+      .shell { width: calc(100% - 32px); }
+      .layout { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 480px) {
+      main { padding-top: 25px; }
+      .search-panel { padding: 13px; margin-top: 17px; }
+      .result-head { align-items: flex-start; flex-direction: column; }
+      .result { grid-template-columns: 17px minmax(0, 1fr); padding: 13px; gap: 8px; }
+      .result-actions { grid-column: 2; flex-direction: row; align-items: center; }
+      .field input { width: 81px; }
+      .filters .checkbox-label { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="shell top-content">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>pdf2jsonl</a>
+      <span class="connection" id="connection">正在索引本地 PDF</span>
+    </div>
+  </header>
+  <main class="shell">
+    <div class="intro">
+      <h1>论文检索</h1>
+      <p>检索论文，下载公开 PDF，并自动匹配本地文献。</p>
+    </div>
+    <form id="search-form" class="panel search-panel">
+      <div class="query-row">
+        <label class="query-wrap">
+          <span class="visually-hidden">关键词、论文题名或 DOI</span><span class="search-icon" aria-hidden="true"></span>
+          <input id="query" name="q" placeholder="输入关键词、论文题名或 DOI" required maxlength="500" autocomplete="off">
+        </label>
+        <button id="search-button" class="primary" type="submit">搜索</button>
+      </div>
+      <div class="filters">
+        <label class="field">检索来源
+          <select name="provider" id="provider"><option value="openalex">OpenAlex</option>
+            <option value="google_scholar">Google 学术</option></select>
+        </label>
+        <label class="field">起始年份<input name="from_year" placeholder="不限" type="number" min="1500" max="2100"></label>
+        <label class="field">结束年份<input name="to_year" placeholder="不限" type="number" min="1500" max="2100"></label>
+        <label class="field">每页篇数
+          <select name="limit" id="page-size"><option value="10">10 篇</option><option value="25" selected>25 篇</option>
+            <option value="50">50 篇</option><option value="100">100 篇</option></select>
+        </label>
+        <label class="checkbox-label"><input name="oa_only" type="checkbox" value="true"><span id="oa-label">仅开放获取</span></label>
+      </div>
+      <div id="scholar-access" class="source-access" hidden>
+        <span id="scholar-status">正在读取 Google 学术配置</span>
+        <a id="open-scholar" href="https://scholar.google.com/" target="_blank" rel="noopener noreferrer">在 Google 学术打开查询</a>
+      </div>
+      <div class="examples">
+        <span>试试</span>
+        <button class="example" type="button">soybean seed protein QTL</button>
+        <button class="example" type="button">rice cold tolerance GWAS</button>
+      </div>
+    </form>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    <div class="layout">
+      <section class="panel" aria-labelledby="results-title">
+        <div class="result-head">
+          <div>
+            <h2 id="results-title">检索结果</h2>
+            <p class="subtext" id="result-count" aria-live="polite">按主题、题名或 DOI 查找文献。</p>
+          </div>
+          <div class="toolbar">
+            <label class="checkbox-label"><input id="show-existing" type="checkbox">显示已存在</label>
+            <button id="download-selected" class="primary" type="button" disabled>下载所选</button>
+          </div>
+        </div>
+        <div class="list-bar" id="list-bar" hidden>
+          <div class="list-controls" id="list-controls" hidden>
+            <label class="checkbox-label"><input id="select-all" type="checkbox">选择本页可下载或可查全文的论文</label>
+          </div>
+          <nav class="pager" id="pager" aria-label="检索结果分页" hidden>
+            <button id="previous-page" type="button" disabled>上一页</button>
+            <span id="current-page" aria-live="polite">第 1 页</span>
+            <button id="next-page" type="button" disabled>下一页</button>
+          </nav>
+        </div>
+        <ol class="results-list" id="results-list"></ol>
+        <p id="empty" class="empty">输入关键词后，论文会显示在这里。</p>
+      </section>
+      <aside class="panel library" aria-labelledby="library-title">
+        <h2 id="library-title">本地文献库</h2>
+        <div class="library-top"><strong id="library-count">…</strong><span class="small">份不同的 PDF</span></div>
+        <div class="side-section">
+          <h3>查重目录</h3>
+          <ul class="paths" id="library-dirs"></ul>
+        </div>
+        <div class="side-section">
+          <h3>下载到</h3><code class="path" id="download-dir">正在读取目录</code>
+        </div>
+        <div class="side-section">
+          <p class="small" id="api-key-status">正在读取 OpenAlex 配置</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+  <script>
+    const byId = id => document.getElementById(id);
+    const form = byId("search-form");
+    const query = byId("query");
+    const provider = byId("provider");
+    const pageSize = byId("page-size");
+    const searchButton = byId("search-button");
+    const list = byId("results-list");
+    const empty = byId("empty");
+    const showExisting = byId("show-existing");
+    const selectAll = byId("select-all");
+    const downloadSelected = byId("download-selected");
+    const previousPage = byId("previous-page");
+    const nextPage = byId("next-page");
+    const selected = new Set();
+    let results = [];
+    let searched = false;
+    let busy = false;
+    let searching = false;
+    let scholarConfigured;
+    let pagination = null;
+    let activeSearch = null;
+
+    function element(tag, classes, text) {
+      const node = document.createElement(tag);
+      if (classes) node.className = classes;
+      if (text) node.textContent = text;
+      return node;
+    }
+
+    function message(text, tone = "info") {
+      const node = byId("notice");
+      node.textContent = text;
+      node.dataset.tone = tone;
+      node.hidden = !text;
+    }
+
+    async function api(url, options) {
+      const response = await fetch(url, options);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "本地服务请求失败。");
+      return data;
+    }
+
+    function libraryDetails(data) {
+      byId("library-count").textContent = data.pdf_count.toLocaleString("zh-CN");
+      byId("download-dir").textContent = data.output_dir;
+      byId("library-dirs").replaceChildren(...data.directories.map(path => {
+        const item = element("li");
+        item.append(element("code", "path", path));
+        return item;
+      }));
+      const connection = byId("connection");
+      connection.dataset.state = "ready";
+      connection.textContent = "本地服务已连接";
+    }
+
+    function scholarLink() {
+      const url = new URL("https://scholar.google.com/scholar");
+      const params = new FormData(form);
+      url.searchParams.set("hl", "zh-CN");
+      url.searchParams.set("q", query.value.trim());
+      for (const [field, parameter] of [["from_year", "as_ylo"], ["to_year", "as_yhi"]]) {
+        if (params.get(field)) url.searchParams.set(parameter, params.get(field));
+      }
+      byId("open-scholar").href = url.href;
+    }
+
+    function updateProviderFields() {
+      const scholar = provider.value === "google_scholar";
+      const limits = scholar ? ["10", "20"] : ["10", "25", "50", "100"];
+      const selectedLimit = pageSize.value;
+      pageSize.replaceChildren(...limits.map(value => new Option(value + " 篇", value)));
+      pageSize.value = limits.includes(selectedLimit) ? selectedLimit : (scholar ? "10" : "25");
+      byId("oa-label").textContent = scholar ? "本页仅显示有 PDF 链接" : "仅开放获取";
+      byId("scholar-access").hidden = !scholar;
+      scholarLink();
+    }
+
+    async function refreshLibrary() {
+      try {
+        const data = await api("/api/library");
+        libraryDetails(data);
+        byId("api-key-status").textContent = data.key_configured ? "OpenAlex API Key 已配置" :
+          "可直接下载公开直链。OpenAlex 托管全文需要 API Key。";
+        scholarConfigured = data.scholar_configured;
+        byId("scholar-status").textContent = scholarConfigured ? "Google 学术检索通过 SerpApi" :
+          "应用内检索需要设置 SERPAPI_API_KEY。";
+      } catch {
+        byId("connection").dataset.state = "error";
+        byId("connection").textContent = "本地文献库读取失败";
+      }
+    }
+
+    function visibleResults() {
+      return results.filter(paper => showExisting.checked || !paper.local || paper.state);
+    }
+
+    function downloadable(paper) {
+      return (paper.can_download || paper.can_lookup) && !paper.local;
+    }
+
+    function updateSelection() {
+      const available = visibleResults().filter(downloadable);
+      const checked = available.filter(paper => selected.has(paper.id)).length;
+      selectAll.disabled = busy || searching || available.length === 0;
+      selectAll.checked = available.length > 0 && checked === available.length;
+      selectAll.indeterminate = checked > 0 && checked < available.length;
+      downloadSelected.disabled = busy || searching || checked === 0;
+      downloadSelected.textContent = checked ? "下载本页所选（" + checked + "）" : "下载所选";
+    }
+
+    function displayStatus(paper) {
+      if (paper.state === "running") return ["正在下载", "existing"];
+      if (paper.state === "downloaded") return ["已下载", "downloaded"];
+      if (paper.local) return ["已存在", "existing"];
+      if (paper.state === "failed") return ["下载失败", "failed"];
+      if (paper.can_download) return ["可下载", "available"];
+      if (paper.can_lookup) return ["可查全文", "available"];
+      if (paper.key_can_help) return ["需要 API Key", "blocked"];
+      return ["待提供全文", "blocked"];
+    }
+
+    function createRow(paper) {
+      const row = element("li", "result");
+      const check = element("input");
+      check.type = "checkbox";
+      check.setAttribute("aria-label", "选择 " + paper.title);
+      check.checked = selected.has(paper.id);
+      check.disabled = busy || searching || !downloadable(paper);
+      check.addEventListener("change", () => {
+        if (check.checked) selected.add(paper.id);
+        else selected.delete(paper.id);
+        updateSelection();
+      });
+      const main = element("div");
+      const name = element("a", "paper-title", paper.title);
+      name.href = paper.url;
+      name.target = "_blank";
+      name.rel = "noopener noreferrer";
+      main.append(name);
+      const authors = paper.authors.slice(0, 3).join(", ") + (paper.authors.length > 3 ? " 等" : "");
+      const metadata = [authors, paper.year, paper.journal].filter(Boolean).join(" · ");
+      if (metadata) main.append(element("p", "meta", metadata));
+      if (paper.doi) main.append(element("p", "doi", "DOI " + paper.doi));
+      if (paper.local || paper.message) {
+        const text = paper.local ? paper.local.filename : paper.message;
+        const receipt = element("p", "receipt", text);
+        receipt.dataset.tone = paper.state || "";
+        if (paper.local) receipt.title = paper.local.path;
+        main.append(receipt);
+      }
+      const actions = element("div", "result-actions");
+      const [label, tone] = displayStatus(paper);
+      const state = element("span", "state", label);
+      state.dataset.tone = tone;
+      actions.append(state);
+      if (paper.local) {
+        const link = element("a", "row-action", "打开 PDF");
+        link.href = "/api/pdf/" + paper.local.sha256;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        actions.append(link);
+      } else if (downloadable(paper)) {
+        const action = paper.can_download ? "下载" : "查找 PDF";
+        const button = element("button", "row-action", paper.state === "failed" ? "重试" : action);
+        button.type = "button";
+        button.disabled = busy || searching;
+        button.addEventListener("click", () => download([paper]));
+        actions.append(button);
+      }
+      row.append(check, main, actions);
+      row.dataset.id = paper.id;
+      return row;
+    }
+
+    function render() {
+      const visible = visibleResults();
+      const existingCount = results.filter(paper => paper.local).length;
+      if (searched) {
+        const sourceName = activeSearch.get("provider") === "google_scholar" ? "Google 学术" : "OpenAlex";
+        byId("result-count").textContent = sourceName + " · 本页找到 " + results.length + " 篇 · 本地已有 " +
+          existingCount + " 篇" + (Number.isInteger(pagination.total) && pagination.total > results.length ?
+            " · 来源约 " + pagination.total.toLocaleString("zh-CN") + " 篇" : "");
+      }
+      const canPage = Boolean(pagination && (pagination.has_previous || pagination.has_next));
+      byId("list-bar").hidden = visible.length === 0 && !canPage;
+      byId("list-controls").hidden = visible.length === 0;
+      byId("pager").hidden = !canPage;
+      if (pagination) byId("current-page").textContent = "第 " + pagination.page + " 页";
+      previousPage.disabled = busy || searching || !pagination?.has_previous;
+      nextPage.disabled = busy || searching || !pagination?.has_next;
+      list.replaceChildren(...visible.map(createRow));
+      empty.hidden = visible.length > 0;
+      if (!visible.length && searched) {
+        const filteringPdfs = activeSearch.get("provider") === "google_scholar" && activeSearch.get("oa_only") === "true";
+        empty.textContent = results.length ? "本页论文已在本地。勾选「显示已存在」可打开 PDF。" :
+          filteringPdfs ? "本页没有带 PDF 链接的结果。" : "本页没有匹配结果。可以调整关键词或年份范围。";
+      }
+      updateSelection();
+    }
+
+    function formSearch(page = 1) {
+      const params = new URLSearchParams();
+      for (const [key, value] of new FormData(form)) {
+        if (value.trim()) params.set(key, value.trim());
+      }
+      params.set("page", String(page));
+      return params;
+    }
+
+    async function loadSearch(params) {
+      if (busy || searching) return;
+      if (!params.get("q")) { query.focus(); return; }
+      const inScholar = params.get("provider") === "google_scholar";
+      if (inScholar && scholarConfigured === false) {
+        message("可点击「在 Google 学术打开查询」。应用内检索需要先设置 SERPAPI_API_KEY。", "error");
+        return;
+      }
+      searching = true;
+      searchButton.disabled = true;
+      searchButton.textContent = "搜索中…";
+      message("正在检索 " + (inScholar ? "Google 学术" : "OpenAlex") + " 并比对本地文献…");
+      render();
+      try {
+        const data = await api("/api/search?" + params.toString());
+        results = data.results;
+        pagination = data.pagination;
+        activeSearch = new URLSearchParams(params);
+        selected.clear();
+        searched = true;
+        libraryDetails(data.library);
+        history.replaceState(null, "", "/?" + params.toString());
+        message("");
+      } catch (error) {
+        message(error.message || "检索失败，请重试。", "error");
+      } finally {
+        searching = false;
+        searchButton.disabled = false;
+        searchButton.textContent = "搜索";
+        render();
+      }
+    }
+
+    function turnPage(step) {
+      if (!activeSearch || !pagination) return;
+      const params = new URLSearchParams(activeSearch);
+      params.set("page", String(pagination.page + step));
+      loadSearch(params);
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      loadSearch(formSearch());
+    });
+    provider.addEventListener("change", updateProviderFields);
+    form.addEventListener("input", scholarLink);
+    previousPage.addEventListener("click", () => turnPage(-1));
+    nextPage.addEventListener("click", () => turnPage(1));
+
+    async function download(papers) {
+      if (busy || searching || papers.length === 0) return;
+      busy = true;
+      searchButton.disabled = true;
+      let saved = 0;
+      let skipped = 0;
+      let failures = 0;
+      for (const [index, paper] of papers.entries()) {
+        paper.state = "running";
+        paper.message = "";
+        message("正在下载第 " + (index + 1) + " / " + papers.length + " 篇。");
+        render();
+        try {
+          const data = await api("/api/download", {method: "POST", headers: {"Content-Type": "application/json"},
+                                                   body: JSON.stringify({id: paper.id})});
+          paper.state = data.status;
+          paper.message = data.message || "";
+          paper.local = data.local || null;
+          if (data.status === "downloaded") saved++;
+          else if (data.status === "already_exists") skipped++;
+          else failures++;
+          if (data.status === "unavailable") {
+            paper.can_download = false;
+            paper.can_lookup = false;
+          }
+        } catch (error) {
+          paper.state = "failed";
+          paper.message = error.message || "下载失败，请重试。";
+          failures++;
+        }
+        selected.delete(paper.id);
+      }
+      busy = false;
+      searchButton.disabled = false;
+      message("已下载 " + saved + " 篇 · 已存在 " + skipped + " 篇 · 未下载 " + failures + " 篇",
+              failures ? "error" : "info");
+      render();
+      refreshLibrary();
+    }
+
+    showExisting.addEventListener("change", render);
+    selectAll.addEventListener("change", () => {
+      for (const paper of visibleResults().filter(downloadable)) {
+        if (selectAll.checked) selected.add(paper.id);
+        else selected.delete(paper.id);
+      }
+      render();
+      selectAll.focus();
+    });
+    downloadSelected.addEventListener("click", () => download(visibleResults().filter(paper => selected.has(paper.id))));
+    for (const button of document.querySelectorAll(".example")) {
+      button.addEventListener("click", () => {
+        query.value = button.textContent;
+        scholarLink();
+        form.requestSubmit();
+      });
+    }
+
+    refreshLibrary();
+    const initial = new URLSearchParams(location.search);
+    if (initial.get("provider") === "google_scholar") provider.value = "google_scholar";
+    updateProviderFields();
+    for (const key of ["q", "from_year", "to_year", "limit"]) {
+      if (!initial.has(key)) continue;
+      const field = form.elements.namedItem(key);
+      if (key !== "limit" || Array.from(field.options).some(option => option.value === initial.get(key))) {
+        field.value = initial.get(key);
+      }
+    }
+    form.elements.namedItem("oa_only").checked = initial.get("oa_only") === "true";
+    scholarLink();
+    const initialPage = Number(initial.get("page"));
+    if (query.value.trim()) loadSearch(formSearch(Number.isInteger(initialPage) && initialPage > 0 ? initialPage : 1));
+  </script>
+</body>
+</html>

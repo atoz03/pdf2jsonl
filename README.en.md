@@ -29,7 +29,7 @@ a corpus, QA seeds and relational tables from the same records.
 
 > Want to extract your own paper instead of the examples? Jump to [Extract your own papers](#-extract-your-own-papers).
 
-> **Current version: 4.0.0.** New users only need this version: install it, pin `--schema-version 4.0.0`, and follow “Extract your own papers”. 3.x exists only for historical record compatibility; you do not need to install, migrate or follow the old commands.
+> **Current version: 4.0.1.** New users only need this version: install it, pin `--schema-version 4.0.1`, and follow [Search for and download papers](#search-for-and-download-papers) or “Extract your own papers”. 3.x exists only for historical record compatibility; you do not need to install, migrate or follow the old commands.
 
 **Everything is shown in one site:** [https://atoz03.github.io/pdf2jsonl](https://atoz03.github.io/pdf2jsonl/), built by `scripts/make_site.py` from the
 latest release and the checked-in examples, and deployed from `main`.
@@ -141,7 +141,7 @@ languages and downloads the SVG. Run `make diagram` to regenerate both README im
 | `examples/` | Synthetic papers, the RBL1 case, the 13-paper rice stress panel, pipeline output, migrations and derived views |
 | `tests/` | pytest suite (catalog fidelity, releases, validation, pipeline, Skill sync, importers, bundles, functions, evidence chain, downstream hooks, workflow, verification, source parts, site) |
 
-## 🔬 Contract at a glance (4.0.0)
+## 🔬 Contract at a glance (4.0.1)
 
 - 439 fields in five groups: `common` 195, `agent` 64, `skills` 53, `transform` 59, `omics` 68.
   The 259 v3.0.0 fields are `verified` and verbatim; the 180 fields added since are `provisional`.
@@ -178,6 +178,33 @@ make check        # bdc check --strict
 make test         # pytest
 ```
 
+## Search for and download papers
+
+From the repository root, install the PDF dependency and start the local search service.
+
+```bash
+python -m pip install -e '.[pdf]'
+pdf2jsonl papers serve --library-dir "/path/to/local/papers"
+```
+
+Use `--library-dir` for an existing PDF collection. Repeat it to scan multiple folders. Open the [local paper search page](http://127.0.0.1:8765/) and search by keyword, title, or DOI. Filter by year, use Previous and Next to browse pages, and select PDFs to download. Keep the terminal running while you use the page.
+
+PDFs go to `out/papers/` by default. Change the destination with `--out-dir`. The app checks the download directory and all configured library directories for matches by paper ID, DOI, title, and SHA-256. It saves the source of each download.
+
+- **OpenAlex** is the default provider. It supports publicly available PDF links. Set `OPENALEX_API_KEY` before starting the service to access OpenAlex-hosted full text. [OpenAlex full-text API](https://help.openalex.org/access/fulltext/)
+- **Google Scholar** uses SerpApi. Set `SERPAPI_API_KEY` in the shell before starting the service, then select Google Scholar on the page. The page can also open the query directly in Google Scholar. Results with a DOI can look up open full text through OpenAlex. [SerpApi Google Scholar API](https://serpapi.com/google-scholar-api)
+
+The CLI can also search OpenAlex and download by result number.
+
+```bash
+pdf2jsonl papers search "soybean seed protein QTL" --from-year 2018 --to-year 2024 --page 1 --limit 25 --library-dir "/path/to/local/papers" --out out/papers/search.json
+pdf2jsonl papers download --from out/papers/search.json --select 1,3 --library-dir "/path/to/local/papers"
+```
+
+Pass a downloaded PDF directly to `pdf2jsonl prepare`.
+
+For an agent, specify the keywords, inclusive date range, maximum number of downloads, and existing library directories. To extract records and generate the full paper dashboard, pin `--schema-version 4.0.1` and `--profile pdf_extraction`. Keep the PDFs and extraction output in the repository directory being scanned, then run `python scripts/make_dashboard.py --scan out/papers --out out/paper-dashboard.html`.
+
 ## 🧪 Extract your own papers
 
 The repository is not limited to its example papers. It does **not** call a model API by itself: it produces
@@ -191,7 +218,7 @@ pipeline validates it, writes records and builds derived views.
 | General paper records (phenotype, material, method, claim, …) | `pdf_extraction` | 4.x default, directly extracted D fields |
 | Association events + primer sequences + field evidence | `association_extraction` | New in 4.0.0; for gene/QTL—trait—population—sequence papers such as RBL1 |
 
-Pin `--schema-version 4.0.0` for reproducible experiments; do not use `latest` for long-lived runs.
+Pin `--schema-version 4.0.1` for reproducible experiments; do not use `latest` for long-lived runs.
 
 ### 2. Prepare a paper
 
@@ -206,14 +233,14 @@ pip install -e '.[dev]'                # includes pypdf / openpyxl
 
 pdf2jsonl prepare "papers/my-paper.pdf" \
   --profile association_extraction \
-  --schema-version 4.0.0 \
+  --schema-version 4.0.1 \
   --out-dir out/my-paper \
   --work-dir out/my-paper/work
 
 # one or more supplementary files:
 pdf2jsonl prepare "papers/my-paper.pdf" \
   --supplement "papers/my-paper-supplement.pdf" \
-  --profile association_extraction --schema-version 4.0.0 \
+  --profile association_extraction --schema-version 4.0.1 \
   --out-dir out/my-paper --work-dir out/my-paper/work
 ```
 
@@ -268,7 +295,7 @@ If another tool already produced candidates:
 ```bash
 pdf2jsonl run "papers/my-paper.pdf" \
   --backend candidates --candidates out/my-paper/work/candidates.json \
-  --profile association_extraction --schema-version 4.0.0 \
+  --profile association_extraction --schema-version 4.0.1 \
   --out-dir out/my-paper
 ```
 
@@ -283,7 +310,7 @@ One `work/` directory per paper; never mix candidates from different papers:
 for pdf in papers/*.pdf; do
   stem=$(basename "$pdf" .pdf)
   pdf2jsonl prepare "$pdf" \
-    --profile pdf_extraction --schema-version 4.0.0 \
+    --profile pdf_extraction --schema-version 4.0.1 \
     --out-dir "out/$stem" --work-dir "out/$stem/work"
   # give each out/$stem/work to the agent, then:
   pdf2jsonl finalize "out/$stem/work" --out-dir "out/$stem"
@@ -312,9 +339,9 @@ and terminal access; it only wraps the same `prepare`/`finalize` flow.
 ```python
 from breeding_contract import resolve_schema, load_profile, load_field_catalog, validate_record
 
-rc = resolve_schema("4.0.0")                   # or "latest", or "dev" (unreleased working tree)
+rc = resolve_schema("4.0.1")                   # or "latest", or "dev" (unreleased working tree)
 profile = load_profile("pdf_extraction", "latest")
-catalog = load_field_catalog("4.0.0")
+catalog = load_field_catalog("4.0.1")
 result = validate_record(record)               # validates against the version the record declares
 result.valid, [i.to_dict() for i in result.errors]
 ```

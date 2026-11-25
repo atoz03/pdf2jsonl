@@ -28,7 +28,7 @@
 
 > 想抽取自己的论文，而不是跑示例？直接看 [用你自己的论文抽取](#-用你自己的论文抽取)。
 
-> **当前版本：4.0.0。** 新用户只需要这一版：安装后固定 `--schema-version 4.0.0`，按“用你自己的论文抽取”操作即可。3.x 只用于历史记录兼容，不需要安装、迁移或按旧命令操作。
+> **当前版本：4.0.1。** 新用户只需要这一版：安装后固定 `--schema-version 4.0.1`，按[论文检索与下载](#论文检索与下载)或“用你自己的论文抽取”操作。3.x 只用于历史记录兼容，不需要安装、迁移或按旧命令操作。
 
 **所有内容都在一个站点里：** [https://atoz03.github.io/pdf2jsonl](https://atoz03.github.io/pdf2jsonl/) 由 `scripts/make_site.py`
 根据最新发布版本和仓库内的示例生成，随 `main` 分支自动部署。
@@ -132,7 +132,7 @@ PDF 不随仓库分发；来源 URL 与 SHA256 写在 `examples/rbl1/README.md`�
 | `examples/` | 合成论文、RBL1 case、13 篇水稻真实论文面板、管线输出、迁移与派生示例 |
 | `tests/` | pytest 测试：规范一致性、版本、校验、管线、Skill 同步、导入、文档包、功能、证据链、下游钩子、研究流程、语义复核、来源组成部分及站点 |
 
-## 🔬 规范概览（4.0.0）
+## 🔬 规范概览（4.0.1）
 
 - 共 439 个字段，分为五组：`common` 195、`agent` 64、`skills` 53、`transform` 59、`omics` 68。
   v3.0.0 的 259 个字段标记为 `verified`，定义逐字保留；其后新增的 180 个字段标记为 `provisional`。
@@ -166,6 +166,33 @@ make check        # bdc check --strict
 make test         # pytest
 ```
 
+## 论文检索与下载
+
+在仓库根目录安装 PDF 依赖并启动本地检索服务。
+
+```powershell
+python -m pip install -e ".[pdf]"
+pdf2jsonl papers serve --library-dir "D:\papers"
+```
+
+把 `D:\papers` 换成已有的 PDF 目录。`--library-dir` 可重复传入。打开[论文检索页面](http://127.0.0.1:8765/)，输入关键词、题名或 DOI，按年份筛选，用「上一页」「下一页」翻页。点单篇「下载」或「下载本页所选」。使用期间保持启动窗口运行。
+
+公开 PDF 默认保存到 `out/papers/`，可用 `--out-dir` 指定目录。下载目录和已有文献目录都会参与查重。程序按论文 ID、DOI、题名和 SHA-256 匹配已有文件，并保存每篇论文的下载来源。
+
+- **OpenAlex** 默认可用，可下载公开直链。若要使用 OpenAlex 托管的全文，在启动服务前设置 `OPENALEX_API_KEY`。[OpenAlex 全文 API](https://help.openalex.org/access/fulltext/)
+- **Google 学术** 在启动服务的 PowerShell 窗口里设置 `$env:SERPAPI_API_KEY = '你的 SerpApi Key'`，启动后在「检索来源」中选择 Google 学术。页面也提供「在 Google 学术打开查询」。对带 DOI 的结果，程序还可查找 OpenAlex 收录的公开全文。[SerpApi 接口说明](https://serpapi.com/google-scholar-api)
+
+也可以用命令行检索 OpenAlex 并按结果编号下载。
+
+```powershell
+pdf2jsonl papers search "soybean seed protein QTL" --from-year 2018 --to-year 2024 --page 1 --limit 25 --library-dir "D:\papers" --out out/papers/search.json
+pdf2jsonl papers download --from out/papers/search.json --select 1,3 --library-dir "D:\papers"
+```
+
+下载后的 PDF 可以直接交给 `pdf2jsonl prepare`。
+
+给 Agent 时，写明关键词、起止年份（含两端）、下载上限和查重目录。需要抽取并生成完整论文看板时，指定 `--schema-version 4.0.1` 和 `--profile pdf_extraction`，把 PDF 与抽取输出放在仓库内的扫描目录中。生成看板时用 `python scripts/make_dashboard.py --scan out/papers --out out/paper-dashboard.html`。
+
 ## 🧪 用你自己的论文抽取
 
 不是只能跑仓库里的示例论文。任意外部 PDF 都可以走同一条流程；项目本身**不调用模型 API**，而是生成
@@ -179,7 +206,7 @@ make test         # pytest
 | 普通论文记录（表型、材料、方法、结论等） | `pdf_extraction` | 4.x 默认画像，直接抽 D 字段 |
 | 关联事件 + 引物序列 + 字段级证据 | `association_extraction` | 4.0.0 新增；适合 RBL1 这类“基因/QTL—性状—群体—序列”论文 |
 
-复现实验请固定 `--schema-version 4.0.0`；不要用 `latest` 做长期可复现实验。
+复现实验请固定 `--schema-version 4.0.1`；不要用 `latest` 做长期可复现实验。
 
 ### 2. 安装并准备一篇新论文
 
@@ -195,7 +222,7 @@ pip install -e '.[dev]'                # dev 已包含 pypdf / openpyxl
 
 pdf2jsonl prepare "papers/my-paper.pdf" \
   --profile association_extraction \
-  --schema-version 4.0.0 \
+  --schema-version 4.0.1 \
   --out-dir out/my-paper \
   --work-dir out/my-paper/work
 ```
@@ -205,7 +232,7 @@ pdf2jsonl prepare "papers/my-paper.pdf" \
 ```bash
 pdf2jsonl prepare "papers/my-paper.pdf" \
   --supplement "papers/my-paper-supplement.pdf" \
-  --profile association_extraction --schema-version 4.0.0 \
+  --profile association_extraction --schema-version 4.0.1 \
   --out-dir out/my-paper --work-dir out/my-paper/work
 ```
 
@@ -262,7 +289,7 @@ bdc validate out/my-paper/my-paper.jsonl
 ```bash
 pdf2jsonl run "papers/my-paper.pdf" \
   --backend candidates --candidates out/my-paper/work/candidates.json \
-  --profile association_extraction --schema-version 4.0.0 \
+  --profile association_extraction --schema-version 4.0.1 \
   --out-dir out/my-paper
 ```
 
@@ -277,7 +304,7 @@ pdf2jsonl run "papers/my-paper.pdf" \
 for pdf in papers/*.pdf; do
   stem=$(basename "$pdf" .pdf)
   pdf2jsonl prepare "$pdf" \
-    --profile pdf_extraction --schema-version 4.0.0 \
+    --profile pdf_extraction --schema-version 4.0.1 \
     --out-dir "out/$stem" --work-dir "out/$stem/work"
   # 对每个 out/$stem/work 交给 agent 写 candidates.json
   pdf2jsonl finalize "out/$stem/work" --out-dir "out/$stem"
@@ -315,9 +342,9 @@ make dashboard-full     # 生成完整论文看板 dashboard.html
 ```python
 from breeding_contract import resolve_schema, load_profile, load_field_catalog, validate_record
 
-rc = resolve_schema("4.0.0")                   # 也可用 "latest" 或 "dev"（未发布的工作目录）
+rc = resolve_schema("4.0.1")                   # 也可用 "latest" 或 "dev"（未发布的工作目录）
 profile = load_profile("pdf_extraction", "latest")
-catalog = load_field_catalog("4.0.0")
+catalog = load_field_catalog("4.0.1")
 result = validate_record(record)               # 按记录声明的版本校验
 result.valid, [i.to_dict() for i in result.errors]
 ```

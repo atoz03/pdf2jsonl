@@ -21,10 +21,11 @@ from pathlib import Path
 
 from . import PIPELINE_VERSION
 from .contract_link import sha256_file
+from .paper_commands import add_paper_commands
 from .pipeline import PipelineError, RunOptions, default_work_dir, finalize, prepare, resolve_contract, run
 from .pdf_parse import split_supplement_spec
 
-SUBCOMMANDS = {"run", "prepare", "finalize", "resolve", "brief", "validate", "bundle"}
+SUBCOMMANDS = {"run", "prepare", "finalize", "resolve", "brief", "validate", "bundle", "papers"}
 AWAITING_AGENT = 3
 
 
@@ -231,6 +232,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("-o", "--output", type=Path)
     p.add_argument("--legacy-v1", action="store_true", help="emit the legacy v1 document layout instead")
     p.set_defaults(fn=cmd_bundle)
+
+    add_paper_commands(sub.add_parser("papers", help="search and download papers from OpenAlex"))
     return ap
 
 
